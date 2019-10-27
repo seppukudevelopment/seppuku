@@ -18,9 +18,9 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 
 apply plugin: "com.github.johnrengelman.shadow"
 
-version = "1.0"
-group = "com.yourname.modid" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "seppuku-1.12.2"
+version = "3.0"
+group = "me.rigamortis"
+archivesBaseName = "seppuku"
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 compileJava {
@@ -41,7 +41,7 @@ minecraft {
 }
 
 dependencies {
-    compile files('lib/json-simple-1.1.1.jar')
+    compile group: "com.googlecode.json-simple", name: "json-simple", version: "1.1.1"
 }
 
 jar {
@@ -66,7 +66,7 @@ reobf {
 
 shadowJar {
     dependencies {
-        include(dependency('org.json.simple:parser'))
+        include(dependency('com.googlecode.json-simple:json-simple:1.1.1'))
         include(dependency('net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'))
     }
 
