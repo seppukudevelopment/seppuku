@@ -5,6 +5,8 @@ import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.NumberValue;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
@@ -30,19 +32,22 @@ public class PullDownModule extends Module
 			if(mc.player.isElytraFlying() || mc.player.capabilities.isFlying || mc.player.onGround) return;
 			
 			// dont trigger when they could just be jumping, 3 blocks is maybe overkill? But its probably the best thing to do
-			boolean isBlockBelow =
-				!mc.world.isAirBlock(mc.player.getPosition().add(0, -1, 0))
-				||
-				!mc.world.isAirBlock(mc.player.getPosition().add(0, -2, 0))
-				||
-				!mc.world.isAirBlock(mc.player.getPosition().add(0, -3, 0))
-			;
+			RayTraceResult rayTraceResult = mc.world.rayTraceBlocks(
+				mc.player.getPositionVector(),
+				mc.player.getPositionVector()
+					.add(
+						new Vec3d(
+							0,
+							-3,
+							0
+						)
+					)
+			);
 			
-			if(!isBlockBelow)
+			if(rayTraceResult == null || rayTraceResult.typeOfHit == RayTraceResult.Type.MISS)
 			{
 				// Pull the player down
 				mc.player.motionY = -(speed.getFloat());
-				// kk thx that ends epic module bsb on top
 			}
 		}
 	}
