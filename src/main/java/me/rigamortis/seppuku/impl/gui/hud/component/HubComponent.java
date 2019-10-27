@@ -75,6 +75,7 @@ public final class HubComponent extends DraggableHudComponent {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         for (HudComponent component : Seppuku.INSTANCE.getHudManager().getComponentList()) {
             if (component != this) {
+                RenderUtil.drawRect(this.getX() + BORDER + TEXT_GAP, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 2, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll, component.isVisible() ? 0x45002e00 : 0x452e0000);
                 mc.fontRenderer.drawStringWithShadow(component.getName(), this.getX() + BORDER + TEXT_GAP + 1, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, component.isVisible() ? 0xFF55FF55 : 0xFFFF5555);
                 offsetY += mc.fontRenderer.FONT_HEIGHT + TEXT_GAP;
             }
