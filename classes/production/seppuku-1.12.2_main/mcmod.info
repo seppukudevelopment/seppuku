@@ -1,0 +1,16 @@
+[
+{
+  "modid": "seppukumod",
+  "name": "Seppuku",
+  "description": "Seppuku is a hacked client built on forge",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "http://seppuku.pw",
+  "updateUrl": "http://seppuku.pw",
+  "authorList": ["Riga"],
+  "credits": "Riga, Dan, Noil, D3x, TheCyberBrick, Hal",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
