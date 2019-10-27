@@ -9,17 +9,15 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
  * @author cookiedragon234
- * (cookiedragon234 owns me and all)
- * also buy backdoored client kk thx
  */
 public class PullDownModule extends Module
 {
+	public final NumberValue<Float> speed = new NumberValue<>("Speed", new String[]{"velocity"}, 10f, Float.class, 0f, 20f, 1f);
+	
 	public PullDownModule()
 	{
 		super("PullDown", new String[]{"FastFall"}, "Increase your downwards velocity when falling", "NONE", -1, ModuleType.MOVEMENT);
 	}
-	
-	public final NumberValue<Float> speed = new NumberValue<>("Speed", new String[]{"velocity"}, 10f, Float.class, 0f, 20f, 1f);
 	
 	@Listener
 	public void onUpdate(EventPlayerUpdate event)
