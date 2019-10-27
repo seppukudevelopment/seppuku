@@ -53,6 +53,12 @@ public final class HubComponent extends DraggableHudComponent {
         // Scrolling
         this.handleScrolling(mouseX, mouseY);
 
+        // No dragging inside box
+        final boolean insideTitlebar = mouseY <= this.getY() + BORDER + Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1;
+        if (!insideTitlebar) {
+            this.setDragging(false);
+        }
+
         // Background & title
         RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0xFF202020);
         mc.fontRenderer.drawStringWithShadow(this.getName(), this.getX() + 2, this.getY() + 2, 0xFFFFFFFF);
