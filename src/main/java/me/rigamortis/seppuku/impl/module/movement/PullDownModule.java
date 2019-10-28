@@ -23,13 +23,11 @@ import java.util.List;
  */
 public class PullDownModule extends Module {
     private static final float VELOCITY_MAX = 10.0f;
-    private static final float DOWNWARD_VELOCITY_MAX = -VELOCITY_MAX;
-
-    public final BooleanValue jumpDisables = new BooleanValue("JumpDisables", new String[] { "jump" }, true);
-
+    public final BooleanValue jumpDisables =
+            new BooleanValue("JumpDisables", new String[]{"jump"}, true);
     public final NumberValue<Float> speed =
             new NumberValue<>("Speed", new String[]{"velocity"}, 4.0f, Float.class,
-                    0f, DOWNWARD_VELOCITY_MAX, 1f);
+                    0f, VELOCITY_MAX, 1f);
 
     public PullDownModule() {
         super("PullDown", new String[]{"FastFall"}, "Increase your downwards velocity when falling",
