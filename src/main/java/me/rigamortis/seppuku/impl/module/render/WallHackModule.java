@@ -60,7 +60,7 @@ public final class WallHackModule extends Module {
     public final BooleanValue vehicles = new BooleanValue("Vehicles", new String[]{"Vehic", "Vehicle"}, true);
     public final BooleanValue local = new BooleanValue("Local", new String[]{"Self"}, true);
     public final BooleanValue items = new BooleanValue("Items", new String[]{"Item"}, true);
-    public final BooleanValue footsteps = new BooleanValue("FootSteps", new String[]{"FootStep", "Steps"}, true);
+    public final BooleanValue footsteps = new BooleanValue("FootSteps", new String[]{"FootStep", "Steps"}, false);
     public final BooleanValue armorStand = new BooleanValue("ArmorStands", new String[]{"ArmorStand", "ArmourStand", "ArmourStands", "ArmStand"}, true);
 
     public final BooleanValue name = new BooleanValue("Name", new String[]{"Nam"}, true);
@@ -161,7 +161,7 @@ public final class WallHackModule extends Module {
 
                             if (this.hearts.getBoolean()) {
                                 final float hearts = entityLiving.getHealth() / 2.0f;
-                                heartsFormatted = (Math.floor(hearts) == hearts ? (int) hearts : String.format("%.1f", hearts)) + "♥";
+                                heartsFormatted = (Math.floor(hearts) == hearts ? (int) hearts : String.format("%.1f", hearts)) + "";
 
                                 float startX = -mc.fontRenderer.getStringWidth(heartsFormatted) / 2.0f;
                                 if (this.name.getBoolean())
