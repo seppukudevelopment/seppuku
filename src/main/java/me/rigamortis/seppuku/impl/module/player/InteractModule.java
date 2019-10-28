@@ -1,16 +1,13 @@
 package me.rigamortis.seppuku.impl.module.player;
 
-import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventSendPacket;
-import me.rigamortis.seppuku.api.event.player.EventRightClickBlock;
 import me.rigamortis.seppuku.api.module.Module;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.client.CPacketUseEntity;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -42,11 +39,8 @@ public final class InteractModule extends Module {
                 final Minecraft mc = Minecraft.getMinecraft();
                 if (mc.currentScreen == null) {
                     final Block block = mc.world.getBlockState(packet.getPos()).getBlock();
-
-                    if (block != null) {
-                        if (block.onBlockActivated(mc.world, packet.getPos(), mc.world.getBlockState(packet.getPos()), mc.player, packet.getHand(), packet.getDirection(), packet.getFacingX(), packet.getFacingY(), packet.getFacingZ())) {
-                            return;
-                        }
+                    if (block.onBlockActivated(mc.world, packet.getPos(), mc.world.getBlockState(packet.getPos()), mc.player, packet.getHand(), packet.getDirection(), packet.getFacingX(), packet.getFacingY(), packet.getFacingZ())) {
+                        return;
                     }
 
                     final BlockPos usable = findUsableBlock(packet.getHand(), packet.getDirection(), packet.getFacingX(), packet.getFacingY(), packet.getFacingZ());
@@ -73,14 +67,12 @@ public final class InteractModule extends Module {
 
         for (int i = 0; i <= mc.playerController.getBlockReachDistance(); i++) {
             final AxisAlignedBB bb = this.traceToBlock(i, mc.getRenderPartialTicks());
-            if (bb != null) {
-                float maxDist = mc.playerController.getBlockReachDistance();
-                for (Entity e : mc.world.getEntitiesWithinAABBExcludingEntity(mc.player, bb)) {
-                    float currentDist = mc.player.getDistance(e);
-                    if (currentDist <= maxDist) {
-                        entity = e;
-                        maxDist = currentDist;
-                    }
+            float maxDist = mc.playerController.getBlockReachDistance();
+            for (Entity e : mc.world.getEntitiesWithinAABBExcludingEntity(mc.player, bb)) {
+                float currentDist = mc.player.getDistance(e);
+                if (currentDist <= maxDist) {
+                    entity = e;
+                    maxDist = currentDist;
                 }
             }
         }
@@ -92,16 +84,10 @@ public final class InteractModule extends Module {
 
         for (int i = 0; i <= mc.playerController.getBlockReachDistance(); i++) {
             final AxisAlignedBB bb = this.traceToBlock(i, mc.getRenderPartialTicks());
-            if (bb != null) {
-                final BlockPos pos = new BlockPos(bb.minX, bb.minY, bb.minZ);
-                if (pos != null) {
-                    final Block block = mc.world.getBlockState(pos).getBlock();
-                    if (block != null) {
-                        if (block.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, hand, dir, x, y, z)) {
-                            return new BlockPos(pos);
-                        }
-                    }
-                }
+            final BlockPos pos = new BlockPos(bb.minX, bb.minY, bb.minZ);
+            final Block block = mc.world.getBlockState(pos).getBlock();
+            if (block.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, hand, dir, x, y, z)) {
+                return new BlockPos(pos);
             }
         }
 
