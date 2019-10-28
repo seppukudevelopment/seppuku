@@ -137,6 +137,7 @@ public final class ModuleManager {
         add(new DiscordBypassModule());
         add(new HolesModule());
         add(new SmallShieldModule());
+        add(new PullDownModule());
 
         this.loadExternalModules();
     }
