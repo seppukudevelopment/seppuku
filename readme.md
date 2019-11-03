@@ -24,3 +24,7 @@ Seppuku is a free, lightweight, open-source Minecraft Forge client-side mod for 
 4. Refresh the project (reload ide / refresh gradle workspace)
 5. Edit `src/main/java/me/rigamortis/seppuku/impl/fml/core/SeppukuClassTransformer.java` change `PatchManager.Environment.IDE` to `PatchManager.Environment.RELEASE`
 6. Run the gradle command `build` via the IDE or gradlew.bat file (via command prompt: `gradlew.bat build`) 
+
+# Debugging
+- Use VM arg `-Dfml.coreMods.load=me.rigamortis.seppuku.impl.fml.core.SeppukuLoadingPlugin`
+- Ensure field `PATCH_MANAGER` in **SeppukuClassTransformer.java** is set to `PatchManager.Environment.IDE`
