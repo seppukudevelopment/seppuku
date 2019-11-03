@@ -7,6 +7,7 @@ import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.math.MathHelper;
+import org.lwjgl.input.Keyboard;
 
 /**
  * Author Seth
@@ -154,6 +155,11 @@ public class DraggableHudComponent extends HudComponent {
 
         if (button == 0) {
             if (this.isDragging()) {
+                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+                    this.setDragging(false);
+                    return;
+                }
+
                 this.anchorPoint = this.findClosest(mouseX, mouseY);
 
                 for (HudComponent component : Seppuku.INSTANCE.getHudManager().getComponentList()) {

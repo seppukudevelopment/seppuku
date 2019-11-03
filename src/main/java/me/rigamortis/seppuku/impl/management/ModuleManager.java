@@ -138,6 +138,7 @@ public final class ModuleManager {
         add(new HolesModule());
         add(new SmallShieldModule());
         add(new PullDownModule());
+        add(new PortalFinderModule());
 
         this.loadExternalModules();
     }
