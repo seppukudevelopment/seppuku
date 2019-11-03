@@ -22,4 +22,5 @@ Seppuku is a free, lightweight, open-source Minecraft Forge client-side mod for 
 2. Import the project through Gradle via `build.gradle` (simple tutorials online for [intellij](https://stackoverflow.com/questions/31256356/how-to-import-gradle-projects-in-intellij), [eclipse](https://stackoverflow.com/questions/10722773/import-existing-gradle-git-project-into-eclipse), etc.)
 3. Run the gradle command `setupDecompWorkspace` via the IDE or gradlew.bat file (via command prompt: `gradlew.bat setupDecompWorkspace`) 
 4. Refresh the project (reload ide / refresh gradle workspace)
-5. Run the gradle command `build` via the IDE or gradlew.bat file (via command prompt: `gradlew.bat build`) 
+5. Edit `src/main/java/me/rigamortis/seppuku/impl/fml/core/SeppukuClassTransformer.java` change `PatchManager.Environment.IDE` to `PatchManager.Environment.RELEASE`
+6. Run the gradle command `build` via the IDE or gradlew.bat file (via command prompt: `gradlew.bat build`) 
