@@ -26,6 +26,7 @@ public final class HubComponent extends DraggableHudComponent {
     public HubComponent() {
         super("Hub");
         this.setVisible(true);
+        this.setSnappable(false);
         this.setW(100);
         this.setH(100);
         this.setX((Minecraft.getMinecraft().displayWidth / 2) - (this.getW() / 2));

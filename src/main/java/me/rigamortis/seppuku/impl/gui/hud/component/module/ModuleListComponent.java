@@ -29,6 +29,7 @@ public final class ModuleListComponent extends DraggableHudComponent {
     public ModuleListComponent(Module.ModuleType type) {
         super(StringUtils.capitalize(type.name().toLowerCase()));
         this.type = type;
+        this.setSnappable(false);
         this.setW(100);
         this.setH(100);
         this.setX((Minecraft.getMinecraft().displayWidth / 2) - (this.getW() / 2));

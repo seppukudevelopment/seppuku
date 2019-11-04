@@ -22,6 +22,8 @@ public final class TutorialComponent extends PopupComponent {
                 "- Both top and bottom parts of a component are able to be glued to.";
 
         this.setTextData(tutorialData);
+
+        this.setSnappable(false);
         this.setW(200);
         this.setH(173);
         this.setX((Minecraft.getMinecraft().displayWidth / 2) - (this.getW() / 2));
