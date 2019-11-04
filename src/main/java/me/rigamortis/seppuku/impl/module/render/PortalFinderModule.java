@@ -19,6 +19,9 @@ import net.minecraft.init.Blocks;
 import net.minecraft.network.play.server.SPacketJoinGame;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -57,13 +60,9 @@ public final class PortalFinderModule extends Module {
             final Minecraft mc = Minecraft.getMinecraft();
 
             for (Vec3d portal : this.portals) {
-                if (mc.player.getDistance(portal.x, portal.y, portal.z) < range.getInt()) {
-                    final GLUProjection.Projection projection = GLUProjection.getInstance().project(portal.x - mc.getRenderManager().viewerPosX, portal.y - mc.getRenderManager().viewerPosY, portal.z - mc.getRenderManager().viewerPosZ, GLUProjection.ClampMode.NONE, true);
-                    if (projection != null) {
-                        RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), event.getScaledResolution().getScaledWidth() / 2, event.getScaledResolution().getScaledHeight() / 2, this.width.getFloat(), COLOR);
-                    }
-                } else if (this.remove.getBoolean()) {
-                    this.portals.remove(portal);
+                final GLUProjection.Projection projection = GLUProjection.getInstance().project(portal.x - mc.getRenderManager().viewerPosX, portal.y - mc.getRenderManager().viewerPosY, portal.z - mc.getRenderManager().viewerPosZ, GLUProjection.ClampMode.NONE, true);
+                if (projection != null) {
+                    RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), event.getScaledResolution().getScaledWidth() / 2, event.getScaledResolution().getScaledHeight() / 2, this.width.getFloat(), COLOR);
                 }
             }
         }
@@ -75,17 +74,13 @@ public final class PortalFinderModule extends Module {
             final Minecraft mc = Minecraft.getMinecraft();
 
             for (Vec3d portal : this.portals) {
-                if (mc.player.getDistance(portal.x, portal.y, portal.z) < range.getInt()) {
-                    final boolean bobbing = mc.gameSettings.viewBobbing;
-                    mc.gameSettings.viewBobbing = false;
-                    mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
-                    final Vec3d forward = new Vec3d(0, 0, 1).rotatePitch(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationPitch)).rotateYaw(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationYaw));
-                    RenderUtil.drawLine3D((float) forward.x, (float) forward.y + mc.player.getEyeHeight(), (float) forward.z, (float) (portal.x - mc.getRenderManager().renderPosX), (float) (portal.y - mc.getRenderManager().renderPosY), (float) (portal.z - mc.getRenderManager().renderPosZ), this.width.getFloat(), COLOR);
-                    mc.gameSettings.viewBobbing = bobbing;
-                    mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
-                } else if (this.remove.getBoolean()) {
-                    this.portals.remove(portal);
-                }
+                final boolean bobbing = mc.gameSettings.viewBobbing;
+                mc.gameSettings.viewBobbing = false;
+                mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
+                final Vec3d forward = new Vec3d(0, 0, 1).rotatePitch(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationPitch)).rotateYaw(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationYaw));
+                RenderUtil.drawLine3D((float) forward.x, (float) forward.y + mc.player.getEyeHeight(), (float) forward.z, (float) (portal.x - mc.getRenderManager().renderPosX), (float) (portal.y - mc.getRenderManager().renderPosY), (float) (portal.z - mc.getRenderManager().renderPosZ), this.width.getFloat(), COLOR);
+                mc.gameSettings.viewBobbing = bobbing;
+                mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
             }
         }
     }
@@ -101,6 +96,7 @@ public final class PortalFinderModule extends Module {
 
     @Listener
     public void onChunkLoad(EventChunk event) {
+        final Minecraft mc = Minecraft.getMinecraft();
         switch (event.getType()) {
             case LOAD:
                 final Chunk chunk = event.getChunk();
@@ -119,10 +115,10 @@ public final class PortalFinderModule extends Module {
                                 if (blockState.getBlock().equals(Blocks.PORTAL)) {
                                     BlockPos position = new BlockPos(event.getChunk().getPos().getXStart() + x, worldY, event.getChunk().getPos().getZStart() + z);
                                     if (!isPortalCached(position.getX(), position.getY(), position.getZ())) {
-                                        this.portals.add(new Vec3d(position.getX(), position.getY(), position.getZ()));
+                                        final Vec3d portal = new Vec3d(position.getX(), position.getY(), position.getZ());
+                                        this.portals.add(portal);
                                         if (this.chat.getBoolean()) {
-                                            String portalLocation = String.format("Portal found! [X: %s, Y: %s, Z: %s]", position.getX(), position.getY(), position.getZ());
-                                            Seppuku.INSTANCE.logChat(ChatFormatting.WHITE + portalLocation);
+                                            this.printPortalToChat(portal);
                                         }
                                         return;
                                     }
@@ -133,6 +129,13 @@ public final class PortalFinderModule extends Module {
                 }
                 break;
             case UNLOAD:
+                if (this.remove.getBoolean()) {
+                    for (Vec3d portal : this.portals) {
+                        if (mc.player.getDistance(portal.x, portal.y, portal.z) > this.range.getInt()) {
+                            this.portals.remove(portal);
+                        }
+                    }
+                }
                 break;
         }
     }
@@ -144,6 +147,29 @@ public final class PortalFinderModule extends Module {
                 return true;
         }
         return false;
+    }
+
+    private void printPortalToChat(Vec3d position) {
+        final TextComponentString portalTextComponent = new TextComponentString("Portal found!");
+
+        String overworld = "";
+        String nether = "";
+
+        if (Minecraft.getMinecraft().player.dimension == 0) { // overworld
+            overworld = String.format("Overworld: X: %s, Y: %s, Z: %s", position.x, position.y, position.z);
+            nether = String.format("Nether: X: %s, Y: %s, Z: %s", position.x / 8, position.y, position.z / 8);
+        } else if (Minecraft.getMinecraft().player.dimension == -1) { // nether
+            overworld = String.format("Overworld: X: %s, Y: %s, Z: %s", position.x * 8, position.y, position.z * 8);
+            nether = String.format("Nether: X: %s, Y: %s, Z: %s", position.x, position.y, position.z);
+        }
+
+        int playerDistance = (int) Minecraft.getMinecraft().player.getDistance(position.x, position.y, position.z);
+        String distance = ChatFormatting.GRAY + "" + playerDistance + "m away";
+
+        String hoverText = overworld + "\n" + nether + "\n" + distance;
+        portalTextComponent.setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(hoverText))));
+
+        Seppuku.INSTANCE.logcChat(portalTextComponent);
     }
 
     public List<Vec3d> getPortals() {

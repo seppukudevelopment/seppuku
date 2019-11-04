@@ -114,6 +114,10 @@ public final class Seppuku {
         Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(new TextComponentString("\2477[Seppuku]\247f " + message));
     }
 
+    public void logcChat(TextComponentString textComponentString) {
+        Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(new TextComponentString("\2477[Seppuku]\247f ").appendSibling(textComponentString));
+    }
+
     public void logfChat(String format, Object... objects) {
         logChat(String.format(format, objects));
     }
