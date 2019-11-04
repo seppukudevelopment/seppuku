@@ -83,7 +83,7 @@ public final class PortalFinderModule extends Module {
                 mc.gameSettings.viewBobbing = false;
                 mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
                 final Vec3d forward = new Vec3d(0, 0, 1).rotatePitch(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationPitch)).rotateYaw(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationYaw));
-                RenderUtil.drawLine3D((float) forward.x, (float) forward.y + mc.player.getEyeHeight(), (float) forward.z, (float) (portal.x - mc.getRenderManager().renderPosX), (float) (portal.y - mc.getRenderManager().renderPosY), (float) (portal.z - mc.getRenderManager().renderPosZ), this.width.getFloat(), new Color(red.getFloat(), green.getFloat(), blue.getFloat()).getRGB());
+                RenderUtil.drawLine3D((float) forward.x, (float) forward.y + mc.player.getEyeHeight(), (float) forward.z, (float) (portal.x - mc.getRenderManager().renderPosX), (float) (portal.y - mc.getRenderManager().renderPosY), (float) (portal.z - mc.getRenderManager().renderPosZ), this.width.getFloat(), new Color(red.getFloat() / 255.0f, green.getFloat() / 255.0f, blue.getFloat() / 255.0f).getRGB());
                 mc.gameSettings.viewBobbing = bobbing;
                 mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
             }
