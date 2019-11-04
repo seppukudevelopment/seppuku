@@ -2,6 +2,7 @@ package me.rigamortis.seppuku.impl.patch;
 
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.world.EventLightUpdate;
+import me.rigamortis.seppuku.api.event.world.EventRainStrength;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
 import me.rigamortis.seppuku.impl.management.PatchManager;
@@ -24,6 +25,7 @@ public final class WorldPatch extends ClassPatch {
      * This function is used to update light for blocks
      * It is VERY unoptimized and in some cases it's
      * better off to disable
+     *
      * @param methodNode
      * @param env
      */
@@ -53,6 +55,29 @@ public final class WorldPatch extends ClassPatch {
 
     public static boolean checkLightForHook() {
         final EventLightUpdate event = new EventLightUpdate();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    @MethodPatch(
+            mcpName = "getRainStrength",
+            notchName = "j",
+            mcpDesc = "(F)F",
+            notchDesc = "(F)F")
+    public void getRainStrength(MethodNode methodNode, PatchManager.Environment env) {
+        final InsnList list = new InsnList();
+        list.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "getRainStrengthHook", "()Z", false));
+        final LabelNode jmp = new LabelNode();
+        list.add(new JumpInsnNode(IFEQ, jmp));
+        list.add(new InsnNode(ICONST_0));
+        list.add(new InsnNode(FRETURN));
+        list.add(jmp);
+        methodNode.instructions.insert(list);
+    }
+
+    public static boolean getRainStrengthHook() {
+        final EventRainStrength event = new EventRainStrength();
         Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
 
         return event.isCanceled();

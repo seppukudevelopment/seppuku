@@ -1,10 +1,8 @@
 package me.rigamortis.seppuku.impl.module.world;
 
-import me.rigamortis.seppuku.api.event.EventStageable;
-import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
+import me.rigamortis.seppuku.api.event.world.EventRainStrength;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.OptionalValue;
-import net.minecraft.client.Minecraft;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
@@ -25,20 +23,8 @@ public final class NoWeatherModule extends Module {
     }
 
     @Listener
-    public void onUpdate(EventPlayerUpdate event) {
-        if (event.getStage() == EventStageable.EventStage.PRE) {
-            final Minecraft mc = Minecraft.getMinecraft();
-            switch (this.mode.getInt()) {
-                case 0:
-                    mc.world.setRainStrength(0);
-                    mc.world.setThunderStrength(0);
-                    break;
-                case 1:
-                    mc.world.setRainStrength(1.0f);
-                    mc.world.setThunderStrength(0);
-                    break;
-            }
-        }
+    public void onRainStrength(EventRainStrength event) {
+        event.setCanceled(true);
     }
 
 }
