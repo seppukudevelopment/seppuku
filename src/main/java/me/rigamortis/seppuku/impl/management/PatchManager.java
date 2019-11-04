@@ -54,6 +54,8 @@ public final class PatchManager {
         this.patchList.add(new AbstractClientPlayerPatch());
         this.patchList.add(new BiomeColorHelperPatch());
         this.patchList.add(new GuiBossOverlayPatch());
+        this.patchList.add(new NetHandlerPlayClientPatch());
+        this.patchList.add(new ChunkPatch());
 
         //load custom external patches
         //TODO this needs more testing
