@@ -33,11 +33,11 @@ public final class PortalFinderModule extends Module {
 
     public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode"}, 0, new String[]{"2D", "3D"});
     public final BooleanValue chat = new BooleanValue("Chat", new String[]{"C", "ChatMessages", "ChatNotifications"}, true);
-    public final BooleanValue remove = new BooleanValue("Remove", new String[]{"R", "ChatMessages", "ChatNotifications"}, true);
+    public final BooleanValue remove = new BooleanValue("Remove", new String[]{"R", "Delete"}, true);
     public final NumberValue<Integer> range = new NumberValue<Integer>("Range", new String[]{"R", "Distance"}, 200, Integer.class, 1, 2000, 1);
     public final NumberValue<Float> width = new NumberValue<Float>("Width", new String[]{"W", "Width"}, 0.5f, Float.class, 0.0f, 5.0f, 0.1f);
 
-    private final List<Vec3d> portals = new ArrayList<>(512);
+    private final List<Vec3d> portals = new ArrayList<>(128);
 
     private static final int COLOR = 0xFFFFFFFF;
 
