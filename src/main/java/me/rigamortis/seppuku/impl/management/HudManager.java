@@ -11,6 +11,7 @@ import me.rigamortis.seppuku.api.util.ReflectionUtil;
 import me.rigamortis.seppuku.impl.config.HudConfig;
 import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
 import me.rigamortis.seppuku.impl.gui.hud.component.*;
+import me.rigamortis.seppuku.impl.gui.hud.component.module.ModuleListComponent;
 import me.rigamortis.seppuku.impl.module.render.HudModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
@@ -70,9 +71,17 @@ public final class HudManager {
         this.componentList.add(new TotemCountComponent());
         this.componentList.add(new TutorialComponent());
 
-        NotificationsComponent notifactionComponent = new NotificationsComponent();
-        notifactionComponent.setAnchorPoint(TOP_RIGHT);
-        this.componentList.add(notifactionComponent);
+        for (Module.ModuleType type : Module.ModuleType.values()) {
+            if (type.equals(Module.ModuleType.HIDDEN) || type.equals(Module.ModuleType.UI))
+                continue;
+
+            final ModuleListComponent moduleList = new ModuleListComponent(type);
+            this.componentList.add(moduleList);
+        }
+
+        NotificationsComponent notificationsComponent = new NotificationsComponent();
+        notificationsComponent.setAnchorPoint(TOP_RIGHT);
+        this.componentList.add(notificationsComponent);
 
         this.loadExternalHudComponents();
 
