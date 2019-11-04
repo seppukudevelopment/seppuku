@@ -58,6 +58,7 @@ public final class ModuleListComponent extends DraggableHudComponent {
         }
 
         // Background & title
+        RenderUtil.drawRect(this.getX() - 1, this.getY() - 1, this.getX() + this.getW() + 1, this.getY() + this.getH() + 1, 0x99101010);
         RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0xFF202020);
         mc.fontRenderer.drawStringWithShadow(this.getName(), this.getX() + 2, this.getY() + 2, 0xFFFFFFFF);
         offsetY += mc.fontRenderer.FONT_HEIGHT + 1;

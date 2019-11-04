@@ -50,8 +50,9 @@ public final class ShulkerPreviewModule extends Module {
                     GlStateManager.disableLighting();
                     GlStateManager.disableDepth();
                     // background
-                    RenderUtil.drawRect(-2, -mc.fontRenderer.FONT_HEIGHT - 3, 9 * 16 + 2, 3 * 16 + 2, 0xEE202020);
-                    RenderUtil.drawRect(0, 0, 9 * 16, 3 * 16, 0x99101010);
+                    RenderUtil.drawRect(-3, -mc.fontRenderer.FONT_HEIGHT - 4, 9 * 16 + 3, 3 * 16 + 3, 0x99101010);
+                    RenderUtil.drawRect(-2, -mc.fontRenderer.FONT_HEIGHT - 3, 9 * 16 + 2, 3 * 16 + 2, 0xFF202020);
+                    RenderUtil.drawRect(0, 0, 9 * 16, 3 * 16, 0xFF101010);
 
                     // text
                     mc.fontRenderer.drawStringWithShadow(shulker.getDisplayName(), 0, -mc.fontRenderer.FONT_HEIGHT - 1, 0xFFFFFFFF);
