@@ -87,7 +87,7 @@ public final class HubComponent extends DraggableHudComponent {
 
         final boolean inside = mouseX >= this.getX() && mouseX <= this.getX() + this.getW() && mouseY >= this.getY() && mouseY <= this.getY() + this.getH();
         if (inside && button == 0) {
-            int offsetY = 0;
+            int offsetY = BORDER;
             for (HudComponent component : Seppuku.INSTANCE.getHudManager().getComponentList()) {
                 if (component != this) {
                     final boolean insideTitlebar = mouseY <= this.getY() + BORDER + Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1;
