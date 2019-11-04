@@ -363,7 +363,7 @@ public final class WallHackModule extends Module {
                 final SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
 
                 if (packet.getCategory() == SoundCategory.NEUTRAL || packet.getCategory() == SoundCategory.PLAYERS) {
-                    final String sound = packet.getSound().getSoundName().getResourcePath();
+                    final String sound = packet.getSound().getSoundName().getPath();
                     if (sound.endsWith(".step") || sound.endsWith(".paddle_land") || sound.endsWith(".gallop")) {
                         this.footstepDataList.add(new FootstepData(packet.getX(), packet.getY(), packet.getZ(), System.currentTimeMillis()));
                     }

@@ -97,7 +97,7 @@ public final class InteractModule extends Module {
     private AxisAlignedBB traceToBlock(double dist, float partialTicks) {
         final Vec3d pos = Minecraft.getMinecraft().player.getPositionEyes(partialTicks);
         final Vec3d angles = Minecraft.getMinecraft().player.getLook(partialTicks);
-        final Vec3d end = pos.addVector(angles.x * dist, angles.y * dist, angles.z * dist);
+        final Vec3d end = pos.add(angles.x * dist, angles.y * dist, angles.z * dist);
         return new AxisAlignedBB(end.x, end.y, end.z, end.x + 1, end.y + 1, end.z + 1);
     }
 }

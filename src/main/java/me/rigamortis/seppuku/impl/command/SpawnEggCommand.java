@@ -63,7 +63,7 @@ public final class SpawnEggCommand extends Command {
                 while (it.hasNext()) {
                     final ResourceLocation res = (ResourceLocation) it.next();
                     if (res != null) {
-                        msg.appendSibling(new TextComponentString("\247a" + res.getResourceDomain() + ":" + res.getResourcePath() + "\2477" + ((index == size - 1) ? "" : ", ")));
+                        msg.appendSibling(new TextComponentString("\247a" + res.getPath() + ":" + res.getPath() + "\2477" + ((index == size - 1) ? "" : ", ")));
                         index++;
                     }
                 }
@@ -82,21 +82,21 @@ public final class SpawnEggCommand extends Command {
                 final ResourceLocation similar = this.findSimilar(split[2]);
                 if (similar != null) {
                     Seppuku.INSTANCE.errorChat("Unknown entity " + "\247f\"" + split[2] + "\"");
-                    Seppuku.INSTANCE.logChat("Did you mean " + "\247c" + similar.getResourcePath() + "\247f?");
+                    Seppuku.INSTANCE.logChat("Did you mean " + "\247c" + similar.getPath() + "\247f?");
                 }
             } else {
                 final ItemStack itemStack = new ItemStack(Item.getItemById(383));
                 final NBTTagCompound tagCompound = (itemStack.hasTagCompound()) ? itemStack.getTagCompound() : new NBTTagCompound();
                 final NBTTagCompound entityTag = new NBTTagCompound();
 
-                entityTag.setString("id", res.getResourceDomain() + ":" + res.getResourcePath());
+                entityTag.setString("id", res.getNamespace() + ":" + res.getPath());
                 tagCompound.setTag("EntityTag", entityTag);
                 itemStack.setTagCompound(tagCompound);
 
                 final int slot = this.findEmptyhotbar();
 
                 mc.player.connection.sendPacket(new CPacketCreativeInventoryAction(36 + (slot != -1 ? slot : mc.player.inventory.currentItem), itemStack));
-                Seppuku.INSTANCE.logChat("Gave you a spawn egg with entity type: " + res.getResourceDomain() + ":" + res.getResourcePath());
+                Seppuku.INSTANCE.logChat("Gave you a spawn egg with entity type: " + res.getNamespace() + ":" + res.getPath());
             }
         } else {
             Seppuku.INSTANCE.errorChat("Unknown input " + "\247f\"" + input + "\"");
@@ -109,7 +109,7 @@ public final class SpawnEggCommand extends Command {
         double similarity = 0.0f;
 
         for (ResourceLocation res : EntityList.getEntityNameList()) {
-            final double currentSimilarity = StringUtil.levenshteinDistance(name, res.getResourcePath());
+            final double currentSimilarity = StringUtil.levenshteinDistance(name, res.getPath());
 
             if (currentSimilarity >= similarity) {
                 similarity = currentSimilarity;
@@ -122,7 +122,7 @@ public final class SpawnEggCommand extends Command {
 
     private ResourceLocation find(String name) {
         for (ResourceLocation res : EntityList.getEntityNameList()) {
-            if (res.getResourcePath().equalsIgnoreCase(name)) {
+            if (res.getPath().equalsIgnoreCase(name)) {
                 return res;
             }
         }

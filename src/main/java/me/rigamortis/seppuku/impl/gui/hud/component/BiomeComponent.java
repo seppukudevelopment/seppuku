@@ -22,7 +22,7 @@ public final class BiomeComponent extends DraggableHudComponent {
 
         final Minecraft mc = Minecraft.getMinecraft();
         final BlockPos pos = mc.player.getPosition();
-        final Chunk chunk = mc.world.getChunkFromBlockCoords(pos);
+        final Chunk chunk = mc.world.getChunk(pos);
         final Biome biome = chunk.getBiome(pos, mc.world.getBiomeProvider());
 
         this.setW(Minecraft.getMinecraft().fontRenderer.getStringWidth(biome.getBiomeName()));

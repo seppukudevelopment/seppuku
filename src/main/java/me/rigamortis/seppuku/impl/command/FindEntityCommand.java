@@ -26,7 +26,7 @@ public final class FindEntityCommand extends Command {
 
         final Minecraft mc = Minecraft.getMinecraft();
         final BlockPos pos = mc.player.getPosition();
-        final Chunk chunk = mc.world.getChunkFromBlockCoords(pos);
+        final Chunk chunk = mc.world.getChunk(pos);
         final Biome biome = chunk.getBiome(pos, mc.world.getBiomeProvider());
 
         System.out.println(biome.getSpawnableList(EnumCreatureType.CREATURE));

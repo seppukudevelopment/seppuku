@@ -257,7 +257,7 @@ public final class CrystalAuraModule extends Module {
 
         float unscaledDamage = (float) ((int) ((densityScale * densityScale + densityScale) / 2.0d * 7.0d * (double) scale + 1.0d));
 
-        unscaledDamage *= 0.5f * mc.world.getDifficulty().getDifficultyId();
+        unscaledDamage *= 0.5f * mc.world.getDifficulty().getId();
 
         return scaleExplosionDamage(entity, new Explosion(mc.world, null, x, y, z, size, false, true), unscaledDamage);
     }

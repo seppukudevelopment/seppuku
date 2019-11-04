@@ -4,7 +4,6 @@ import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -27,8 +26,6 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_LINE_SMOOTH;
-import static org.lwjgl.opengl.GL11.glDisable;
 
 /**
  * A feature that projects the possible path of an entity that was fired.
@@ -469,7 +466,7 @@ public final class ProjectilesModule extends Module {
          */
         private void setThrowableHeading(Vec3d motion, float velocity) {
             // Divide the current motion by the length of the vector
-            this.motion = MathUtil.div(motion, (float) motion.lengthVector());
+            this.motion = MathUtil.div(motion, (float) motion.length());
             // Multiply by the velocity
             this.motion = MathUtil.mult(this.motion, velocity);
         }
