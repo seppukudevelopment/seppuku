@@ -2,6 +2,7 @@ package me.rigamortis.seppuku.impl.module.world;
 
 import me.rigamortis.seppuku.api.event.world.EventRainStrength;
 import me.rigamortis.seppuku.api.module.Module;
+import net.minecraft.client.Minecraft;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
@@ -16,6 +17,9 @@ public final class NoWeatherModule extends Module {
 
     @Listener
     public void onRainStrength(EventRainStrength event) {
+        if (Minecraft.getMinecraft().world == null)
+            return;
+
         event.setCanceled(true);
     }
 

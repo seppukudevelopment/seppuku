@@ -70,7 +70,7 @@ public final class WorldPatch extends ClassPatch {
         list.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "getRainStrengthHook", "()Z", false));
         final LabelNode jmp = new LabelNode();
         list.add(new JumpInsnNode(IFEQ, jmp));
-        list.add(new InsnNode(ICONST_0));
+        list.add(new InsnNode(FCONST_0));
         list.add(new InsnNode(FRETURN));
         list.add(jmp);
         methodNode.instructions.insert(list);

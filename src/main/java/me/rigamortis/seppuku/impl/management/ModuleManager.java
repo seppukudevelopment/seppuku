@@ -139,6 +139,7 @@ public final class ModuleManager {
         add(new SmallShieldModule());
         add(new PullDownModule());
         add(new PortalFinderModule());
+        add(new ShulkerPreviewModule());
 
         this.loadExternalModules();
     }
