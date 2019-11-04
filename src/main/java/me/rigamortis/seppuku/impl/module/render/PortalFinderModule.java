@@ -26,6 +26,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,10 +36,14 @@ import java.util.List;
 public final class PortalFinderModule extends Module {
 
     public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode"}, 0, new String[]{"2D", "3D"});
-    public final BooleanValue chat = new BooleanValue("Chat", new String[]{"C", "ChatMessages", "ChatNotifications"}, true);
+    public final BooleanValue chat = new BooleanValue("Chat", new String[]{"Chat", "ChatMessages", "ChatNotifications"}, true);
     public final BooleanValue remove = new BooleanValue("Remove", new String[]{"R", "Delete"}, true);
     public final NumberValue<Integer> range = new NumberValue<Integer>("Range", new String[]{"R", "Distance"}, 200, Integer.class, 1, 2000, 1);
     public final NumberValue<Float> width = new NumberValue<Float>("Width", new String[]{"W", "Width"}, 0.5f, Float.class, 0.0f, 5.0f, 0.1f);
+
+    public final NumberValue<Float> red = new NumberValue<Float>("Red", new String[]{"R"}, 255.0f, Float.class, 0.0f, 255.0f, 1.0f);
+    public final NumberValue<Float> green = new NumberValue<Float>("Green", new String[]{"G"}, 255.0f, Float.class, 0.0f, 255.0f, 1.0f);
+    public final NumberValue<Float> blue = new NumberValue<Float>("Blue", new String[]{"B"}, 255.0f, Float.class, 0.0f, 255.0f, 1.0f);
 
     private final List<Vec3d> portals = new ArrayList<>(128);
 
@@ -62,7 +67,7 @@ public final class PortalFinderModule extends Module {
             for (Vec3d portal : this.portals) {
                 final GLUProjection.Projection projection = GLUProjection.getInstance().project(portal.x - mc.getRenderManager().viewerPosX, portal.y - mc.getRenderManager().viewerPosY, portal.z - mc.getRenderManager().viewerPosZ, GLUProjection.ClampMode.NONE, true);
                 if (projection != null) {
-                    RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), event.getScaledResolution().getScaledWidth() / 2, event.getScaledResolution().getScaledHeight() / 2, this.width.getFloat(), COLOR);
+                    RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), event.getScaledResolution().getScaledWidth() / 2, event.getScaledResolution().getScaledHeight() / 2, this.width.getFloat(), new Color(red.getFloat() / 255.0f, green.getFloat() / 255.0f, blue.getFloat() / 255.0f).getRGB());
                 }
             }
         }
@@ -78,7 +83,7 @@ public final class PortalFinderModule extends Module {
                 mc.gameSettings.viewBobbing = false;
                 mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
                 final Vec3d forward = new Vec3d(0, 0, 1).rotatePitch(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationPitch)).rotateYaw(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationYaw));
-                RenderUtil.drawLine3D((float) forward.x, (float) forward.y + mc.player.getEyeHeight(), (float) forward.z, (float) (portal.x - mc.getRenderManager().renderPosX), (float) (portal.y - mc.getRenderManager().renderPosY), (float) (portal.z - mc.getRenderManager().renderPosZ), this.width.getFloat(), COLOR);
+                RenderUtil.drawLine3D((float) forward.x, (float) forward.y + mc.player.getEyeHeight(), (float) forward.z, (float) (portal.x - mc.getRenderManager().renderPosX), (float) (portal.y - mc.getRenderManager().renderPosY), (float) (portal.z - mc.getRenderManager().renderPosZ), this.width.getFloat(), new Color(red.getFloat(), green.getFloat(), blue.getFloat()).getRGB());
                 mc.gameSettings.viewBobbing = bobbing;
                 mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
             }
