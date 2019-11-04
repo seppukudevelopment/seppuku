@@ -15,6 +15,7 @@ import me.rigamortis.seppuku.api.value.NumberValue;
 import me.rigamortis.seppuku.api.value.OptionalValue;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.server.SPacketJoinGame;
 import net.minecraft.util.math.BlockPos;
@@ -39,8 +40,11 @@ public final class PortalFinderModule extends Module {
     public final BooleanValue chat = new BooleanValue("Chat", new String[]{"Chat", "ChatMessages", "ChatNotifications"}, true);
     public final BooleanValue remove = new BooleanValue("Remove", new String[]{"R", "Delete"}, true);
     public final NumberValue<Integer> range = new NumberValue<Integer>("Range", new String[]{"R", "Distance"}, 200, Integer.class, 1, 2000, 1);
-    public final NumberValue<Float> width = new NumberValue<Float>("Width", new String[]{"W", "Width"}, 0.5f, Float.class, 0.0f, 5.0f, 0.1f);
 
+    public final BooleanValue showInfo = new BooleanValue("ShowInfo", new String[]{"SI", "DrawInfo", "DrawText"}, true);
+    public final NumberValue<Float> infoScale = new NumberValue<Float>("InfoScale", new String[]{"IS", "Scale", "TextScale"}, 1.0f, Float.class, 0.0f, 3.0f, 0.25f);
+
+    public final NumberValue<Float> width = new NumberValue<Float>("Width", new String[]{"W", "Width"}, 0.5f, Float.class, 0.0f, 5.0f, 0.1f);
     public final NumberValue<Float> red = new NumberValue<Float>("Red", new String[]{"R"}, 255.0f, Float.class, 0.0f, 255.0f, 1.0f);
     public final NumberValue<Float> green = new NumberValue<Float>("Green", new String[]{"G"}, 255.0f, Float.class, 0.0f, 255.0f, 1.0f);
     public final NumberValue<Float> blue = new NumberValue<Float>("Blue", new String[]{"B"}, 255.0f, Float.class, 0.0f, 255.0f, 1.0f);
@@ -68,6 +72,14 @@ public final class PortalFinderModule extends Module {
                 final GLUProjection.Projection projection = GLUProjection.getInstance().project(portal.x - mc.getRenderManager().viewerPosX, portal.y - mc.getRenderManager().viewerPosY, portal.z - mc.getRenderManager().viewerPosZ, GLUProjection.ClampMode.NONE, true);
                 if (projection != null) {
                     RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), event.getScaledResolution().getScaledWidth() / 2, event.getScaledResolution().getScaledHeight() / 2, this.width.getFloat(), new Color(red.getFloat() / 255.0f, green.getFloat() / 255.0f, blue.getFloat() / 255.0f).getRGB());
+                    if (this.showInfo.getBoolean()) {
+                        final float scale = this.infoScale.getFloat();
+                        GlStateManager.pushMatrix();
+                        GlStateManager.scale(scale, scale, scale);
+                        this.drawPortalInfoText(portal, (float) projection.getX() / scale, (float) projection.getY() / scale);
+                        GlStateManager.scale(-scale, -scale, -scale);
+                        GlStateManager.popMatrix();
+                    }
                 }
             }
         }
@@ -79,13 +91,27 @@ public final class PortalFinderModule extends Module {
             final Minecraft mc = Minecraft.getMinecraft();
 
             for (Vec3d portal : this.portals) {
+                GlStateManager.pushMatrix();
                 final boolean bobbing = mc.gameSettings.viewBobbing;
                 mc.gameSettings.viewBobbing = false;
                 mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
+
                 final Vec3d forward = new Vec3d(0, 0, 1).rotatePitch(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationPitch)).rotateYaw(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationYaw));
+
+                // Line
                 RenderUtil.drawLine3D((float) forward.x, (float) forward.y + mc.player.getEyeHeight(), (float) forward.z, (float) (portal.x - mc.getRenderManager().renderPosX), (float) (portal.y - mc.getRenderManager().renderPosY), (float) (portal.z - mc.getRenderManager().renderPosZ), this.width.getFloat(), new Color(red.getFloat() / 255.0f, green.getFloat() / 255.0f, blue.getFloat() / 255.0f).getRGB());
+
+                // Info
+                if (this.showInfo.getBoolean()) {
+                    RenderUtil.glBillboardDistanceScaled((float) portal.x, (float) portal.y, (float) portal.z, mc.player, this.infoScale.getFloat());
+                    GlStateManager.disableDepth();
+                    this.drawPortalInfoText(portal, 0, 0);
+                    GlStateManager.enableDepth();
+                }
+
                 mc.gameSettings.viewBobbing = bobbing;
                 mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
+                GlStateManager.popMatrix();
             }
         }
     }
@@ -154,27 +180,31 @@ public final class PortalFinderModule extends Module {
         return false;
     }
 
-    private void printPortalToChat(Vec3d position) {
+    private void printPortalToChat(Vec3d portal) {
         final TextComponentString portalTextComponent = new TextComponentString("Portal found!");
 
         String overworld = "";
         String nether = "";
 
         if (Minecraft.getMinecraft().player.dimension == 0) { // overworld
-            overworld = String.format("Overworld: X: %s, Y: %s, Z: %s", position.x, position.y, position.z);
-            nether = String.format("Nether: X: %s, Y: %s, Z: %s", position.x / 8, position.y, position.z / 8);
+            overworld = String.format("Overworld: X: %s, Y: %s, Z: %s", (int) portal.x, (int) portal.y, (int) portal.z);
+            nether = String.format("Nether: X: %s, Y: %s, Z: %s", (int) portal.x / 8, (int) portal.y, (int) portal.z / 8);
         } else if (Minecraft.getMinecraft().player.dimension == -1) { // nether
-            overworld = String.format("Overworld: X: %s, Y: %s, Z: %s", position.x * 8, position.y, position.z * 8);
-            nether = String.format("Nether: X: %s, Y: %s, Z: %s", position.x, position.y, position.z);
+            overworld = String.format("Overworld: X: %s, Y: %s, Z: %s", (int) portal.x * 8, (int) portal.y, (int) portal.z * 8);
+            nether = String.format("Nether: X: %s, Y: %s, Z: %s", (int) portal.x, (int) portal.y, (int) portal.z);
         }
 
-        int playerDistance = (int) Minecraft.getMinecraft().player.getDistance(position.x, position.y, position.z);
+        int playerDistance = (int) Minecraft.getMinecraft().player.getDistance(portal.x, portal.y, portal.z);
         String distance = ChatFormatting.GRAY + "" + playerDistance + "m away";
 
         String hoverText = overworld + "\n" + nether + "\n" + distance;
         portalTextComponent.setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(hoverText))));
 
         Seppuku.INSTANCE.logcChat(portalTextComponent);
+    }
+
+    private void drawPortalInfoText(Vec3d portal, float x, float y) {
+        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow((int) Minecraft.getMinecraft().player.getDistance(portal.x, portal.y, portal.z) + "m", x, y, 0xFFAAAAAA);
     }
 
     public List<Vec3d> getPortals() {
