@@ -16,12 +16,14 @@ import static org.objectweb.asm.Opcodes.*;
 public final class GuiBossOverlayPatch extends ClassPatch {
 
     public GuiBossOverlayPatch() {
-        super("net.minecraft.client.gui.GuiBossOverlay");
+        super("net.minecraft.client.gui.GuiBossOverlay", "biz");
     }
 
     @MethodPatch(
             mcpName = "renderBossHealth",
-            mcpDesc = "()V")
+            notchName = "a",
+            mcpDesc = "()V",
+            notchDesc = "()V")
     public void renderBossHealth(MethodNode methodNode, PatchManager.Environment env) {
         //create a list of instructions
         final InsnList insnList = new InsnList();

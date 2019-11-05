@@ -18,7 +18,7 @@ import static org.objectweb.asm.Opcodes.*;
 public final class ChunkPatch extends ClassPatch {
 
     public ChunkPatch() {
-        super("net.minecraft.world.chunk.Chunk", "axu");
+        super("net.minecraft.world.chunk.Chunk", "axw");
     }
 
     @MethodPatch(
@@ -33,7 +33,7 @@ public final class ChunkPatch extends ClassPatch {
         insnList.add(new InsnNode(DUP));
         insnList.add(new FieldInsnNode(GETSTATIC, "me/rigamortis/seppuku/api/event/world/EventChunk$ChunkType", "UNLOAD", "Lme/rigamortis/seppuku/api/event/world/EventChunk$ChunkType;"));
         insnList.add(new VarInsnNode(ALOAD, 0));
-        insnList.add(new MethodInsnNode(INVOKESPECIAL, Type.getInternalName(EventChunk.class), "<init>", env == PatchManager.Environment.IDE ? "(Lme/rigamortis/seppuku/api/event/world/EventChunk$ChunkType;Lnet/minecraft/world/chunk/Chunk;)V" : "(Lme/rigamortis/seppuku/api/event/world/EventChunk$ChunkType;Laxu;)V", false));
+        insnList.add(new MethodInsnNode(INVOKESPECIAL, Type.getInternalName(EventChunk.class), "<init>", env == PatchManager.Environment.IDE ? "(Lme/rigamortis/seppuku/api/event/world/EventChunk$ChunkType;Lnet/minecraft/world/chunk/Chunk;)V" : "(Lme/rigamortis/seppuku/api/event/world/EventChunk$ChunkType;Laxw;)V", false));
         insnList.add(new VarInsnNode(ASTORE, 7));
         insnList.add(new FieldInsnNode(GETSTATIC, Type.getInternalName(Seppuku.class), "INSTANCE", "Lme/rigamortis/seppuku/Seppuku;"));
         insnList.add(new MethodInsnNode(INVOKEVIRTUAL, Type.getInternalName(Seppuku.class), "getEventManager", "()Lteam/stiff/pomelo/EventManager;", false));

@@ -17,14 +17,14 @@ import static org.objectweb.asm.Opcodes.*;
 public final class GuiScreenPatch extends ClassPatch {
 
     public GuiScreenPatch() {
-        super("net.minecraft.client.gui.GuiScreen", "bli");
+        super("net.minecraft.client.gui.GuiScreen", "blk");
     }
 
     @MethodPatch(
             mcpName = "renderToolTip",
             notchName = "a",
             mcpDesc = "(Lnet/minecraft/item/ItemStack;II)V",
-            notchDesc = "(Lain;II)V")
+            notchDesc = "(Laip;II)V")
     public void renderToolTip(MethodNode methodNode, PatchManager.Environment env) {
         final InsnList list = new InsnList();
         list.add(new TypeInsnNode(NEW, Type.getInternalName(EventRenderTooltip.class)));
@@ -32,7 +32,7 @@ public final class GuiScreenPatch extends ClassPatch {
         list.add(new VarInsnNode(ALOAD, 1));
         list.add(new VarInsnNode(ILOAD, 2));
         list.add(new VarInsnNode(ILOAD, 3));
-        list.add(new MethodInsnNode(INVOKESPECIAL, Type.getInternalName(EventRenderTooltip.class), "<init>", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/item/ItemStack;II)V" : "(Lain;II)V", false));
+        list.add(new MethodInsnNode(INVOKESPECIAL, Type.getInternalName(EventRenderTooltip.class), "<init>", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/item/ItemStack;II)V" : "(Laip;II)V", false));
         list.add(new VarInsnNode(ASTORE, 7));
         list.add(new FieldInsnNode(GETSTATIC, Type.getInternalName(Seppuku.class), "INSTANCE", "Lme/rigamortis/seppuku/Seppuku;"));
         list.add(new MethodInsnNode(INVOKEVIRTUAL, Type.getInternalName(Seppuku.class), "getEventManager", "()Lteam/stiff/pomelo/EventManager;", false));
