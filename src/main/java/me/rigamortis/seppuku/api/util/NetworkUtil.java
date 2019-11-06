@@ -6,8 +6,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.UUID;
@@ -34,16 +32,6 @@ public final class NetworkUtil {
                 }
             }
         } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static BufferedImage getIcon(UUID id) {
-        try {
-            URL url = new URL("https://minotar.net/avatar/" + id.toString().replace("-", ""));
-            return ImageIO.read(url);
-        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
