@@ -29,8 +29,8 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * created by noil on 11/3/2019 at 1:55 PM
@@ -40,8 +40,8 @@ public final class PortalFinderModule extends Module {
     public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode"}, 0, new String[]{"2D", "3D"});
     public final BooleanValue chat = new BooleanValue("Chat", new String[]{"Chat", "ChatMessages", "ChatNotifications"}, true);
     public final BooleanValue remove = new BooleanValue("Remove", new String[]{"R", "Delete"}, true);
-    public final NumberValue<Integer> range = new NumberValue<Integer>("Range", new String[]{"R", "Distance"}, 200, Integer.class, 1, 2000, 1);
 
+    public final NumberValue<Integer> removeDistance = new NumberValue<Integer>("RemoveDistance", new String[]{"RD", "RemoveRange"}, 200, Integer.class, 1, 2000, 1);
     public final BooleanValue showInfo = new BooleanValue("ShowInfo", new String[]{"SI", "DrawInfo", "DrawText"}, true);
     public final NumberValue<Float> infoScale = new NumberValue<Float>("InfoScale", new String[]{"IS", "Scale", "TextScale"}, 1.0f, Float.class, 0.0f, 3.0f, 0.25f);
 
@@ -50,7 +50,7 @@ public final class PortalFinderModule extends Module {
     public final NumberValue<Float> green = new NumberValue<Float>("Green", new String[]{"G"}, 255.0f, Float.class, 0.0f, 255.0f, 1.0f);
     public final NumberValue<Float> blue = new NumberValue<Float>("Blue", new String[]{"B"}, 255.0f, Float.class, 0.0f, 255.0f, 1.0f);
 
-    private final List<Vec3d> portals = new ArrayList<>(128);
+    private final List<Vec3d> portals = new CopyOnWriteArrayList<>();
 
     private static final int COLOR = 0xFFFFFFFF;
 
@@ -168,7 +168,7 @@ public final class PortalFinderModule extends Module {
             case UNLOAD:
                 if (this.remove.getBoolean()) {
                     for (Vec3d portal : this.portals) {
-                        if (mc.player.getDistance(portal.x, portal.y, portal.z) > this.range.getInt()) {
+                        if (mc.player.getDistance(portal.x, portal.y, portal.z) > this.removeDistance.getInt()) {
                             this.portals.remove(portal);
                         }
                     }
