@@ -7,6 +7,7 @@ import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.render.EventRender2D;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.event.world.EventChunk;
+import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.GLUProjection;
 import me.rigamortis.seppuku.api.util.RenderUtil;
@@ -123,6 +124,11 @@ public final class PortalFinderModule extends Module {
                 this.portals.clear();
             }
         }
+    }
+
+    @Listener
+    public void onLoadWorld(EventLoadWorld event) {
+        this.portals.clear();
     }
 
     @Listener

@@ -6,11 +6,13 @@ import me.rigamortis.seppuku.api.event.minecraft.EventDisplayGui;
 import me.rigamortis.seppuku.api.event.minecraft.EventKeyPress;
 import me.rigamortis.seppuku.api.event.minecraft.EventRunTick;
 import me.rigamortis.seppuku.api.event.minecraft.EventUpdateFramebufferSize;
+import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
 import me.rigamortis.seppuku.api.util.ASMUtil;
 import me.rigamortis.seppuku.impl.management.PatchManager;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.multiplayer.WorldClient;
 import org.lwjgl.input.Keyboard;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
@@ -30,6 +32,7 @@ public final class MinecraftPatch extends ClassPatch {
     /**
      * Patch the method "updateFramebufferSize"
      * Mainly used for shaders
+     *
      * @param methodNode
      */
     @MethodPatch(
@@ -53,6 +56,7 @@ public final class MinecraftPatch extends ClassPatch {
      * Patch the method "runTick"
      * The bytecode we are inserting here replicates this call
      * MinecraftPatch.runTickHook(EventStageable.EventStage.PRE);
+     *
      * @param methodNode
      * @param env
      */
@@ -90,6 +94,7 @@ public final class MinecraftPatch extends ClassPatch {
 
     /**
      * This is where key input is handled
+     *
      * @param methodNode
      * @param env
      */
@@ -101,7 +106,7 @@ public final class MinecraftPatch extends ClassPatch {
         //find the instruction that calls dispatchKeypresses
         final AbstractInsnNode target = ASMUtil.findMethodInsn(methodNode, INVOKEVIRTUAL, env == PatchManager.Environment.IDE ? "net/minecraft/client/Minecraft" : "bib", env == PatchManager.Environment.IDE ? "dispatchKeypresses" : "W", "()V");
 
-        if(target != null) {
+        if (target != null) {
             //make a list of instructions
             final InsnList insnList = new InsnList();
             //we use ILOAD to pass the "keycode" into our call
@@ -118,7 +123,7 @@ public final class MinecraftPatch extends ClassPatch {
      */
     public static void runTickKeyboardHook(int key) {
         //check if the key was just pressed
-        if(Keyboard.getEventKeyState()) {
+        if (Keyboard.getEventKeyState()) {
             //dispatch our event for key presses and pass in the keycode
             Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventKeyPress(key));
         }
@@ -127,6 +132,7 @@ public final class MinecraftPatch extends ClassPatch {
     /**
      * This is used to tell if we just opened a gui screen
      * It can be cancelled
+     *
      * @param methodNode
      * @param env
      */
@@ -157,6 +163,7 @@ public final class MinecraftPatch extends ClassPatch {
 
     /**
      * Our display gui hook called when we open a gui
+     *
      * @param screen can be null!
      * @return
      */
@@ -169,4 +176,25 @@ public final class MinecraftPatch extends ClassPatch {
         return event.isCanceled();
     }
 
+    @MethodPatch(
+            mcpName = "loadWorld",
+            notchName = "a",
+            mcpDesc = "(Lnet/minecraft/client/multiplayer/WorldClient;Ljava/lang/String;)V",
+            notchDesc = "(Lbsb;Ljava/lang/String;)V")
+    public void loadWorld(MethodNode methodNode, PatchManager.Environment env) {
+        final InsnList insnList = new InsnList();
+        insnList.add(new VarInsnNode(ALOAD, 1));
+        insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "loadWorldHook", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/client/multiplayer/WorldClient;)Z" : "(Lbsb;)Z", false));
+        final LabelNode jmp = new LabelNode();
+        insnList.add(new JumpInsnNode(IFEQ, jmp));
+        insnList.add(new InsnNode(RETURN));
+        insnList.add(jmp);
+        methodNode.instructions.insert(insnList);
+    }
+
+    public static boolean loadWorldHook(WorldClient worldClient) {
+        final EventLoadWorld event = new EventLoadWorld(worldClient);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }
 }
