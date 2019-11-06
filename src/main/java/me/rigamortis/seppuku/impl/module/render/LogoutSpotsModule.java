@@ -52,18 +52,15 @@ public final class LogoutSpotsModule extends Module {
     public void onRender2D(EventRender2D event) {
         final Minecraft mc = Minecraft.getMinecraft();
 
-
         for (GameProfile profile : this.logoutCache.keySet()) {
             final PlayerData data = this.logoutCache.get(profile);
             final GLUProjection.Projection projection = GLUProjection.getInstance().project(data.position.getX() - mc.getRenderManager().renderPosX, data.position.getY() - mc.getRenderManager().renderPosY, data.position.getZ() - mc.getRenderManager().renderPosZ, GLUProjection.ClampMode.NONE, true);
             if (projection != null) {
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(projection.getX(), projection.getY(), 0);
-
+                playerIcon.render(-8, -16 - 2, 16, 16);
                 String text = profile.getName() + " logout";
                 float textWidth = mc.fontRenderer.getStringWidth(text);
-                playerIcon.render(-8, -16 - 2, 16, 16);
-
                 mc.fontRenderer.drawStringWithShadow(text, -(textWidth / 2), 0, -1);
                 GlStateManager.translate(-projection.getX(), -projection.getY(), 0);
                 GlStateManager.popMatrix();
