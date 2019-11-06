@@ -223,7 +223,7 @@ public final class WallHackModule extends Module {
                                             }
 
                                             // draw the textured icon
-                                            RenderUtil.drawTexturedModalRect(offsetX, offsetY, iconIndex % 8 * 18, 198 + iconIndex / 8 * 18, 18, 18);
+                                            RenderUtil.drawTexture(offsetX, offsetY, iconIndex % 8 * 18, 198 + iconIndex / 8 * 18, 18, 18);
                                             GlStateManager.popMatrix();
 
                                             offsetY += 16;

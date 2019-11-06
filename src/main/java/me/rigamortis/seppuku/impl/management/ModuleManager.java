@@ -140,6 +140,7 @@ public final class ModuleManager {
         add(new PullDownModule());
         add(new PortalFinderModule());
         add(new ShulkerPreviewModule());
+        add(new LogoutSpotsModule());
 
         this.loadExternalModules();
     }

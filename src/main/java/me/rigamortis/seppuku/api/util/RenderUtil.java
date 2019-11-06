@@ -356,16 +356,29 @@ public final class RenderUtil {
         GlStateManager.scale(scaleDistance, scaleDistance, scaleDistance);
     }
 
-    public static void drawTexturedModalRect(float x, float y, float textureX, float textureY, float width, float height) {
+    public static void drawTexture(float x, float y, float textureX, float textureY, float width, float height) {
         float f = 0.00390625F;
         float f1 = 0.00390625F;
         final Tessellator tessellator = Tessellator.getInstance();
         final BufferBuilder bufferbuilder = tessellator.getBuffer();
-        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
+        bufferbuilder.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         bufferbuilder.pos(x, (y + height), 0.0D).tex((textureX * f), ((textureY + height) * f1)).endVertex();
         bufferbuilder.pos((x + width), (y + height), 0.0D).tex(((textureX + width) * f), ((textureY + height) * f1)).endVertex();
         bufferbuilder.pos((x + width), y, 0.0D).tex(((textureX + width) * f), (textureY * f1)).endVertex();
         bufferbuilder.pos(x, y, 0.0D).tex((textureX * f), (textureY * f1)).endVertex();
+        tessellator.draw();
+    }
+
+    public static void drawTexture(float x, float y, float width, float height, float u, float v, float t, float s) {
+        final Tessellator tessellator = Tessellator.getInstance();
+        final BufferBuilder bufferbuilder = tessellator.getBuffer();
+        bufferbuilder.begin(GL_TRIANGLES, DefaultVertexFormats.POSITION_TEX);
+        bufferbuilder.pos(x + width, y, 0F).tex(t, v).endVertex();
+        bufferbuilder.pos(x, y, 0F).tex(u, v).endVertex();
+        bufferbuilder.pos(x, y + height, 0F).tex(u, s).endVertex();
+        bufferbuilder.pos(x, y + height, 0F).tex(u, s).endVertex();
+        bufferbuilder.pos(x + width, y + height, 0F).tex(t, s).endVertex();
+        bufferbuilder.pos(x + width, y, 0F).tex(t, v).endVertex();
         tessellator.draw();
     }
 }
