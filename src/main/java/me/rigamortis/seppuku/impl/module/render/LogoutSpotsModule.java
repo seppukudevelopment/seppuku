@@ -35,8 +35,6 @@ public final class LogoutSpotsModule extends Module {
         super.onToggle();
         playerCache.clear();
         logoutCache.clear();
-
-        logoutCache.put(Minecraft.getMinecraft().player.getGameProfile(), new PlayerData(Minecraft.getMinecraft().player.getPosition()));
     }
 
     @Listener
