@@ -55,7 +55,7 @@ public final class LogoutSpotsModule extends Module {
         for (GameProfile profile : this.logoutCache.keySet()) {
             final PlayerData data = this.logoutCache.get(profile);
             final GLUProjection.Projection projection = GLUProjection.getInstance().project(data.position.getX() - mc.getRenderManager().renderPosX, data.position.getY() - mc.getRenderManager().renderPosY, data.position.getZ() - mc.getRenderManager().renderPosZ, GLUProjection.ClampMode.NONE, true);
-            if (projection != null) {
+            if (projection != null && projection.isType(GLUProjection.Projection.Type.INSIDE)) {
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(projection.getX(), projection.getY(), 0);
                 playerIcon.render(-8, -16 - 2, 16, 16);
