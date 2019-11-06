@@ -15,6 +15,7 @@ import me.rigamortis.seppuku.api.value.NumberValue;
 import me.rigamortis.seppuku.impl.module.player.GodModeModule;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -49,6 +50,7 @@ public final class CrystalAuraModule extends Module {
     public final NumberValue minDamage = new NumberValue("Min_Damage", new String[]{"MinDamage", "Min", "MinDmg"}, 1.0f, Float.class, 0.0f, 20.0f, 0.5f);
     public final BooleanValue ignore = new BooleanValue("Ignore", new String[]{"Ig"}, false);
     public final BooleanValue render = new BooleanValue("Render", new String[]{"R"}, true);
+    public final BooleanValue renderDamage = new BooleanValue("Render_Damage", new String[]{"RD", "RenderDamage", "ShowDamage"}, true);
 
     private Timer attackTimer = new Timer();
     private Timer placeTimer = new Timer();
@@ -120,8 +122,9 @@ public final class CrystalAuraModule extends Module {
                         final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f));
                         Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
                         mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, EnumHand.MAIN_HAND, 0, 0, 0));
-                        this.placeLocations.add(new PlaceLocation(pos.getX(), pos.getY(), pos.getZ()));
+                        this.placeLocations.add(new PlaceLocation(pos.getX(), pos.getY(), pos.getZ(), damage));
                     }
+
                     this.placeTimer.reset();
                 }
             }
@@ -198,6 +201,17 @@ public final class CrystalAuraModule extends Module {
 
                 RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(0xAA9900EE, placeLocation.alpha / 2));
                 RenderUtil.drawBoundingBox(bb, 1, ColorUtil.changeAlpha(0xAAAAAAAA, placeLocation.alpha));
+
+                if (this.renderDamage.getBoolean()) {
+                    GlStateManager.pushMatrix();
+                    RenderUtil.glBillboardDistanceScaled((float) placeLocation.getX() + 0.5f, (float) placeLocation.getY() + 0.5f, (float) placeLocation.getZ() + 0.5f, mc.player, 1);
+                    final float damage = placeLocation.damage;
+                    final String damageText = (Math.floor(damage) == damage ? (int) damage : String.format("%.1f", damage)) + "";
+                    GlStateManager.disableDepth();
+                    GlStateManager.translate(-(mc.fontRenderer.getStringWidth(damageText) / 2.0d), 0, 0);
+                    mc.fontRenderer.drawStringWithShadow(damageText, 0, 0, 0xFFAAAAAA);
+                    GlStateManager.popMatrix();
+                }
             }
         }
     }
@@ -273,9 +287,11 @@ public final class CrystalAuraModule extends Module {
 
         private int alpha = 0xAA;
         private boolean placed = false;
+        private float damage;
 
-        private PlaceLocation(int xIn, int yIn, int zIn) {
+        private PlaceLocation(int xIn, int yIn, int zIn, float damage) {
             super(xIn, yIn, zIn);
+            this.damage = damage;
         }
 
         private void update() {
