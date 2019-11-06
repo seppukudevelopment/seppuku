@@ -70,7 +70,7 @@ public final class PortalFinderModule extends Module {
 
             for (Vec3d portal : this.portals) {
                 final GLUProjection.Projection projection = GLUProjection.getInstance().project(portal.x - mc.getRenderManager().viewerPosX, portal.y - mc.getRenderManager().viewerPosY, portal.z - mc.getRenderManager().viewerPosZ, GLUProjection.ClampMode.NONE, true);
-                if (projection != null) {
+                if (projection != null && projection.isType(GLUProjection.Projection.Type.INSIDE)) {
                     RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), event.getScaledResolution().getScaledWidth() / 2, event.getScaledResolution().getScaledHeight() / 2, this.width.getFloat(), new Color(red.getFloat() / 255.0f, green.getFloat() / 255.0f, blue.getFloat() / 255.0f).getRGB());
                     if (this.showInfo.getBoolean()) {
                         final float scale = this.infoScale.getFloat();
