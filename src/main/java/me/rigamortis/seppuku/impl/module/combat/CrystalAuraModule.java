@@ -120,9 +120,7 @@ public final class CrystalAuraModule extends Module {
                         final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f));
                         Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
                         mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, EnumHand.MAIN_HAND, 0, 0, 0));
-                        if (!this.placeLocations.contains(pos)) {
-                            this.placeLocations.add(new PlaceLocation(pos.getX(), pos.getY(), pos.getZ()));
-                        }
+                        this.placeLocations.add(new PlaceLocation(pos.getX(), pos.getY(), pos.getZ()));
                     }
                     this.placeTimer.reset();
                 }
