@@ -161,7 +161,11 @@ public final class WallHackModule extends Module {
 
                             if (this.hearts.getBoolean()) {
                                 final float hearts = entityLiving.getHealth() / 2.0f;
-                                heartsFormatted = (Math.floor(hearts) == hearts ? (int) hearts : String.format("%.1f", hearts)) + "";
+
+                                if (hearts <= 0)
+                                    heartsFormatted = "*DEAD*";
+                                else
+                                    heartsFormatted = (Math.floor(hearts) == hearts ? (int) hearts : String.format("%.1f", hearts)) + "";
 
                                 float startX = -mc.fontRenderer.getStringWidth(heartsFormatted) / 2.0f;
                                 if (this.name.getBoolean())
