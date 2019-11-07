@@ -167,6 +167,11 @@ public final class WallHackModule extends Module {
                                 else
                                     heartsFormatted = (Math.floor(hearts) == hearts ? (int) hearts : String.format("%.1f", hearts)) + "";
 
+                                if (e instanceof EntityPlayer) {
+                                    if (((EntityPlayer) e).isCreative())
+                                        heartsFormatted = ChatFormatting.YELLOW + "*";
+                                }
+
                                 float startX = -mc.fontRenderer.getStringWidth(heartsFormatted) / 2.0f;
                                 if (this.name.getBoolean())
                                     startX = -(mc.fontRenderer.getStringWidth(name) / 2.0f) - 2.0f - mc.fontRenderer.getStringWidth(heartsFormatted);
