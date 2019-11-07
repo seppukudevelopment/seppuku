@@ -21,6 +21,7 @@ apply plugin: "com.github.johnrengelman.shadow"
 version = "3.0"
 group = "me.rigamortis"
 archivesBaseName = "seppuku"
+def buildmode = "RELEASE"
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 compileJava {
@@ -121,8 +122,10 @@ processResources {
     }
 }
 
-sourceSets {
-    main {
-        output.resourcesDir = output.classesDir
+if (buildmode.equals("IDE")) {
+    sourceSets {
+        main {
+            output.resourcesDir = output.classesDir
+        }
     }
 }
