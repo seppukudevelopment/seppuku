@@ -80,7 +80,7 @@ public final class GiveCommand extends Command {
 
             if(similar != null) {
                 Seppuku.INSTANCE.errorChat("Unknown item " + "\247f\"" + split[1] + "\"");
-                Seppuku.INSTANCE.logChat("Did you mean " + "\247c" + similar.getResourcePath() + "\247f?");
+                Seppuku.INSTANCE.logChat("Did you mean " + "\247c" + similar.getPath() + "\247f?");
             }
         }
     }
@@ -105,7 +105,7 @@ public final class GiveCommand extends Command {
         double similarity = 0.0f;
 
         for (ResourceLocation res : Item.REGISTRY.getKeys()) {
-            final double currentSimilarity = StringUtil.levenshteinDistance(name, res.getResourcePath());
+            final double currentSimilarity = StringUtil.levenshteinDistance(name, res.getPath());
 
             if (currentSimilarity >= similarity) {
                 similarity = currentSimilarity;

@@ -25,6 +25,7 @@ public final class RenderManagerPatch extends ClassPatch {
 
     /**
      * This is where minecraft handles rendering of entities
+     *
      * @param methodNode
      * @param env
      */
@@ -89,6 +90,7 @@ public final class RenderManagerPatch extends ClassPatch {
      * Our renderEntity hook
      * Used to disable rendering of certain entities or modify the
      * way they render
+     *
      * @param entity
      * @param x
      * @param y

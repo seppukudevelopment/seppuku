@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL32;
@@ -337,16 +338,47 @@ public final class RenderUtil {
         GL11.glScissor((int) (x * sr.getScaleFactor()), (int) (Minecraft.getMinecraft().displayHeight - (y1 * sr.getScaleFactor())), (int) ((x1 - x) * sr.getScaleFactor()), (int) ((y1 - y) * sr.getScaleFactor()));
     }
 
-    public static void drawTexturedModalRect(float x, float y, float textureX, float textureY, float width, float height) {
+    public static void glBillboard(float x, float y, float z) {
+        float scale = 0.016666668f * 1.6f;
+        GlStateManager.translate(x - Minecraft.getMinecraft().getRenderManager().renderPosX, y - Minecraft.getMinecraft().getRenderManager().renderPosY, z - Minecraft.getMinecraft().getRenderManager().renderPosZ);
+        GlStateManager.glNormal3f(0.0f, 1.0f, 0.0f);
+        GlStateManager.rotate(-Minecraft.getMinecraft().player.rotationYaw, 0.0f, 1.0f, 0.0f);
+        GlStateManager.rotate(Minecraft.getMinecraft().player.rotationPitch, Minecraft.getMinecraft().gameSettings.thirdPersonView == 2 ? -1.0f : 1.0f, 0.0f, 0.0f);
+        GlStateManager.scale(-scale, -scale, scale);
+    }
+
+    public static void glBillboardDistanceScaled(float x, float y, float z, EntityPlayer player, float scale) {
+        glBillboard(x, y, z);
+        int distance = (int) player.getDistance(x, y, z);
+        float scaleDistance = (distance / 2.0f) / (2.0f + (2.0f - scale));
+        if (scaleDistance < 1f)
+            scaleDistance = 1;
+        GlStateManager.scale(scaleDistance, scaleDistance, scaleDistance);
+    }
+
+    public static void drawTexture(float x, float y, float textureX, float textureY, float width, float height) {
         float f = 0.00390625F;
         float f1 = 0.00390625F;
         final Tessellator tessellator = Tessellator.getInstance();
         final BufferBuilder bufferbuilder = tessellator.getBuffer();
-        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
+        bufferbuilder.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         bufferbuilder.pos(x, (y + height), 0.0D).tex((textureX * f), ((textureY + height) * f1)).endVertex();
         bufferbuilder.pos((x + width), (y + height), 0.0D).tex(((textureX + width) * f), ((textureY + height) * f1)).endVertex();
         bufferbuilder.pos((x + width), y, 0.0D).tex(((textureX + width) * f), (textureY * f1)).endVertex();
         bufferbuilder.pos(x, y, 0.0D).tex((textureX * f), (textureY * f1)).endVertex();
+        tessellator.draw();
+    }
+
+    public static void drawTexture(float x, float y, float width, float height, float u, float v, float t, float s) {
+        final Tessellator tessellator = Tessellator.getInstance();
+        final BufferBuilder bufferbuilder = tessellator.getBuffer();
+        bufferbuilder.begin(GL_TRIANGLES, DefaultVertexFormats.POSITION_TEX);
+        bufferbuilder.pos(x + width, y, 0F).tex(t, v).endVertex();
+        bufferbuilder.pos(x, y, 0F).tex(u, v).endVertex();
+        bufferbuilder.pos(x, y + height, 0F).tex(u, s).endVertex();
+        bufferbuilder.pos(x, y + height, 0F).tex(u, s).endVertex();
+        bufferbuilder.pos(x + width, y + height, 0F).tex(t, s).endVertex();
+        bufferbuilder.pos(x + width, y, 0F).tex(t, v).endVertex();
         tessellator.draw();
     }
 }

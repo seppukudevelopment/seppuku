@@ -21,6 +21,7 @@ apply plugin: "com.github.johnrengelman.shadow"
 version = "3.0"
 group = "me.rigamortis"
 archivesBaseName = "seppuku"
+def buildmode = "RELEASE"
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 compileJava {
@@ -30,13 +31,13 @@ compileJava {
 minecraft {
     version = "1.12.2-14.23.5.2768"
     runDir = "run"
-    
+
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "snapshot_20171003"
+    mappings = "stable_39"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
@@ -75,7 +76,7 @@ shadowJar {
         attributes 'FMLCorePluginContainsFMLMod': 'true'
         attributes 'FMLAT': 'seppuku_at.cfg'
     }
-    
+
     exclude 'dummyThing'
     exclude 'LICENSE.txt'
     classifier = 'full'
@@ -94,11 +95,13 @@ task signJar(type: SignJar, dependsOn: reobfJar) {
     outputFile = jar.archivePath
 }
 
-build.dependsOn {[
-    'shadowJar',
-    'reobfShadowJar',
-    'signJar'
-]}
+build.dependsOn {
+    [
+            'shadowJar',
+            'reobfShadowJar',
+            'signJar'
+    ]
+}
 
 processResources {
     // this will ensure that this task is redone when the versions change.
@@ -108,13 +111,21 @@ processResources {
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
+
         // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand 'version': project.version, 'mcversion': project.minecraft.version
     }
-        
+
     // copy everything else except the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+}
+
+if (buildmode.equals("IDE")) {
+    sourceSets {
+        main {
+            output.resourcesDir = output.classesDir
+        }
     }
 }

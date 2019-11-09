@@ -5,18 +5,10 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.player.EventPlayerJoin;
 import me.rigamortis.seppuku.api.event.player.EventPlayerLeave;
+import me.rigamortis.seppuku.api.util.NetworkUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.server.SPacketPlayerListItem;
-import org.apache.commons.io.IOUtils;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
-import org.json.simple.parser.ParseException;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.UUID;
 
 /**
  * Author Seth
@@ -39,7 +31,7 @@ public final class JoinLeaveManager {
                         for (SPacketPlayerListItem.AddPlayerData playerData : packet.getEntries()) {
                             if (playerData.getProfile().getId() != mc.session.getProfile().getId()) {
                                 new Thread(() -> {
-                                    final String name = resolveUsername(playerData.getProfile().getId());
+                                    final String name = NetworkUtil.resolveUsername(playerData.getProfile().getId());
                                     if (name != null) {
                                         Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventPlayerJoin(name, playerData.getProfile().getId().toString()));
                                     }
@@ -51,7 +43,7 @@ public final class JoinLeaveManager {
                         for (SPacketPlayerListItem.AddPlayerData playerData : packet.getEntries()) {
                             if (playerData.getProfile().getId() != mc.session.getProfile().getId()) {
                                 new Thread(() -> {
-                                    final String name = resolveUsername(playerData.getProfile().getId());
+                                    final String name = NetworkUtil.resolveUsername(playerData.getProfile().getId());
                                     if (name != null) {
                                         Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventPlayerLeave(name, playerData.getProfile().getId().toString()));
                                     }
@@ -62,28 +54,6 @@ public final class JoinLeaveManager {
                 }
             }
         }
-    }
-
-    public String resolveUsername(UUID id) {
-        final String url = "https://api.mojang.com/user/profiles/" + id.toString().replace("-", "") + "/names";
-        try {
-            final String nameJson = IOUtils.toString(new URL(url));
-            if (nameJson != null) {
-                final JSONArray nameValue = (JSONArray) JSONValue.parseWithException(nameJson);
-                if (nameValue != null) {
-                    final String playerSlot = nameValue.get(nameValue.size() - 1).toString();
-                    if (playerSlot != null) {
-                        final JSONObject nameObject = (JSONObject) JSONValue.parseWithException(playerSlot);
-                        if (nameObject != null) {
-                            return nameObject.get("name").toString();
-                        }
-                    }
-                }
-            }
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     public void unload() {

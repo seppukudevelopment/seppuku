@@ -61,7 +61,7 @@ public final class GuiHudEditor extends GuiScreen {
                     if (draggable.isDragging()) {
                         RenderUtil.drawRect(draggable.getX(), draggable.getY(), draggable.getX() + draggable.getW(), draggable.getY() + draggable.getH(), 0x35FFFFFF);
                         for (HudComponent other : Seppuku.INSTANCE.getHudManager().getComponentList()) {
-                            if (other != draggable && draggable.collidesWith(other) && other.isVisible()) {
+                            if (other != draggable && draggable.collidesWith(other) && other.isVisible() && draggable.isSnappable()) {
                                 RenderUtil.drawRect(draggable.getX(), draggable.getY(), draggable.getX() + draggable.getW(), draggable.getY() + draggable.getH(), 0x3510FF10);
                                 RenderUtil.drawRect(other.getX(), other.getY(), other.getX() + other.getW(), other.getY() + other.getH(), 0x35FF1010);
                             }

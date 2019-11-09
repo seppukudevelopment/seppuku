@@ -138,6 +138,9 @@ public final class ModuleManager {
         add(new HolesModule());
         add(new SmallShieldModule());
         add(new PullDownModule());
+        add(new PortalFinderModule());
+        add(new ShulkerPreviewModule());
+        add(new LogoutSpotsModule());
 
         this.loadExternalModules();
     }
@@ -223,7 +226,7 @@ public final class ModuleManager {
                 return mod;
             }
 
-            if(mod.getAlias() != null && mod.getAlias().length > 0) {
+            if (mod.getAlias() != null && mod.getAlias().length > 0) {
                 for (String s : mod.getAlias()) {
                     if (alias.equalsIgnoreCase(s)) {
                         return mod;
@@ -273,6 +276,16 @@ public final class ModuleManager {
 
     public List<Module> getModuleList() {
         return moduleList;
+    }
+
+    public List<Module> getModuleList(Module.ModuleType type) {
+        List<Module> list = new ArrayList<>();
+        for (Module module : moduleList) {
+            if (module.getType().equals(type)) {
+                list.add(module);
+            }
+        }
+        return list;
     }
 
     public void setModuleList(List<Module> moduleList) {

@@ -7,6 +7,7 @@ import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.math.MathHelper;
+import org.lwjgl.input.Keyboard;
 
 /**
  * Author Seth
@@ -14,6 +15,7 @@ import net.minecraft.util.math.MathHelper;
  */
 public class DraggableHudComponent extends HudComponent {
 
+    private boolean snappable;
     private boolean dragging;
     private float deltaX;
     private float deltaY;
@@ -26,6 +28,7 @@ public class DraggableHudComponent extends HudComponent {
     public DraggableHudComponent(String name) {
         this.setName(name);
         this.setVisible(false);
+        this.setSnappable(true);
         this.setX(Minecraft.getMinecraft().displayWidth / 2.0f);
         this.setY(Minecraft.getMinecraft().displayHeight / 2.0f);
     }
@@ -154,12 +157,17 @@ public class DraggableHudComponent extends HudComponent {
 
         if (button == 0) {
             if (this.isDragging()) {
+                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT) || !this.isSnappable()) {
+                    this.setDragging(false);
+                    return;
+                }
+
                 this.anchorPoint = this.findClosest(mouseX, mouseY);
 
                 for (HudComponent component : Seppuku.INSTANCE.getHudManager().getComponentList()) {
                     if (component instanceof DraggableHudComponent) {
                         DraggableHudComponent draggable = (DraggableHudComponent) component;
-                        if (draggable != this && this.collidesWith(draggable) && draggable.isVisible()) {
+                        if (draggable != this && this.collidesWith(draggable) && draggable.isVisible() && draggable.isSnappable()) {
                             if ((this.getY() + (this.getH() / 2)) < (draggable.getY() + (draggable.getH() / 2))) { // top
                                 this.setY(draggable.getY() - this.getH());
                                 this.glueSide = GlueSide.TOP;
@@ -220,8 +228,12 @@ public class DraggableHudComponent extends HudComponent {
         }
     }
 
-    public boolean collides() {
-        return false;
+    public boolean isSnappable() {
+        return snappable;
+    }
+
+    public void setSnappable(boolean snappable) {
+        this.snappable = snappable;
     }
 
     public boolean isDragging() {

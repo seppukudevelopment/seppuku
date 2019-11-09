@@ -161,7 +161,16 @@ public final class WallHackModule extends Module {
 
                             if (this.hearts.getBoolean()) {
                                 final float hearts = entityLiving.getHealth() / 2.0f;
-                                heartsFormatted = (Math.floor(hearts) == hearts ? (int) hearts : String.format("%.1f", hearts)) + "";
+
+                                if (hearts <= 0)
+                                    heartsFormatted = "*DEAD*";
+                                else
+                                    heartsFormatted = (Math.floor(hearts) == hearts ? (int) hearts : String.format("%.1f", hearts)) + "";
+
+                                if (e instanceof EntityPlayer) {
+                                    if (((EntityPlayer) e).isCreative())
+                                        heartsFormatted = ChatFormatting.YELLOW + "*";
+                                }
 
                                 float startX = -mc.fontRenderer.getStringWidth(heartsFormatted) / 2.0f;
                                 if (this.name.getBoolean())
@@ -223,7 +232,7 @@ public final class WallHackModule extends Module {
                                             }
 
                                             // draw the textured icon
-                                            RenderUtil.drawTexturedModalRect(offsetX, offsetY, iconIndex % 8 * 18, 198 + iconIndex / 8 * 18, 18, 18);
+                                            RenderUtil.drawTexture(offsetX, offsetY, iconIndex % 8 * 18, 198 + iconIndex / 8 * 18, 18, 18);
                                             GlStateManager.popMatrix();
 
                                             offsetY += 16;
@@ -363,7 +372,7 @@ public final class WallHackModule extends Module {
                 final SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
 
                 if (packet.getCategory() == SoundCategory.NEUTRAL || packet.getCategory() == SoundCategory.PLAYERS) {
-                    final String sound = packet.getSound().getSoundName().getResourcePath();
+                    final String sound = packet.getSound().getSoundName().getPath();
                     if (sound.endsWith(".step") || sound.endsWith(".paddle_land") || sound.endsWith(".gallop")) {
                         this.footstepDataList.add(new FootstepData(packet.getX(), packet.getY(), packet.getZ(), System.currentTimeMillis()));
                     }

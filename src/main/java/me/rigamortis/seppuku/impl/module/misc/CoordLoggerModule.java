@@ -50,7 +50,7 @@ public final class CoordLoggerModule extends Module {
 
                     if (packet.getEntityType() == 55 && packet.getY() <= 40 && !mc.world.getBiome(mc.player.getPosition()).getBiomeName().toLowerCase().contains("swamp")) {
                         final BlockPos pos = new BlockPos(packet.getX(), packet.getY(), packet.getZ());
-                        Seppuku.INSTANCE.logChat("Slime Spawned in chunk X:" + mc.world.getChunkFromBlockCoords(pos).x + " Z:" + mc.world.getChunkFromBlockCoords(pos).z);
+                        Seppuku.INSTANCE.logChat("Slime Spawned in chunk X:" + mc.world.getChunk(pos).x + " Z:" + mc.world.getChunk(pos).z);
                     }
                 }
             }
