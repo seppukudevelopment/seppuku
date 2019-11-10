@@ -10,6 +10,7 @@ import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.*;
 import me.rigamortis.seppuku.api.value.BooleanValue;
 import me.rigamortis.seppuku.api.value.OptionalValue;
+import me.rigamortis.seppuku.impl.module.render.WallHackModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -76,8 +77,9 @@ public final class NametagsModule extends Module {
     public void render2D(EventRender2D event) {
         final Minecraft mc = Minecraft.getMinecraft();
 
+        List<Entity> entitylist = WallHackModule.entitylist;
 
-        for (Entity e : mc.world.loadedEntityList) {
+        for (Entity e : entitylist) {
             if (e != null) {
                 if (this.checkFilter(e)) {
                     final float[] bounds = this.convertBounds(e, event.getPartialTicks(), event.getScaledResolution().getScaledWidth(), event.getScaledResolution().getScaledHeight());
@@ -430,7 +432,7 @@ public final class NametagsModule extends Module {
         };
 
         for (Vec3d vec : corners) {
-            final GLUProjection.Projection projection = GLUProjection.getInstance().project(pos.x + vec.x - Minecraft.getMinecraft().getRenderManager().viewerPosX, pos.y + vec.y - Minecraft.getMinecraft().getRenderManager().viewerPosY, pos.z + vec.z - Minecraft.getMinecraft().getRenderManager().viewerPosZ, GLUProjection.ClampMode.NONE, false);
+            final GLUProjection.Projection projection = WallHackModule.projection;
 
             if (projection == null) {
                 return null;

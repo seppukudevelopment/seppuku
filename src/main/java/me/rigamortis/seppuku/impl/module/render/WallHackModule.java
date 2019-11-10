@@ -1,23 +1,18 @@
 package me.rigamortis.seppuku.impl.module.render;
 
-import com.google.common.collect.Lists;
-import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.render.EventRender2D;
 import me.rigamortis.seppuku.api.event.render.EventRenderName;
-import me.rigamortis.seppuku.api.friend.Friend;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.*;
 import me.rigamortis.seppuku.api.value.BooleanValue;
 import me.rigamortis.seppuku.api.value.OptionalValue;
+import me.rigamortis.seppuku.impl.module.render.NametagsModule;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.culling.ICamera;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.*;
@@ -33,6 +28,7 @@ import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -61,13 +57,22 @@ public final class WallHackModule extends Module {
     //i cba
     private List<FootstepData> footstepDataList = new CopyOnWriteArrayList<>();
 
+    public static List<Entity> entitylist = new ArrayList<>();
+
+    public static GLUProjection.Projection projection = null;
+
     public WallHackModule() {
         super("WallHack", new String[]{"Esp"}, "Highlights entities", "NONE", -1, ModuleType.RENDER);
     }
 
+
+
     @Listener
     public void render2D(EventRender2D event) {
         final Minecraft mc = Minecraft.getMinecraft();
+
+        entitylist = Minecraft.getMinecraft().world.loadedEntityList;
+
 
         if (this.footsteps.getBoolean()) {
             for (FootstepData data : this.footstepDataList) {
@@ -82,7 +87,7 @@ public final class WallHackModule extends Module {
             }
         }
 
-        for (Entity e : mc.world.loadedEntityList) {
+        for (Entity e : entitylist) {
             if (e != null) {
                 if (this.checkFilter(e)) {
                     final float[] bounds = this.convertBounds(e, event.getPartialTicks(), event.getScaledResolution().getScaledWidth(), event.getScaledResolution().getScaledHeight());
@@ -93,13 +98,8 @@ public final class WallHackModule extends Module {
                             RenderUtil.drawOutlineRect(bounds[0] - 0.5f, bounds[1] - 0.5f, bounds[2] + 0.5f, bounds[3] + 0.5f, 0.5f, this.getColor(e));
                         }
 
-                        String name = StringUtils.stripControlCodes(getNameForEntity(e));
-                        String heartsFormatted = null;
-                        String pingFormatted = null;
-
 
                         if (e instanceof EntityLivingBase) {
-                            final EntityLivingBase entityLiving = (EntityLivingBase) e;
 
                             if (this.hpMode.getInt() != 0) {
                                 RenderUtil.drawRect(bounds[2] - 0.5f, bounds[1], bounds[2] - 2, bounds[3], 0xAA000000);
@@ -151,25 +151,6 @@ public final class WallHackModule extends Module {
         }
     }
 
-    private String getNameForEntity(Entity entity) {
-        if (entity instanceof EntityItem) {
-            final EntityItem item = (EntityItem) entity;
-            String itemName = "";
-
-            final int stackSize = item.getItem().getCount();
-            if (stackSize > 1) {
-                itemName = item.getItem().getDisplayName() + "(" + item.getItem().getCount() + ")";
-            } else {
-                itemName = item.getItem().getDisplayName();
-            }
-            return itemName;
-        }
-        if (entity instanceof EntityMinecart) {
-            final EntityMinecart minecart = (EntityMinecart) entity;
-            return minecart.getCartItem().getDisplayName();
-        }
-        return entity.getName();
-    }
 
     private boolean checkFilter(Entity entity) {
         boolean ret = false;
@@ -285,7 +266,7 @@ public final class WallHackModule extends Module {
         };
 
         for (Vec3d vec : corners) {
-            final GLUProjection.Projection projection = GLUProjection.getInstance().project(pos.x + vec.x - Minecraft.getMinecraft().getRenderManager().viewerPosX, pos.y + vec.y - Minecraft.getMinecraft().getRenderManager().viewerPosY, pos.z + vec.z - Minecraft.getMinecraft().getRenderManager().viewerPosZ, GLUProjection.ClampMode.NONE, false);
+            projection = GLUProjection.getInstance().project(pos.x + vec.x - Minecraft.getMinecraft().getRenderManager().viewerPosX, pos.y + vec.y - Minecraft.getMinecraft().getRenderManager().viewerPosY, pos.z + vec.z - Minecraft.getMinecraft().getRenderManager().viewerPosZ, GLUProjection.ClampMode.NONE, false);
 
             if (projection == null) {
                 return null;
