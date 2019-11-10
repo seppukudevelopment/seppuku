@@ -141,6 +141,7 @@ public final class ModuleManager {
         add(new PortalFinderModule());
         add(new ShulkerPreviewModule());
         add(new LogoutSpotsModule());
+        add(new ChatSuffixModule());
 
         this.loadExternalModules();
     }
