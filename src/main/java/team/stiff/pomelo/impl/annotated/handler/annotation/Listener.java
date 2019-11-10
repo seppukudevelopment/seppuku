@@ -1,6 +1,7 @@
 package team.stiff.pomelo.impl.annotated.handler.annotation;
 
 import team.stiff.pomelo.filter.EventFilter;
+import team.stiff.pomelo.handler.ListenerPriority;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,4 +27,11 @@ public @interface Listener {
      * @return array of filters
      */
     Class<? extends EventFilter>[] filters() default { };
+
+    /**
+     * The priority of the event listener in the container.
+     *
+     * @return listener priority
+     */
+    ListenerPriority priority() default ListenerPriority.NORMAL;
 }

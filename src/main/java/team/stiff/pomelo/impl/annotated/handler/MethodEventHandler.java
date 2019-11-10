@@ -2,6 +2,8 @@ package team.stiff.pomelo.impl.annotated.handler;
 
 import team.stiff.pomelo.filter.EventFilter;
 import team.stiff.pomelo.handler.EventHandler;
+import team.stiff.pomelo.handler.ListenerPriority;
+import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -31,6 +33,11 @@ public final class MethodEventHandler implements EventHandler {
      */
     private final Set<EventFilter> eventFilters;
 
+    /**
+     * The annotation to the event listener.
+     */
+    private final Listener listenerAnnotation;
+
     public MethodEventHandler(final Object listenerParent, final Method method,
             final Set<EventFilter> eventFilters) {
         this.listenerParent = listenerParent;
@@ -39,6 +46,7 @@ public final class MethodEventHandler implements EventHandler {
 
         this.method = method;
         this.eventFilters = eventFilters;
+        this.listenerAnnotation = method.getAnnotation(Listener.class);
     }
 
     @Override
@@ -63,7 +71,18 @@ public final class MethodEventHandler implements EventHandler {
     }
 
     @Override
+    public ListenerPriority getPriority() {
+        return listenerAnnotation.priority();
+    }
+
+    @Override
     public Iterable<EventFilter> getFilters() {
         return eventFilters;
+    }
+
+    @Override
+    public int compareTo(final EventHandler eventHandler) {
+        return Integer.compare(eventHandler.getPriority().getPriorityLevel(),
+                getPriority().getPriorityLevel());
     }
 }
