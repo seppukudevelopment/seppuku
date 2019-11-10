@@ -9,7 +9,7 @@ import team.stiff.pomelo.filter.EventFilter;
  * @author Daniel
  * @since May 31, 2017
  */
-public interface EventHandler {
+public interface EventHandler extends Comparable<EventHandler> {
 
     /**
      * Invoked when the listener needs to handle
@@ -23,6 +23,13 @@ public interface EventHandler {
      * @return parent of listener
      */
     Object getListener();
+
+    /**
+     * The priority of the current listener inside the container.
+     *
+     * @return listener priority
+     */
+    ListenerPriority getPriority();
 
     /**
      * All of the filters that will be tested on the

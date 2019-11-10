@@ -8,10 +8,7 @@ import team.stiff.pomelo.impl.annotated.handler.MethodEventHandler;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -33,7 +30,7 @@ public final class MethodHandlerScanner implements EventHandlerScanner {
                 .filter(method -> method.isAnnotationPresent(Listener.class))
                 .filter(method -> method.getParameterCount() == 1)
                 .forEach(method -> eventHandlers
-                        .computeIfAbsent(method.getParameterTypes()[0], obj -> new HashSet<>())
+                        .computeIfAbsent(method.getParameterTypes()[0], obj -> new TreeSet<>())
                         .add(new MethodEventHandler(listenerContainer, method,
                                 filterScanner.scan(method))));
         return eventHandlers;
