@@ -130,7 +130,7 @@ public final class ObsidianReplaceModule extends Module {
             if (this.mode.getInt() == 1) {
                 if (event.getPacket() instanceof SPacketBlockChange) {
                     final SPacketBlockChange packet = (SPacketBlockChange) event.getPacket();
-                    if (packet.getBlockState().getBlock() instanceof BlockAir) {
+                    if (packet.getBlockState().getMaterial().isReplaceable()) {
                         final double dist = mc.player.getDistance(packet.getBlockPosition().getX(), packet.getBlockPosition().getY(), packet.getBlockPosition().getZ());
                         if (dist <= 5.0f) {
                             if (!this.blocks.contains(packet.getBlockPosition())) {
