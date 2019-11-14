@@ -341,7 +341,7 @@ public final class ObsidianReplaceModule extends Module {
         }
 
         for (Entity entity : mc.world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos))) {
-            if (!(entity instanceof EntityItem)) {
+            if (!(entity instanceof EntityItem) && !(entity instanceof EntityXPOrb)) {
                 return false;
             }
         }
