@@ -19,7 +19,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
@@ -341,7 +341,7 @@ public final class ObsidianReplaceModule extends Module {
         }
 
         for (Entity entity : mc.world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos))) {
-            if (entity instanceof EntityLivingBase) {
+            if (!(entity instanceof EntityItem)) {
                 return false;
             }
         }
