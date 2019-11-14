@@ -11,10 +11,15 @@ import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.value.OptionalValue;
 import me.rigamortis.seppuku.impl.module.player.FreeCamModule;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.BlockObsidian;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
@@ -344,8 +349,13 @@ public final class ObsidianReplaceModule extends Module {
         final Block east = mc.world.getBlockState(pos.add(1, 0, 0)).getBlock();
         final Block west = mc.world.getBlockState(pos.add(-1, 0, 0)).getBlock();
 
+        for (Entity entity : mc.world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos))) {
+            if (entity instanceof EntityLivingBase) {
+                return false;
+            }
+        }
+
         return (block instanceof BlockAir)
-                && mc.world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos)).isEmpty()
                 && ((up != null && up != Blocks.AIR && !(up instanceof BlockLiquid))
                 || (down != null && down != Blocks.AIR && !(down instanceof BlockLiquid))
                 || (north != null && north != Blocks.AIR && !(north instanceof BlockLiquid))
