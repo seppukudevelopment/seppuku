@@ -22,6 +22,7 @@ import java.util.List;
  * @author Daniel E
  */
 public class PullDownModule extends Module {
+    private final List<RayTraceResult> rayTraceResults = new ArrayList<>(8);
     private static final float VELOCITY_MAX = 10.0f;
     public final BooleanValue jumpDisables =
             new BooleanValue("JumpDisables", new String[]{"jump"}, true);
@@ -46,7 +47,7 @@ public class PullDownModule extends Module {
                 return;
 
             final Vec3d playerPosition = mc.player.getPositionVector();
-            final boolean doesPlayerCollide = traceEntityHull(mc.player, playerPosition
+            final boolean doesPlayerCollide = recomputeHullTraces(mc.player, playerPosition
                     .subtract(0.0d, 3.0d, 0.0d)).stream()
                     .anyMatch(this::hitsCollidableBlock);
             if (!doesPlayerCollide)
@@ -58,7 +59,9 @@ public class PullDownModule extends Module {
         return rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK;
     }
 
-    private List<RayTraceResult> traceEntityHull(final Entity entity, final Vec3d nextPosition) {
+    private List<RayTraceResult> recomputeHullTraces(final Entity entity, final Vec3d nextPosition) {
+        rayTraceResults.clear();
+
         final AxisAlignedBB boundingBox = entity.getEntityBoundingBox();
         final Vec3d[] boundingBoxCorners = {
                 new Vec3d(boundingBox.minX, boundingBox.minY, boundingBox.minZ),
@@ -68,11 +71,10 @@ public class PullDownModule extends Module {
                 new Vec3d(boundingBox.maxX, boundingBox.minY, boundingBox.minZ),
                 new Vec3d(boundingBox.maxX, boundingBox.minY, boundingBox.maxZ),
                 new Vec3d(boundingBox.maxX, boundingBox.maxY, boundingBox.minZ),
-                new Vec3d(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ),
+                new Vec3d(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ)
         };
 
         final Vec3d entityPosition = entity.getPositionVector();
-        final List<RayTraceResult> rayTraceResults = new ArrayList<>(8);
         for (final Vec3d entityBoxCorner : boundingBoxCorners) {
             final Vec3d nextBoxCorner = entityBoxCorner.subtract(entityPosition).add(nextPosition);
             final RayTraceResult rayTraceResult = entity.world.rayTraceBlocks(entityBoxCorner,
