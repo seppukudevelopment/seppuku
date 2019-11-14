@@ -79,12 +79,9 @@ public final class ObsidianReplaceModule extends Module {
                     if (pos != null) {
                         final double dist = mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ());
                         if (dist <= 5.0f) {
-                            final Block block = mc.world.getBlockState(pos).getBlock();
-                            if (block instanceof BlockAir || block instanceof BlockLiquid) {
-                                if (this.valid(pos)) {
-                                    this.place(pos);
-                                    valid = true;
-                                }
+                            if (this.valid(pos)) {
+                                this.place(pos);
+                                valid = true;
                             }
                         }
                     }
@@ -117,11 +114,8 @@ public final class ObsidianReplaceModule extends Module {
             if (pos != null) {
                 final double dist = mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ());
                 if (dist <= 5.0f) {
-                    final Block block = mc.world.getBlockState(pos).getBlock();
-                    if (block instanceof BlockAir || block instanceof BlockLiquid) {
-                        if (this.valid(pos)) {
-                            return true;
-                        }
+                    if (this.valid(pos)) {
+                        return true;
                     }
                 }
             }
@@ -342,12 +336,9 @@ public final class ObsidianReplaceModule extends Module {
     private boolean valid(BlockPos pos) {
         final Block block = mc.world.getBlockState(pos).getBlock();
 
-        final Block up = mc.world.getBlockState(pos.add(0, 1, 0)).getBlock();
-        final Block down = mc.world.getBlockState(pos.add(0, -1, 0)).getBlock();
-        final Block north = mc.world.getBlockState(pos.add(0, 0, -1)).getBlock();
-        final Block south = mc.world.getBlockState(pos.add(0, 0, 1)).getBlock();
-        final Block east = mc.world.getBlockState(pos.add(1, 0, 0)).getBlock();
-        final Block west = mc.world.getBlockState(pos.add(-1, 0, 0)).getBlock();
+        if (!(block instanceof BlockAir) && !(block instanceof BlockLiquid)) {
+            return false;
+        }
 
         for (Entity entity : mc.world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos))) {
             if (entity instanceof EntityLivingBase) {
@@ -355,8 +346,14 @@ public final class ObsidianReplaceModule extends Module {
             }
         }
 
-        return (block instanceof BlockAir)
-                && ((up != null && up != Blocks.AIR && !(up instanceof BlockLiquid))
+        final Block up = mc.world.getBlockState(pos.add(0, 1, 0)).getBlock();
+        final Block down = mc.world.getBlockState(pos.add(0, -1, 0)).getBlock();
+        final Block north = mc.world.getBlockState(pos.add(0, 0, -1)).getBlock();
+        final Block south = mc.world.getBlockState(pos.add(0, 0, 1)).getBlock();
+        final Block east = mc.world.getBlockState(pos.add(1, 0, 0)).getBlock();
+        final Block west = mc.world.getBlockState(pos.add(-1, 0, 0)).getBlock();
+
+        return ((up != null && up != Blocks.AIR && !(up instanceof BlockLiquid))
                 || (down != null && down != Blocks.AIR && !(down instanceof BlockLiquid))
                 || (north != null && north != Blocks.AIR && !(north instanceof BlockLiquid))
                 || (south != null && south != Blocks.AIR && !(south instanceof BlockLiquid))
