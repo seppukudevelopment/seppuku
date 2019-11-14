@@ -74,8 +74,7 @@ public final class ObsidianReplaceModule extends Module {
                     if (pos != null) {
                         final double dist = mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ());
                         if (dist <= 5.0f) {
-                            final Block block = mc.world.getBlockState(pos).getBlock();
-                            if (block instanceof BlockAir || block instanceof BlockLiquid) {
+                            if (mc.world.getBlockState(pos).getMaterial().isReplaceable()) {
                                 if (this.valid(pos)) {
                                     this.place(pos);
                                     valid = true;
@@ -112,8 +111,7 @@ public final class ObsidianReplaceModule extends Module {
             if (pos != null) {
                 final double dist = mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ());
                 if (dist <= 5.0f) {
-                    final Block block = mc.world.getBlockState(pos).getBlock();
-                    if (block instanceof BlockAir || block instanceof BlockLiquid) {
+                    if (mc.world.getBlockState(pos).getMaterial().isReplaceable()) {
                         if (this.valid(pos)) {
                             return true;
                         }
