@@ -10,6 +10,7 @@ import me.rigamortis.seppuku.api.value.BooleanValue;
 import me.rigamortis.seppuku.api.value.NumberValue;
 import me.rigamortis.seppuku.api.value.OptionalValue;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.network.play.client.CPacketEntityAction;
@@ -18,7 +19,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
  * Authors Seth & noil
- *
+ * <p>
  * 5/2/2019 @ 12:43 AM.
  */
 public final class ElytraFlyModule extends Module {
@@ -30,6 +31,7 @@ public final class ElytraFlyModule extends Module {
     public final BooleanValue autoStart = new BooleanValue("AutoStart", new String[]{"AutoStart", "start", "autojump"}, true);
     public final BooleanValue disableInLiquid = new BooleanValue("DisableInLiquid", new String[]{"DisableInWater", "DisableInLava", "disableliquid", "liquidoff", "noliquid"}, true);
     public final BooleanValue infiniteDurability = new BooleanValue("InfiniteDurability", new String[]{"InfiniteDura", "dura", "inf", "infdura"}, false);
+    public final BooleanValue noKick = new BooleanValue("NoKick", new String[]{"AntiKick", "Kick"}, true);
 
     private final Timer timer = new Timer();
 
@@ -72,7 +74,7 @@ public final class ElytraFlyModule extends Module {
                 if (this.autoStart.getBoolean()) {
                     if (mc.gameSettings.keyBindJump.isKeyDown() && !mc.player.isElytraFlying()) { // jump is held, player is not elytra flying
                         if (mc.player.motionY < 0) { // player motion is falling
-                            if (this.timer.passed(100)) { // 100 ms
+                            if (this.timer.passed(250)) { // 100 ms
                                 mc.getConnection().sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
                                 this.timer.reset();
                             }
@@ -108,9 +110,8 @@ public final class ElytraFlyModule extends Module {
                         }
                         break;
                     case 1: // Packet
-                        mc.player.motionX = 0;
-                        mc.player.motionY = 0;
-                        mc.player.motionZ = 0;
+                        this.freezePlayer(mc.player);
+                        this.runNoKick(mc.player);
 
                         final double[] directionSpeedPacket = MathUtil.directionSpeed(this.speed.getFloat());
 
@@ -195,4 +196,17 @@ public final class ElytraFlyModule extends Module {
         }
     }
 
+    private void freezePlayer(EntityPlayer player) {
+        player.motionX = 0;
+        player.motionY = 0;
+        player.motionZ = 0;
+    }
+
+    private void runNoKick(EntityPlayer player) {
+        if (this.noKick.getBoolean() && !player.isElytraFlying()) {
+            if (player.ticksExisted % 4 == 0) {
+                player.motionY = -0.04f;
+            }
+        }
+    }
 }
