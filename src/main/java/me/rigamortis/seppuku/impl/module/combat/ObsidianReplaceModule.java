@@ -341,11 +341,11 @@ public final class ObsidianReplaceModule extends Module {
             return false;
         }
 
-        for (Entity entity : mc.world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos))) {
-            if (!(entity instanceof EntityItem) && !(entity instanceof EntityXPOrb)) {
-                return false;
-            }
-        }
+        final List<Entity> invalidEntities = mc.world.getEntitiesInAABBexcluding(null,
+                new AxisAlignedBB(pos), entity -> !(entity instanceof EntityItem) &&
+                        !(entity instanceof EntityXPOrb));
+        if (!invalidEntities.isEmpty())
+            return false;
 
         final Block up = mc.world.getBlockState(pos.add(0, 1, 0)).getBlock();
         final Block down = mc.world.getBlockState(pos.add(0, -1, 0)).getBlock();
@@ -354,12 +354,11 @@ public final class ObsidianReplaceModule extends Module {
         final Block east = mc.world.getBlockState(pos.add(1, 0, 0)).getBlock();
         final Block west = mc.world.getBlockState(pos.add(-1, 0, 0)).getBlock();
 
-        return ((up != null && up != Blocks.AIR && !(up instanceof BlockLiquid))
-                || (down != null && down != Blocks.AIR && !(down instanceof BlockLiquid))
-                || (north != null && north != Blocks.AIR && !(north instanceof BlockLiquid))
-                || (south != null && south != Blocks.AIR && !(south instanceof BlockLiquid))
-                || (east != null && east != Blocks.AIR && !(east instanceof BlockLiquid))
-                || (west != null && west != Blocks.AIR && !(west instanceof BlockLiquid)));
+        return ((up != Blocks.AIR && !(up instanceof BlockLiquid))
+                || (down != Blocks.AIR && !(down instanceof BlockLiquid))
+                || (north != Blocks.AIR && !(north instanceof BlockLiquid))
+                || (south != Blocks.AIR && !(south instanceof BlockLiquid))
+                || (east != Blocks.AIR && !(east instanceof BlockLiquid))
+                || (west != Blocks.AIR && !(west instanceof BlockLiquid)));
     }
-
 }
