@@ -74,7 +74,7 @@ public final class ElytraFlyModule extends Module {
                 if (this.autoStart.getBoolean()) {
                     if (mc.gameSettings.keyBindJump.isKeyDown() && !mc.player.isElytraFlying()) { // jump is held, player is not elytra flying
                         if (mc.player.motionY < 0) { // player motion is falling
-                            if (this.timer.passed(250)) { // 100 ms
+                            if (this.timer.passed(250)) { // 250 ms
                                 mc.getConnection().sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
                                 this.timer.reset();
                             }
