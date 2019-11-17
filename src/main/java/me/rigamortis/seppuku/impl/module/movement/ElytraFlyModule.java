@@ -25,7 +25,7 @@ public final class ElytraFlyModule extends Module {
 
     public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"Vanilla", "Packet", "Bypass"});
 
-    public final NumberValue<Float> speed = new NumberValue<Float>("Speed", new String[]{"Spd"}, 0.25f, Float.class, 0.0f, 10.0f, 0.01f);
+    public final NumberValue<Float> speed = new NumberValue<Float>("Speed", new String[]{"Spd"}, 1.0f, Float.class, 0.0f, 5.0f, 0.01f);
 
     public final BooleanValue autoStart = new BooleanValue("AutoStart", new String[]{"AutoStart", "start", "autojump"}, true);
     public final BooleanValue disableInLiquid = new BooleanValue("DisableInLiquid", new String[]{"DisableInWater", "DisableInLava", "disableliquid", "liquidoff", "noliquid"}, true);
