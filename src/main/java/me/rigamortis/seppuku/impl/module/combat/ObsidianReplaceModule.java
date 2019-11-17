@@ -11,10 +11,16 @@ import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.value.OptionalValue;
 import me.rigamortis.seppuku.impl.module.player.FreeCamModule;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.BlockObsidian;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
@@ -74,12 +80,9 @@ public final class ObsidianReplaceModule extends Module {
                     if (pos != null) {
                         final double dist = mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ());
                         if (dist <= 5.0f) {
-                            final Block block = mc.world.getBlockState(pos).getBlock();
-                            if (block instanceof BlockAir || block instanceof BlockLiquid) {
-                                if (this.valid(pos)) {
-                                    this.place(pos);
-                                    valid = true;
-                                }
+                            if (this.valid(pos)) {
+                                this.place(pos);
+                                valid = true;
                             }
                         }
                     }
@@ -112,11 +115,8 @@ public final class ObsidianReplaceModule extends Module {
             if (pos != null) {
                 final double dist = mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ());
                 if (dist <= 5.0f) {
-                    final Block block = mc.world.getBlockState(pos).getBlock();
-                    if (block instanceof BlockAir || block instanceof BlockLiquid) {
-                        if (this.valid(pos)) {
-                            return true;
-                        }
+                    if (this.valid(pos)) {
+                        return true;
                     }
                 }
             }
@@ -337,6 +337,16 @@ public final class ObsidianReplaceModule extends Module {
     private boolean valid(BlockPos pos) {
         final Block block = mc.world.getBlockState(pos).getBlock();
 
+        if (!(block instanceof BlockAir) && !(block instanceof BlockLiquid)) {
+            return false;
+        }
+
+        for (Entity entity : mc.world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos))) {
+            if (!(entity instanceof EntityItem) && !(entity instanceof EntityXPOrb)) {
+                return false;
+            }
+        }
+
         final Block up = mc.world.getBlockState(pos.add(0, 1, 0)).getBlock();
         final Block down = mc.world.getBlockState(pos.add(0, -1, 0)).getBlock();
         final Block north = mc.world.getBlockState(pos.add(0, 0, -1)).getBlock();
@@ -344,9 +354,7 @@ public final class ObsidianReplaceModule extends Module {
         final Block east = mc.world.getBlockState(pos.add(1, 0, 0)).getBlock();
         final Block west = mc.world.getBlockState(pos.add(-1, 0, 0)).getBlock();
 
-        return (block instanceof BlockAir)
-                && mc.world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos)).isEmpty()
-                && ((up != null && up != Blocks.AIR && !(up instanceof BlockLiquid))
+        return ((up != null && up != Blocks.AIR && !(up instanceof BlockLiquid))
                 || (down != null && down != Blocks.AIR && !(down instanceof BlockLiquid))
                 || (north != null && north != Blocks.AIR && !(north instanceof BlockLiquid))
                 || (south != null && south != Blocks.AIR && !(south instanceof BlockLiquid))
