@@ -1,29 +1,37 @@
 package me.rigamortis.seppuku.impl.module.movement;
 
-import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.MathUtil;
+import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.BooleanValue;
+import me.rigamortis.seppuku.api.value.NumberValue;
+import me.rigamortis.seppuku.api.value.OptionalValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.network.play.server.SPacketChat;
-import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
- * Author Seth
+ * Authors Seth & noil
+ *
  * 5/2/2019 @ 12:43 AM.
  */
 public final class ElytraFlyModule extends Module {
 
-    //private OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"Vanilla", "NCP"});
+    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"Vanilla", "Packet", "Bypass"});
 
-    public final BooleanValue infiniteDura = new BooleanValue("InfiniteDurability", new String[]{"InfiniteDura", "dura", "inf", "infdura"}, true);
+    public final NumberValue<Float> speed = new NumberValue<Float>("Speed", new String[]{"Spd"}, 0.25f, Float.class, 0.0f, 10.0f, 0.01f);
+
+    public final BooleanValue autoStart = new BooleanValue("AutoStart", new String[]{"AutoStart", "start", "autojump"}, true);
+    public final BooleanValue disableInLiquid = new BooleanValue("DisableInLiquid", new String[]{"DisableInWater", "DisableInLava", "disableliquid", "liquidoff", "noliquid"}, true);
+    public final BooleanValue infiniteDurability = new BooleanValue("InfiniteDurability", new String[]{"InfiniteDura", "dura", "inf", "infdura"}, false);
+
+    private final Timer timer = new Timer();
 
     public ElytraFlyModule() {
         super("ElytraFly", new String[]{"Elytra"}, "Allows you to fly with elytras", "NONE", -1, ModuleType.MOVEMENT);
@@ -37,7 +45,7 @@ public final class ElytraFlyModule extends Module {
     @Override
     public void onDisable() {
         super.onDisable();
-        if(Minecraft.getMinecraft().player != null) {
+        if (Minecraft.getMinecraft().player != null) {
             Minecraft.getMinecraft().player.capabilities.isFlying = false;
         }
     }
@@ -46,44 +54,119 @@ public final class ElytraFlyModule extends Module {
     public void onWalkingUpdate(EventUpdateWalkingPlayer event) {
         final Minecraft mc = Minecraft.getMinecraft();
 
-        if (event.getStage() == EventStageable.EventStage.PRE) {
-            if (mc.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() == Items.ELYTRA) {
-                if (mc.gameSettings.keyBindJump.isKeyDown()) {
-                    mc.player.motionY = 0.02f;
+        // ensure player has an elytra on before running any code
+        if (mc.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() != Items.ELYTRA)
+            return;
+
+        switch (event.getStage()) {
+            case PRE:
+                // liquid check
+                if (this.disableInLiquid.getBoolean() && (mc.player.isInWater() || mc.player.isInLava())) {
+                    if (mc.player.isElytraFlying()) {
+                        mc.getConnection().sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
+                    }
+                    return;
                 }
 
-                if (mc.gameSettings.keyBindSneak.isKeyDown()) {
-                    mc.player.motionY = -0.2f;
+                // automatic jump start
+                if (this.autoStart.getBoolean()) {
+                    if (mc.gameSettings.keyBindJump.isKeyDown() && !mc.player.isElytraFlying()) { // jump is held, player is not elytra flying
+                        if (mc.player.motionY < 0) { // player motion is falling
+                            if (this.timer.passed(100)) { // 100 ms
+                                mc.getConnection().sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
+                                this.timer.reset();
+                            }
+                        }
+                    }
                 }
 
-                if(mc.player.ticksExisted % 8 == 0 && mc.player.posY <= 240) {
-                    mc.player.motionY = 0.02f;
+                // the player's rotation yaw
+                final double rotationYaw = Math.toRadians(mc.player.rotationYaw);
+
+                switch (mode.getInt()) {
+                    case 0: // Vanilla
+                        if (mc.player.isElytraFlying()) {
+                            final float speedScaled = this.speed.getFloat() * 0.05f; // 5/100 of original value
+
+                            if (mc.gameSettings.keyBindJump.isKeyDown()) {
+                                mc.player.motionY += speedScaled;
+                            }
+
+                            if (mc.gameSettings.keyBindSneak.isKeyDown()) {
+                                mc.player.motionY -= speedScaled;
+                            }
+
+                            if (mc.gameSettings.keyBindForward.isKeyDown()) {
+                                mc.player.motionX -= Math.sin(rotationYaw) * speedScaled;
+                                mc.player.motionZ += Math.cos(rotationYaw) * speedScaled;
+                            }
+
+                            if (mc.gameSettings.keyBindBack.isKeyDown()) {
+                                mc.player.motionX += Math.sin(rotationYaw) * speedScaled;
+                                mc.player.motionZ -= Math.cos(rotationYaw) * speedScaled;
+                            }
+                        }
+                        break;
+                    case 1: // Packet
+                        mc.player.motionX = 0;
+                        mc.player.motionY = 0;
+                        mc.player.motionZ = 0;
+
+                        final double[] directionSpeedPacket = MathUtil.directionSpeed(this.speed.getFloat());
+
+                        if (mc.player.movementInput.jump) {
+                            mc.player.motionY = this.speed.getFloat();
+                        }
+
+                        if (mc.player.movementInput.sneak) {
+                            mc.player.motionY = -this.speed.getFloat();
+                        }
+
+                        if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
+                            mc.player.motionX = directionSpeedPacket[0];
+                            mc.player.motionZ = directionSpeedPacket[1];
+                        }
+
+                        mc.getConnection().sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
+                        mc.getConnection().sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
+                        break;
+                    case 2: // Bypass / 9b9t
+                        if (mc.gameSettings.keyBindJump.isKeyDown()) {
+                            mc.player.motionY = 0.02f;
+                        }
+
+                        if (mc.gameSettings.keyBindSneak.isKeyDown()) {
+                            mc.player.motionY = -0.2f;
+                        }
+
+                        if (mc.player.ticksExisted % 8 == 0 && mc.player.posY <= 240) {
+                            mc.player.motionY = 0.02f;
+                        }
+
+                        mc.player.capabilities.isFlying = true;
+                        mc.player.capabilities.setFlySpeed(0.025f);
+
+                        final double[] directionSpeed9b = MathUtil.directionSpeed(0.52f);
+
+                        if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
+                            mc.player.motionX = directionSpeed9b[0];
+                            mc.player.motionZ = directionSpeed9b[1];
+                        } else {
+                            mc.player.motionX = 0;
+                            mc.player.motionZ = 0;
+                        }
+                        break;
                 }
 
-                mc.player.capabilities.isFlying = true;
-                mc.player.capabilities.setFlySpeed(0.025f);
-
-                final double[] dir = MathUtil.directionSpeed(0.52f);
-
-                if(mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
-                    mc.player.motionX = dir[0];
-                    mc.player.motionZ = dir[1];
-                }else{
-                    mc.player.motionX = 0;
-                    mc.player.motionZ = 0;
-                }
-
-                if (this.infiniteDura.getBoolean()) {
+                if (this.infiniteDurability.getBoolean()) {
                     mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
                 }
-            }
-        }
-        if (event.getStage() == EventStageable.EventStage.POST) {
-            if (mc.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() == Items.ELYTRA) {
-                if (this.infiniteDura.getBoolean()) {
+                break;
+            case POST:
+                if (this.infiniteDurability.getBoolean()) {
                     mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
                 }
-            }
+                break;
         }
     }
 
