@@ -146,11 +146,11 @@ public final class ElytraFlyModule extends Module {
                         mc.player.capabilities.isFlying = true;
                         mc.player.capabilities.setFlySpeed(0.025f);
 
-                        final double[] directionSpeed9b = MathUtil.directionSpeed(0.52f);
+                        final double[] directionSpeedBypass = MathUtil.directionSpeed(0.52f);
 
                         if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
-                            mc.player.motionX = directionSpeed9b[0];
-                            mc.player.motionZ = directionSpeed9b[1];
+                            mc.player.motionX = directionSpeedBypass[0];
+                            mc.player.motionZ = directionSpeedBypass[1];
                         } else {
                             mc.player.motionX = 0;
                             mc.player.motionZ = 0;
