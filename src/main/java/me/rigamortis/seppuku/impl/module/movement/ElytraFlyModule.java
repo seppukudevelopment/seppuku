@@ -85,9 +85,10 @@ public final class ElytraFlyModule extends Module {
                 // the player's rotation yaw
                 final double rotationYaw = Math.toRadians(mc.player.rotationYaw);
 
-                switch (mode.getInt()) {
-                    case 0: // Vanilla
-                        if (mc.player.isElytraFlying()) {
+                // ensure the player is in the elytra flying state
+                if (mc.player.isElytraFlying()) {
+                    switch (mode.getInt()) {
+                        case 0: // Vanilla
                             final float speedScaled = this.speed.getFloat() * 0.05f; // 5/100 of original value
 
                             if (mc.gameSettings.keyBindJump.isKeyDown()) {
@@ -107,56 +108,56 @@ public final class ElytraFlyModule extends Module {
                                 mc.player.motionX += Math.sin(rotationYaw) * speedScaled;
                                 mc.player.motionZ -= Math.cos(rotationYaw) * speedScaled;
                             }
-                        }
-                        break;
-                    case 1: // Packet
-                        this.freezePlayer(mc.player);
-                        this.runNoKick(mc.player);
+                            break;
+                        case 1: // Packet
+                            this.freezePlayer(mc.player);
+                            this.runNoKick(mc.player);
 
-                        final double[] directionSpeedPacket = MathUtil.directionSpeed(this.speed.getFloat());
+                            final double[] directionSpeedPacket = MathUtil.directionSpeed(this.speed.getFloat());
 
-                        if (mc.player.movementInput.jump) {
-                            mc.player.motionY = this.speed.getFloat();
-                        }
+                            if (mc.player.movementInput.jump) {
+                                mc.player.motionY = this.speed.getFloat();
+                            }
 
-                        if (mc.player.movementInput.sneak) {
-                            mc.player.motionY = -this.speed.getFloat();
-                        }
+                            if (mc.player.movementInput.sneak) {
+                                mc.player.motionY = -this.speed.getFloat();
+                            }
 
-                        if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
-                            mc.player.motionX = directionSpeedPacket[0];
-                            mc.player.motionZ = directionSpeedPacket[1];
-                        }
+                            if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
+                                mc.player.motionX = directionSpeedPacket[0];
+                                mc.player.motionZ = directionSpeedPacket[1];
+                            }
 
-                        mc.getConnection().sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
-                        mc.getConnection().sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
-                        break;
-                    case 2: // Bypass / 9b9t
-                        if (mc.gameSettings.keyBindJump.isKeyDown()) {
-                            mc.player.motionY = 0.02f;
-                        }
+                            mc.getConnection().sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
+                            mc.getConnection().sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
+                            break;
+                        case 2: // Bypass / 9b9t
+                            if (mc.gameSettings.keyBindJump.isKeyDown()) {
+                                mc.player.motionY = 0.02f;
+                            }
 
-                        if (mc.gameSettings.keyBindSneak.isKeyDown()) {
-                            mc.player.motionY = -0.2f;
-                        }
+                            if (mc.gameSettings.keyBindSneak.isKeyDown()) {
+                                mc.player.motionY = -0.2f;
+                            }
 
-                        if (mc.player.ticksExisted % 8 == 0 && mc.player.posY <= 240) {
-                            mc.player.motionY = 0.02f;
-                        }
+                            if (mc.player.ticksExisted % 8 == 0 && mc.player.posY <= 240) {
+                                mc.player.motionY = 0.02f;
+                            }
 
-                        mc.player.capabilities.isFlying = true;
-                        mc.player.capabilities.setFlySpeed(0.025f);
+                            mc.player.capabilities.isFlying = true;
+                            mc.player.capabilities.setFlySpeed(0.025f);
 
-                        final double[] directionSpeedBypass = MathUtil.directionSpeed(0.52f);
+                            final double[] directionSpeedBypass = MathUtil.directionSpeed(0.52f);
 
-                        if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
-                            mc.player.motionX = directionSpeedBypass[0];
-                            mc.player.motionZ = directionSpeedBypass[1];
-                        } else {
-                            mc.player.motionX = 0;
-                            mc.player.motionZ = 0;
-                        }
-                        break;
+                            if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
+                                mc.player.motionX = directionSpeedBypass[0];
+                                mc.player.motionZ = directionSpeedBypass[1];
+                            } else {
+                                mc.player.motionX = 0;
+                                mc.player.motionZ = 0;
+                            }
+                            break;
+                    }
                 }
 
                 if (this.infiniteDurability.getBoolean()) {
