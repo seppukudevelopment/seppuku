@@ -87,7 +87,7 @@ public final class ObsidianReplaceModule extends Module {
         final double playerToBlockDistance = calculateReachDistance(
                 minecraft.player.getPositionEyes(1.0f), position.getX(),
                 position.getY(), position.getZ());
-        if (playerToBlockDistance <= getExtendedReachDistance(minecraft))
+        if (playerToBlockDistance <= getReachDistance(minecraft))
             handlePlaceRequest(minecraft, placementRequest);
 
         processHandSwap(handSwapContext, true, minecraft);
@@ -109,7 +109,7 @@ public final class ObsidianReplaceModule extends Module {
                 final double playerToBlockDistance = calculateReachDistance(
                         minecraft.player.getPositionEyes(1.0f), position.getX(),
                         position.getY(), position.getZ());
-                if (playerToBlockDistance <= getExtendedReachDistance(minecraft))
+                if (playerToBlockDistance <= getReachDistance(minecraft))
                     buildPlacementRequest(minecraft, position);
             }
         }
@@ -224,7 +224,7 @@ public final class ObsidianReplaceModule extends Module {
         return -1;
     }
 
-    private double getExtendedReachDistance(final Minecraft minecraft) {
+    private double getReachDistance(final Minecraft minecraft) {
         // todo; this is just not right my guy, we should really be verifying
         //  placements on certain block faces with traces and stuff...
         return minecraft.playerController.getBlockReachDistance();
