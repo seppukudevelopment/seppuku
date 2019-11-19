@@ -103,9 +103,9 @@ public final class ObsidianReplaceModule extends Module {
             final SPacketBlockChange blockChange = (SPacketBlockChange) event.getPacket();
             if (blockChange.getBlockState().getBlock() instanceof BlockAir) {
                 final BlockPos position = blockChange.getBlockPosition();
-                final double worldBlockDistance = minecraft.player.getDistance(
+                final double playerToBlockDistance = minecraft.player.getDistance(
                         position.getX(), position.getY(), position.getZ());
-                if (worldBlockDistance <= getExtendedReachDistance(minecraft))
+                if (playerToBlockDistance <= getExtendedReachDistance(minecraft))
                     buildPlacementRequest(minecraft, position);
             }
         }
@@ -154,7 +154,9 @@ public final class ObsidianReplaceModule extends Module {
     }
 
     private double getExtendedReachDistance(final Minecraft minecraft) {
-        return minecraft.playerController.getBlockReachDistance() + 0.5d;
+        // todo; this is just not right my guy, we should really be verifying
+        //  placements on certain block faces with traces and stuff...
+        return minecraft.playerController.getBlockReachDistance();
     }
 
     private void buildPlacementRequest(final Minecraft minecraft, final BlockPos position) {
@@ -169,9 +171,8 @@ public final class ObsidianReplaceModule extends Module {
             if (placementDirection == null)
                 continue;
 
-            final PlacementRequest placementRequest = new PlacementRequest(relativePosition, position,
-                    placementDirection);
-            if (placementRequests.offer(placementRequest))
+            if (placementRequests.offer(new PlacementRequest(
+                    relativePosition, position, placementDirection)))
                 break;
         }
     }
