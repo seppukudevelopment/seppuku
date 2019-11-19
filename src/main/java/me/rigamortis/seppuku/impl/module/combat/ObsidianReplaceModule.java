@@ -228,25 +228,25 @@ public final class ObsidianReplaceModule extends Module {
     }
 
     private void processHandSwap(final HandSwapContext context, final boolean restore, final Minecraft minecraft) {
-        minecraft.player.inventory.currentItem = restore ? context.getGameSlot() : context.getObsidianSlot();
+        minecraft.player.inventory.currentItem = restore ? context.getOldSlot() : context.getNewSlot();
         minecraft.playerController.updateController();
     }
 
     private static final class HandSwapContext {
-        private final int gameSlot;
-        private final int obsidianSlot;
+        private final int oldSlot;
+        private final int newSlot;
 
-        HandSwapContext(int gameSlot, int obsidianSlot) {
-            this.gameSlot = gameSlot;
-            this.obsidianSlot = obsidianSlot;
+        HandSwapContext(int oldSlot, int newSlot) {
+            this.oldSlot = oldSlot;
+            this.newSlot = newSlot;
         }
 
-        int getGameSlot() {
-            return gameSlot;
+        int getOldSlot() {
+            return oldSlot;
         }
 
-        int getObsidianSlot() {
-            return obsidianSlot;
+        int getNewSlot() {
+            return newSlot;
         }
     }
 
