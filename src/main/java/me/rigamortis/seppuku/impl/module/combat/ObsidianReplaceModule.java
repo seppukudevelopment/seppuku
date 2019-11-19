@@ -24,6 +24,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
@@ -83,8 +84,9 @@ public final class ObsidianReplaceModule extends Module {
 
         final PlacementRequest placementRequest = placementRequests.poll();
         final BlockPos position = placementRequest.getBlockPosition();
-        final double playerToBlockDistance = player.getPositionEyes(1.0f)
-                .distanceTo(new Vec3d(position.getX(), position.getY(), position.getZ()));
+        final double playerToBlockDistance = calculateReachDistance(
+                minecraft.player.getPositionEyes(1.0f), position.getX(),
+                position.getY(), position.getZ());
         if (playerToBlockDistance <= getExtendedReachDistance(minecraft))
             handlePlaceRequest(minecraft, placementRequest);
 
@@ -104,8 +106,9 @@ public final class ObsidianReplaceModule extends Module {
             final SPacketBlockChange blockChange = (SPacketBlockChange) event.getPacket();
             if (blockChange.getBlockState().getBlock() instanceof BlockAir) {
                 final BlockPos position = blockChange.getBlockPosition();
-                final double playerToBlockDistance = minecraft.player.getPositionEyes(1.0f)
-                        .distanceTo(new Vec3d(position.getX(), position.getY(), position.getZ()));
+                final double playerToBlockDistance = calculateReachDistance(
+                        minecraft.player.getPositionEyes(1.0f), position.getX(),
+                        position.getY(), position.getZ());
                 if (playerToBlockDistance <= getExtendedReachDistance(minecraft))
                     buildPlacementRequest(minecraft, position);
             }
@@ -225,6 +228,14 @@ public final class ObsidianReplaceModule extends Module {
         // todo; this is just not right my guy, we should really be verifying
         //  placements on certain block faces with traces and stuff...
         return minecraft.playerController.getBlockReachDistance();
+    }
+
+    private double calculateReachDistance(final Vec3d vector, final int blockX,
+                                          final int blockY, final int blockZ) {
+        final double diffX = blockX - vector.x;
+        final double diffY = blockY - vector.y;
+        final double diffZ = blockZ - vector.z;
+        return MathHelper.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
     }
 
     private void processHandSwap(final HandSwapContext context, final boolean restore, final Minecraft minecraft) {
