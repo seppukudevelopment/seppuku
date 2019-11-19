@@ -30,6 +30,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.BiFunction;
 
 /**
  * @author Daniel E
@@ -148,10 +149,17 @@ public final class ObsidianReplaceModule extends Module {
 
     private EnumFacing calculateFaceForPlacement(final BlockPos structurePosition,
                                                  final BlockPos blockPosition) {
-        final int diffX = structurePosition.getX() - blockPosition.getX();
-        if (diffX < -1 || diffX > 1)
-            return null;
+        final BiFunction<Integer, String, Integer> throwingClampCheck = (number, axis) -> {
+            if (number < -1 || number > 1)
+                throw new IllegalStateException(
+                        String.format("Difference in %s illegal usage with " +
+                                "calculateFaceForPlacement.", axis));
 
+            return number;
+        };
+
+        final int diffX = throwingClampCheck.apply(
+                structurePosition.getX() - blockPosition.getX(), "diffX");
         switch (diffX) {
             case 1:
                 return EnumFacing.WEST;
@@ -161,10 +169,8 @@ public final class ObsidianReplaceModule extends Module {
                 break;
         }
 
-        final int diffY = structurePosition.getY() - blockPosition.getY();
-        if (diffY < -1 || diffY > 1)
-            return null;
-
+        final int diffY = throwingClampCheck.apply(
+                structurePosition.getY() - blockPosition.getY(), "diffY");
         switch (diffY) {
             case 1:
                 return EnumFacing.DOWN;
@@ -174,10 +180,8 @@ public final class ObsidianReplaceModule extends Module {
                 break;
         }
 
-        final int diffZ = structurePosition.getZ() - blockPosition.getZ();
-        if (diffZ < -1 || diffZ > 1)
-            return null;
-
+        final int diffZ = throwingClampCheck.apply(
+                structurePosition.getZ() - blockPosition.getZ(), "diffZ");
         switch (diffZ) {
             case 1:
                 return EnumFacing.NORTH;
