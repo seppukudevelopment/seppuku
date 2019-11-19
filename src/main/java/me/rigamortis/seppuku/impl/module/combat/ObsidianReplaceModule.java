@@ -2,363 +2,277 @@ package me.rigamortis.seppuku.impl.module.combat;
 
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
+import me.rigamortis.seppuku.api.event.module.EventModulePostLoaded;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
-import me.rigamortis.seppuku.api.event.network.EventSendPacket;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
-import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.util.MathUtil;
-import me.rigamortis.seppuku.api.util.RenderUtil;
-import me.rigamortis.seppuku.api.value.OptionalValue;
 import me.rigamortis.seppuku.impl.module.player.FreeCamModule;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockObsidian;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityXPOrb;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketEntityAction;
-import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * Author Seth
- * 8/14/2019 @ 6:01 PM.
+ * @author Daniel E
  */
 public final class ObsidianReplaceModule extends Module {
+    private static final Vec3d EMPTY_FACE_OFFSET_VECTOR = new Vec3d(0.0d, 0.0d, 0.0d);
+    private static final int[][] BLOCK_DIRECTION_OFFSET = {
+            {0, 1, 0},
+            {0, -1, 0},
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"Manual", "Automatic"});
+            {0, 0, -1},
+            {0, 0, 1},
 
-    private final Minecraft mc = Minecraft.getMinecraft();
+            {1, 0, 0},
+            {-1, 0, 0}
+    };
 
-    private List<BlockPos> blocks = new CopyOnWriteArrayList<>();
-
-    private int lastSlot;
+    private final Queue<PlacementRequest> placementRequests = new ConcurrentLinkedQueue<>();
+    private FreeCamModule freeCamModule = null;
 
     public ObsidianReplaceModule() {
-        super("ObsidianReplace", new String[]{"ObbyRep", "ObbyReplace", "ObbRep", "ObsidianRep"}, "Automatically replaces broken obsidian near you", "NONE", -1, ModuleType.COMBAT);
+        super("ObsidianReplace", new String[]{
+                        "ObbyRep", "ObbyReplace", "ObbRep", "ObsidianRep"
+                }, "Automatically replaces broken obsidian near you",
+                "NONE", -1, ModuleType.COMBAT);
+
+        if (!Seppuku.INSTANCE.getEventManager().addEventListener(this))
+            throw new RuntimeException();
     }
 
     @Listener
-    public void onToggle() {
-        super.onToggle();
-        this.blocks.clear();
+    public void onWalkingUpdate(final EventUpdateWalkingPlayer event) {
+        if (placementRequests.isEmpty())
+            return;
+
+        if (event.getStage() != EventStageable.EventStage.PRE)
+            return;
+
+        if (freeCamModule != null && freeCamModule.isEnabled())
+            return;
+
+        final Minecraft minecraft = Minecraft.getMinecraft();
+        final int obisidanSlot = findObsidianInHotbar(minecraft.player);
+        if (obisidanSlot == -1)
+            return;
+
+        final int currentSlot = minecraft.player.inventory.currentItem;
+        final HandSwapContext handSwapContext = new HandSwapContext(currentSlot, obisidanSlot);
+        processHandSwap(handSwapContext, false, minecraft);
+        if (!isHoldingObsidian(minecraft.player))
+            return;
+
+        final PlacementRequest placementRequest = placementRequests.poll();
+        final BlockPos position = placementRequest.getBlockPosition();
+        final double worldBlockDistance = minecraft.player.getDistance(
+                position.getX(), position.getY(), position.getZ());
+        if (worldBlockDistance <= getExtendedReachDistance(minecraft))
+            handlePlaceRequest(minecraft, placementRequest);
+
+        processHandSwap(handSwapContext, true, minecraft);
     }
 
     @Listener
-    public void onWalkingUpdate(EventUpdateWalkingPlayer event) {
-        if (event.getStage() == EventStageable.EventStage.PRE) {
+    public void onReceivePacket(final EventReceivePacket event) {
+        if (event.getStage() != EventStageable.EventStage.POST)
+            return;
 
-            final FreeCamModule freeCam = (FreeCamModule) Seppuku.INSTANCE.getModuleManager().find(FreeCamModule.class);
+        if (freeCamModule != null && freeCamModule.isEnabled())
+            return;
 
-            if(freeCam != null && freeCam.isEnabled()) {
-                return;
+        final Minecraft minecraft = Minecraft.getMinecraft();
+        if (event.getPacket() instanceof SPacketBlockChange) {
+            final SPacketBlockChange blockChange = (SPacketBlockChange) event.getPacket();
+            if (blockChange.getBlockState().getBlock() instanceof BlockAir) {
+                final BlockPos position = blockChange.getBlockPosition();
+                final double worldBlockDistance = minecraft.player.getDistance(
+                        position.getX(), position.getY(), position.getZ());
+                if (worldBlockDistance <= getExtendedReachDistance(minecraft))
+                    buildPlacementRequest(minecraft, position);
             }
+        }
+    }
 
-            if (this.hasStack(Blocks.OBSIDIAN)) {
-                boolean valid = false;
-
-                for (BlockPos pos : this.blocks) {
-                    if (pos != null) {
-                        final double dist = mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ());
-                        if (dist <= 5.0f) {
-                            if (this.valid(pos)) {
-                                this.place(pos);
-                                valid = true;
-                            }
-                        }
-                    }
-                }
-
-                if (valid) {
-                    mc.player.inventory.currentItem = this.lastSlot;
-                    mc.playerController.updateController();
-                }
-            } else {
-                if (this.canPlace()) {
-                    final int slot = this.findStackHotbar(Blocks.OBSIDIAN);
-                    if (slot != -1) {
-                        this.lastSlot = mc.player.inventory.currentItem;
-                        mc.player.inventory.currentItem = slot;
-                        mc.playerController.updateController();
-                    }
-                }
-            }
+    @Listener
+    public void onModulePostLoaded(final EventModulePostLoaded event) {
+        if (event.getModule() instanceof FreeCamModule) {
+            freeCamModule = (FreeCamModule) event.getModule();
+            if (!Seppuku.INSTANCE.getEventManager().removeEventListener(this))
+                throw new RuntimeException();
         }
     }
 
     @Override
-    public String getMetaData() {
-        return this.mode.getSelectedOption();
+    public void onToggle() {
+        super.onToggle();
+        placementRequests.clear();
     }
 
-    private boolean canPlace() {
-        for (BlockPos pos : this.blocks) {
-            if (pos != null) {
-                final double dist = mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ());
-                if (dist <= 5.0f) {
-                    if (this.valid(pos)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+    private boolean isHoldingObsidian(final EntityPlayerSP player) {
+        final ItemStack currentItem = player.inventory.getCurrentItem();
+        if (currentItem.getItem() instanceof ItemBlock)
+            return ((ItemBlock) currentItem.getItem()).getBlock() instanceof BlockObsidian;
+
+        return true;
     }
 
-    @Listener
-    public void recievePacket(EventReceivePacket event) {
-        if (event.getStage() == EventStageable.EventStage.PRE) {
-            if (this.mode.getInt() == 1) {
-                if (event.getPacket() instanceof SPacketBlockChange) {
-                    final SPacketBlockChange packet = (SPacketBlockChange) event.getPacket();
-                    if (packet.getBlockState().getBlock() instanceof BlockAir) {
-                        final double dist = mc.player.getDistance(packet.getBlockPosition().getX(), packet.getBlockPosition().getY(), packet.getBlockPosition().getZ());
-                        if (dist <= 5.0f) {
-                            if (!this.blocks.contains(packet.getBlockPosition())) {
-                                this.blocks.add(packet.getBlockPosition());
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    private void processHandSwap(final HandSwapContext context, final boolean restore, final Minecraft minecraft) {
+        minecraft.player.inventory.currentItem = restore ? context.getPreviousSlot() : context.getCurrentSlot();
+        minecraft.playerController.updateController();
     }
 
-    @Listener
-    public void sendPacket(EventSendPacket event) {
-        if (event.getStage() == EventStageable.EventStage.PRE) {
-            if(this.mode.getInt() == 0) {
-                if (event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock) {
-                    final CPacketPlayerTryUseItemOnBlock packet = (CPacketPlayerTryUseItemOnBlock) event.getPacket();
-                    final ItemStack stack = mc.player.inventory.getCurrentItem();
-                    if (stack != null && stack.getItem() != Items.AIR && stack.getItem() instanceof ItemBlock) {
-                        final ItemBlock itemBlock = (ItemBlock) stack.getItem();
-                        if (itemBlock.getBlock() instanceof BlockObsidian) {
-                            BlockPos pos = packet.getPos();
+    private int findObsidianInHotbar(final EntityPlayer player) {
+        for (int index = 0; InventoryPlayer.isHotbar(index); index++) {
+            final ItemStack itemStack = player.inventory.getStackInSlot(index);
+            if (!(itemStack.getItem() instanceof ItemBlock))
+                continue;
 
-                            switch (packet.getDirection()) {
-                                case NORTH:
-                                    pos = pos.add(0, 0, -1);
-                                    break;
-                                case SOUTH:
-                                    pos = pos.add(0, 0, 1);
-                                    break;
-                                case EAST:
-                                    pos = pos.add(1, 0, 0);
-                                    break;
-                                case WEST:
-                                    pos = pos.add(-1, 0, 0);
-                                    break;
-                                case UP:
-                                    pos = pos.add(0, 1, 0);
-                                    break;
-                                case DOWN:
-                                    pos = pos.add(0, -1, 0);
-                                    break;
-                            }
-
-                            if (!this.blocks.contains(pos)) {
-                                this.blocks.add(pos);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @Listener
-    public void render3D(EventRender3D event) {
-        for (BlockPos pos : this.blocks) {
-            if (pos != null) {
-                final double dist = mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ());
-                if (dist <= 5.0f) {
-                    final IBlockState iblockstate = mc.world.getBlockState(pos);
-
-                    if (iblockstate.getMaterial() != Material.AIR && mc.world.getWorldBorder().contains(pos)) {
-                        final Vec3d interp = MathUtil.interpolateEntity(mc.player, mc.getRenderPartialTicks());
-                        RenderUtil.drawBoundingBox(iblockstate.getSelectedBoundingBox(mc.world, pos).grow(0.0020000000949949026D).offset(-interp.x, -interp.y, -interp.z), 1.5f, 0xFF9900EE);
-                    }
-                }
-            }
-        }
-    }
-
-    private boolean hasStack(Block type) {
-        if (mc.player.inventory.getCurrentItem().getItem() instanceof ItemBlock) {
-            final ItemBlock block = (ItemBlock) mc.player.inventory.getCurrentItem().getItem();
-            if (block.getBlock() == type) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void place(BlockPos pos) {
-        final Minecraft mc = Minecraft.getMinecraft();
-
-        final Block north = mc.world.getBlockState(pos.add(0, 0, -1)).getBlock();
-        final Block south = mc.world.getBlockState(pos.add(0, 0, 1)).getBlock();
-        final Block east = mc.world.getBlockState(pos.add(1, 0, 0)).getBlock();
-        final Block west = mc.world.getBlockState(pos.add(-1, 0, 0)).getBlock();
-        final Block up = mc.world.getBlockState(pos.add(0, 1, 0)).getBlock();
-        final Block down = mc.world.getBlockState(pos.add(0, -1, 0)).getBlock();
-
-        if (up != null && up != Blocks.AIR && !(up instanceof BlockLiquid)) {
-            final boolean activated = up.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, EnumHand.MAIN_HAND, EnumFacing.DOWN, 0, 0, 0);
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
-            }
-
-            if (mc.playerController.processRightClickBlock(mc.player, mc.world, pos.add(0, 1, 0), EnumFacing.DOWN, new Vec3d(0d, 0d, 0d), EnumHand.MAIN_HAND) != EnumActionResult.FAIL) {
-                mc.player.swingArm(EnumHand.MAIN_HAND);
-            }
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
-            }
+            final ItemBlock itemBlock = (ItemBlock) itemStack.getItem();
+            if (itemBlock.getBlock() instanceof BlockObsidian)
+                return index;
         }
 
-        if (down != null && down != Blocks.AIR && !(down instanceof BlockLiquid)) {
-            final boolean activated = down.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, EnumHand.MAIN_HAND, EnumFacing.UP, 0, 0, 0);
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
-            }
-
-            if (mc.playerController.processRightClickBlock(mc.player, mc.world, pos.add(0, -1, 0), EnumFacing.UP, new Vec3d(0d, 0d, 0d), EnumHand.MAIN_HAND) != EnumActionResult.FAIL) {
-                mc.player.swingArm(EnumHand.MAIN_HAND);
-            }
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
-            }
-        }
-
-        if (north != null && north != Blocks.AIR && !(north instanceof BlockLiquid)) {
-            final boolean activated = north.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, EnumHand.MAIN_HAND, EnumFacing.UP, 0, 0, 0);
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
-            }
-
-            if (mc.playerController.processRightClickBlock(mc.player, mc.world, pos.add(0, 0, -1), EnumFacing.SOUTH, new Vec3d(0d, 0d, 0d), EnumHand.MAIN_HAND) != EnumActionResult.FAIL) {
-                mc.player.swingArm(EnumHand.MAIN_HAND);
-            }
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
-            }
-        }
-
-        if (south != null && south != Blocks.AIR && !(south instanceof BlockLiquid)) {
-            final boolean activated = south.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, EnumHand.MAIN_HAND, EnumFacing.UP, 0, 0, 0);
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
-            }
-
-            if (mc.playerController.processRightClickBlock(mc.player, mc.world, pos.add(0, 0, 1), EnumFacing.NORTH, new Vec3d(0d, 0d, 0d), EnumHand.MAIN_HAND) != EnumActionResult.FAIL) {
-                mc.player.swingArm(EnumHand.MAIN_HAND);
-            }
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
-            }
-        }
-
-        if (east != null && east != Blocks.AIR && !(east instanceof BlockLiquid)) {
-            final boolean activated = east.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, EnumHand.MAIN_HAND, EnumFacing.UP, 0, 0, 0);
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
-            }
-
-            if (mc.playerController.processRightClickBlock(mc.player, mc.world, pos.add(1, 0, 0), EnumFacing.WEST, new Vec3d(0d, 0d, 0d), EnumHand.MAIN_HAND) != EnumActionResult.FAIL) {
-                mc.player.swingArm(EnumHand.MAIN_HAND);
-            }
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
-            }
-        }
-
-        if (west != null && west != Blocks.AIR && !(west instanceof BlockLiquid)) {
-            final boolean activated = west.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, EnumHand.MAIN_HAND, EnumFacing.UP, 0, 0, 0);
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
-            }
-
-            if (mc.playerController.processRightClickBlock(mc.player, mc.world, pos.add(-1, 0, 0), EnumFacing.EAST, new Vec3d(0d, 0d, 0d), EnumHand.MAIN_HAND) != EnumActionResult.FAIL) {
-                mc.player.swingArm(EnumHand.MAIN_HAND);
-            }
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
-            }
-        }
-    }
-
-    private int findStackHotbar(Block type) {
-        for (int i = 0; i < 9; i++) {
-            final ItemStack stack = Minecraft.getMinecraft().player.inventory.getStackInSlot(i);
-            if (stack.getItem() instanceof ItemBlock) {
-                final ItemBlock block = (ItemBlock) stack.getItem();
-
-                if (block.getBlock() == type) {
-                    return i;
-                }
-            }
-        }
         return -1;
     }
 
-    private boolean valid(BlockPos pos) {
-        final Block block = mc.world.getBlockState(pos).getBlock();
+    private double getExtendedReachDistance(final Minecraft minecraft) {
+        return minecraft.playerController.getBlockReachDistance() + 0.5d;
+    }
 
-        if (!(block instanceof BlockAir) && !(block instanceof BlockLiquid)) {
-            return false;
+    private void buildPlacementRequest(final Minecraft minecraft, final BlockPos position) {
+        for (final int[] directionOffset : BLOCK_DIRECTION_OFFSET) {
+            final BlockPos relativePosition = position.add(directionOffset[0], directionOffset[1],
+                    directionOffset[2]);
+            final Block structureBlock = minecraft.world.getBlockState(relativePosition).getBlock();
+            if (structureBlock instanceof BlockAir || structureBlock instanceof BlockLiquid)
+                continue;
+
+            final EnumFacing placementDirection = calculatePlacementFace(relativePosition, position);
+            if (placementDirection == null)
+                continue;
+
+            final PlacementRequest placementRequest = new PlacementRequest(relativePosition, position,
+                    placementDirection);
+            if (placementRequests.offer(placementRequest))
+                break;
+        }
+    }
+
+    private EnumFacing calculatePlacementFace(final BlockPos structurePosition,
+                                              final BlockPos blockPosition) {
+        final int diffX = structurePosition.getX() - blockPosition.getX();
+        final int diffY = structurePosition.getY() - blockPosition.getY();
+        final int diffZ = structurePosition.getZ() - blockPosition.getZ();
+        switch (diffX) {
+            case 1:
+                return EnumFacing.EAST;
+            case -1:
+                return EnumFacing.WEST;
+            default:
+                break;
         }
 
-        final List<Entity> invalidEntities = mc.world.getEntitiesInAABBexcluding(null,
-                new AxisAlignedBB(pos), entity -> !(entity instanceof EntityItem) &&
-                        !(entity instanceof EntityXPOrb));
-        if (!invalidEntities.isEmpty())
-            return false;
+        switch (diffY) {
+            case 1:
+                return EnumFacing.UP;
+            case -1:
+                return EnumFacing.DOWN;
+            default:
+                break;
+        }
 
-        final Block up = mc.world.getBlockState(pos.add(0, 1, 0)).getBlock();
-        final Block down = mc.world.getBlockState(pos.add(0, -1, 0)).getBlock();
-        final Block north = mc.world.getBlockState(pos.add(0, 0, -1)).getBlock();
-        final Block south = mc.world.getBlockState(pos.add(0, 0, 1)).getBlock();
-        final Block east = mc.world.getBlockState(pos.add(1, 0, 0)).getBlock();
-        final Block west = mc.world.getBlockState(pos.add(-1, 0, 0)).getBlock();
+        switch (diffZ) {
+            case 1:
+                return EnumFacing.SOUTH;
+            case -1:
+                return EnumFacing.NORTH;
+            default:
+                break;
+        }
 
-        return ((up != Blocks.AIR && !(up instanceof BlockLiquid))
-                || (down != Blocks.AIR && !(down instanceof BlockLiquid))
-                || (north != Blocks.AIR && !(north instanceof BlockLiquid))
-                || (south != Blocks.AIR && !(south instanceof BlockLiquid))
-                || (east != Blocks.AIR && !(east instanceof BlockLiquid))
-                || (west != Blocks.AIR && !(west instanceof BlockLiquid)));
+        return null;
+    }
+
+    private void handlePlaceRequest(final Minecraft minecraft, final PlacementRequest placementRequest) {
+        final IBlockState blockState = minecraft.world.getBlockState(placementRequest.getStructureBlock());
+        final boolean blockActivated = blockState.getBlock().onBlockActivated(minecraft.world,
+                placementRequest.getBlockPosition(), blockState, minecraft.player,
+                EnumHand.MAIN_HAND, placementRequest.getPlaceDirection(), 0, 0, 0);
+        if (blockActivated)
+            minecraft.player.connection.sendPacket(new CPacketEntityAction(
+                    minecraft.player, CPacketEntityAction.Action.START_SNEAKING));
+
+        if (minecraft.playerController.processRightClickBlock(minecraft.player,
+                minecraft.world, placementRequest.getBlockPosition(),
+                placementRequest.getPlaceDirection().getOpposite(),
+                EMPTY_FACE_OFFSET_VECTOR, EnumHand.MAIN_HAND) != EnumActionResult.FAIL)
+            minecraft.player.swingArm(EnumHand.MAIN_HAND);
+
+        if (blockActivated)
+            minecraft.player.connection.sendPacket(new CPacketEntityAction(
+                    minecraft.player, CPacketEntityAction.Action.STOP_SNEAKING));
+    }
+
+    private static final class HandSwapContext {
+        private final int previousSlot;
+        private final int currentSlot;
+
+        HandSwapContext(int previousSlot, int currentSlot) {
+            this.previousSlot = previousSlot;
+            this.currentSlot = currentSlot;
+        }
+
+        int getPreviousSlot() {
+            return previousSlot;
+        }
+
+        int getCurrentSlot() {
+            return currentSlot;
+        }
+    }
+
+    private static final class PlacementRequest {
+        private final BlockPos blockPosition;
+        private final BlockPos structureBlock;
+        private final EnumFacing placeDirection;
+
+        PlacementRequest(final BlockPos blockPosition,
+                         final BlockPos structureBlock,
+                         final EnumFacing placeDirection) {
+            this.blockPosition = blockPosition;
+            this.structureBlock = structureBlock;
+            this.placeDirection = placeDirection;
+        }
+
+        BlockPos getBlockPosition() {
+            return blockPosition;
+        }
+
+        BlockPos getStructureBlock() {
+            return structureBlock;
+        }
+
+        EnumFacing getPlaceDirection() {
+            return placeDirection;
+        }
     }
 }
