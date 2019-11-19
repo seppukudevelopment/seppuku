@@ -79,14 +79,15 @@ public final class ObsidianReplaceModule extends Module {
         final int currentSlot = player.inventory.currentItem;
         final HandSwapContext handSwapContext = new HandSwapContext(currentSlot, obisidanSlot);
         processHandSwap(handSwapContext, false, minecraft);
-        if (!isItemStackObsidian(player.inventory.getCurrentItem()))
-            return;
 
+        // it's literally not gonna be null but intellij is screwing me?
         final PlacementRequest placementRequest = placementRequests.poll();
+        assert placementRequest != null;
+
         final BlockPos position = placementRequest.getBlockPosition();
-        final double playerToBlockDistance = calculateVecDistance(
-                player.getPositionEyes(1.0f),
-                position.getX(), position.getY(), position.getZ());
+        final double playerToBlockDistance =
+                calculateVecDistance(player.getPositionEyes(1.0f),
+                        position.getX(), position.getY(), position.getZ());
         if (playerToBlockDistance <= getReachDistance(minecraft))
             handlePlaceRequest(minecraft, placementRequest);
 
@@ -106,9 +107,9 @@ public final class ObsidianReplaceModule extends Module {
             final SPacketBlockChange blockChange = (SPacketBlockChange) event.getPacket();
             if (blockChange.getBlockState().getBlock() instanceof BlockAir) {
                 final BlockPos position = blockChange.getBlockPosition();
-                final double playerToBlockDistance = calculateVecDistance(
-                        minecraft.player.getPositionEyes(1.0f), position.getX(),
-                        position.getY(), position.getZ());
+                final double playerToBlockDistance =
+                        calculateVecDistance(minecraft.player.getPositionEyes(1.0f),
+                                position.getX(), position.getY(), position.getZ());
                 if (playerToBlockDistance <= getReachDistance(minecraft))
                     buildPlacementRequest(minecraft, position);
             }
@@ -138,24 +139,24 @@ public final class ObsidianReplaceModule extends Module {
             if (structureBlock instanceof BlockAir || structureBlock instanceof BlockLiquid)
                 continue;
 
-            final EnumFacing placementDirection = calculatePlacementFace(relativePosition, position);
-            if (placementDirection != null && placementRequests.offer(new PlacementRequest(
-                    relativePosition, position, placementDirection)))
+            final EnumFacing blockPlacementFace = calculateFaceForPlacement(relativePosition, position);
+            if (blockPlacementFace != null && placementRequests.offer(new PlacementRequest(
+                    relativePosition, position, blockPlacementFace)))
                 return;
         }
     }
 
-    private EnumFacing calculatePlacementFace(final BlockPos structurePosition,
-                                              final BlockPos blockPosition) {
+    private EnumFacing calculateFaceForPlacement(final BlockPos structurePosition,
+                                                 final BlockPos blockPosition) {
         final int diffX = structurePosition.getX() - blockPosition.getX();
         if (diffX < -1 || diffX > 1)
             return null;
 
         switch (diffX) {
             case 1:
-                return EnumFacing.EAST;
-            case -1:
                 return EnumFacing.WEST;
+            case -1:
+                return EnumFacing.EAST;
             default:
                 break;
         }
@@ -166,9 +167,9 @@ public final class ObsidianReplaceModule extends Module {
 
         switch (diffY) {
             case 1:
-                return EnumFacing.UP;
-            case -1:
                 return EnumFacing.DOWN;
+            case -1:
+                return EnumFacing.UP;
             default:
                 break;
         }
@@ -179,9 +180,9 @@ public final class ObsidianReplaceModule extends Module {
 
         switch (diffZ) {
             case 1:
-                return EnumFacing.SOUTH;
-            case -1:
                 return EnumFacing.NORTH;
+            case -1:
+                return EnumFacing.SOUTH;
             default:
                 break;
         }
@@ -200,8 +201,8 @@ public final class ObsidianReplaceModule extends Module {
                     CPacketEntityAction.Action.START_SNEAKING));
 
         if (minecraft.playerController.processRightClickBlock(player, minecraft.world,
-                placementRequest.getBlockPosition(), placementRequest.getPlaceDirection()
-                        .getOpposite(), Vec3d.ZERO, EnumHand.MAIN_HAND) != EnumActionResult.FAIL)
+                placementRequest.getBlockPosition(), placementRequest.getPlaceDirection(),
+                Vec3d.ZERO, EnumHand.MAIN_HAND) != EnumActionResult.FAIL)
             player.swingArm(EnumHand.MAIN_HAND);
 
         if (blockActivated)
@@ -238,8 +239,10 @@ public final class ObsidianReplaceModule extends Module {
         return MathHelper.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
     }
 
-    private void processHandSwap(final HandSwapContext context, final boolean restore, final Minecraft minecraft) {
-        minecraft.player.inventory.currentItem = restore ? context.getOldSlot() : context.getNewSlot();
+    private void processHandSwap(final HandSwapContext context, final boolean restore,
+                                 final Minecraft minecraft) {
+        minecraft.player.inventory.currentItem =
+                restore ? context.getOldSlot() : context.getNewSlot();
         minecraft.playerController.updateController();
     }
 
