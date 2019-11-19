@@ -84,7 +84,7 @@ public final class ObsidianReplaceModule extends Module {
 
         final PlacementRequest placementRequest = placementRequests.poll();
         final BlockPos position = placementRequest.getBlockPosition();
-        final double playerToBlockDistance = calculateReachDistance(
+        final double playerToBlockDistance = calculateVecDistance(
                 minecraft.player.getPositionEyes(1.0f), position.getX(),
                 position.getY(), position.getZ());
         if (playerToBlockDistance <= getReachDistance(minecraft))
@@ -106,7 +106,7 @@ public final class ObsidianReplaceModule extends Module {
             final SPacketBlockChange blockChange = (SPacketBlockChange) event.getPacket();
             if (blockChange.getBlockState().getBlock() instanceof BlockAir) {
                 final BlockPos position = blockChange.getBlockPosition();
-                final double playerToBlockDistance = calculateReachDistance(
+                final double playerToBlockDistance = calculateVecDistance(
                         minecraft.player.getPositionEyes(1.0f), position.getX(),
                         position.getY(), position.getZ());
                 if (playerToBlockDistance <= getReachDistance(minecraft))
@@ -230,8 +230,8 @@ public final class ObsidianReplaceModule extends Module {
         return minecraft.playerController.getBlockReachDistance();
     }
 
-    private double calculateReachDistance(final Vec3d vector, final int blockX,
-                                          final int blockY, final int blockZ) {
+    private double calculateVecDistance(final Vec3d vector, final int blockX,
+                                        final int blockY, final int blockZ) {
         final double diffX = blockX - vector.x;
         final double diffY = blockY - vector.y;
         final double diffZ = blockZ - vector.z;
