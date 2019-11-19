@@ -34,7 +34,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @author Daniel E
  */
 public final class ObsidianReplaceModule extends Module {
-    private static final Vec3d EMPTY_FACE_OFFSET_VECTOR = new Vec3d(0.0d, 0.0d, 0.0d);
     private static final int[][] BLOCK_DIRECTION_OFFSET = {
             {0, 1, 0},
             {0, -1, 0},
@@ -223,8 +222,8 @@ public final class ObsidianReplaceModule extends Module {
 
         if (minecraft.playerController.processRightClickBlock(minecraft.player,
                 minecraft.world, placementRequest.getBlockPosition(),
-                placementRequest.getPlaceDirection().getOpposite(),
-                EMPTY_FACE_OFFSET_VECTOR, EnumHand.MAIN_HAND) != EnumActionResult.FAIL)
+                placementRequest.getPlaceDirection().getOpposite(), Vec3d.ZERO,
+                EnumHand.MAIN_HAND) != EnumActionResult.FAIL)
             minecraft.player.swingArm(EnumHand.MAIN_HAND);
 
         if (blockActivated)
