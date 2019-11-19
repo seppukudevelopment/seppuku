@@ -35,7 +35,26 @@ public final class NotificationsComponent extends DraggableHudComponent {
         float maxWidth = 0;
 
         for (Notification notification : Seppuku.INSTANCE.getNotificationManager().getNotifications()) {
-            notification.setX(this.getX());
+
+            float offsetX = 0;
+
+            if (this.getAnchorPoint() != null) {
+                switch (this.getAnchorPoint().getPoint()) {
+                    case TOP_CENTER:
+                        offsetX = (this.getW() - Minecraft.getMinecraft().fontRenderer.getStringWidth(notification.getText())) / 2;
+                        break;
+                    case TOP_LEFT:
+                    case BOTTOM_LEFT:
+                        offsetX = 0;
+                        break;
+                    case TOP_RIGHT:
+                    case BOTTOM_RIGHT:
+                        offsetX = this.getW() - Minecraft.getMinecraft().fontRenderer.getStringWidth(notification.getText());
+                        break;
+                }
+            }
+
+            notification.setX(this.getX() + offsetX);
             notification.setY(this.getY() + offsetY);
             notification.setWidth(Minecraft.getMinecraft().fontRenderer.getStringWidth(notification.getText()) + 4);
             notification.setHeight(Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 5);

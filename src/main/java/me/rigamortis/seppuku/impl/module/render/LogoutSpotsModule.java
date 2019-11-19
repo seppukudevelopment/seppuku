@@ -6,6 +6,7 @@ import me.rigamortis.seppuku.api.event.player.EventPlayerJoin;
 import me.rigamortis.seppuku.api.event.player.EventPlayerLeave;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.event.render.EventRender2D;
+import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.GLUProjection;
@@ -25,7 +26,7 @@ public final class LogoutSpotsModule extends Module {
 
     public final NumberValue<Integer> removeDistance = new NumberValue<Integer>("RemoveDistance", new String[]{"RD", "RemoveRange"}, 200, Integer.class, 1, 2000, 1);
 
-    private final Map<String, PlayerData> playerCache = Maps.newConcurrentMap();
+    private final Map<String, EntityPlayer> playerCache = Maps.newConcurrentMap();
     private final Map<String, PlayerData> logoutCache = Maps.newConcurrentMap();
     private final Texture playerIcon = new Texture("location.png");
 
@@ -51,9 +52,39 @@ public final class LogoutSpotsModule extends Module {
             if (player == null || player.equals(mc.player))
                 continue;
 
-            final GameProfile gameProfile = player.getGameProfile();
-            final String uuid = gameProfile.getId().toString();
-            this.updatePlayerCache(uuid, new PlayerData(gameProfile.getName(), player.getPosition()));
+            //final PlayerData data = new PlayerData(player.getPosition(), player.getGameProfile(), (EntityOtherPlayerMP) player);
+
+            this.updatePlayerCache(player.getGameProfile().getId().toString(), player);
+        }
+    }
+
+    @Listener
+    public void onRenderWorld(EventRender3D event) {
+        final Minecraft mc = Minecraft.getMinecraft();
+
+        for (String uuid : this.logoutCache.keySet()) {
+            final PlayerData data = this.logoutCache.get(uuid);
+
+            if (this.isOutOfRange(data)) {
+                this.logoutCache.remove(uuid);
+                continue;
+            }
+
+            data.ghost.prevLimbSwingAmount = 0;
+            data.ghost.limbSwing = 0;
+            data.ghost.limbSwingAmount = 0;
+
+            GlStateManager.pushMatrix();
+            GlStateManager.enableLighting();
+            GlStateManager.enableBlend();
+            GlStateManager.enableAlpha();
+            GlStateManager.enableDepth();
+            GlStateManager.color(1, 1, 1, 1);
+            mc.getRenderManager().renderEntity(data.ghost, data.position.getX() - mc.getRenderManager().renderPosX, data.position.getY() - mc.getRenderManager().renderPosY, data.position.getZ() - mc.getRenderManager().renderPosZ, data.ghost.rotationYaw, mc.getRenderPartialTicks(), false);
+            GlStateManager.disableLighting();
+            GlStateManager.disableBlend();
+            GlStateManager.disableAlpha();
+            GlStateManager.popMatrix();
         }
     }
 
@@ -73,8 +104,8 @@ public final class LogoutSpotsModule extends Module {
             if (projection != null && projection.isType(GLUProjection.Projection.Type.INSIDE)) {
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(projection.getX(), projection.getY(), 0);
-                playerIcon.render(-8, -16 - 2, 16, 16);
-                String text = data.username + " logout";
+                //playerIcon.render(-8, -16 - 2, 16, 16);
+                String text = data.profile.getName() + " logout";
                 float textWidth = mc.fontRenderer.getStringWidth(text);
                 mc.fontRenderer.drawStringWithShadow(text, -(textWidth / 2), 0, -1);
                 GlStateManager.translate(-projection.getX(), -projection.getY(), 0);
@@ -91,7 +122,9 @@ public final class LogoutSpotsModule extends Module {
             if (!uuid.equals(event.getUuid())) // not matching uuid
                 continue;
 
-            final PlayerData data = this.playerCache.get(uuid);
+            final EntityPlayer player = this.playerCache.get(uuid);
+
+            final PlayerData data = new PlayerData(player.getPosition(), player.getGameProfile(), player);
 
             if (!this.hasPlayerLogged(uuid)) {
                 this.logoutCache.put(uuid, data);
@@ -119,8 +152,8 @@ public final class LogoutSpotsModule extends Module {
         this.logoutCache.remove(uuid);
     }
 
-    private void updatePlayerCache(String uuid, PlayerData data) {
-        this.playerCache.put(uuid, data);
+    private void updatePlayerCache(String uuid, EntityPlayer player) {
+        this.playerCache.put(uuid, player);
     }
 
     private boolean hasPlayerLogged(String uuid) {
@@ -133,12 +166,14 @@ public final class LogoutSpotsModule extends Module {
     }
 
     private class PlayerData {
-        String username;
         BlockPos position;
+        GameProfile profile;
+        EntityPlayer ghost;
 
-        PlayerData(String username, BlockPos position) {
-            this.username = username;
+        public PlayerData(BlockPos position, GameProfile profile, EntityPlayer ghost) {
             this.position = position;
+            this.profile = profile;
+            this.ghost = ghost;
         }
     }
 }

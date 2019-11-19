@@ -1,11 +1,14 @@
 package me.rigamortis.seppuku.impl.patch;
 
 import me.rigamortis.seppuku.Seppuku;
+import me.rigamortis.seppuku.api.event.world.EventAddEntity;
 import me.rigamortis.seppuku.api.event.world.EventLightUpdate;
 import me.rigamortis.seppuku.api.event.world.EventRainStrength;
+import me.rigamortis.seppuku.api.event.world.EventRemoveEntity;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
 import me.rigamortis.seppuku.impl.management.PatchManager;
+import net.minecraft.entity.Entity;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
@@ -81,6 +84,38 @@ public final class WorldPatch extends ClassPatch {
         Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
 
         return event.isCanceled();
+    }
+
+    @MethodPatch(
+            mcpName = "onEntityAdded",
+            notchName = "b",
+            mcpDesc = "(Lnet/minecraft/entity/Entity;)V",
+            notchDesc = "(Lvg;)V")
+    public void onEntityAdded(MethodNode methodNode, PatchManager.Environment env) {
+        final InsnList list = new InsnList();
+        list.add(new VarInsnNode(ALOAD, 1));
+        list.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "onEntityAddedHook", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/entity/Entity;)V" : "(Lvg;)V", false));
+        methodNode.instructions.insert(list);
+    }
+
+    public static void onEntityAddedHook(Entity entity) {
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventAddEntity(entity));
+    }
+
+    @MethodPatch(
+            mcpName = "onEntityRemoved",
+            notchName = "c",
+            mcpDesc = "(Lnet/minecraft/entity/Entity;)V",
+            notchDesc = "(Lvg;)V")
+    public void onEntityRemoved(MethodNode methodNode, PatchManager.Environment env) {
+        final InsnList list = new InsnList();
+        list.add(new VarInsnNode(ALOAD, 1));
+        list.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "onEntityRemovedHook", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/entity/Entity;)V" : "(Lvg;)V", false));
+        methodNode.instructions.insert(list);
+    }
+
+    public static void onEntityRemovedHook(Entity entity) {
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventRemoveEntity(entity));
     }
 
 }

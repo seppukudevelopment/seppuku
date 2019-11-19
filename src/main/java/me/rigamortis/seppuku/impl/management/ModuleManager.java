@@ -142,6 +142,7 @@ public final class ModuleManager {
         add(new ShulkerPreviewModule());
         add(new LogoutSpotsModule());
         add(new ChatSuffixModule());
+        add(new VisualRangeModule());
 
         this.loadExternalModules();
     }

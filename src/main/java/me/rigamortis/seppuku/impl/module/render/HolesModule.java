@@ -3,6 +3,8 @@ package me.rigamortis.seppuku.impl.module.render;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.util.MathUtil;
+import me.rigamortis.seppuku.api.value.BooleanValue;
 import me.rigamortis.seppuku.api.value.NumberValue;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -27,6 +29,8 @@ import static org.lwjgl.opengl.GL11.*;
 public final class HolesModule extends Module {
 
     public final NumberValue radius = new NumberValue("Radius", new String[]{"Radius", "Range", "Distance"}, 8, Integer.class, 0, 32, 1);
+
+    public final BooleanValue fade = new BooleanValue("Fade", new String[]{"f"}, true);
 
     public final List<Hole> holes = new ArrayList<>();
 
@@ -98,8 +102,13 @@ public final class HolesModule extends Module {
                 glEnable(GL_LINE_SMOOTH);
                 glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
                 glLineWidth(1.5f);
-                RenderGlobal.renderFilledBox(bb, 0, 1, 0, 0.25f);
-                RenderGlobal.drawBoundingBox(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ, 0, 1, 0, 0.25f);
+
+                final double dist = mc.player.getDistance(hole.getX() + 0.5f, hole.getY() + 0.5f, hole.getZ() + 0.5f) * 0.75f;
+
+                float alpha = MathUtil.clamp((float) (dist * 255.0f / (this.radius.getInt()) / 255.0f), 0.0f, 0.3f);
+
+                RenderGlobal.renderFilledBox(bb, 0, 1, 0, this.fade.getBoolean() ? alpha : 0.25f);
+                RenderGlobal.drawBoundingBox(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ, 0, 1, 0, this.fade.getBoolean() ? alpha : 0.25f);
                 glDisable(GL_LINE_SMOOTH);
                 GlStateManager.depthMask(true);
                 GlStateManager.enableDepth();
