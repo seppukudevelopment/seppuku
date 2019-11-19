@@ -85,8 +85,8 @@ public final class ObsidianReplaceModule extends Module {
         final PlacementRequest placementRequest = placementRequests.poll();
         final BlockPos position = placementRequest.getBlockPosition();
         final double playerToBlockDistance = calculateVecDistance(
-                minecraft.player.getPositionEyes(1.0f), position.getX(),
-                position.getY(), position.getZ());
+                player.getPositionEyes(1.0f),
+                position.getX(), position.getY(), position.getZ());
         if (playerToBlockDistance <= getReachDistance(minecraft))
             handlePlaceRequest(minecraft, placementRequest);
 
