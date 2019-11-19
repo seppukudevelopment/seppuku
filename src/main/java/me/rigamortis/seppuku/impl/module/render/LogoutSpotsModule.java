@@ -8,7 +8,6 @@ import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.event.render.EventRender2D;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.GLUProjection;
 import me.rigamortis.seppuku.api.value.NumberValue;
 import net.minecraft.client.Minecraft;
@@ -28,7 +27,6 @@ public final class LogoutSpotsModule extends Module {
 
     private final Map<String, EntityPlayer> playerCache = Maps.newConcurrentMap();
     private final Map<String, PlayerData> logoutCache = Maps.newConcurrentMap();
-    private final Texture playerIcon = new Texture("location.png");
 
     public LogoutSpotsModule() {
         super("LogoutSpots", new String[]{"Logout", "Spots"}, "Draws the location of nearby player logouts.", "NONE", -1, ModuleType.RENDER);
@@ -51,8 +49,6 @@ public final class LogoutSpotsModule extends Module {
         for (EntityPlayer player : mc.world.playerEntities) {
             if (player == null || player.equals(mc.player))
                 continue;
-
-            //final PlayerData data = new PlayerData(player.getPosition(), player.getGameProfile(), (EntityOtherPlayerMP) player);
 
             this.updatePlayerCache(player.getGameProfile().getId().toString(), player);
         }
@@ -104,7 +100,6 @@ public final class LogoutSpotsModule extends Module {
             if (projection != null && projection.isType(GLUProjection.Projection.Type.INSIDE)) {
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(projection.getX(), projection.getY(), 0);
-                //playerIcon.render(-8, -16 - 2, 16, 16);
                 String text = data.profile.getName() + " logout";
                 float textWidth = mc.fontRenderer.getStringWidth(text);
                 mc.fontRenderer.drawStringWithShadow(text, -(textWidth / 2), 0, -1);
