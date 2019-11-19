@@ -70,21 +70,22 @@ public final class ObsidianReplaceModule extends Module {
             return;
 
         final Minecraft minecraft = Minecraft.getMinecraft();
-        final int obisidanSlot = findObsidianInHotbar(minecraft.player);
+        final EntityPlayerSP player = minecraft.player;
+        final int obisidanSlot = findObsidianInHotbar(player);
         if (obisidanSlot == -1)
             return;
 
-        final int currentSlot = minecraft.player.inventory.currentItem;
+        final int currentSlot = player.inventory.currentItem;
         final HandSwapContext handSwapContext = new HandSwapContext(currentSlot, obisidanSlot);
         processHandSwap(handSwapContext, false, minecraft);
-        if (!isHoldingObsidian(minecraft.player))
+        if (!isItemStackObsidian(player.inventory.getCurrentItem()))
             return;
 
         final PlacementRequest placementRequest = placementRequests.poll();
         final BlockPos position = placementRequest.getBlockPosition();
-        final double worldBlockDistance = minecraft.player.getDistance(
-                position.getX(), position.getY(), position.getZ());
-        if (worldBlockDistance <= getExtendedReachDistance(minecraft))
+        final double playerToBlockDistance = player.getPositionEyes(1.0f)
+                .distanceTo(new Vec3d(position.getX(), position.getY(), position.getZ()));
+        if (playerToBlockDistance <= getExtendedReachDistance(minecraft))
             handlePlaceRequest(minecraft, placementRequest);
 
         processHandSwap(handSwapContext, true, minecraft);
@@ -103,8 +104,8 @@ public final class ObsidianReplaceModule extends Module {
             final SPacketBlockChange blockChange = (SPacketBlockChange) event.getPacket();
             if (blockChange.getBlockState().getBlock() instanceof BlockAir) {
                 final BlockPos position = blockChange.getBlockPosition();
-                final double playerToBlockDistance = minecraft.player.getDistance(
-                        position.getX(), position.getY(), position.getZ());
+                final double playerToBlockDistance = minecraft.player.getPositionEyes(1.0f)
+                        .distanceTo(new Vec3d(position.getX(), position.getY(), position.getZ()));
                 if (playerToBlockDistance <= getExtendedReachDistance(minecraft))
                     buildPlacementRequest(minecraft, position);
             }
@@ -126,39 +127,6 @@ public final class ObsidianReplaceModule extends Module {
         placementRequests.clear();
     }
 
-    private boolean isHoldingObsidian(final EntityPlayerSP player) {
-        final ItemStack currentItem = player.inventory.getCurrentItem();
-        if (currentItem.getItem() instanceof ItemBlock)
-            return ((ItemBlock) currentItem.getItem()).getBlock() instanceof BlockObsidian;
-
-        return true;
-    }
-
-    private void processHandSwap(final HandSwapContext context, final boolean restore, final Minecraft minecraft) {
-        minecraft.player.inventory.currentItem = restore ? context.getPreviousSlot() : context.getCurrentSlot();
-        minecraft.playerController.updateController();
-    }
-
-    private int findObsidianInHotbar(final EntityPlayer player) {
-        for (int index = 0; InventoryPlayer.isHotbar(index); index++) {
-            final ItemStack itemStack = player.inventory.getStackInSlot(index);
-            if (!(itemStack.getItem() instanceof ItemBlock))
-                continue;
-
-            final ItemBlock itemBlock = (ItemBlock) itemStack.getItem();
-            if (itemBlock.getBlock() instanceof BlockObsidian)
-                return index;
-        }
-
-        return -1;
-    }
-
-    private double getExtendedReachDistance(final Minecraft minecraft) {
-        // todo; this is just not right my guy, we should really be verifying
-        //  placements on certain block faces with traces and stuff...
-        return minecraft.playerController.getBlockReachDistance();
-    }
-
     private void buildPlacementRequest(final Minecraft minecraft, final BlockPos position) {
         for (final int[] directionOffset : BLOCK_DIRECTION_OFFSET) {
             final BlockPos relativePosition = position.add(directionOffset[0], directionOffset[1],
@@ -168,20 +136,18 @@ public final class ObsidianReplaceModule extends Module {
                 continue;
 
             final EnumFacing placementDirection = calculatePlacementFace(relativePosition, position);
-            if (placementDirection == null)
-                continue;
-
-            if (placementRequests.offer(new PlacementRequest(
+            if (placementDirection != null && placementRequests.offer(new PlacementRequest(
                     relativePosition, position, placementDirection)))
-                break;
+                return;
         }
     }
 
     private EnumFacing calculatePlacementFace(final BlockPos structurePosition,
                                               final BlockPos blockPosition) {
         final int diffX = structurePosition.getX() - blockPosition.getX();
-        final int diffY = structurePosition.getY() - blockPosition.getY();
-        final int diffZ = structurePosition.getZ() - blockPosition.getZ();
+        if (diffX < -1 || diffX > 1)
+            return null;
+
         switch (diffX) {
             case 1:
                 return EnumFacing.EAST;
@@ -191,6 +157,10 @@ public final class ObsidianReplaceModule extends Module {
                 break;
         }
 
+        final int diffY = structurePosition.getY() - blockPosition.getY();
+        if (diffY < -1 || diffY > 1)
+            return null;
+
         switch (diffY) {
             case 1:
                 return EnumFacing.UP;
@@ -199,6 +169,10 @@ public final class ObsidianReplaceModule extends Module {
             default:
                 break;
         }
+
+        final int diffZ = structurePosition.getZ() - blockPosition.getZ();
+        if (diffZ < -1 || diffZ > 1)
+            return null;
 
         switch (diffZ) {
             case 1:
@@ -213,40 +187,66 @@ public final class ObsidianReplaceModule extends Module {
     }
 
     private void handlePlaceRequest(final Minecraft minecraft, final PlacementRequest placementRequest) {
-        final IBlockState blockState = minecraft.world.getBlockState(placementRequest.getStructureBlock());
-        final boolean blockActivated = blockState.getBlock().onBlockActivated(minecraft.world,
-                placementRequest.getBlockPosition(), blockState, minecraft.player,
-                EnumHand.MAIN_HAND, placementRequest.getPlaceDirection(), 0, 0, 0);
+        final EntityPlayerSP player = minecraft.player;
+        final IBlockState blockState = player.world.getBlockState(placementRequest.getStructureBlock());
+        final boolean blockActivated = blockState.getBlock().onBlockActivated(player.world,
+                placementRequest.getBlockPosition(), blockState, player, EnumHand.MAIN_HAND,
+                placementRequest.getPlaceDirection(), 0.0f, 0.0f, 0.0f);
         if (blockActivated)
-            minecraft.player.connection.sendPacket(new CPacketEntityAction(
-                    minecraft.player, CPacketEntityAction.Action.START_SNEAKING));
+            player.connection.sendPacket(new CPacketEntityAction(player,
+                    CPacketEntityAction.Action.START_SNEAKING));
 
-        if (minecraft.playerController.processRightClickBlock(minecraft.player,
-                minecraft.world, placementRequest.getBlockPosition(),
-                placementRequest.getPlaceDirection().getOpposite(), Vec3d.ZERO,
-                EnumHand.MAIN_HAND) != EnumActionResult.FAIL)
-            minecraft.player.swingArm(EnumHand.MAIN_HAND);
+        if (minecraft.playerController.processRightClickBlock(player, minecraft.world,
+                placementRequest.getBlockPosition(), placementRequest.getPlaceDirection()
+                        .getOpposite(), Vec3d.ZERO, EnumHand.MAIN_HAND) != EnumActionResult.FAIL)
+            player.swingArm(EnumHand.MAIN_HAND);
 
         if (blockActivated)
-            minecraft.player.connection.sendPacket(new CPacketEntityAction(
-                    minecraft.player, CPacketEntityAction.Action.STOP_SNEAKING));
+            player.connection.sendPacket(new CPacketEntityAction(player,
+                    CPacketEntityAction.Action.STOP_SNEAKING));
+    }
+
+    private boolean isItemStackObsidian(final ItemStack itemStack) {
+        if (itemStack.getItem() instanceof ItemBlock)
+            return ((ItemBlock) itemStack.getItem()).getBlock() instanceof BlockObsidian;
+
+        return false;
+    }
+
+    private int findObsidianInHotbar(final EntityPlayer player) {
+        for (int index = 0; InventoryPlayer.isHotbar(index); index++)
+            if (isItemStackObsidian(player.inventory.getStackInSlot(index)))
+                return index;
+
+        return -1;
+    }
+
+    private double getExtendedReachDistance(final Minecraft minecraft) {
+        // todo; this is just not right my guy, we should really be verifying
+        //  placements on certain block faces with traces and stuff...
+        return minecraft.playerController.getBlockReachDistance();
+    }
+
+    private void processHandSwap(final HandSwapContext context, final boolean restore, final Minecraft minecraft) {
+        minecraft.player.inventory.currentItem = restore ? context.getGameSlot() : context.getObsidianSlot();
+        minecraft.playerController.updateController();
     }
 
     private static final class HandSwapContext {
-        private final int previousSlot;
-        private final int currentSlot;
+        private final int gameSlot;
+        private final int obsidianSlot;
 
-        HandSwapContext(int previousSlot, int currentSlot) {
-            this.previousSlot = previousSlot;
-            this.currentSlot = currentSlot;
+        HandSwapContext(int gameSlot, int obsidianSlot) {
+            this.gameSlot = gameSlot;
+            this.obsidianSlot = obsidianSlot;
         }
 
-        int getPreviousSlot() {
-            return previousSlot;
+        int getGameSlot() {
+            return gameSlot;
         }
 
-        int getCurrentSlot() {
-            return currentSlot;
+        int getObsidianSlot() {
+            return obsidianSlot;
         }
     }
 
