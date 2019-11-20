@@ -21,7 +21,7 @@ apply plugin: "com.github.johnrengelman.shadow"
 version = "3.0"
 group = "me.rigamortis"
 archivesBaseName = "seppuku"
-def buildmode = "RELEASE"
+def buildmode = "IDE"
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 compileJava {

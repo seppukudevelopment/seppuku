@@ -13,7 +13,7 @@ import me.rigamortis.seppuku.api.value.NumberValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.util.Map;
@@ -76,7 +76,7 @@ public final class LogoutSpotsModule extends Module {
             GlStateManager.enableAlpha();
             GlStateManager.enableDepth();
             GlStateManager.color(1, 1, 1, 1);
-            mc.getRenderManager().renderEntity(data.ghost, data.position.getX() - mc.getRenderManager().renderPosX, data.position.getY() - mc.getRenderManager().renderPosY, data.position.getZ() - mc.getRenderManager().renderPosZ, data.ghost.rotationYaw, mc.getRenderPartialTicks(), false);
+            mc.getRenderManager().renderEntity(data.ghost, data.position.x - mc.getRenderManager().renderPosX, data.position.y - mc.getRenderManager().renderPosY, data.position.z - mc.getRenderManager().renderPosZ, data.ghost.rotationYaw, mc.getRenderPartialTicks(), false);
             GlStateManager.disableLighting();
             GlStateManager.disableBlend();
             GlStateManager.disableAlpha();
@@ -96,7 +96,7 @@ public final class LogoutSpotsModule extends Module {
                 continue;
             }
 
-            final GLUProjection.Projection projection = GLUProjection.getInstance().project(data.position.getX() - mc.getRenderManager().renderPosX, data.position.getY() - mc.getRenderManager().renderPosY, data.position.getZ() - mc.getRenderManager().renderPosZ, GLUProjection.ClampMode.NONE, true);
+            final GLUProjection.Projection projection = GLUProjection.getInstance().project(data.position.x - mc.getRenderManager().renderPosX, data.position.y - mc.getRenderManager().renderPosY, data.position.z - mc.getRenderManager().renderPosZ, GLUProjection.ClampMode.NONE, true);
             if (projection != null && projection.isType(GLUProjection.Projection.Type.INSIDE)) {
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(projection.getX(), projection.getY(), 0);
@@ -119,7 +119,8 @@ public final class LogoutSpotsModule extends Module {
 
             final EntityPlayer player = this.playerCache.get(uuid);
 
-            final PlayerData data = new PlayerData(player.getPosition(), player.getGameProfile(), player);
+            //final Vec3d interp = MathUtil.interpolateEntity(player, mc.getRenderPartialTicks());
+            final PlayerData data = new PlayerData(player.getPositionVector(), player.getGameProfile(), player);
 
             if (!this.hasPlayerLogged(uuid)) {
                 this.logoutCache.put(uuid, data);
@@ -156,16 +157,16 @@ public final class LogoutSpotsModule extends Module {
     }
 
     private boolean isOutOfRange(PlayerData data) {
-        BlockPos position = data.position;
-        return Minecraft.getMinecraft().player.getDistance(position.getX(), position.getY(), position.getZ()) > this.removeDistance.getInt();
+        Vec3d position = data.position;
+        return Minecraft.getMinecraft().player.getDistance(position.x, position.y, position.z) > this.removeDistance.getInt();
     }
 
     private class PlayerData {
-        BlockPos position;
+        Vec3d position;
         GameProfile profile;
         EntityPlayer ghost;
 
-        public PlayerData(BlockPos position, GameProfile profile, EntityPlayer ghost) {
+        public PlayerData(Vec3d position, GameProfile profile, EntityPlayer ghost) {
             this.position = position;
             this.profile = profile;
             this.ghost = ghost;

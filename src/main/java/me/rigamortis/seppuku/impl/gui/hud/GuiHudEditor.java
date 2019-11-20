@@ -9,6 +9,7 @@ import me.rigamortis.seppuku.impl.module.ui.HudEditorModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.OpenGlHelper;
 import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
@@ -116,6 +117,10 @@ public final class GuiHudEditor extends GuiScreen {
     @Override
     public void onGuiClosed() {
         Seppuku.INSTANCE.getConfigManager().saveAll();
+
+        if (OpenGlHelper.shadersSupported) {
+            mc.entityRenderer.stopUseShader();
+        }
 
         for (HudComponent component : Seppuku.INSTANCE.getHudManager().getComponentList()) {
             if (component instanceof DraggableHudComponent) {
