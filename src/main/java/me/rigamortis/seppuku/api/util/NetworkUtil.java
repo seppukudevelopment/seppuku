@@ -1,6 +1,7 @@
 package me.rigamortis.seppuku.api.util;
 
 import org.apache.commons.io.IOUtils;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
@@ -15,15 +16,15 @@ import java.util.UUID;
 public final class NetworkUtil {
 
     public static String resolveUsername(UUID id) {
-        final String url = "https://api.minetools.eu/uuid/" + id.toString().replace("-", "");
+        final String url = "https://api.mojang.com/user/profiles/" + id.toString().replace("-", "") + "/names";
         try {
             final String nameJson = IOUtils.toString(new URL(url));
             if (nameJson != null && nameJson.length() > 0) {
-                final JSONObject jsonObject = (JSONObject) JSONValue.parseWithException(nameJson);
-                if (jsonObject != null) {
-                    final String nick = jsonObject.get("name").toString();
-                    if (nick != null) {
-                        return nick;
+                final JSONArray jsonArray = (JSONArray) JSONValue.parseWithException(nameJson);
+                if (jsonArray != null) {
+                    final JSONObject latestName = (JSONObject) jsonArray.get(jsonArray.size() - 1);
+                    if (latestName != null) {
+                        return latestName.get("name").toString();
                     }
                 }
             }
