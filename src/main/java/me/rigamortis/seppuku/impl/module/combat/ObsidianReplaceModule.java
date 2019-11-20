@@ -127,8 +127,8 @@ public final class ObsidianReplaceModule extends Module {
     }
 
     @Override
-    public void onToggle() {
-        super.onToggle();
+    public void onDisable() {
+        super.onDisable();
         placementRequests.clear();
     }
 
