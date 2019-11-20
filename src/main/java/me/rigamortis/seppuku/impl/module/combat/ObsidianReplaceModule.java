@@ -79,7 +79,7 @@ public final class ObsidianReplaceModule extends Module {
 
         final int currentSlot = player.inventory.currentItem;
         final HandSwapContext handSwapContext = new HandSwapContext(currentSlot, obisidanSlot);
-        processHandSwap(handSwapContext, false, minecraft);
+        handleHandSwap(handSwapContext, false, minecraft);
 
         // it's literally not gonna be null but intellij is screwing me?
         final PlacementRequest placementRequest = placementRequests.poll();
@@ -92,7 +92,7 @@ public final class ObsidianReplaceModule extends Module {
         if (playerToBlockDistance <= getReachDistance(minecraft))
             handlePlaceRequest(minecraft, placementRequest);
 
-        processHandSwap(handSwapContext, true, minecraft);
+        handleHandSwap(handSwapContext, true, minecraft);
     }
 
     @Listener
@@ -149,17 +149,17 @@ public final class ObsidianReplaceModule extends Module {
 
     private EnumFacing calculateFaceForPlacement(final BlockPos structurePosition,
                                                  final BlockPos blockPosition) {
-        final BiFunction<Integer, String, Integer> throwingClampCheck = (number, axis) -> {
+        final BiFunction<Integer, String, Integer> throwingClamp = (number, axis) -> {
             if (number < -1 || number > 1)
-                throw new IllegalStateException(
-                        String.format("Difference in %s illegal usage with " +
-                                "calculateFaceForPlacement.", axis));
+                throw new IllegalArgumentException(
+                        String.format("Difference in %s is illegal, " +
+                                "positions are too far apart.", axis));
 
             return number;
         };
 
-        final int diffX = throwingClampCheck.apply(
-                structurePosition.getX() - blockPosition.getX(), "diffX");
+        final int diffX = throwingClamp.apply(
+                structurePosition.getX() - blockPosition.getX(), "x-axis");
         switch (diffX) {
             case 1:
                 return EnumFacing.WEST;
@@ -169,8 +169,8 @@ public final class ObsidianReplaceModule extends Module {
                 break;
         }
 
-        final int diffY = throwingClampCheck.apply(
-                structurePosition.getY() - blockPosition.getY(), "diffY");
+        final int diffY = throwingClamp.apply(
+                structurePosition.getY() - blockPosition.getY(), "y-axis");
         switch (diffY) {
             case 1:
                 return EnumFacing.DOWN;
@@ -180,8 +180,8 @@ public final class ObsidianReplaceModule extends Module {
                 break;
         }
 
-        final int diffZ = throwingClampCheck.apply(
-                structurePosition.getZ() - blockPosition.getZ(), "diffZ");
+        final int diffZ = throwingClamp.apply(
+                structurePosition.getZ() - blockPosition.getZ(), "z-axis");
         switch (diffZ) {
             case 1:
                 return EnumFacing.NORTH;
@@ -235,16 +235,16 @@ public final class ObsidianReplaceModule extends Module {
         return minecraft.playerController.getBlockReachDistance();
     }
 
-    private double calculateVecDistance(final Vec3d vector, final int blockX,
+    private double calculateVecDistance(final Vec3d vec, final int blockX,
                                         final int blockY, final int blockZ) {
-        final double diffX = blockX - vector.x;
-        final double diffY = blockY - vector.y;
-        final double diffZ = blockZ - vector.z;
+        final double diffX = blockX - vec.x;
+        final double diffY = blockY - vec.y;
+        final double diffZ = blockZ - vec.z;
         return MathHelper.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
     }
 
-    private void processHandSwap(final HandSwapContext context, final boolean restore,
-                                 final Minecraft minecraft) {
+    private void handleHandSwap(final HandSwapContext context, final boolean restore,
+                                final Minecraft minecraft) {
         minecraft.player.inventory.currentItem =
                 restore ? context.getOldSlot() : context.getNewSlot();
         minecraft.playerController.updateController();
