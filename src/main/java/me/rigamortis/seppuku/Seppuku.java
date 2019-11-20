@@ -31,6 +31,8 @@ public final class Seppuku {
 
     private EventManager eventManager;
 
+    private APIManager apiManager;
+
     private ModuleManager moduleManager;
 
     private CommandManager commandManager;
@@ -74,6 +76,7 @@ public final class Seppuku {
     public void init() {
         this.initLogger();
         this.eventManager = new AnnotatedEventManager();
+        this.apiManager = new APIManager();
         this.moduleManager = new ModuleManager();
         this.commandManager = new CommandManager();
         this.friendManager = new FriendManager();
@@ -124,6 +127,7 @@ public final class Seppuku {
 
     public void unload() {
         this.moduleManager.unload();
+        this.apiManager.unload();
         this.commandManager.unload();
         this.friendManager.unload();
         this.waypointManager.unload();
@@ -192,6 +196,13 @@ public final class Seppuku {
         }
 
         return this.eventManager;
+    }
+
+    public APIManager getApiManager() {
+        if (this.apiManager == null) {
+            this.apiManager = new APIManager();
+        }
+        return this.apiManager;
     }
 
     public ModuleManager getModuleManager() {

@@ -5,7 +5,6 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.player.EventPlayerJoin;
 import me.rigamortis.seppuku.api.event.player.EventPlayerLeave;
-import me.rigamortis.seppuku.api.util.NetworkUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.server.SPacketPlayerListItem;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -31,7 +30,7 @@ public final class JoinLeaveManager {
                         for (SPacketPlayerListItem.AddPlayerData playerData : packet.getEntries()) {
                             if (playerData.getProfile().getId() != mc.session.getProfile().getId()) {
                                 new Thread(() -> {
-                                    final String name = NetworkUtil.resolveUsername(playerData.getProfile().getId());
+                                    final String name = Seppuku.INSTANCE.getApiManager().resolveName(playerData.getProfile().getId().toString());
                                     if (name != null) {
                                         Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventPlayerJoin(name, playerData.getProfile().getId().toString()));
                                     }
@@ -43,7 +42,7 @@ public final class JoinLeaveManager {
                         for (SPacketPlayerListItem.AddPlayerData playerData : packet.getEntries()) {
                             if (playerData.getProfile().getId() != mc.session.getProfile().getId()) {
                                 new Thread(() -> {
-                                    final String name = NetworkUtil.resolveUsername(playerData.getProfile().getId());
+                                    final String name = Seppuku.INSTANCE.getApiManager().resolveName(playerData.getProfile().getId().toString());
                                     if (name != null) {
                                         Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventPlayerLeave(name, playerData.getProfile().getId().toString()));
                                     }
