@@ -7,10 +7,7 @@ import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.impl.module.player.FreeCamModule;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockAir;
-import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.BlockObsidian;
+import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -85,7 +82,7 @@ public final class ObsidianReplaceModule extends Module {
         final PlacementRequest placementRequest = placementRequests.poll();
         assert placementRequest != null;
 
-        final BlockPos position = placementRequest.getBlockPosition();
+        final BlockPos position = placementRequest.getStructurePosition();
         final double playerToBlockDistance =
                 calculateVecDistance(player.getPositionEyes(1.0f),
                         position.getX(), position.getY(), position.getZ());
@@ -142,7 +139,7 @@ public final class ObsidianReplaceModule extends Module {
 
             final EnumFacing blockPlacementFace = calculateFaceForPlacement(relativePosition, position);
             if (blockPlacementFace != null && placementRequests.offer(new PlacementRequest(
-                    relativePosition, position, blockPlacementFace)))
+                    relativePosition, blockPlacementFace)))
                 return;
         }
     }
@@ -196,16 +193,18 @@ public final class ObsidianReplaceModule extends Module {
 
     private void handlePlaceRequest(final Minecraft minecraft, final PlacementRequest placementRequest) {
         final EntityPlayerSP player = minecraft.player;
-        final IBlockState blockState = player.world.getBlockState(placementRequest.getStructureBlock());
-        final boolean blockActivated = blockState.getBlock().onBlockActivated(player.world,
-                placementRequest.getBlockPosition(), blockState, player, EnumHand.MAIN_HAND,
-                placementRequest.getPlaceDirection(), 0.0f, 0.0f, 0.0f);
+        final BlockPos structurePosition = placementRequest.getStructurePosition();
+        final IBlockState structureBlockState = minecraft.world.getBlockState(structurePosition);
+        final Block structureBlock = structureBlockState.getBlock();
+        final boolean blockActivated = structureBlock.onBlockActivated(minecraft.world,
+                structurePosition, structureBlockState, player, EnumHand.MAIN_HAND,
+                EnumFacing.UP, 0.0f, 0.0f, 0.0f);
         if (blockActivated)
             player.connection.sendPacket(new CPacketEntityAction(player,
                     CPacketEntityAction.Action.START_SNEAKING));
 
         if (minecraft.playerController.processRightClickBlock(player, minecraft.world,
-                placementRequest.getBlockPosition(), placementRequest.getPlaceDirection(),
+                structurePosition, placementRequest.getPlaceDirection(),
                 Vec3d.ZERO, EnumHand.MAIN_HAND) != EnumActionResult.FAIL)
             player.swingArm(EnumHand.MAIN_HAND);
 
@@ -269,24 +268,17 @@ public final class ObsidianReplaceModule extends Module {
     }
 
     private static final class PlacementRequest {
-        private final BlockPos blockPosition;
-        private final BlockPos structureBlock;
+        private final BlockPos structurePosition;
         private final EnumFacing placeDirection;
 
-        PlacementRequest(final BlockPos blockPosition,
-                         final BlockPos structureBlock,
+        PlacementRequest(final BlockPos structurePosition,
                          final EnumFacing placeDirection) {
-            this.blockPosition = blockPosition;
-            this.structureBlock = structureBlock;
+            this.structurePosition = structurePosition;
             this.placeDirection = placeDirection;
         }
 
-        BlockPos getBlockPosition() {
-            return blockPosition;
-        }
-
-        BlockPos getStructureBlock() {
-            return structureBlock;
+        BlockPos getStructurePosition() {
+            return structurePosition;
         }
 
         EnumFacing getPlaceDirection() {
