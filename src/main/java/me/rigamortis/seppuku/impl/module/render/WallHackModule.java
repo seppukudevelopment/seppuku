@@ -60,6 +60,7 @@ public final class WallHackModule extends Module {
     public final BooleanValue vehicles = new BooleanValue("Vehicles", new String[]{"Vehic", "Vehicle"}, true);
     public final BooleanValue local = new BooleanValue("Local", new String[]{"Self"}, true);
     public final BooleanValue items = new BooleanValue("Items", new String[]{"Item"}, true);
+    public final BooleanValue crystals = new BooleanValue("End Crystals", new String[]{"crystal", "crystals", "endcrystal", "endcrystals"}, true);
     public final BooleanValue footsteps = new BooleanValue("FootSteps", new String[]{"FootStep", "Steps"}, false);
     public final BooleanValue armorStand = new BooleanValue("ArmorStands", new String[]{"ArmorStand", "ArmourStand", "ArmourStands", "ArmStand"}, true);
 
@@ -412,6 +413,9 @@ public final class WallHackModule extends Module {
             }
             return itemName;
         }
+        if (entity instanceof EntityEnderCrystal) {
+            return "End Crystal";
+        }
         if (entity instanceof EntityMinecart) {
             final EntityMinecart minecart = (EntityMinecart) entity;
             return minecart.getCartItem().getDisplayName();
@@ -435,6 +439,9 @@ public final class WallHackModule extends Module {
             ret = true;
         }
         if (this.items.getBoolean() && entity instanceof EntityItem) {
+            ret = true;
+        }
+        if (this.crystals.getBoolean() && entity instanceof EntityEnderCrystal) {
             ret = true;
         }
         if (this.vehicles.getBoolean() && (entity instanceof EntityBoat || entity instanceof EntityMinecart || entity instanceof EntityMinecartContainer)) {
@@ -464,6 +471,9 @@ public final class WallHackModule extends Module {
         }
         if (entity instanceof EntityItem) {
             ret = 0xFF00FFAA;
+        }
+        if (entity instanceof EntityEnderCrystal){
+            ret =0xFFCD00CD;
         }
         if (entity instanceof EntityPlayer) {
             ret = 0xFFFF4444;
@@ -496,6 +506,10 @@ public final class WallHackModule extends Module {
         }
 
         AxisAlignedBB bb = e.getEntityBoundingBox();
+
+        if (e instanceof EntityEnderCrystal) {
+            bb = new AxisAlignedBB(bb.minX + 0.3f, bb.minY + 0.2f, bb.minZ + 0.3f, bb.maxX - 0.3f, bb.maxY, bb.maxZ - 0.3f);
+        }
 
         if (e instanceof EntityItem) {
             bb = new AxisAlignedBB(bb.minX, bb.minY + 0.7f, bb.minZ, bb.maxX, bb.maxY, bb.maxZ);
