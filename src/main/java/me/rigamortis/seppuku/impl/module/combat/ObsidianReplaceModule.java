@@ -78,7 +78,6 @@ public final class ObsidianReplaceModule extends Module {
         final HandSwapContext handSwapContext = new HandSwapContext(currentSlot, obisidanSlot);
         handleHandSwap(handSwapContext, false, minecraft);
 
-        // it's literally not gonna be null but intellij is screwing me?
         final PlacementRequest placementRequest = placementRequests.poll();
         assert placementRequest != null;
 
