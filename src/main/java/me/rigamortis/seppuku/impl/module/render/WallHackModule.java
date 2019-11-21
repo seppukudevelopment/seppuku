@@ -60,7 +60,7 @@ public final class WallHackModule extends Module {
     public final BooleanValue vehicles = new BooleanValue("Vehicles", new String[]{"Vehic", "Vehicle"}, true);
     public final BooleanValue local = new BooleanValue("Local", new String[]{"Self"}, true);
     public final BooleanValue items = new BooleanValue("Items", new String[]{"Item"}, true);
-    public final BooleanValue crystals = new BooleanValue("End Crystals", new String[]{"crystal", "crystals", "endcrystal", "endcrystals"}, true);
+    public final BooleanValue crystals = new BooleanValue("Crystals", new String[]{"crystal", "crystals", "endcrystal", "endcrystals"}, true);
     public final BooleanValue footsteps = new BooleanValue("FootSteps", new String[]{"FootStep", "Steps"}, false);
     public final BooleanValue armorStand = new BooleanValue("ArmorStands", new String[]{"ArmorStand", "ArmourStand", "ArmourStands", "ArmStand"}, true);
 
@@ -472,8 +472,8 @@ public final class WallHackModule extends Module {
         if (entity instanceof EntityItem) {
             ret = 0xFF00FFAA;
         }
-        if (entity instanceof EntityEnderCrystal){
-            ret =0xFFCD00CD;
+        if (entity instanceof EntityEnderCrystal) {
+            ret = 0xFFCD00CD;
         }
         if (entity instanceof EntityPlayer) {
             ret = 0xFFFF4444;
