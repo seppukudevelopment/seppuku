@@ -136,7 +136,11 @@ public final class WallHackModule extends Module {
                         if (e instanceof EntityPlayer) {
                             final EntityPlayer player = (EntityPlayer) e;
                             if (this.ping.getBoolean()) {
-                                final int responseTime = (int) MathUtil.clamp(mc.getConnection().getPlayerInfo(player.getUniqueID()).getResponseTime(), 0, 300);
+                                int responseTime = -1;
+                                try {
+                                    responseTime = (int) MathUtil.clamp(mc.getConnection().getPlayerInfo(player.getUniqueID()).getResponseTime(), 0, 300);
+                                } catch (NullPointerException np) {
+                                }
                                 pingFormatted = responseTime + "ms";
 
                                 float startX = -mc.fontRenderer.getStringWidth(pingFormatted) / 2.0f;
