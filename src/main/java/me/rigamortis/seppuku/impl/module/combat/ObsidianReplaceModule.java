@@ -79,8 +79,6 @@ public final class ObsidianReplaceModule extends Module {
         handleHandSwap(handSwapContext, false, minecraft);
 
         final PlacementRequest placementRequest = placementRequests.poll();
-        assert placementRequest != null;
-
         final BlockPos position = placementRequest.getStructurePosition();
         final double playerToBlockDistance =
                 calculateVecDistance(player.getPositionEyes(1.0f),
