@@ -2,8 +2,9 @@ package me.rigamortis.seppuku.impl.management;
 
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.ignore.Ignored;
-import java.util.ArrayList;
+
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Author Seth
@@ -11,7 +12,7 @@ import java.util.List;
  */
 public final class IgnoredManager {
 
-    private List<Ignored> ignoredList = new ArrayList<>();
+    private List<Ignored> ignoredList = new CopyOnWriteArrayList<>();
 
     public void add(String name) {
         this.ignoredList.add(new Ignored(name));

@@ -14,8 +14,6 @@ import java.io.*;
  */
 public final class HudConfig extends Configurable {
 
-    public static boolean FIRST_HUD_RUN = true;
-
     public HudConfig() {
         super(ConfigManager.CONFIG_PATH + "Hud.cfg");
     }
@@ -35,11 +33,6 @@ public final class HudConfig extends Configurable {
             String line;
             while ((line = reader.readLine()) != null) {
                 final String[] split = line.split(":");
-
-                if (split[0].equals("FIRST_HUD_RUN")) {
-                    FIRST_HUD_RUN = Boolean.valueOf(split[1]);
-                    continue;
-                }
 
                 final HudComponent component = Seppuku.INSTANCE.getHudManager().findComponent(split[0]);
                 if (component != null) {
@@ -86,9 +79,6 @@ public final class HudConfig extends Configurable {
             }
 
             final BufferedWriter writer = new BufferedWriter(new FileWriter(this.getPath()));
-
-            writer.write("FIRST_HUD_RUN" + ":" + FIRST_HUD_RUN);
-            writer.newLine();
 
             if (Seppuku.INSTANCE.getHudManager().getComponentList() != null) {
                 for (HudComponent component : Seppuku.INSTANCE.getHudManager().getComponentList()) {

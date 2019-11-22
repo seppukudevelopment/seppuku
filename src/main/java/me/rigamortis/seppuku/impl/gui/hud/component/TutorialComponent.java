@@ -23,6 +23,7 @@ public final class TutorialComponent extends PopupComponent {
 
         this.setTextData(tutorialData);
 
+        this.setVisible(true);
         this.setSnappable(false);
         this.setW(200);
         this.setH(173);
