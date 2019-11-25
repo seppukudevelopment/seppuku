@@ -70,19 +70,16 @@ public final class ObsidianReplaceModule extends Module {
 
         final Minecraft minecraft = Minecraft.getMinecraft();
         final EntityPlayerSP player = minecraft.player;
-        final int obisidanSlot = findObsidianInHotbar(player);
-        if (obisidanSlot == -1)
+        final HandSwapContext handSwapContext = new HandSwapContext(
+                player.inventory.currentItem, findObsidianInHotbar(player));
+        if (handSwapContext.getNewSlot() == -1)
             return;
 
-        final int currentSlot = player.inventory.currentItem;
-        final HandSwapContext handSwapContext = new HandSwapContext(currentSlot, obisidanSlot);
         handleHandSwap(handSwapContext, false, minecraft);
 
         final PlacementRequest placementRequest = placementRequests.poll();
-        final BlockPos position = placementRequest.getStructurePosition();
-        final double playerToBlockDistance =
-                calculateVecDistance(player.getPositionEyes(1.0f),
-                        position.getX(), position.getY(), position.getZ());
+        final double playerToBlockDistance = calculateVecDistance(
+                player.getPositionEyes(1.0f), placementRequest.getStructurePosition());
         if (playerToBlockDistance <= getReachDistance(minecraft))
             handlePlaceRequest(minecraft, placementRequest);
 
@@ -101,12 +98,11 @@ public final class ObsidianReplaceModule extends Module {
         if (event.getPacket() instanceof SPacketBlockChange) {
             final SPacketBlockChange blockChange = (SPacketBlockChange) event.getPacket();
             if (blockChange.getBlockState().getBlock() instanceof BlockAir) {
-                final BlockPos position = blockChange.getBlockPosition();
-                final double playerToBlockDistance =
-                        calculateVecDistance(minecraft.player.getPositionEyes(1.0f),
-                                position.getX(), position.getY(), position.getZ());
+                final BlockPos blockPosition = blockChange.getBlockPosition();
+                final double playerToBlockDistance = calculateVecDistance(
+                        minecraft.player.getPositionEyes(1.0f), blockPosition);
                 if (playerToBlockDistance <= getReachDistance(minecraft))
-                    buildPlacementRequest(minecraft, position);
+                    buildPlacementRequest(minecraft, blockPosition);
             }
         }
     }
@@ -192,8 +188,7 @@ public final class ObsidianReplaceModule extends Module {
         final EntityPlayerSP player = minecraft.player;
         final BlockPos structurePosition = placementRequest.getStructurePosition();
         final IBlockState structureBlockState = minecraft.world.getBlockState(structurePosition);
-        final Block structureBlock = structureBlockState.getBlock();
-        final boolean blockActivated = structureBlock.onBlockActivated(minecraft.world,
+        final boolean blockActivated = structureBlockState.getBlock().onBlockActivated(minecraft.world,
                 structurePosition, structureBlockState, player, EnumHand.MAIN_HAND,
                 EnumFacing.UP, 0.0f, 0.0f, 0.0f);
         if (blockActivated)
@@ -231,11 +226,10 @@ public final class ObsidianReplaceModule extends Module {
         return minecraft.playerController.getBlockReachDistance();
     }
 
-    private double calculateVecDistance(final Vec3d vec, final int blockX,
-                                        final int blockY, final int blockZ) {
-        final double diffX = blockX - vec.x;
-        final double diffY = blockY - vec.y;
-        final double diffZ = blockZ - vec.z;
+    private double calculateVecDistance(final Vec3d vec, final BlockPos blockPosition) {
+        final double diffX = blockPosition.getX() - vec.x;
+        final double diffY = blockPosition.getY() - vec.y;
+        final double diffZ = blockPosition.getZ() - vec.z;
         return MathHelper.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
     }
 
