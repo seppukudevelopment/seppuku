@@ -22,6 +22,7 @@ public final class HudModule extends Module {
     public HudModule() {
         super("Hud", new String[]{"Overlay"}, "Shows lots of useful info", "NONE", -1, ModuleType.RENDER);
         this.setHidden(true);
+        this.setEnabled(true);
     }
 
     @Listener
