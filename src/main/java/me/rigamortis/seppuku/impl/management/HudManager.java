@@ -1,22 +1,16 @@
 package me.rigamortis.seppuku.impl.management;
 
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.event.EventStageable;
-import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.render.EventRender2D;
 import me.rigamortis.seppuku.api.gui.hud.component.HudComponent;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.notification.Notification;
 import me.rigamortis.seppuku.api.util.ReflectionUtil;
-import me.rigamortis.seppuku.impl.config.HudConfig;
 import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
 import me.rigamortis.seppuku.impl.gui.hud.component.*;
 import me.rigamortis.seppuku.impl.gui.hud.component.module.ModuleListComponent;
-import me.rigamortis.seppuku.impl.module.render.HudModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.network.play.server.SPacketJoinGame;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.io.File;
@@ -122,32 +116,6 @@ public final class HudManager {
             if (point.getPoint() == AnchorPoint.Point.TOP_CENTER) {
                 point.setX(event.getScaledResolution().getScaledWidth() / 2);
                 point.setY(2);
-            }
-        }
-    }
-
-    @Listener
-    public void onReceivePacket(EventReceivePacket event) {
-        if (event.getStage().equals(EventStageable.EventStage.POST)) {
-            if (event.getPacket() instanceof SPacketJoinGame) {
-                if (HudConfig.FIRST_HUD_RUN) {
-                    final Module hudModule = Seppuku.INSTANCE.getModuleManager().find(HudModule.class);
-                    final HudComponent tutorialComponent = this.findComponent(TutorialComponent.class);
-
-                    if (hudModule != null) {
-                        if (!hudModule.isEnabled()) {
-                            hudModule.toggle();
-                        }
-                    }
-
-                    if (tutorialComponent != null) {
-                        tutorialComponent.setVisible(true);
-                    }
-
-                    Seppuku.INSTANCE.getNotificationManager().addNotification("New Hud Editor! .bind HudEditor <key>", "New Hud Editor! .bind HudEditor <key>", Notification.Type.INFO, 20000);
-                    HudConfig.FIRST_HUD_RUN = false;
-                    Seppuku.INSTANCE.getConfigManager().saveAll();
-                }
             }
         }
     }
