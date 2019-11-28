@@ -7,11 +7,13 @@ import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.impl.module.player.FreeCamModule;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.BlockObsidian;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -34,14 +36,14 @@ import java.util.function.BiFunction;
  */
 public final class ObsidianReplaceModule extends Module {
     private static final int[][] BLOCK_DIRECTION_OFFSET = {
+            {1, 0, 0},
+            {-1, 0, 0},
+
             {0, 1, 0},
             {0, -1, 0},
 
-            {0, 0, -1},
             {0, 0, 1},
-
-            {1, 0, 0},
-            {-1, 0, 0}
+            {0, 0, -1},
     };
 
     private final Queue<PlacementRequest> placementRequests = new ConcurrentLinkedQueue<>();
@@ -185,23 +187,22 @@ public final class ObsidianReplaceModule extends Module {
     }
 
     private void handlePlaceRequest(final Minecraft minecraft, final PlacementRequest placementRequest) {
-        final EntityPlayerSP player = minecraft.player;
         final BlockPos structurePosition = placementRequest.getStructurePosition();
         final IBlockState structureBlockState = minecraft.world.getBlockState(structurePosition);
         final boolean blockActivated = structureBlockState.getBlock().onBlockActivated(minecraft.world,
-                structurePosition, structureBlockState, player, EnumHand.MAIN_HAND,
+                structurePosition, structureBlockState, minecraft.player, EnumHand.MAIN_HAND,
                 EnumFacing.UP, 0.0f, 0.0f, 0.0f);
         if (blockActivated)
-            player.connection.sendPacket(new CPacketEntityAction(player,
+            minecraft.player.connection.sendPacket(new CPacketEntityAction(minecraft.player,
                     CPacketEntityAction.Action.START_SNEAKING));
 
-        if (minecraft.playerController.processRightClickBlock(player, minecraft.world,
+        if (minecraft.playerController.processRightClickBlock(minecraft.player, minecraft.world,
                 structurePosition, placementRequest.getPlaceDirection(),
                 Vec3d.ZERO, EnumHand.MAIN_HAND) != EnumActionResult.FAIL)
-            player.swingArm(EnumHand.MAIN_HAND);
+            minecraft.player.swingArm(EnumHand.MAIN_HAND);
 
         if (blockActivated)
-            player.connection.sendPacket(new CPacketEntityAction(player,
+            minecraft.player.connection.sendPacket(new CPacketEntityAction(minecraft.player,
                     CPacketEntityAction.Action.STOP_SNEAKING));
     }
 
@@ -212,7 +213,7 @@ public final class ObsidianReplaceModule extends Module {
         return false;
     }
 
-    private int findObsidianInHotbar(final EntityPlayer player) {
+    private int findObsidianInHotbar(final EntityPlayerSP player) {
         for (int index = 0; InventoryPlayer.isHotbar(index); index++)
             if (isItemStackObsidian(player.inventory.getStackInSlot(index)))
                 return index;
@@ -244,7 +245,7 @@ public final class ObsidianReplaceModule extends Module {
         private final int oldSlot;
         private final int newSlot;
 
-        HandSwapContext(int oldSlot, int newSlot) {
+        HandSwapContext(final int oldSlot, final int newSlot) {
             this.oldSlot = oldSlot;
             this.newSlot = newSlot;
         }
