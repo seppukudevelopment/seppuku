@@ -1,14 +1,10 @@
 package me.rigamortis.seppuku.impl.patch;
 
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.event.EventStageable;
-import me.rigamortis.seppuku.api.event.render.EventRenderLivingEntity;
 import me.rigamortis.seppuku.api.event.render.EventRenderName;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
-import me.rigamortis.seppuku.api.util.ASMUtil;
 import me.rigamortis.seppuku.impl.management.PatchManager;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;

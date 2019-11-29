@@ -4,7 +4,7 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.player.EventPlayerJoin;
 import me.rigamortis.seppuku.api.event.player.EventPlayerLeave;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.OptionalValue;
+import me.rigamortis.seppuku.api.value.old.OptionalValue;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**

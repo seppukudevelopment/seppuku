@@ -4,7 +4,6 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.command.Command;
 import me.rigamortis.seppuku.api.util.StringUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.play.client.CPacketPlayer;
 
 /**
  * Author Seth

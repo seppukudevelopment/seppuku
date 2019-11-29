@@ -4,7 +4,7 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.config.Configurable;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.StringUtil;
-import me.rigamortis.seppuku.api.value.*;
+import me.rigamortis.seppuku.api.value.old.*;
 import me.rigamortis.seppuku.impl.management.ConfigManager;
 
 import java.io.*;

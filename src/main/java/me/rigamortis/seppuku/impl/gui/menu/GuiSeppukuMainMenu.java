@@ -1,6 +1,5 @@
 package me.rigamortis.seppuku.impl.gui.menu;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.minecraft.EventDisplayGui;
 import me.rigamortis.seppuku.impl.fml.SeppukuMod;

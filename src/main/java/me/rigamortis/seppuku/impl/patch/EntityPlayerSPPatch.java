@@ -14,7 +14,6 @@ import org.objectweb.asm.tree.*;
 import team.stiff.pomelo.EventManager;
 
 import static org.objectweb.asm.Opcodes.*;
-import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 
 /**
  * Author Seth

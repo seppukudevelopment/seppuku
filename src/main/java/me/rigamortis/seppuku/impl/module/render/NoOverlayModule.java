@@ -4,7 +4,7 @@ import me.rigamortis.seppuku.api.event.gui.EventRenderHelmet;
 import me.rigamortis.seppuku.api.event.gui.EventRenderPortal;
 import me.rigamortis.seppuku.api.event.render.EventRenderOverlay;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.BooleanValue;
+import me.rigamortis.seppuku.api.value.old.BooleanValue;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**

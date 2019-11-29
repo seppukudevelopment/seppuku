@@ -6,7 +6,7 @@ import me.rigamortis.seppuku.api.event.command.EventCommandLoad;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.ReflectionUtil;
 import me.rigamortis.seppuku.api.util.StringUtil;
-import me.rigamortis.seppuku.api.value.*;
+import me.rigamortis.seppuku.api.value.old.*;
 import me.rigamortis.seppuku.impl.command.*;
 
 import java.io.File;

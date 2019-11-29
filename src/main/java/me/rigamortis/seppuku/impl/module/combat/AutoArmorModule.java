@@ -4,8 +4,8 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.Timer;
-import me.rigamortis.seppuku.api.value.BooleanValue;
-import me.rigamortis.seppuku.api.value.NumberValue;
+import me.rigamortis.seppuku.api.value.old.BooleanValue;
+import me.rigamortis.seppuku.api.value.old.NumberValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -30,53 +30,53 @@ public final class AutoArmorModule extends Module {
     private Timer timer = new Timer();
 
     public AutoArmorModule() {
-        super("AutoArmor", new String[] {"AutoArm", "AutoArmour"}, "Automatically equips armor", "NONE", -1, ModuleType.COMBAT);
+        super("AutoArmor", new String[]{"AutoArm", "AutoArmour"}, "Automatically equips armor", "NONE", -1, ModuleType.COMBAT);
     }
 
     @Listener
     public void onUpdate(EventPlayerUpdate event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             final Minecraft mc = Minecraft.getMinecraft();
-            if(mc.currentScreen instanceof GuiInventory) {
+            if (mc.currentScreen instanceof GuiInventory) {
                 return;
             }
 
             final ItemStack helm = mc.player.inventoryContainer.getSlot(5).getStack();
 
-            if(helm.getItem() == Items.AIR) {
+            if (helm.getItem() == Items.AIR) {
                 final int slot = this.findArmorSlot(EntityEquipmentSlot.HEAD);
 
-                if(slot != -1) {
+                if (slot != -1) {
                     this.clickSlot(slot, 0, ClickType.QUICK_MOVE);
                 }
             }
 
             final ItemStack chest = mc.player.inventoryContainer.getSlot(6).getStack();
 
-            if(chest.getItem() == Items.AIR) {
+            if (chest.getItem() == Items.AIR) {
                 final int slot = this.findArmorSlot(EntityEquipmentSlot.CHEST);
 
-                if(slot != -1) {
+                if (slot != -1) {
                     this.clickSlot(slot, 0, ClickType.QUICK_MOVE);
                 }
             }
 
             final ItemStack legging = mc.player.inventoryContainer.getSlot(7).getStack();
 
-            if(legging.getItem() == Items.AIR) {
+            if (legging.getItem() == Items.AIR) {
                 final int slot = this.findArmorSlot(EntityEquipmentSlot.LEGS);
 
-                if(slot != -1) {
+                if (slot != -1) {
                     this.clickSlot(slot, 0, ClickType.QUICK_MOVE);
                 }
             }
 
             final ItemStack feet = mc.player.inventoryContainer.getSlot(8).getStack();
 
-            if(feet.getItem() == Items.AIR) {
+            if (feet.getItem() == Items.AIR) {
                 final int slot = this.findArmorSlot(EntityEquipmentSlot.FEET);
 
-                if(slot != -1) {
+                if (slot != -1) {
                     this.clickSlot(slot, 0, ClickType.QUICK_MOVE);
                 }
             }
@@ -84,7 +84,7 @@ public final class AutoArmorModule extends Module {
     }
 
     private void clickSlot(int slot, int mouse, ClickType type) {
-        if(this.timer.passed(this.delay.getFloat())) {
+        if (this.timer.passed(this.delay.getFloat())) {
             Minecraft.getMinecraft().playerController.windowClick(Minecraft.getMinecraft().player.inventoryContainer.windowId, slot, mouse, type, Minecraft.getMinecraft().player);
             this.timer.reset();
         }

@@ -5,7 +5,7 @@ import me.rigamortis.seppuku.api.command.Command;
 import me.rigamortis.seppuku.api.event.minecraft.EventKeyPress;
 import me.rigamortis.seppuku.api.event.player.EventSendChatMessage;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.StringValue;
+import me.rigamortis.seppuku.api.value.old.StringValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import org.lwjgl.input.Keyboard;

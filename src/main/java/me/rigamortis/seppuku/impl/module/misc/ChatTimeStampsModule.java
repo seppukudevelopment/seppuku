@@ -3,7 +3,7 @@ package me.rigamortis.seppuku.impl.module.misc;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.OptionalValue;
+import me.rigamortis.seppuku.api.value.old.OptionalValue;
 import net.minecraft.network.play.server.SPacketChat;
 import net.minecraft.util.text.TextComponentString;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;

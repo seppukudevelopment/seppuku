@@ -1,11 +1,8 @@
 package me.rigamortis.seppuku.impl.gui.hud.component;
 
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
-import net.minecraft.init.Items;
-import me.rigamortis.seppuku.impl.module.combat.AutoTotemModule;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 /**

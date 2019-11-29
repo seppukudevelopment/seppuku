@@ -3,7 +3,7 @@ package me.rigamortis.seppuku.impl.module.movement;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.player.EventMove;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.NumberValue;
+import me.rigamortis.seppuku.api.value.old.NumberValue;
 import me.rigamortis.seppuku.impl.module.player.FreeCamModule;
 import net.minecraft.client.Minecraft;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;

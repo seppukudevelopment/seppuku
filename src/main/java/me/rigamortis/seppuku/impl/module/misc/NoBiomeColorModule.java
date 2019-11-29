@@ -6,8 +6,8 @@ import me.rigamortis.seppuku.api.event.world.EventFoliageColor;
 import me.rigamortis.seppuku.api.event.world.EventGrassColor;
 import me.rigamortis.seppuku.api.event.world.EventWaterColor;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.NumberValue;
-import me.rigamortis.seppuku.api.value.OptionalValue;
+import me.rigamortis.seppuku.api.value.old.NumberValue;
+import me.rigamortis.seppuku.api.value.old.OptionalValue;
 import net.minecraft.client.Minecraft;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 

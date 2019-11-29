@@ -4,7 +4,6 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventSendPacket;
 import me.rigamortis.seppuku.api.module.Module;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.play.client.CPacketClickWindow;
 import net.minecraft.network.play.client.CPacketCloseWindow;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 

@@ -3,9 +3,7 @@ package me.rigamortis.seppuku.impl.module.player;
 import me.rigamortis.seppuku.api.event.player.EventApplyCollision;
 import me.rigamortis.seppuku.api.event.player.EventPushOutOfBlocks;
 import me.rigamortis.seppuku.api.event.player.EventPushedByWater;
-import me.rigamortis.seppuku.api.event.world.EventAddCollisionBox;
 import me.rigamortis.seppuku.api.module.Module;
-import net.minecraft.client.Minecraft;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**

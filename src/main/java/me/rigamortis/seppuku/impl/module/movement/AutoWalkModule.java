@@ -1,11 +1,9 @@
 package me.rigamortis.seppuku.impl.module.movement;
 
-import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.KeyBinding;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**

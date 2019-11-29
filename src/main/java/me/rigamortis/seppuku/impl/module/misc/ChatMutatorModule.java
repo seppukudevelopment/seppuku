@@ -4,7 +4,7 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventSendPacket;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.OptionalValue;
+import me.rigamortis.seppuku.api.value.old.OptionalValue;
 import me.rigamortis.seppuku.impl.module.hidden.CommandsModule;
 import net.minecraft.network.play.client.CPacketChatMessage;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;

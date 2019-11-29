@@ -1,11 +1,9 @@
 package me.rigamortis.seppuku.impl.module.player;
 
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
-import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.BooleanValue;
+import me.rigamortis.seppuku.api.value.old.BooleanValue;
 import net.minecraft.client.Minecraft;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 

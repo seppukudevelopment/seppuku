@@ -1,7 +1,6 @@
 package me.rigamortis.seppuku.impl.patch;
 
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.event.render.EventRenderBlockModel;
 import me.rigamortis.seppuku.api.event.render.EventRenderFluid;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
@@ -11,8 +10,6 @@ import org.objectweb.asm.tree.*;
 import team.stiff.pomelo.EventManager;
 
 import static org.objectweb.asm.Opcodes.*;
-import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
-import static org.objectweb.asm.Opcodes.IRETURN;
 
 /**
  * Author Seth

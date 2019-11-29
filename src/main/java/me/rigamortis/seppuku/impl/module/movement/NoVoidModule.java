@@ -1,10 +1,9 @@
 package me.rigamortis.seppuku.impl.module.movement;
 
 import me.rigamortis.seppuku.api.event.EventStageable;
-import me.rigamortis.seppuku.api.event.player.EventMove;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.NumberValue;
+import me.rigamortis.seppuku.api.value.old.NumberValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;

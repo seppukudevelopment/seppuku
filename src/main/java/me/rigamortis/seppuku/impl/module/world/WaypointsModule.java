@@ -6,8 +6,8 @@ import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.api.util.GLUProjection;
 import me.rigamortis.seppuku.api.util.RenderUtil;
-import me.rigamortis.seppuku.api.value.BooleanValue;
-import me.rigamortis.seppuku.api.value.NumberValue;
+import me.rigamortis.seppuku.api.value.old.BooleanValue;
+import me.rigamortis.seppuku.api.value.old.NumberValue;
 import net.minecraft.client.Minecraft;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 

@@ -6,7 +6,7 @@ import me.rigamortis.seppuku.api.event.module.EventModulePostLoaded;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.ReflectionUtil;
 import me.rigamortis.seppuku.api.util.StringUtil;
-import me.rigamortis.seppuku.api.value.Value;
+import me.rigamortis.seppuku.api.value.old.Value;
 import me.rigamortis.seppuku.impl.module.combat.*;
 import me.rigamortis.seppuku.impl.module.hidden.CommandsModule;
 import me.rigamortis.seppuku.impl.module.hidden.IgnoreModule;

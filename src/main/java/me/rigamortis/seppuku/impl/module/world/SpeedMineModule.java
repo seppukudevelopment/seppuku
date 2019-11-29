@@ -1,10 +1,13 @@
 package me.rigamortis.seppuku.impl.module.world;
 
 import me.rigamortis.seppuku.api.event.EventStageable;
-import me.rigamortis.seppuku.api.event.player.*;
+import me.rigamortis.seppuku.api.event.player.EventClickBlock;
+import me.rigamortis.seppuku.api.event.player.EventPlayerDamageBlock;
+import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
+import me.rigamortis.seppuku.api.event.player.EventResetBlockRemoving;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.BooleanValue;
-import me.rigamortis.seppuku.api.value.OptionalValue;
+import me.rigamortis.seppuku.api.value.old.BooleanValue;
+import me.rigamortis.seppuku.api.value.old.OptionalValue;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;

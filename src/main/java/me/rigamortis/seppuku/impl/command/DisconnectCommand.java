@@ -4,7 +4,6 @@ import me.rigamortis.seppuku.api.command.Command;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiMultiplayer;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.realms.RealmsBridge;
 
 /**

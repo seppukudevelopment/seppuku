@@ -1,10 +1,10 @@
 package me.rigamortis.seppuku.impl.module.render;
 
-import me.rigamortis.seppuku.api.module.Module;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.Minecraft;
-import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
+import me.rigamortis.seppuku.api.module.Module;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemRenderer;
+import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
  * Author fsck

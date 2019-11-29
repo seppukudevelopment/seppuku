@@ -5,7 +5,7 @@ import me.rigamortis.seppuku.api.event.gui.EventRenderPotions;
 import me.rigamortis.seppuku.api.event.render.EventRender2D;
 import me.rigamortis.seppuku.api.gui.hud.component.HudComponent;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.BooleanValue;
+import me.rigamortis.seppuku.api.value.old.BooleanValue;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;

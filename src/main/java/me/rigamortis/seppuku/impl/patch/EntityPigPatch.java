@@ -7,9 +7,6 @@ import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
 import me.rigamortis.seppuku.api.util.ASMUtil;
 import me.rigamortis.seppuku.impl.management.PatchManager;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.EntityPig;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 

@@ -9,7 +9,7 @@ import me.rigamortis.seppuku.api.event.render.EventRender2D;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.GLUProjection;
-import me.rigamortis.seppuku.api.value.NumberValue;
+import me.rigamortis.seppuku.api.value.old.NumberValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;

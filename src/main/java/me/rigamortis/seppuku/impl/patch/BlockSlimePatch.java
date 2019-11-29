@@ -9,9 +9,7 @@ import me.rigamortis.seppuku.impl.management.PatchManager;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
-import static org.objectweb.asm.Opcodes.IFEQ;
-import static org.objectweb.asm.Opcodes.INVOKESTATIC;
-import static org.objectweb.asm.Opcodes.RETURN;
+import static org.objectweb.asm.Opcodes.*;
 
 /**
  * Author Seth

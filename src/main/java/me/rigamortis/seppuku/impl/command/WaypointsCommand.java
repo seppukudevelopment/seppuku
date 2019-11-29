@@ -2,7 +2,6 @@ package me.rigamortis.seppuku.impl.command;
 
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.command.Command;
-import me.rigamortis.seppuku.api.macro.Macro;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.StringUtil;
 import me.rigamortis.seppuku.impl.module.world.WaypointsModule;

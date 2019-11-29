@@ -2,11 +2,9 @@ package me.rigamortis.seppuku.impl.module.render;
 
 import me.rigamortis.seppuku.api.event.render.EventRenderBlockModel;
 import me.rigamortis.seppuku.api.event.render.EventRenderBlockSide;
-import me.rigamortis.seppuku.api.event.render.EventRenderFluid;
 import me.rigamortis.seppuku.api.event.world.EventSetOpaqueCube;
 import me.rigamortis.seppuku.api.module.Module;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.Minecraft;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 

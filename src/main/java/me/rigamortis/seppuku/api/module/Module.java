@@ -1,7 +1,7 @@
 package me.rigamortis.seppuku.api.module;
 
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.value.*;
+import me.rigamortis.seppuku.api.value.old.*;
 
 import java.util.ArrayList;
 import java.util.List;

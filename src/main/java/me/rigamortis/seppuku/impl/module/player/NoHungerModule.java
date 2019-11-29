@@ -8,7 +8,8 @@ import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.network.play.client.CPacketPlayer;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
-import static net.minecraft.network.play.client.CPacketEntityAction.Action.*;
+import static net.minecraft.network.play.client.CPacketEntityAction.Action.START_SPRINTING;
+import static net.minecraft.network.play.client.CPacketEntityAction.Action.STOP_SPRINTING;
 
 /**
  * Author Seth

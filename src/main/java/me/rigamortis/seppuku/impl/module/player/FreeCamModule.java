@@ -11,8 +11,8 @@ import me.rigamortis.seppuku.api.event.world.EventLiquidCollisionBB;
 import me.rigamortis.seppuku.api.event.world.EventSetOpaqueCube;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.MathUtil;
-import me.rigamortis.seppuku.api.value.BooleanValue;
-import me.rigamortis.seppuku.api.value.NumberValue;
+import me.rigamortis.seppuku.api.value.old.BooleanValue;
+import me.rigamortis.seppuku.api.value.old.NumberValue;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
@@ -21,7 +21,6 @@ import net.minecraft.network.play.client.*;
 import net.minecraft.network.play.server.SPacketPlayerPosLook;
 import net.minecraft.network.play.server.SPacketSetPassengers;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.GameType;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**

@@ -2,40 +2,100 @@ package me.rigamortis.seppuku.api.value;
 
 /**
  * Author Seth
- * 4/17/2019 @ 5:58 AM.
+ * 11/18/2019 @ 8:56 PM.
  */
 public class Value<T> {
 
-    private String displayName;
+    private String name;
     private String[] alias;
+    private String desc;
+
     private T value;
-    private T type;
 
-    private Value parent;
+    private T min;
+    private T max;
+    private T inc;
 
-    public Value() {
-
+    public Value(String name, String[] alias, String desc) {
+        this.name = name;
+        this.alias = alias;
+        this.desc = desc;
     }
 
-    public Value(String displayName, String[] alias, T value) {
-        this.displayName = displayName;
+    public Value(String name, String[] alias, String desc, T value) {
+        this.name = name;
         this.alias = alias;
+        this.desc = desc;
         this.value = value;
     }
 
-    public Value(String displayName, String[] alias, T value, T type) {
-        this.displayName = displayName;
+    public Value(String name, String[] alias, String desc, T value, T min, T max, T inc) {
+        this.name = name;
         this.alias = alias;
+        this.desc = desc;
         this.value = value;
-        this.type = type;
+        this.min = min;
+        this.max = max;
+        this.inc = inc;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public <T> T clamp(T value, T min, T max) {
+        return ((Comparable) value).compareTo(min) < 0 ? min : (((Comparable) value).compareTo(max) > 0 ? max : value);
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public T getValue() {
+        return this.value;
+    }
+
+    public void setValue(T value) {
+        if (min != null && max != null) {
+            final Number val = (Number) value;
+            final Number min = (Number) this.min;
+            final Number max = (Number) this.max;
+            this.value = (T) this.clamp(val, min, max);
+        } else {
+            this.value = value;
+        }
+    }
+
+    public void setEnumValue(String value) {
+        for (Enum e : ((Enum) this.value).getClass().getEnumConstants()) {
+            if (e.name().equalsIgnoreCase(value)) {
+                this.value = (T) e;
+            }
+        }
+    }
+
+    public T getMin() {
+        return min;
+    }
+
+    public void setMin(T min) {
+        this.min = min;
+    }
+
+    public T getMax() {
+        return max;
+    }
+
+    public void setMax(T max) {
+        this.max = max;
+    }
+
+    public T getInc() {
+        return inc;
+    }
+
+    public void setInc(T inc) {
+        this.inc = inc;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String[] getAlias() {
@@ -46,27 +106,12 @@ public class Value<T> {
         this.alias = alias;
     }
 
-    public T getValue() {
-        return value;
+    public String getDesc() {
+        return desc;
     }
 
-    public void setValue(T value) {
-        this.value = value;
-    }
-
-    public T getType() {
-        return type;
-    }
-
-    public void setType(T type) {
-        this.type = type;
-    }
-
-    public Value getParent() {
-        return parent;
-    }
-
-    public void setParent(Value parent) {
-        this.parent = parent;
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 }
+

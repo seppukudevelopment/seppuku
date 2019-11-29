@@ -1,9 +1,9 @@
 package me.rigamortis.seppuku.impl.patch;
 
 import me.rigamortis.seppuku.Seppuku;
+import me.rigamortis.seppuku.api.event.render.EventRenderBlockSide;
 import me.rigamortis.seppuku.api.event.world.EventAddCollisionBox;
 import me.rigamortis.seppuku.api.event.world.EventGetBlockLayer;
-import me.rigamortis.seppuku.api.event.render.EventRenderBlockSide;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
 import me.rigamortis.seppuku.impl.management.PatchManager;
