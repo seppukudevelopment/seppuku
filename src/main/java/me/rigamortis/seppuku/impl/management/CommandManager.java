@@ -198,7 +198,7 @@ public final class CommandManager {
                             }
 
                             if (v.getValue() instanceof Enum) {
-                                if (!this.clamp(input, 3, 3)) {
+                                if (!this.clamp(input, 3, 3) || split[2].matches("-?\\d+(\\.\\d+)?")) { // is a number?
                                     this.printUsage();
                                     return;
                                 }
@@ -206,7 +206,7 @@ public final class CommandManager {
                                 final int op = v.getEnum(split[2]);
 
                                 if (op != -1) {
-                                    v.setValue(op);
+                                    v.setEnumValue(split[2]);
                                     Seppuku.INSTANCE.logChat(module.getDisplayName() + " \247c" + v.getName() + "\247f set to " + ((Enum) v.getValue()).name());
                                     Seppuku.INSTANCE.getConfigManager().saveAll();
                                 } else if (StringUtil.isInt(split[2])) {
@@ -243,7 +243,7 @@ public final class CommandManager {
                                         Seppuku.INSTANCE.getConfigManager().saveAll();
                                     }
                                 } else {
-                                    Seppuku.INSTANCE.errorChat("Invalid input " + "\"" + split[2] + "\" expected a number");
+                                    Seppuku.INSTANCE.errorChat("Invalid input " + "\"" + split[2] + "\" expected a string");
                                 }
                             }
                         } else {

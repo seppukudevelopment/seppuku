@@ -22,7 +22,7 @@ public final class ValueConfig extends Configurable {
     @Override
     public void load() {
         try {
-            for(Module mod : Seppuku.INSTANCE.getModuleManager().getModuleList()) {
+            for (Module mod : Seppuku.INSTANCE.getModuleManager().getModuleList()) {
                 final File file = new File(this.getPath() + mod.getDisplayName() + ".cfg");
 
                 if (!file.exists()) {
@@ -64,8 +64,8 @@ public final class ValueConfig extends Configurable {
                         }
 
                         if (v.getValue() instanceof Enum) {
-                            if (StringUtil.isInt(split[1])) {
-                                v.setValue(Integer.parseInt(split[1]));
+                            if (split.length > 1) {
+                                v.setEnumValue(split[1]);
                             }
                         }
 
@@ -87,10 +87,10 @@ public final class ValueConfig extends Configurable {
     @Override
     public void save() {
         try {
-            for(Module mod : Seppuku.INSTANCE.getModuleManager().getModuleList()) {
+            for (Module mod : Seppuku.INSTANCE.getModuleManager().getModuleList()) {
                 final File file = new File(this.getPath() + mod.getDisplayName() + ".cfg");
 
-                if(!file.exists()) {
+                if (!file.exists()) {
                     file.getParentFile().mkdirs();
                     file.createNewFile();
                 }

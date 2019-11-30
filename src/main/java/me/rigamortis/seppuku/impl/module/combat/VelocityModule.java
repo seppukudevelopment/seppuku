@@ -1,5 +1,6 @@
 package me.rigamortis.seppuku.impl.module.combat;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.module.Module;
@@ -21,6 +22,11 @@ public final class VelocityModule extends Module {
 
     public VelocityModule() {
         super("Velocity", new String[]{"Vel", "AntiVelocity", "Knockback", "AntiKnockback"}, "Modify the velocity you take", "NONE", -1, ModuleType.COMBAT);
+    }
+
+    @Override
+    public String getMetaData() {
+        return String.format("H:%s%%" + ChatFormatting.GRAY + "|" + ChatFormatting.RESET + "V:%s%%", this.horizontal_vel.getValue(), this.vertical_vel.getValue());
     }
 
     @Listener
