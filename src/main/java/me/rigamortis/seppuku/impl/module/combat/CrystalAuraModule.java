@@ -10,8 +10,7 @@ import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.util.Timer;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
+import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.module.player.GodModeModule;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -43,14 +42,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public final class CrystalAuraModule extends Module {
 
-    public final NumberValue range = new NumberValue("Range", new String[]{"Dist"}, 4.5f, Float.class, 0.0f, 5.0f, 0.1f);
-    public final NumberValue delay = new NumberValue("Attack_Delay", new String[]{"AttackDelay", "AttackDel", "Del"}, 50.0f, Float.class, 0.0f, 1000.0f, 1.0f);
-    public final BooleanValue place = new BooleanValue("Place", new String[]{"AutoPlace"}, true);
-    public final NumberValue placeDelay = new NumberValue("Place_Delay", new String[]{"PlaceDelay", "PlaceDel"}, 50.0f, Float.class, 0.0f, 1000.0f, 1.0f);
-    public final NumberValue minDamage = new NumberValue("Min_Damage", new String[]{"MinDamage", "Min", "MinDmg"}, 1.0f, Float.class, 0.0f, 20.0f, 0.5f);
-    public final BooleanValue ignore = new BooleanValue("Ignore", new String[]{"Ig"}, false);
-    public final BooleanValue render = new BooleanValue("Render", new String[]{"R"}, true);
-    public final BooleanValue renderDamage = new BooleanValue("Render_Damage", new String[]{"RD", "RenderDamage", "ShowDamage"}, true);
+    public final Value<Float> range = new Value("Range", new String[]{"Dist"}, "The minimum range to attack crystals.", 4.5f, 0.0f, 5.0f, 0.1f);
+    public final Value<Float> delay = new Value("Attack_Delay", new String[]{"AttackDelay", "AttackDel", "Del"}, "The delay to attack in milliseconds.", 50.0f, 0.0f, 1000.0f, 1.0f);
+    public final Value<Boolean> place = new Value("Place", new String[]{"AutoPlace"}, "Automatically place crystals.", true);
+    public final Value<Float> placeDelay = new Value("Place_Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay to place crystals.", 50.0f, 0.0f, 1000.0f, 1.0f);
+    public final Value<Float> minDamage = new Value("Min_Damage", new String[]{"MinDamage", "Min", "MinDmg"}, "The minimum explosion damage calculated to place down a crystal.", 1.0f, 0.0f, 20.0f, 0.5f);
+    public final Value<Boolean> ignore = new Value("Ignore", new String[]{"Ig"}, "Ignore self damage checks.", false);
+    public final Value<Boolean> render = new Value("Render", new String[]{"R"}, "Draws information about recently placed crystals from your player.", true);
+    public final Value<Boolean> renderDamage = new Value("Render_Damage", new String[]{"RD", "RenderDamage", "ShowDamage"}, "Draws calculated explosion damage on recently placed crystals from your player.", true);
 
     private Timer attackTimer = new Timer();
     private Timer placeTimer = new Timer();
@@ -70,9 +69,9 @@ public final class CrystalAuraModule extends Module {
                 return;
             }
 
-            if (this.place.getBoolean()) {
-                if (this.placeTimer.passed(this.placeDelay.getFloat())) {
-                    final float radius = this.range.getFloat();
+            if (this.place.getValue()) {
+                if (this.placeTimer.passed(this.placeDelay.getValue())) {
+                    final float radius = this.range.getValue();
 
                     float damage = 0;
                     double maxDist = 6.0f;
@@ -108,7 +107,7 @@ public final class CrystalAuraModule extends Module {
                                             localDamage = -1;
                                         }
 
-                                        if (currentDamage > damage && currentDamage >= this.minDamage.getFloat() && localDamage <= currentDamage) {
+                                        if (currentDamage > damage && currentDamage >= this.minDamage.getValue() && localDamage <= currentDamage) {
                                             damage = currentDamage;
                                             pos = blockPos;
                                         }
@@ -131,7 +130,7 @@ public final class CrystalAuraModule extends Module {
 
             for (Entity entity : mc.world.loadedEntityList) {
                 if (entity != null && entity instanceof EntityEnderCrystal) {
-                    if (mc.player.getDistance(entity) <= this.range.getFloat()) {
+                    if (mc.player.getDistance(entity) <= this.range.getValue()) {
                         for (Entity ent : mc.world.loadedEntityList) {
                             if (ent != null && ent != mc.player && (ent.getDistance(entity) <= 14.0f) && ent != entity && ent instanceof EntityPlayer) {
                                 final EntityPlayer player = (EntityPlayer) ent;
@@ -142,10 +141,10 @@ public final class CrystalAuraModule extends Module {
                                     localDamage = -1;
                                 }
 
-                                if (localDamage <= currentDamage && currentDamage >= this.minDamage.getFloat()) {
+                                if (localDamage <= currentDamage && currentDamage >= this.minDamage.getValue()) {
                                     final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), entity.getPositionVector());
                                     Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
-                                    if (this.attackTimer.passed(this.delay.getFloat())) {
+                                    if (this.attackTimer.passed(this.delay.getValue())) {
                                         mc.player.swingArm(EnumHand.MAIN_HAND);
                                         mc.playerController.attackEntity(mc.player, entity);
                                         this.attackTimer.reset();
@@ -177,7 +176,7 @@ public final class CrystalAuraModule extends Module {
 
     @Listener
     public void onRender(EventRender3D event) {
-        if (!this.render.getBoolean())
+        if (!this.render.getValue())
             return;
 
         final Minecraft mc = Minecraft.getMinecraft();
@@ -202,7 +201,7 @@ public final class CrystalAuraModule extends Module {
                 RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(0xAA9900EE, placeLocation.alpha / 2));
                 RenderUtil.drawBoundingBox(bb, 1, ColorUtil.changeAlpha(0xAAAAAAAA, placeLocation.alpha));
 
-                if (this.renderDamage.getBoolean()) {
+                if (this.renderDamage.getValue()) {
                     GlStateManager.pushMatrix();
                     RenderUtil.glBillboardDistanceScaled((float) placeLocation.getX() + 0.5f, (float) placeLocation.getY() + 0.5f, (float) placeLocation.getZ() + 0.5f, mc.player, 1);
                     final float damage = placeLocation.damage;
@@ -229,7 +228,7 @@ public final class CrystalAuraModule extends Module {
             return false;
         }
 
-        if (this.ignore.getBoolean()) {
+        if (this.ignore.getValue()) {
             return false;
         }
 
@@ -247,7 +246,7 @@ public final class CrystalAuraModule extends Module {
 
             if (floor == Blocks.AIR && ceil == Blocks.AIR) {
                 if (mc.world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos.add(0, 1, 0))).isEmpty()) {
-                    if (mc.player.getDistance(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f) <= this.range.getFloat()) {
+                    if (mc.player.getDistance(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f) <= this.range.getValue()) {
                         return true;
                     }
                 }

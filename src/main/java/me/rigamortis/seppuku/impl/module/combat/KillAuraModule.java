@@ -5,8 +5,7 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.MathUtil;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -32,16 +31,16 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class KillAuraModule extends Module {
 
-    public final BooleanValue players = new BooleanValue("Players", new String[]{"Player"}, true);
-    public final BooleanValue mobs = new BooleanValue("Mobs", new String[]{"Mob"}, true);
-    public final BooleanValue animals = new BooleanValue("Animals", new String[]{"Animal"}, true);
-    public final BooleanValue vehicles = new BooleanValue("Vehicles", new String[]{"Vehic", "Vehicle"}, true);
-    public final BooleanValue projectiles = new BooleanValue("Projectile", new String[]{"Proj"}, true);
+    public final Value<Boolean> players = new Value("Players", new String[]{"Player"}, "Choose to target players.", true);
+    public final Value<Boolean> mobs = new Value("Mobs", new String[]{"Mob"}, "Choose to target mobs.", true);
+    public final Value<Boolean> animals = new Value("Animals", new String[]{"Animal"}, "Choose to target animals.", true);
+    public final Value<Boolean> vehicles = new Value("Vehicles", new String[]{"Vehic", "Vehicle"}, "Choose to target vehicles.", true);
+    public final Value<Boolean> projectiles = new Value("Projectile", new String[]{"Proj"}, "Choose to target projectiles", true);
 
-    public final NumberValue range = new NumberValue("Range", new String[]{"Dist"}, 4.5f, Float.class, 0.0f, 5.0f, 0.1f);
-    public final BooleanValue coolDown = new BooleanValue("CoolDown", new String[]{"CoolD"}, true);
-    public final BooleanValue sync = new BooleanValue("Sync", new String[]{"snc"}, true);
-    public final BooleanValue teleport = new BooleanValue("Teleport", new String[]{"tp"}, false);
+    public final Value<Float> range = new Value<>("Range", new String[]{"Dist"}, "The minimum range to attack.", 4.5f, 0.0f, 5.0f, 0.1f);
+    public final Value<Boolean> coolDown = new Value("CoolDown", new String[]{"CoolD"}, "Delay your hits to gain damage.", true);
+    public final Value<Boolean> sync = new Value("Sync", new String[]{"snc"}, "Sync your hits with the server's estimated TPS.", true);
+    public final Value<Boolean> teleport = new Value("Teleport", new String[]{"tp"}, "Teleports to your target(Only works on vanilla).", false);
 
     public KillAuraModule() {
         super("KillAura", new String[]{"Aura"}, "Automatically aims and attacks enemies", "NONE", -1, ModuleType.COMBAT);
@@ -60,12 +59,12 @@ public final class KillAuraModule extends Module {
 
                 final float ticks = 20.0f - Seppuku.INSTANCE.getTickRateManager().getTickRate();
 
-                final boolean canAttack = this.coolDown.getBoolean() ? (mc.player.getCooledAttackStrength(this.sync.getBoolean() ? -ticks : 0.0f) >= 1) : true;
+                final boolean canAttack = this.coolDown.getValue() ? (mc.player.getCooledAttackStrength(this.sync.getValue() ? -ticks : 0.0f) >= 1) : true;
 
                 final ItemStack stack = mc.player.getHeldItem(EnumHand.OFF_HAND);
 
                 //TODO interp
-                if(this.teleport.getBoolean()) {
+                if(this.teleport.getValue()) {
                     Seppuku.INSTANCE.getPositionManager().setPlayerPosition(target.posX, target.posY, target.posZ);
                 }
 
@@ -87,7 +86,7 @@ public final class KillAuraModule extends Module {
 
         final Minecraft mc = Minecraft.getMinecraft();
 
-        float maxDist = this.range.getFloat();
+        float maxDist = this.range.getValue();
 
         for (Entity e : mc.world.loadedEntityList) {
             if (e != null) {
@@ -108,23 +107,23 @@ public final class KillAuraModule extends Module {
     private boolean checkFilter(Entity entity) {
         boolean ret = false;
 
-        if (this.players.getBoolean() && entity instanceof EntityPlayer && entity != Minecraft.getMinecraft().player && Seppuku.INSTANCE.getFriendManager().isFriend(entity) == null && !entity.getName().equals(Minecraft.getMinecraft().player.getName())) {
+        if (this.players.getValue() && entity instanceof EntityPlayer && entity != Minecraft.getMinecraft().player && Seppuku.INSTANCE.getFriendManager().isFriend(entity) == null && !entity.getName().equals(Minecraft.getMinecraft().player.getName())) {
             ret = true;
         }
 
-        if (this.mobs.getBoolean() && entity instanceof IMob) {
+        if (this.mobs.getValue() && entity instanceof IMob) {
             ret = true;
         }
 
-        if (this.animals.getBoolean() && entity instanceof IAnimals && !(entity instanceof IMob)) {
+        if (this.animals.getValue() && entity instanceof IAnimals && !(entity instanceof IMob)) {
             ret = true;
         }
 
-        if (this.vehicles.getBoolean() && (entity instanceof EntityBoat || entity instanceof EntityMinecart || entity instanceof EntityMinecartContainer)) {
+        if (this.vehicles.getValue() && (entity instanceof EntityBoat || entity instanceof EntityMinecart || entity instanceof EntityMinecartContainer)) {
             ret = true;
         }
 
-        if(this.projectiles.getBoolean() && (entity instanceof EntityShulkerBullet || entity instanceof EntityFireball)) {
+        if(this.projectiles.getValue() && (entity instanceof EntityShulkerBullet || entity instanceof EntityFireball)) {
             ret = true;
         }
 
