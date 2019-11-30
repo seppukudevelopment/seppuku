@@ -1,7 +1,7 @@
 package me.rigamortis.seppuku.api.module;
 
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.value.old.*;
+import me.rigamortis.seppuku.api.value.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,29 +89,32 @@ public class Module {
         final StringBuilder sb = new StringBuilder();
 
         for(Value v : this.getValueList()) {
-            if(v instanceof BooleanValue) {
-                sb.append(v.getDisplayName() + "\n");
+            if (v.getValue() instanceof Boolean) {
+                sb.append(v.getName() + "\n");
             }
-            if(v instanceof NumberValue && !(v instanceof OptionalValue)) {
-                sb.append(v.getDisplayName() + " <Amount>\n");
+
+            if (v.getValue() instanceof Number && !(v.getValue() instanceof Enum)) {
+                sb.append(v.getName() + " <Amount>\n");
             }
-            if(v instanceof StringValue) {
-                sb.append(v.getDisplayName() + " <String>\n");
+
+            if (v.getValue() instanceof String) {
+                sb.append(v.getName() + " <String>\n");
             }
-            if(v instanceof OptionalValue) {
-                final OptionalValue val = (OptionalValue) v;
+
+            if (v.getValue() instanceof Enum) {
+                final Enum val = (Enum) v.getValue();
 
                 final StringBuilder options = new StringBuilder();
 
-                final int size = val.getOptions().length;
+                final int size = val.getClass().getEnumConstants().length;
 
-                for(int i = 0; i < val.getOptions().length; i++) {
-                    final String option = val.getOptions()[i];
+                for (int i = 0; i < size; i++) {
+                    final Enum option = val.getClass().getEnumConstants()[i];
 
-                    options.append(option + ((i == size - 1) ? "" : "|"));
+                    options.append(option.name() + ((i == size - 1) ? "" : " | "));
                 }
 
-                sb.append(v.getDisplayName() + " <" + options.toString() + ">\n");
+                sb.append(v.getName() + " <" + options.toString() + ">\n");
             }
         }
 
@@ -122,12 +125,13 @@ public class Module {
 
     public Value find(String alias) {
         for(Value v : this.getValueList()) {
-            for(String s : v.getAlias()) {
-                if(alias.equalsIgnoreCase(s)) {
+            for (String s : v.getAlias()) {
+                if (alias.equalsIgnoreCase(s)) {
                     return v;
                 }
             }
-            if(v.getDisplayName().equalsIgnoreCase(alias)) {
+
+            if (v.getName().equalsIgnoreCase(alias)) {
                 return v;
             }
         }
