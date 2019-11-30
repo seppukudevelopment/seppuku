@@ -4,7 +4,7 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventSendPacket;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.network.play.client.CPacketEntityAction;
@@ -17,7 +17,11 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class SneakModule extends Module {
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"Vanilla", "NCP"});
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The sneak mode to use.", Mode.VANILLA);
+
+    private enum Mode {
+        VANILLA, NCP
+    }
 
     public SneakModule() {
         super("Sneak", new String[]{"Sneek"}, "Allows you to sneak at full speed", "NONE", -1, ModuleType.MOVEMENT);
@@ -33,20 +37,20 @@ public final class SneakModule extends Module {
 
     @Override
     public String getMetaData() {
-        return this.mode.getSelectedOption();
+        return this.mode.getValue().name();
     }
 
     @Listener
     public void onWalkingUpdate(EventUpdateWalkingPlayer event) {
         final Minecraft mc = Minecraft.getMinecraft();
         if (event.getStage() == EventStageable.EventStage.PRE) {
-            switch (this.mode.getInt()) {
-                case 0:
+            switch (this.mode.getValue()) {
+                case VANILLA:
                     mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
                     break;
-                case 1:
+                case NCP:
                     if (!mc.player.isSneaking()) {
-                        if (isMoving()) {
+                        if (this.isMoving()) {
                             mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
                             mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
                         } else {
@@ -56,8 +60,8 @@ public final class SneakModule extends Module {
                     break;
             }
         } else {
-            if (this.mode.getInt() == 1) {
-                if (isMoving()) {
+            if (this.mode.getValue() == Mode.NCP) {
+                if (this.isMoving()) {
                     mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
                 }
             }

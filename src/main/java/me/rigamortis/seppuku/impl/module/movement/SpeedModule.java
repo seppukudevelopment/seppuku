@@ -6,8 +6,7 @@ import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.MathUtil;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.MobEffects;
@@ -19,16 +18,20 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class SpeedModule extends Module {
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"Vanilla", "Bhop"});
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The speed mode to use.", Mode.VANILLA);
 
-    public final NumberValue speed = new NumberValue("Speed", new String[]{"Spd"}, 0.1f, Float.class, 0.0f, 10.0f, 0.1f);
+    private enum Mode {
+        VANILLA, BHOP
+    }
+
+    public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd"}, "Speed multiplier, higher numbers equal faster motion.", 0.1f, 0.0f, 10.0f, 0.1f);
 
     private int tick;
     private double prevDistance;
     private double movementSpeed;
 
     public SpeedModule() {
-        super("Speed", new String[]{"Spd"}, "Allows you to move faster", "NONE", -1, ModuleType.MOVEMENT);
+        super("Speed", new String[]{"Spd"}, "Allows you to move faster.", "NONE", -1, ModuleType.MOVEMENT);
     }
 
     @Override
@@ -52,7 +55,7 @@ public final class SpeedModule extends Module {
 
     @Override
     public String getMetaData() {
-        return this.mode.getSelectedOption();
+        return this.mode.getValue().name();
     }
 
     private double getDefaultSpeed() {
@@ -74,7 +77,7 @@ public final class SpeedModule extends Module {
 
     @Listener
     public void onMove(EventMove event) {
-        if (this.mode.getInt() == 1) {
+        if (this.mode.getValue() == Mode.BHOP) {
             final Minecraft mc = Minecraft.getMinecraft();
 
             if (MathUtil.round(mc.player.posY - (int) mc.player.posY, 3) == MathUtil.round(0.138D, 3)) {
@@ -110,7 +113,7 @@ public final class SpeedModule extends Module {
     @Listener
     public void onWalkingUpdate(EventUpdateWalkingPlayer event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
-            if (this.mode.getInt() == 1) {
+            if (this.mode.getValue() == Mode.BHOP) {
                 final Minecraft mc = Minecraft.getMinecraft();
                 final double deltaX = (mc.player.posX - mc.player.prevPosX);
                 final double deltaZ = (mc.player.posZ - mc.player.prevPosZ);
@@ -127,7 +130,7 @@ public final class SpeedModule extends Module {
             final Entity riding = mc.player.getRidingEntity();
 
             if (riding != null) {
-                final double[] dir = MathUtil.directionSpeed(speed.getFloat());
+                final double[] dir = MathUtil.directionSpeed(this.speed.getValue());
 
                 if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
                     riding.motionX = dir[0];

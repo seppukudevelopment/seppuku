@@ -11,7 +11,7 @@ import me.rigamortis.seppuku.api.module.Module;
 public final class ToggleCommand extends Command {
 
     public ToggleCommand() {
-        super("Toggle", new String[]{"T", "Tog"}, "Allows you to toggle modules or between two mode options", "Toggle <Module>\nToggle <Module> <Mode> <Option> <Option>");
+        super("Toggle", new String[]{"T", "Tog"}, "Allows you to toggle modules or between two mode options", "Toggle <Module>");
     }
 
     @Override

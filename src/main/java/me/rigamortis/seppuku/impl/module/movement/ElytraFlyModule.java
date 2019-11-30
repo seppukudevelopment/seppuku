@@ -6,9 +6,7 @@ import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.Timer;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -24,14 +22,18 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class ElytraFlyModule extends Module {
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"Vanilla", "Packet", "Bypass"});
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Mode to use for elytra flight.", Mode.VANILLA);
 
-    public final NumberValue<Float> speed = new NumberValue<Float>("Speed", new String[]{"Spd"}, 1.0f, Float.class, 0.0f, 5.0f, 0.01f);
+    private enum Mode {
+        VANILLA, PACKET, BYPASS
+    }
 
-    public final BooleanValue autoStart = new BooleanValue("AutoStart", new String[]{"AutoStart", "start", "autojump"}, true);
-    public final BooleanValue disableInLiquid = new BooleanValue("DisableInLiquid", new String[]{"DisableInWater", "DisableInLava", "disableliquid", "liquidoff", "noliquid"}, true);
-    public final BooleanValue infiniteDurability = new BooleanValue("InfiniteDurability", new String[]{"InfiniteDura", "dura", "inf", "infdura"}, false);
-    public final BooleanValue noKick = new BooleanValue("NoKick", new String[]{"AntiKick", "Kick"}, true);
+    public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd"}, "Speed multiplier for elytra flight, higher values equals more speed.", 1.0f, 0.0f, 5.0f, 0.01f);
+
+    public final Value<Boolean> autoStart = new Value<Boolean>("AutoStart", new String[]{"AutoStart", "start", "autojump"}, "Hold down the jump key to have an easy automated lift off.", true);
+    public final Value<Boolean> disableInLiquid = new Value<Boolean>("DisableInLiquid", new String[]{"DisableInWater", "DisableInLava", "disableliquid", "liquidoff", "noliquid"}, "Disables all elytra flight when the player is in contact wiht liquid.", true);
+    public final Value<Boolean> infiniteDurability = new Value<Boolean>("InfiniteDurability", new String[]{"InfiniteDura", "dura", "inf", "infdura"}, "Enables an old exploit that sends the start elytra-flying packet each tick.", false);
+    public final Value<Boolean> noKick = new Value<Boolean>("NoKick", new String[]{"AntiKick", "Kick"}, "Bypass the server kicking you for flying while in elytra flight (Only works for Packet mode!).", true);
 
     private final Timer timer = new Timer();
 
@@ -63,7 +65,7 @@ public final class ElytraFlyModule extends Module {
         switch (event.getStage()) {
             case PRE:
                 // liquid check
-                if (this.disableInLiquid.getBoolean() && (mc.player.isInWater() || mc.player.isInLava())) {
+                if (this.disableInLiquid.getValue() && (mc.player.isInWater() || mc.player.isInLava())) {
                     if (mc.player.isElytraFlying()) {
                         mc.getConnection().sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
                     }
@@ -71,7 +73,7 @@ public final class ElytraFlyModule extends Module {
                 }
 
                 // automatic jump start
-                if (this.autoStart.getBoolean()) {
+                if (this.autoStart.getValue()) {
                     if (mc.gameSettings.keyBindJump.isKeyDown() && !mc.player.isElytraFlying()) { // jump is held, player is not elytra flying
                         if (mc.player.motionY < 0) { // player motion is falling
                             if (this.timer.passed(250)) { // 250 ms
@@ -87,9 +89,9 @@ public final class ElytraFlyModule extends Module {
 
                 // ensure the player is in the elytra flying state
                 if (mc.player.isElytraFlying()) {
-                    switch (mode.getInt()) {
-                        case 0: // Vanilla
-                            final float speedScaled = this.speed.getFloat() * 0.05f; // 5/100 of original value
+                    switch (this.mode.getValue()) {
+                        case VANILLA:
+                            final float speedScaled = this.speed.getValue() * 0.05f; // 5/100 of original value
 
                             if (mc.gameSettings.keyBindJump.isKeyDown()) {
                                 mc.player.motionY += speedScaled;
@@ -109,18 +111,18 @@ public final class ElytraFlyModule extends Module {
                                 mc.player.motionZ -= Math.cos(rotationYaw) * speedScaled;
                             }
                             break;
-                        case 1: // Packet
+                        case PACKET:
                             this.freezePlayer(mc.player);
                             this.runNoKick(mc.player);
 
-                            final double[] directionSpeedPacket = MathUtil.directionSpeed(this.speed.getFloat());
+                            final double[] directionSpeedPacket = MathUtil.directionSpeed(this.speed.getValue());
 
                             if (mc.player.movementInput.jump) {
-                                mc.player.motionY = this.speed.getFloat();
+                                mc.player.motionY = this.speed.getValue();
                             }
 
                             if (mc.player.movementInput.sneak) {
-                                mc.player.motionY = -this.speed.getFloat();
+                                mc.player.motionY = -this.speed.getValue();
                             }
 
                             if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
@@ -131,7 +133,7 @@ public final class ElytraFlyModule extends Module {
                             mc.getConnection().sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
                             mc.getConnection().sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
                             break;
-                        case 2: // Bypass / 9b9t
+                        case BYPASS: // Bypass / 9b9t
                             if (mc.gameSettings.keyBindJump.isKeyDown()) {
                                 mc.player.motionY = 0.02f;
                             }
@@ -160,12 +162,12 @@ public final class ElytraFlyModule extends Module {
                     }
                 }
 
-                if (this.infiniteDurability.getBoolean()) {
+                if (this.infiniteDurability.getValue()) {
                     mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
                 }
                 break;
             case POST:
-                if (this.infiniteDurability.getBoolean()) {
+                if (this.infiniteDurability.getValue()) {
                     mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
                 }
                 break;
@@ -204,7 +206,7 @@ public final class ElytraFlyModule extends Module {
     }
 
     private void runNoKick(EntityPlayer player) {
-        if (this.noKick.getBoolean() && !player.isElytraFlying()) {
+        if (this.noKick.getValue() && !player.isElytraFlying()) {
             if (player.ticksExisted % 4 == 0) {
                 player.motionY = -0.04f;
             }

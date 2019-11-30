@@ -3,7 +3,7 @@ package me.rigamortis.seppuku.impl.module.movement;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -15,10 +15,10 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class NoVoidModule extends Module {
 
-    public final NumberValue height = new NumberValue("Height", new String[]{"hgt"}, 16, Integer.class, 0, 256, 1);
+    public final Value<Integer> height = new Value<Integer>("Height", new String[]{"hgt"}, "The Y level the player must be at or below to start running ray-traces for void checks.", 16, 0, 256, 1);
 
     public NoVoidModule() {
-        super("NoVoid", new String[] {"AntiVoid"}, "Slows down movement when over the void", "NONE", -1, ModuleType.MOVEMENT);
+        super("NoVoid", new String[]{"AntiVoid"}, "Slows down movement when over the void.", "NONE", -1, ModuleType.MOVEMENT);
     }
 
     @Listener
@@ -26,7 +26,7 @@ public final class NoVoidModule extends Module {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             final Minecraft mc = Minecraft.getMinecraft();
             if(!mc.player.noClip) {
-                if(mc.player.posY <= this.height.getInt()) {
+                if (mc.player.posY <= this.height.getValue()) {
 
                     final RayTraceResult trace = mc.world.rayTraceBlocks(mc.player.getPositionVector(), new Vec3d(mc.player.posX, 0, mc.player.posZ), false, false, false);
 

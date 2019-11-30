@@ -3,8 +3,7 @@ package me.rigamortis.seppuku.impl.module.movement;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -24,10 +23,10 @@ import java.util.List;
 public class PullDownModule extends Module {
     private final List<RayTraceResult> rayTraceResults = new ArrayList<>(8);
     private static final float VELOCITY_MAX = 10.0f;
-    public final BooleanValue jumpDisables =
-            new BooleanValue("JumpDisables", new String[]{"jump"}, true);
-    public final NumberValue<Float> speed =
-            new NumberValue<>("Speed", new String[]{"velocity"}, 4.0f, Float.class,
+    public final Value<Boolean> jumpDisables =
+            new Value<Boolean>("JumpDisables", new String[]{"jump"}, "When enabled, holding the jump key will disable any pulldown events from triggering.", true);
+    public final Value<Float> speed =
+            new Value<Float>("Speed", new String[]{"velocity"}, "Speed multiplier at which the player will be pulled down at.", 4.0f,
                     0f, VELOCITY_MAX, 1f);
 
     public PullDownModule() {
@@ -39,7 +38,7 @@ public class PullDownModule extends Module {
     public void onUpdate(EventPlayerUpdate event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             final Minecraft mc = Minecraft.getMinecraft();
-            if (jumpDisables.getBoolean() && mc.gameSettings.keyBindJump.isKeyDown())
+            if (this.jumpDisables.getValue() && mc.gameSettings.keyBindJump.isKeyDown())
                 return;
 
             if (mc.player.isElytraFlying() || mc.player.capabilities.isFlying ||
@@ -51,7 +50,7 @@ public class PullDownModule extends Module {
                     .subtract(0.0d, 3.0d, 0.0d)).stream()
                     .anyMatch(this::hitsCollidableBlock);
             if (!doesPlayerCollide)
-                mc.player.motionY = -speed.getFloat();
+                mc.player.motionY = -this.speed.getValue();
         }
     }
 

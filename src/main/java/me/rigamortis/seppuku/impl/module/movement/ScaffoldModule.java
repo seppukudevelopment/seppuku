@@ -4,7 +4,7 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.MathUtil;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
@@ -32,16 +32,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public final class ScaffoldModule extends Module {
 
-    public final BooleanValue refill = new BooleanValue("Refill", new String[]{"ref"}, true);
-
-    public final BooleanValue destroy = new BooleanValue("Destroy", new String[]{"Dest"}, false);
+    public final Value<Boolean> refill = new Value<Boolean>("Refill", new String[]{"ref"}, "If the held item is empty or not a block, fill the slot with a block from the inventory when the scaffold is triggered to place.", true);
+    public final Value<Boolean> destroy = new Value<Boolean>("Destroy", new String[]{"Dest"}, "When enabled, after placing the block, forces the player to swing/destroy at the same position.", false);
 
     private int[] blackList = new int[]{145, 130, 12, 252, 54, 146, 122, 13, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 50};
 
     private List<BlockPos> blocks = new CopyOnWriteArrayList<BlockPos>();
 
     public ScaffoldModule() {
-        super("Scaffold", new String[]{"Scaff"}, "Automatically places blocks where you are walking", "NONE", -1, ModuleType.MOVEMENT);
+        super("Scaffold", new String[]{"Scaff"}, "Automatically places blocks where you are walking.", "NONE", -1, ModuleType.MOVEMENT);
     }
 
     @Override
@@ -64,8 +63,7 @@ public final class ScaffoldModule extends Module {
                 return;
             }
 
-            if (this.destroy.getBoolean()) {
-
+            if (this.destroy.getValue()) {
                 double maxDist = 4.5f;
                 BlockPos closest = null;
 
@@ -95,14 +93,14 @@ public final class ScaffoldModule extends Module {
                         final BlockPos pos = new BlockPos(block.x, block.y, block.z);
                         this.placeBlock(pos);
 
-                        if (this.destroy.getBoolean() && this.canBreak(pos)) {
+                        if (this.destroy.getValue() && this.canBreak(pos)) {
                             this.blocks.add(pos);
                         }
                     }
                 } else {
                     final Vec3d block = getFirstBlock(dir);
 
-                    if (this.refill.getBoolean() && block != null) {
+                    if (this.refill.getValue() && block != null) {
                         final int slot = this.findStackHotbar();
                         if (slot != -1) {
                             mc.player.inventory.currentItem = slot;

@@ -3,7 +3,7 @@ package me.rigamortis.seppuku.impl.module.movement;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.material.Material;
@@ -21,11 +21,15 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class StepModule extends Module {
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"One", "Two"});
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The step block-height mode to use.", Mode.ONE);
 
-    private final double[] oneblockPositions = { 0.42D, 0.75D };
+    private enum Mode {
+        ONE, TWO
+    }
 
-    private final double[] twoblockPositions = { 0.4D, 0.75D, 0.5D, 0.41D, 0.83D, 1.16D, 1.41D, 1.57D, 1.58D, 1.42D };
+    private final double[] oneblockPositions = {0.42D, 0.75D};
+
+    private final double[] twoblockPositions = {0.4D, 0.75D, 0.5D, 0.41D, 0.83D, 1.16D, 1.41D, 1.57D, 1.58D, 1.42D};
 
     private double[] selectedPositions = new double[0];
 
@@ -45,11 +49,11 @@ public final class StepModule extends Module {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             final Minecraft mc = Minecraft.getMinecraft();
 
-            switch (this.mode.getInt()) {
-                case 0:
+            switch (this.mode.getValue()) {
+                case ONE:
                     this.selectedPositions = this.oneblockPositions;
                     break;
-                case 1:
+                case TWO:
                     this.selectedPositions = this.twoblockPositions;
                     break;
             }
@@ -64,7 +68,7 @@ public final class StepModule extends Module {
             for (int x = MathHelper.floor(bb.minX); x < MathHelper.floor(bb.maxX + 1.0D); x++) {
                 for (int z = MathHelper.floor(bb.minZ); z < MathHelper.floor(bb.maxZ + 1.0D); z++) {
                     final Block block = mc.world.getBlockState(new BlockPos(x, bb.maxY + 1, z)).getBlock();
-                    if(!(block instanceof BlockAir)) {
+                    if (!(block instanceof BlockAir)) {
                         return;
                     }
                 }
