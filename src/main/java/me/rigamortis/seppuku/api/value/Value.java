@@ -58,6 +58,16 @@ public class Value<T> {
         }
     }
 
+    public int getEnum(String input) {
+        for (int i = 0; i < this.value.getClass().getEnumConstants().length; i++) {
+            final Enum e = (Enum) this.value.getClass().getEnumConstants()[i];
+            if (input.equalsIgnoreCase(e.name())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public void setEnumValue(String value) {
         for (Enum e : ((Enum) this.value).getClass().getEnumConstants()) {
             if (e.name().equalsIgnoreCase(value)) {

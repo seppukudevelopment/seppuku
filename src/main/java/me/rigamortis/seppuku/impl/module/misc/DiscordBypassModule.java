@@ -28,7 +28,7 @@ public class DiscordBypassModule extends Module {
                 final CPacketChatMessage packet = (CPacketChatMessage) event.getPacket();
                 final CommandsModule commands = (CommandsModule) Seppuku.INSTANCE.getModuleManager().find(CommandsModule.class);
                 if (commands != null) {
-                    if (packet.getMessage().startsWith(commands.prefix.getString()) || packet.getMessage().startsWith("/"))
+                    if (packet.getMessage().startsWith(commands.prefix.getValue()) || packet.getMessage().startsWith("/"))
                         return;
                     //Technically the "spawn area" is usually around 23x23 chunks, but jj might've changed it... or perhaps he might not be using the spawn chunks at all.
                     //Just in case he's going to the "anarchy definition" of spawn, I set it to 1k. Better safe than sorry, nobody except jj will notice the extra #.

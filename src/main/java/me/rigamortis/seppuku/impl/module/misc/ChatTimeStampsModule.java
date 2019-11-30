@@ -3,7 +3,7 @@ package me.rigamortis.seppuku.impl.module.misc;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.network.play.server.SPacketChat;
 import net.minecraft.util.text.TextComponentString;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -17,7 +17,12 @@ import java.util.Date;
  */
 public final class ChatTimeStampsModule extends Module {
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"12", "24"});
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Time format, 12 hour or 24 hour.", Mode.TWELVE);
+
+    private enum Mode {
+        TWELVE, TWENTY_FOUR
+    }
+
 
     public ChatTimeStampsModule() {
         super("ChatTimeStamps", new String[]{"ChatStamp", "ChatStamps"}, "Appends a time stamp on chat messages", "NONE", -1, ModuleType.MISC);
@@ -25,7 +30,7 @@ public final class ChatTimeStampsModule extends Module {
 
     @Override
     public String getMetaData() {
-        return this.mode.getSelectedOption();
+        return this.mode.getValue().name();
     }
 
     @Listener
@@ -39,11 +44,11 @@ public final class ChatTimeStampsModule extends Module {
 
                     String date = "";
 
-                    switch (this.mode.getInt()) {
-                        case 0:
+                    switch (this.mode.getValue()) {
+                        case TWELVE:
                             date = new SimpleDateFormat("h:mm a").format(new Date());
                             break;
-                        case 1:
+                        case TWENTY_FOUR:
                             date = new SimpleDateFormat("k:mm").format(new Date());
                             break;
                     }

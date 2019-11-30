@@ -4,7 +4,7 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketChunkData;
@@ -16,16 +16,20 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class ChestAlertModule extends Module {
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"Chat", "Notification", "Both"});
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Change between alert modes.", Mode.CHAT);
+
+    private enum Mode {
+        CHAT, NOTIFICATION, BOTH
+    }
 
     public ChestAlertModule() {
-        super("ChestAlert", new String[] {"ChestAlerts"}, "Alerts you how many chests are in a chunk when it's loaded", "NONE", -1, ModuleType.MISC);
+        super("ChestAlert", new String[]{"ChestAlerts"}, "Alerts you how many chests are in a chunk when it's loaded", "NONE", -1, ModuleType.MISC);
     }
 
     @Listener
     public void recievePacket(EventReceivePacket event) {
-        if(event.getStage() == EventStageable.EventStage.POST) {
-            if(event.getPacket() instanceof SPacketChunkData) {
+        if (event.getStage() == EventStageable.EventStage.POST) {
+            if (event.getPacket() instanceof SPacketChunkData) {
                 final SPacketChunkData packet = (SPacketChunkData) event.getPacket();
 
                 final Minecraft mc = Minecraft.getMinecraft();
@@ -42,10 +46,10 @@ public final class ChestAlertModule extends Module {
 
                 if(count > 0) {
                     final String message = count + " Chests located at X: " + packet.getChunkX() * 16 + " Z: " + packet.getChunkZ() * 16;
-                    if (this.mode.getInt() == 0 || this.mode.getInt() == 2) {
+                    if (this.mode.getValue() == Mode.CHAT || this.mode.getValue() == Mode.BOTH) {
                         Seppuku.INSTANCE.logChat(message);
                     }
-                    if (this.mode.getInt() == 1 || this.mode.getInt() == 2) {
+                    if (this.mode.getValue() == Mode.NOTIFICATION || this.mode.getValue() == Mode.BOTH) {
                         Seppuku.INSTANCE.getNotificationManager().addNotification("", message);
                     }
                 }
