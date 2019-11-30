@@ -5,7 +5,7 @@ import me.rigamortis.seppuku.api.command.Command;
 import me.rigamortis.seppuku.api.event.minecraft.EventKeyPress;
 import me.rigamortis.seppuku.api.event.player.EventSendChatMessage;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.old.StringValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import org.lwjgl.input.Keyboard;
@@ -17,7 +17,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class CommandsModule extends Module {
 
-    public final StringValue prefix = new StringValue("Prefix", new String[]{"prefx", "pfx"}, ".");
+    public final Value<String> prefix = new Value("Prefix", new String[]{"prefx", "pfx"}, "The command prefix.", ".");
 
     public CommandsModule() {
         super("Commands", new String[]{"cmds", "cmd"}, "Allows you to execute client commands", "NONE", -1, ModuleType.HIDDEN);
@@ -27,9 +27,9 @@ public final class CommandsModule extends Module {
 
     @Listener
     public void keyPress(EventKeyPress event) {
-        if(this.prefix.getString().length() == 1) {
+        if(this.prefix.getValue().length() == 1) {
             final char key = Keyboard.getEventCharacter();
-            if(this.prefix.getString().charAt(0) == key) {
+            if(this.prefix.getValue().charAt(0) == key) {
                 Minecraft.getMinecraft().displayGuiScreen(new GuiChat());
             }
         }
@@ -37,8 +37,8 @@ public final class CommandsModule extends Module {
 
     @Listener
     public void sendChatMessage(EventSendChatMessage event) {
-        if (event.getMessage().startsWith(this.prefix.getString())) {
-            final String input = event.getMessage().substring(this.prefix.getString().length());
+        if (event.getMessage().startsWith(this.prefix.getValue())) {
+            final String input = event.getMessage().substring(this.prefix.getValue().length());
             final String[] split = input.split(" ");
 
             final Command command = Seppuku.INSTANCE.getCommandManager().find(split[0]);
@@ -63,7 +63,7 @@ public final class CommandsModule extends Module {
         }
     }
 
-    public StringValue getPrefix() {
+    public Value<String> getPrefix() {
         return prefix;
     }
 }

@@ -5,7 +5,7 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.ignore.Ignored;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.server.SPacketChat;
 import net.minecraft.util.StringUtils;
@@ -21,7 +21,7 @@ import java.util.List;
  */
 public final class AutoIgnoreModule extends Module {
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"Client", "Server", "Both"});
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The auto ignore mode to use.", Mode.CLIENT);
 
     private List<String> blacklist = new ArrayList<>();
 
@@ -31,7 +31,7 @@ public final class AutoIgnoreModule extends Module {
 
     @Override
     public String getMetaData() {
-        return this.mode.getSelectedOption();
+        return this.mode.getValue().name();
     }
 
     public boolean blacklistContains(String message) {
@@ -61,15 +61,15 @@ public final class AutoIgnoreModule extends Module {
                             final String username = split[0].replace("<", "").replace(">", "");
                             final Ignored ignored = Seppuku.INSTANCE.getIgnoredManager().find(username);
                             if (ignored == null && !username.equalsIgnoreCase(Minecraft.getMinecraft().session.getUsername())) {
-                                switch (this.mode.getInt()) {
-                                    case 0:
+                                switch (this.mode.getValue()) {
+                                    case CLIENT:
                                         Seppuku.INSTANCE.getIgnoredManager().add(username);
                                         Seppuku.INSTANCE.logChat("Added \247c" + username + "\247f to your ignore list");
                                         break;
-                                    case 1:
+                                    case SERVER:
                                         Seppuku.INSTANCE.getChatManager().add("/ignore " + username);
                                         break;
-                                    case 2:
+                                    case BOTH:
                                         Seppuku.INSTANCE.getChatManager().add("/ignore " + username);
                                         Seppuku.INSTANCE.getIgnoredManager().add(username);
                                         Seppuku.INSTANCE.logChat("Added \247c" + username + "\247f to your ignore list");
@@ -82,6 +82,10 @@ public final class AutoIgnoreModule extends Module {
                 }
             }
         }
+    }
+
+    private enum Mode {
+        CLIENT, SERVER, BOTH
     }
 
     public List<String> getBlacklist() {

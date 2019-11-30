@@ -4,7 +4,7 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.StringUtil;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.network.play.server.SPacketChat;
 import net.minecraft.util.text.TextComponentString;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -18,9 +18,9 @@ import java.util.List;
  */
 public final class ChatFilterModule extends Module {
 
-    public final BooleanValue unicode = new BooleanValue("Unicode", new String[]{"uc"}, true);
-    public final BooleanValue broadcasts = new BooleanValue("Broadcasts", new String[]{"broad", "bc"}, true);
-    public final BooleanValue spam = new BooleanValue("Spam", new String[]{"sp", "s"}, true);
+    public final Value<Boolean> unicode = new Value("Unicode", new String[]{"uc"}, "Reverts \"Fancy Chat\" characters back into normal ones. ", true);
+    public final Value<Boolean> broadcasts = new Value("Broadcasts", new String[]{"broad", "bc"}, "Prevents displaying chat messages that begin with [SERVER].", true);
+    public final Value<Boolean> spam = new Value("Spam", new String[]{"sp", "s"}, "Attempts to prevent spam by checking recent chat messages for duplicates.", true);
 
     private List<String> cache = new ArrayList<>();
 
@@ -40,13 +40,13 @@ public final class ChatFilterModule extends Module {
             if (event.getPacket() instanceof SPacketChat) {
                 final SPacketChat packet = (SPacketChat) event.getPacket();
 
-                if (this.broadcasts.getBoolean()) {
+                if (this.broadcasts.getValue()) {
                     if (packet.getChatComponent().getFormattedText().startsWith("\2475[SERVER]")) {
                         event.setCanceled(true);
                     }
                 }
 
-                if (this.spam.getBoolean()) {
+                if (this.spam.getValue()) {
                     final String chat = packet.getChatComponent().getUnformattedText();
 
                     if (this.cache.size() > 0) {
@@ -66,7 +66,7 @@ public final class ChatFilterModule extends Module {
                     }
                 }
 
-                if (this.unicode.getBoolean()) {
+                if (this.unicode.getValue()) {
                     if (packet.getChatComponent() instanceof TextComponentString) {
                         final TextComponentString component = (TextComponentString) packet.getChatComponent();
 
