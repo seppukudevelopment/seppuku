@@ -16,8 +16,8 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class VelocityModule extends Module {
 
-    public final Value<Integer> horizontal_vel = new Value("Horizontal_Velocity", new String[]{"Horizontal_Velocity", "HVel", "HV", "HorizontalVel"}, "The horizontal velocity you will take.", 0, 0, 100, 1);
-    public final Value<Integer> vertical_vel = new Value("Vertical_Velocity", new String[]{"Vertical_Velocity", "VVel", "VV", "VerticalVel"}, "The vertical velocity you will take.", 0, 0, 100, 1);
+    public final Value<Integer> horizontal_vel = new Value("Horizontal_Velocity", new String[]{"Horizontal_Velocity", "HVel", "HV", "HorizontalVel", "Horizontal", "H"}, "The horizontal velocity you will take.", 0, 0, 100, 1);
+    public final Value<Integer> vertical_vel = new Value("Vertical_Velocity", new String[]{"Vertical_Velocity", "VVel", "VV", "VerticalVel", "Vertical", "Vert", "V"}, "The vertical velocity you will take.", 0, 0, 100, 1);
     public final Value<Boolean> explosions = new Value("Explosions", new String[]{"Explosions", "Explosion", "EXP", "EX", "Expl"}, "Apply velocity modifier on explosion velocity.", true);
 
     public VelocityModule() {
