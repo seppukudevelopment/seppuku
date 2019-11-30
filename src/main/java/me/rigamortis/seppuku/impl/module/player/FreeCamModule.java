@@ -11,8 +11,7 @@ import me.rigamortis.seppuku.api.event.world.EventLiquidCollisionBB;
 import me.rigamortis.seppuku.api.event.world.EventSetOpaqueCube;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.MathUtil;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
@@ -35,11 +34,11 @@ public final class FreeCamModule extends Module {
     private float yaw;
     private float pitch;
 
-    public final NumberValue speed = new NumberValue("Speed", new String[]{"Spd"}, 0.1f, Float.class, 0.0f, 10.0f, 0.1f);
+    public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd"}, "Speed of free-cam flight, higher number equals quicker motion.", 1.0f, 0.0f, 10.0f, 0.1f);
 
-    public final BooleanValue view = new BooleanValue("3D", new String[]{"View"}, true);
+    public final Value<Boolean> view = new Value<Boolean>("3D", new String[]{"View"}, "The old Nodus client style free-cam, kind of like an elytra. (Hold forward key & move the mouse to turn)", false);
 
-    public final BooleanValue packet = new BooleanValue("Packet", new String[]{"Pack"}, true);
+    public final Value<Boolean> packet = new Value<Boolean>("Packet", new String[]{"Pack"}, "Disables any player position or rotation packets from being sent during free-cam if enabled.", true);
 
     public FreeCamModule() {
         super("FreeCam", new String[]{"FreeCamera"}, "Out of body experience", "NONE", -1, ModuleType.PLAYER);
@@ -98,9 +97,9 @@ public final class FreeCamModule extends Module {
             final Minecraft mc = Minecraft.getMinecraft();
             mc.player.setVelocity(0, 0, 0);
             mc.player.renderArmPitch = 5000;
-            mc.player.jumpMovementFactor = speed.getFloat();
+            mc.player.jumpMovementFactor = this.speed.getValue();
 
-            final double[] dir = MathUtil.directionSpeed(speed.getFloat());
+            final double[] dir = MathUtil.directionSpeed(this.speed.getValue());
 
             if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
                 mc.player.motionX = dir[0];
@@ -112,18 +111,18 @@ public final class FreeCamModule extends Module {
 
             mc.player.setSprinting(false);
 
-            if (this.view.getBoolean()) {
+            if (this.view.getValue()) {
                 if (!mc.gameSettings.keyBindSneak.isKeyDown() && !mc.gameSettings.keyBindJump.isKeyDown()) {
-                    mc.player.motionY = (speed.getFloat() * (-MathUtil.degToRad(mc.player.rotationPitch))) * mc.player.movementInput.moveForward;
+                    mc.player.motionY = (this.speed.getValue() * (-MathUtil.degToRad(mc.player.rotationPitch))) * mc.player.movementInput.moveForward;
                 }
             }
 
             if (mc.gameSettings.keyBindJump.isKeyDown()) {
-                mc.player.motionY += speed.getFloat();
+                mc.player.motionY += this.speed.getValue();
             }
 
             if (mc.gameSettings.keyBindSneak.isKeyDown()) {
-                mc.player.motionY -= speed.getFloat();
+                mc.player.motionY -= this.speed.getValue();
             }
         }
     }
@@ -132,7 +131,7 @@ public final class FreeCamModule extends Module {
     public void sendPacket(EventSendPacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             if (Minecraft.getMinecraft().world != null) {
-                if (this.packet.getBoolean()) {
+                if (this.packet.getValue()) {
                     if (event.getPacket() instanceof CPacketPlayer) {
                         event.setCanceled(true);
                     }
@@ -158,7 +157,7 @@ public final class FreeCamModule extends Module {
             }
             if (event.getPacket() instanceof SPacketPlayerPosLook) {
                 final SPacketPlayerPosLook packet = (SPacketPlayerPosLook) event.getPacket();
-                if (this.packet.getBoolean()) {
+                if (this.packet.getValue()) {
                     if (this.entity != null) {
                         this.entity.setPositionAndRotation(packet.getX(), packet.getY(), packet.getZ(), packet.getYaw(), packet.getPitch());
                     }
