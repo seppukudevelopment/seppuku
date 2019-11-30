@@ -111,18 +111,15 @@ public class Module {
 
             if (v.getValue() instanceof Enum) {
                 final Enum val = (Enum) v.getValue();
-
                 final StringBuilder options = new StringBuilder();
-
                 final int size = val.getClass().getEnumConstants().length;
 
                 for (int i = 0; i < size; i++) {
                     final Enum option = val.getClass().getEnumConstants()[i];
-
-                    options.append(option.name() + ((i == size - 1) ? "" : ", "));
+                    options.append(option.name().toLowerCase() + ((i == size - 1) ? "" : ", "));
                 }
 
-                msg.appendSibling(new TextComponentString(v.getName() + ChatFormatting.GRAY + " <" + options.toString() + ">" + ChatFormatting.DARK_GRAY + " | " + ChatFormatting.YELLOW + v.getValue()).setStyle(style));
+                msg.appendSibling(new TextComponentString(v.getName() + ChatFormatting.GRAY + " <" + options.toString() + ">" + ChatFormatting.DARK_GRAY + " | " + ChatFormatting.YELLOW + val.name().toLowerCase()).setStyle(style));
             }
         }
 

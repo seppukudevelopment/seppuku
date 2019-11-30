@@ -131,24 +131,23 @@ public final class CommandManager {
                                     if (split[2].equalsIgnoreCase("true") || split[2].equalsIgnoreCase("false") || split[2].equalsIgnoreCase("1") || split[2].equalsIgnoreCase("0")) {
                                         if (split[2].equalsIgnoreCase("1")) {
                                             v.setValue(true);
-                                            Seppuku.INSTANCE.logChat(module.getDisplayName() + " \247c" + v.getName() + "\247f set to true");
+                                            Seppuku.INSTANCE.logChat(module.getDisplayName() + " \2477" + v.getName() + "\247f set to \247atrue");
                                             Seppuku.INSTANCE.getConfigManager().saveAll();
                                         } else if (split[2].equalsIgnoreCase("0")) {
                                             v.setValue(false);
-                                            Seppuku.INSTANCE.logChat(module.getDisplayName() + " \247c" + v.getName() + "\247f set to false");
+                                            Seppuku.INSTANCE.logChat(module.getDisplayName() + " \2477" + v.getName() + "\247f set to \247cfalse");
                                             Seppuku.INSTANCE.getConfigManager().saveAll();
                                         } else {
                                             v.setValue(Boolean.parseBoolean(split[2]));
-                                            Seppuku.INSTANCE.logChat(module.getDisplayName() + " \247c" + v.getName() + "\247f set to " + Boolean.parseBoolean(split[2]));
+                                            Seppuku.INSTANCE.logChat(module.getDisplayName() + " \2477" + v.getName() + "\247f set to " + ((Boolean) v.getValue() ? "\247a" : "\247c") + v.getValue());
                                             Seppuku.INSTANCE.getConfigManager().saveAll();
-
                                         }
                                     } else {
                                         Seppuku.INSTANCE.errorChat("Invalid input " + "\"" + split[2] + "\" expected true/false");
                                     }
                                 } else {
                                     v.setValue(!((Boolean) v.getValue()));
-                                    Seppuku.INSTANCE.logChat(module.getDisplayName() + " \247c" + v.getName() + "\247f set to " + v.getValue());
+                                    Seppuku.INSTANCE.logChat(module.getDisplayName() + " \2477" + v.getName() + "\247f set to " + ((Boolean) v.getValue() ? "\247a" : "\247c") + v.getValue());
                                     Seppuku.INSTANCE.getConfigManager().saveAll();
                                 }
                             }
@@ -159,7 +158,7 @@ public final class CommandManager {
                                     return;
                                 }
                                 v.setValue(split[2]);
-                                Seppuku.INSTANCE.logChat(module.getDisplayName() + " \247c" + v.getName() + "\247f set to " + split[2]);
+                                Seppuku.INSTANCE.logChat(module.getDisplayName() + " \2477" + v.getName() + "\247f set to " + split[2]);
                                 Seppuku.INSTANCE.getConfigManager().saveAll();
                             }
 
@@ -171,7 +170,7 @@ public final class CommandManager {
                                 if (v.getValue().getClass() == Float.class) {
                                     if (StringUtil.isFloat(split[2])) {
                                         v.setValue(Float.parseFloat(split[2]));
-                                        Seppuku.INSTANCE.logChat(module.getDisplayName() + " \247c" + v.getName() + "\247f set to " + Float.parseFloat(split[2]));
+                                        Seppuku.INSTANCE.logChat(module.getDisplayName() + " \2477" + v.getName() + "\247b set to \247b" + Float.parseFloat(split[2]));
                                         Seppuku.INSTANCE.getConfigManager().saveAll();
                                     } else {
                                         Seppuku.INSTANCE.errorChat("Invalid input " + "\"" + split[2] + "\" expected a number");
@@ -180,7 +179,7 @@ public final class CommandManager {
                                 if (v.getValue().getClass() == Double.class) {
                                     if (StringUtil.isDouble(split[2])) {
                                         v.setValue(Double.parseDouble(split[2]));
-                                        Seppuku.INSTANCE.logChat(module.getDisplayName() + " \247c" + v.getName() + "\247f set to " + Double.parseDouble(split[2]));
+                                        Seppuku.INSTANCE.logChat(module.getDisplayName() + " \2477" + v.getName() + "\247f set to \247b" + Double.parseDouble(split[2]));
                                         Seppuku.INSTANCE.getConfigManager().saveAll();
                                     } else {
                                         Seppuku.INSTANCE.errorChat("Invalid input " + "\"" + split[2] + "\" expected a number");
@@ -189,7 +188,7 @@ public final class CommandManager {
                                 if (v.getValue().getClass() == Integer.class) {
                                     if (StringUtil.isInt(split[2])) {
                                         v.setValue(Integer.parseInt(split[2]));
-                                        Seppuku.INSTANCE.logChat(module.getDisplayName() + " \247c" + v.getName() + "\247f set to " + Integer.parseInt(split[2]));
+                                        Seppuku.INSTANCE.logChat(module.getDisplayName() + " \2477" + v.getName() + "\247f set to \247b" + Integer.parseInt(split[2]));
                                         Seppuku.INSTANCE.getConfigManager().saveAll();
                                     } else {
                                         Seppuku.INSTANCE.errorChat("Invalid input " + "\"" + split[2] + "\" expected a number");
@@ -207,41 +206,8 @@ public final class CommandManager {
 
                                 if (op != -1) {
                                     v.setEnumValue(split[2]);
-                                    Seppuku.INSTANCE.logChat(module.getDisplayName() + " \247c" + v.getName() + "\247f set to " + ((Enum) v.getValue()).name());
+                                    Seppuku.INSTANCE.logChat(module.getDisplayName() + " \2477" + v.getName() + "\247f set to \247e" + ((Enum) v.getValue()).name().toLowerCase());
                                     Seppuku.INSTANCE.getConfigManager().saveAll();
-                                } else if (StringUtil.isInt(split[2])) {
-                                    final int mode = Integer.parseInt(split[2]);
-
-                                    if (mode > v.getValue().getClass().getEnumConstants().length - 1) {
-                                        Seppuku.INSTANCE.errorChat("Invalid mode " + "\"" + split[2] + "\"");
-                                        StringBuilder sb = new StringBuilder();
-
-                                        final int size = v.getValue().getClass().getEnumConstants().length;
-                                        for (int i = 0; i < size; i++) {
-                                            final Enum option = (Enum) v.getValue().getClass().getEnumConstants()[i];
-                                            sb.append(option.name() + " (" + i + ")" + ((i == size - 1) ? "" : ", "));
-                                        }
-
-                                        Seppuku.INSTANCE.logChat("Valid Options:");
-                                        Seppuku.INSTANCE.logChat(sb.toString());
-                                        return;
-                                    } else if (mode < 0) {
-                                        Seppuku.INSTANCE.errorChat("Invalid mode " + "\"" + split[2] + "\"");
-                                        StringBuilder sb = new StringBuilder();
-
-                                        final int size = v.getValue().getClass().getEnumConstants().length;
-                                        for (int i = 0; i < size; i++) {
-                                            final Enum option = (Enum) v.getValue().getClass().getEnumConstants()[i];
-                                            sb.append(option.name() + " (" + i + ")" + ((i == size - 1) ? "" : ", "));
-                                        }
-
-                                        Seppuku.INSTANCE.logChat("Valid Options: " + sb.toString());
-                                        return;
-                                    } else {
-                                        v.setValue(mode);
-                                        Seppuku.INSTANCE.logChat(module.getDisplayName() + " \247c" + v.getName() + "\247f set to " + ((Enum) v.getValue()).name());
-                                        Seppuku.INSTANCE.getConfigManager().saveAll();
-                                    }
                                 } else {
                                     Seppuku.INSTANCE.errorChat("Invalid input " + "\"" + split[2] + "\" expected a string");
                                 }
