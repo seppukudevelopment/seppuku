@@ -6,8 +6,7 @@ import me.rigamortis.seppuku.api.event.player.EventRightClickBlock;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.MathUtil;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
@@ -24,9 +23,13 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class NukerModule extends Module {
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"Selection", "All"});
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The nuker mode to use.", Mode.SELECTION);
 
-    public final NumberValue distance = new NumberValue("Distance", new String[]{"Dist", "D"}, 4.5f, Float.class, 0.0f, 5.0f, 0.1f);
+    private enum Mode {
+        SELECTION, ALL
+    }
+
+    public final Value<Float> distance = new Value<Float>("Distance", new String[]{"Dist", "D"}, "Maximum distance in blocks the nuker will reach.", 4.5f, 0.0f, 5.0f, 0.1f);
 
     private Block selected;
 
@@ -42,7 +45,7 @@ public final class NukerModule extends Module {
 
     @Override
     public String getMetaData() {
-        return this.mode.getSelectedOption();
+        return this.mode.getValue().name();
     }
 
     @Listener
@@ -50,11 +53,11 @@ public final class NukerModule extends Module {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             BlockPos pos = null;
 
-            switch (this.mode.getInt()) {
-                case 0:
+            switch (this.mode.getValue()) {
+                case SELECTION:
                     pos = this.getClosestBlockSelection();
                     break;
-                case 1:
+                case ALL:
                     pos = this.getClosestBlockAll();
                     break;
             }
@@ -75,7 +78,7 @@ public final class NukerModule extends Module {
 
     @Listener
     public void clickBlock(EventRightClickBlock event) {
-        if (this.mode.getInt() == 0) {
+        if (this.mode.getValue() == Mode.SELECTION) {
             final Block block = Minecraft.getMinecraft().world.getBlockState(event.getPos()).getBlock();
             if (block != null && block != this.selected) {
                 this.selected = block;
@@ -94,7 +97,7 @@ public final class NukerModule extends Module {
 
     private BlockPos getClosestBlockAll() {
         final Minecraft mc = Minecraft.getMinecraft();
-        float maxDist = this.distance.getFloat();
+        float maxDist = this.distance.getValue();
 
         BlockPos ret = null;
 
@@ -118,7 +121,7 @@ public final class NukerModule extends Module {
 
     private BlockPos getClosestBlockSelection() {
         final Minecraft mc = Minecraft.getMinecraft();
-        float maxDist = this.distance.getFloat();
+        float maxDist = this.distance.getValue();
 
         BlockPos ret = null;
 
