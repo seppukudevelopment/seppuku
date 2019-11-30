@@ -3,9 +3,7 @@ package me.rigamortis.seppuku.impl.module.combat;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
@@ -20,11 +18,11 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class RegenModule extends Module {
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"Potion", "Gapple"});
+    public final Value<Mode> mode = new Value("Mode", new String[]{"Mode", "M"}, "The regen mode to use.", Mode.GAPPLE);
 
-    public final NumberValue health = new NumberValue("Health", new String[]{"Hp"}, 8.0f, Float.class, 0.0f, 20.0f, 0.5f);
+    public final Value<Float> health = new Value("Health", new String[]{"Hp"}, "The minimum health required to heal.", 8.0f, 0.0f, 20.0f, 0.5f);
 
-    public final BooleanValue refill = new BooleanValue("Refill", new String[]{"ref"}, true);
+    public final Value<Boolean> refill = new Value("Refill", new String[]{"ref"}, "Automatically refill the hotbar with gapples.", true);
 
     private int gappleSlot = -1;
 
@@ -34,7 +32,7 @@ public final class RegenModule extends Module {
 
     @Override
     public String getMetaData() {
-        return this.mode.getSelectedOption();
+        return this.mode.getValue().name();
     }
 
     @Override
@@ -49,11 +47,11 @@ public final class RegenModule extends Module {
 
             final ItemStack stack = mc.player.inventory.getCurrentItem();
 
-            switch (this.mode.getInt()) {
-                case 0:
+            switch (this.mode.getValue()) {
+                case POTION:
                     break;
-                case 1:
-                    if (mc.player.getHealth() <= this.health.getFloat() && mc.player.getAbsorptionAmount() <= 0) {
+                case GAPPLE:
+                    if (mc.player.getHealth() <= this.health.getValue() && mc.player.getAbsorptionAmount() <= 0) {
                         gappleSlot = getItemHotbar(Items.GOLDEN_APPLE);
                     }
 
@@ -73,9 +71,9 @@ public final class RegenModule extends Module {
                                 gappleSlot = -1;
                             }
                         }
-                    }else{
-                        if (mc.player.getHealth() <= this.health.getFloat() && mc.player.getAbsorptionAmount() <= 0) {
-                            if (this.refill.getBoolean()) {
+                    } else {
+                        if (mc.player.getHealth() <= this.health.getValue() && mc.player.getAbsorptionAmount() <= 0) {
+                            if (this.refill.getValue()) {
                                 final int invSlot = findStackInventory(Items.GOLDEN_APPLE);
                                 if (invSlot != -1) {
                                     final int empty = findEmptyhotbar();
@@ -104,7 +102,7 @@ public final class RegenModule extends Module {
         for (int i = 0; i < 9; i++) {
             final ItemStack stack = Minecraft.getMinecraft().player.inventory.getStackInSlot(i);
 
-            if(stack.getItem() == Items.AIR) {
+            if (stack.getItem() == Items.AIR) {
                 return i;
             }
         }
@@ -119,6 +117,10 @@ public final class RegenModule extends Module {
             }
         }
         return -1;
+    }
+
+    private enum Mode {
+        POTION, GAPPLE
     }
 
 }

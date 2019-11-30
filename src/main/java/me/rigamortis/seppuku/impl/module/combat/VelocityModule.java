@@ -3,8 +3,7 @@ package me.rigamortis.seppuku.impl.module.combat;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.network.play.server.SPacketExplosion;
@@ -16,9 +15,9 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class VelocityModule extends Module {
 
-    public final NumberValue horizontal_vel = new NumberValue("Horizontal_Velocity", new String[]{"Horizontal_Velocity", "HVel", "HV", "HorizontalVel"}, 0, Integer.class, 0, 100, 1);
-    public final NumberValue vertical_vel = new NumberValue("Vertical_Velocity", new String[]{"Vertical_Velocity", "VVel", "VV", "VerticalVel"}, 0, Integer.class, 0, 100, 1);
-    public final BooleanValue explosions = new BooleanValue("Explosions", new String[]{"Explosions", "Explosion", "EXP", "EX", "Expl"}, true);
+    public final Value<Integer> horizontal_vel = new Value("Horizontal_Velocity", new String[]{"Horizontal_Velocity", "HVel", "HV", "HorizontalVel"}, "The horizontal velocity you will take.", 0, 0, 100, 1);
+    public final Value<Integer> vertical_vel = new Value("Vertical_Velocity", new String[]{"Vertical_Velocity", "VVel", "VV", "VerticalVel"}, "The vertical velocity you will take.", 0, 0, 100, 1);
+    public final Value<Boolean> explosions = new Value("Explosions", new String[]{"Explosions", "Explosion", "EXP", "EX", "Expl"}, "Apply velocity modifier on explosion velocity.", true);
 
     public VelocityModule() {
         super("Velocity", new String[]{"Vel", "AntiVelocity", "Knockback", "AntiKnockback"}, "Modify the velocity you take", "NONE", -1, ModuleType.COMBAT);
@@ -30,36 +29,36 @@ public final class VelocityModule extends Module {
             if (event.getPacket() instanceof SPacketEntityVelocity) {
                 final SPacketEntityVelocity packet = (SPacketEntityVelocity) event.getPacket();
                 if (packet.getEntityID() == Minecraft.getMinecraft().player.getEntityId()) {
-                    if (this.horizontal_vel.getInt() == 0 && this.vertical_vel.getInt() == 0) {
+                    if (this.horizontal_vel.getValue() == 0 && this.vertical_vel.getValue() == 0) {
                         event.setCanceled(true);
                         return;
                     }
 
-                    if (this.horizontal_vel.getInt() != 100) {
-                        packet.motionX = packet.motionX / 100 * this.horizontal_vel.getInt();
-                        packet.motionZ = packet.motionZ / 100 * this.horizontal_vel.getInt();
+                    if (this.horizontal_vel.getValue() != 100) {
+                        packet.motionX = packet.motionX / 100 * this.horizontal_vel.getValue();
+                        packet.motionZ = packet.motionZ / 100 * this.horizontal_vel.getValue();
                     }
 
-                    if (this.vertical_vel.getInt() != 100) {
-                        packet.motionY = packet.motionY / 100 * this.vertical_vel.getInt();
+                    if (this.vertical_vel.getValue() != 100) {
+                        packet.motionY = packet.motionY / 100 * this.vertical_vel.getValue();
                     }
                 }
             }
-            if (event.getPacket() instanceof SPacketExplosion && this.explosions.getBoolean()) {
+            if (event.getPacket() instanceof SPacketExplosion && this.explosions.getValue()) {
                 final SPacketExplosion packet = (SPacketExplosion) event.getPacket();
 
-                if (this.horizontal_vel.getInt() == 0 && this.vertical_vel.getInt() == 0) {
+                if (this.horizontal_vel.getValue() == 0 && this.vertical_vel.getValue() == 0) {
                     event.setCanceled(true);
                     return;
                 }
 
-                if (this.horizontal_vel.getInt() != 100) {
-                    packet.motionX = packet.motionX / 100 * this.horizontal_vel.getInt();
-                    packet.motionZ = packet.motionZ / 100 * this.horizontal_vel.getInt();
+                if (this.horizontal_vel.getValue() != 100) {
+                    packet.motionX = packet.motionX / 100 * this.horizontal_vel.getValue();
+                    packet.motionZ = packet.motionZ / 100 * this.horizontal_vel.getValue();
                 }
 
-                if (this.vertical_vel.getInt() != 100) {
-                    packet.motionY = packet.motionY / 100 * this.vertical_vel.getInt();
+                if (this.vertical_vel.getValue() != 100) {
+                    packet.motionY = packet.motionY / 100 * this.vertical_vel.getValue();
                 }
             }
         }

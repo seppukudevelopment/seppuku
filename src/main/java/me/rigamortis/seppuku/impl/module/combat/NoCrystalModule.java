@@ -5,7 +5,7 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.MathUtil;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
+import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.module.player.FreeCamModule;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
@@ -31,7 +31,7 @@ public final class NoCrystalModule extends Module {
 
     private final Minecraft mc = Minecraft.getMinecraft();
 
-    public final BooleanValue disable = new BooleanValue("Disable", new String[]{"dis"}, false);
+    public final Value<Boolean> disable = new Value("Disable", new String[]{"dis"}, "Automatically disable after it places.", false);
 
     private int lastSlot;
 
@@ -78,7 +78,7 @@ public final class NoCrystalModule extends Module {
                     mc.player.inventory.currentItem = this.lastSlot;
                     mc.playerController.updateController();
 
-                    if(this.disable.getBoolean()) {
+                    if(this.disable.getValue()) {
                         this.toggle();
                     }
                 }

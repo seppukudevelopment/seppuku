@@ -4,8 +4,7 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.Timer;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -23,9 +22,8 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class AutoArmorModule extends Module {
 
-    public final NumberValue delay = new NumberValue("Delay", new String[]{"Del"}, 50.0f, Float.class, 0.0f, 1000.0f, 1.0f);
-
-    public final BooleanValue curse = new BooleanValue("Curse", new String[]{"Curses"}, false);
+    public final Value<Float> delay = new Value("Delay", new String[]{"Del"}, "The amount of delay in milliseconds.", 50.0f, 0.0f, 1000.0f, 1.0f);
+    public final Value<Boolean> curse = new Value("Curse", new String[]{"Curses"}, "Prevents you from equipping armor with cursed enchantments.", false);
 
     private Timer timer = new Timer();
 
@@ -84,7 +82,7 @@ public final class AutoArmorModule extends Module {
     }
 
     private void clickSlot(int slot, int mouse, ClickType type) {
-        if (this.timer.passed(this.delay.getFloat())) {
+        if (this.timer.passed(this.delay.getValue())) {
             Minecraft.getMinecraft().playerController.windowClick(Minecraft.getMinecraft().player.inventoryContainer.windowId, slot, mouse, type, Minecraft.getMinecraft().player);
             this.timer.reset();
         }
@@ -103,7 +101,7 @@ public final class AutoArmorModule extends Module {
                     if (armor.armorType == type) {
                         final float currentDamage = (armor.damageReduceAmount + EnchantmentHelper.getEnchantmentLevel(Enchantments.PROTECTION, s));
 
-                        final boolean cursed = this.curse.getBoolean() ? (EnchantmentHelper.hasBindingCurse(s)) : false;
+                        final boolean cursed = this.curse.getValue() ? (EnchantmentHelper.hasBindingCurse(s)) : false;
 
                         if (currentDamage > damage && !cursed) {
                             damage = currentDamage;

@@ -3,7 +3,7 @@ package me.rigamortis.seppuku.impl.module.combat;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.init.Items;
@@ -18,7 +18,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class AutoTotemModule extends Module {
 
-    public final NumberValue health = new NumberValue("Health", new String[]{"Hp"}, 16.0f, Float.class, 0.0f, 20.0f, 0.5f);
+    public final Value<Float> health = new Value("Health", new String[]{"Hp"}, "The amount of health needed to acquire a totem.", 16.0f, 0.0f, 20.0f, 0.5f);
 
     public AutoTotemModule() {
         super("AutoTotem", new String[] {"Totem"}, "Automatically places a totem of undying in your offhand", "NONE", -1, ModuleType.COMBAT);
@@ -35,7 +35,7 @@ public final class AutoTotemModule extends Module {
             final Minecraft mc = Minecraft.getMinecraft();
 
             if(mc.currentScreen == null || mc.currentScreen instanceof GuiInventory) {
-                if(mc.player.getHealth() <= this.health.getFloat()) {
+                if(mc.player.getHealth() <= this.health.getValue()) {
                     final ItemStack offHand = mc.player.getHeldItemOffhand();
 
                     if (offHand.getItem() == Items.TOTEM_OF_UNDYING) {
