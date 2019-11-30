@@ -4,8 +4,7 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.MobEffects;
 import net.minecraft.network.play.server.SPacketEntityEffect;
@@ -19,8 +18,13 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class BrightnessModule extends Module {
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"Gamma", "Potion", "Table"});
-    public final BooleanValue effects = new BooleanValue("Effects", new String[]{"Eff"}, true);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The brightness mode to use.", Mode.GAMMA);
+
+    private enum Mode {
+        GAMMA, POTION, TABLE
+    }
+
+    public final Value<Boolean> effects = new Value<Boolean>("Effects", new String[]{"Eff"}, "Blocks blindness & nausea effects if enabled.", true);
 
     private float lastGamma;
 
@@ -33,7 +37,7 @@ public final class BrightnessModule extends Module {
     @Override
     public void onEnable() {
         super.onEnable();
-        if (this.mode.getInt() == 0) {
+        if (this.mode.getValue() == Mode.GAMMA) {
             this.lastGamma = Minecraft.getMinecraft().gameSettings.gammaSetting;
         }
     }
@@ -42,13 +46,15 @@ public final class BrightnessModule extends Module {
     public void onDisable() {
         super.onDisable();
 
-        if (this.mode.getInt() == 0) {
+        if (this.mode.getValue() == Mode.GAMMA) {
             Minecraft.getMinecraft().gameSettings.gammaSetting = this.lastGamma;
         }
-        if (this.mode.getInt() == 1 && Minecraft.getMinecraft().player != null) {
+
+        if (this.mode.getValue() == Mode.POTION && Minecraft.getMinecraft().player != null) {
             Minecraft.getMinecraft().player.removePotionEffect(MobEffects.NIGHT_VISION);
         }
-        if (this.mode.getInt() == 2) {
+
+        if (this.mode.getValue() == Mode.TABLE) {
             if (Minecraft.getMinecraft().world != null) {
                 float f = 0.0F;
 
@@ -62,21 +68,21 @@ public final class BrightnessModule extends Module {
 
     @Override
     public String getMetaData() {
-        return this.mode.getSelectedOption();
+        return this.mode.getValue().name();
     }
 
     @Listener
     public void onUpdate(EventPlayerUpdate event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
-            switch (this.mode.getInt()) {
-                case 0:
+            switch (this.mode.getValue()) {
+                case GAMMA:
                     Minecraft.getMinecraft().gameSettings.gammaSetting = 1000;
                     break;
-                case 1:
+                case POTION:
                     Minecraft.getMinecraft().player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 5210));
                     break;
-                case 2:
-                    if(this.world != Minecraft.getMinecraft().world) {
+                case TABLE:
+                    if (this.world != Minecraft.getMinecraft().world) {
                         if (Minecraft.getMinecraft().world != null) {
                             for (int i = 0; i <= 15; ++i) {
                                 Minecraft.getMinecraft().world.provider.getLightBrightnessTable()[i] = 1.0f;
@@ -93,7 +99,7 @@ public final class BrightnessModule extends Module {
     public void receivePacket(EventReceivePacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             if (event.getPacket() instanceof SPacketEntityEffect) {
-                if (this.effects.getBoolean()) {
+                if (this.effects.getValue()) {
                     final SPacketEntityEffect packet = (SPacketEntityEffect) event.getPacket();
                     if (Minecraft.getMinecraft().player != null && packet.getEntityId() == Minecraft.getMinecraft().player.getEntityId()) {
                         if (packet.getEffectId() == 9 || packet.getEffectId() == 15) {

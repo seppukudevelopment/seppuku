@@ -4,7 +4,7 @@ import me.rigamortis.seppuku.api.event.gui.EventRenderHelmet;
 import me.rigamortis.seppuku.api.event.gui.EventRenderPortal;
 import me.rigamortis.seppuku.api.event.render.EventRenderOverlay;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
+import me.rigamortis.seppuku.api.value.Value;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
@@ -13,11 +13,11 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class NoOverlayModule extends Module {
 
-    public final BooleanValue portal = new BooleanValue("Portal", new String[]{}, true);
-    public final BooleanValue helmet = new BooleanValue("Helmet", new String[]{}, true);
-    public final BooleanValue block = new BooleanValue("Block", new String[]{}, true);
-    public final BooleanValue water = new BooleanValue("Water", new String[]{}, true);
-    public final BooleanValue fire = new BooleanValue("Fire", new String[]{}, true);
+    public final Value<Boolean> portal = new Value<Boolean>("Portal", new String[]{}, "Disables the portal screen overlay when using a portal.", true);
+    public final Value<Boolean> helmet = new Value<Boolean>("Helmet", new String[]{}, "Disables the helmet/pumpkin screen overlay.", true);
+    public final Value<Boolean> block = new Value<Boolean>("Block", new String[]{}, "Disables the block-side screen overlay when inside of a block.", true);
+    public final Value<Boolean> water = new Value<Boolean>("Water", new String[]{}, "Disables the water screen overlay when under water.", true);
+    public final Value<Boolean> fire = new Value<Boolean>("Fire", new String[]{}, "Disables the fire screen overlay when on fire.", true);
 
     public NoOverlayModule() {
         super("NoOverlay", new String[]{"AntiOverlay"}, "Removes screen overlay effects", "NONE", -1, ModuleType.RENDER);
@@ -25,27 +25,27 @@ public final class NoOverlayModule extends Module {
 
     @Listener
     public void renderOverlay(EventRenderOverlay event) {
-        if (this.block.getBoolean() && event.getType() == EventRenderOverlay.OverlayType.BLOCK) {
+        if (this.block.getValue() && event.getType() == EventRenderOverlay.OverlayType.BLOCK) {
             event.setCanceled(true);
         }
-        if (this.water.getBoolean() && event.getType() == EventRenderOverlay.OverlayType.LIQUID) {
+        if (this.water.getValue() && event.getType() == EventRenderOverlay.OverlayType.LIQUID) {
             event.setCanceled(true);
         }
-        if (this.fire.getBoolean() && event.getType() == EventRenderOverlay.OverlayType.FIRE) {
+        if (this.fire.getValue() && event.getType() == EventRenderOverlay.OverlayType.FIRE) {
             event.setCanceled(true);
         }
     }
 
     @Listener
     public void renderHelmet(EventRenderHelmet event) {
-        if (this.helmet.getBoolean()) {
+        if (this.helmet.getValue()) {
             event.setCanceled(true);
         }
     }
 
     @Listener
     public void renderPortal(EventRenderPortal event) {
-        if (this.portal.getBoolean()) {
+        if (this.portal.getValue()) {
             event.setCanceled(true);
         }
     }

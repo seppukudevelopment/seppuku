@@ -4,8 +4,7 @@ import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.MathUtil;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -28,9 +27,8 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public final class HolesModule extends Module {
 
-    public final NumberValue radius = new NumberValue("Radius", new String[]{"Radius", "Range", "Distance"}, 8, Integer.class, 0, 32, 1);
-
-    public final BooleanValue fade = new BooleanValue("Fade", new String[]{"f"}, true);
+    public final Value<Integer> radius = new Value<Integer>("Radius", new String[]{"Radius", "Range", "Distance"}, "Radius in blocks to scan for holes.", 8, 0, 32, 1);
+    public final Value<Boolean> fade = new Value<Boolean>("Fade", new String[]{"f"}, "Fades the opacity of the hole the closer your player is to it when enabled.", true);
 
     public final List<Hole> holes = new ArrayList<>();
 
@@ -51,8 +49,8 @@ public final class HolesModule extends Module {
 
         final Vec3i playerPos = new Vec3i(mc.player.posX, mc.player.posY, mc.player.posZ);
 
-        for (int x = playerPos.getX() - radius.getInt(); x < playerPos.getX() + radius.getInt(); x++) {
-            for (int z = playerPos.getZ() - radius.getInt(); z < playerPos.getZ() + radius.getInt(); z++) {
+        for (int x = playerPos.getX() - radius.getValue(); x < playerPos.getX() + radius.getValue(); x++) {
+            for (int z = playerPos.getZ() - radius.getValue(); z < playerPos.getZ() + radius.getValue(); z++) {
                 for (int y = playerPos.getY(); y > playerPos.getY() - 4; y--) {
                     final BlockPos blockPos = new BlockPos(x, y, z);
                     final IBlockState blockState = mc.world.getBlockState(blockPos);
@@ -105,10 +103,10 @@ public final class HolesModule extends Module {
 
                 final double dist = mc.player.getDistance(hole.getX() + 0.5f, hole.getY() + 0.5f, hole.getZ() + 0.5f) * 0.75f;
 
-                float alpha = MathUtil.clamp((float) (dist * 255.0f / (this.radius.getInt()) / 255.0f), 0.0f, 0.3f);
+                float alpha = MathUtil.clamp((float) (dist * 255.0f / (this.radius.getValue()) / 255.0f), 0.0f, 0.3f);
 
-                RenderGlobal.renderFilledBox(bb, 0, 1, 0, this.fade.getBoolean() ? alpha : 0.25f);
-                RenderGlobal.drawBoundingBox(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ, 0, 1, 0, this.fade.getBoolean() ? alpha : 0.25f);
+                RenderGlobal.renderFilledBox(bb, 0, 1, 0, this.fade.getValue() ? alpha : 0.25f);
+                RenderGlobal.drawBoundingBox(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ, 0, 1, 0, this.fade.getValue() ? alpha : 0.25f);
                 glDisable(GL_LINE_SMOOTH);
                 GlStateManager.depthMask(true);
                 GlStateManager.enableDepth();

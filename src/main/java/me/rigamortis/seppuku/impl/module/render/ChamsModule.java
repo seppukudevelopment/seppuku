@@ -3,8 +3,7 @@ package me.rigamortis.seppuku.impl.module.render;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.render.EventRenderEntity;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -27,12 +26,16 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public final class ChamsModule extends Module {
 
-    public final BooleanValue players = new BooleanValue("Players", new String[]{"Player"}, true);
-    public final BooleanValue mobs = new BooleanValue("Mobs", new String[]{"Mob"}, true);
-    public final BooleanValue animals = new BooleanValue("Animals", new String[]{"Animal"}, true);
-    public final BooleanValue vehicles = new BooleanValue("Vehicles", new String[]{"Vehic", "Vehicle"}, true);
+    public final Value<Boolean> players = new Value<Boolean>("Players", new String[]{"Player"}, "Choose to enable on players.", true);
+    public final Value<Boolean> mobs = new Value<Boolean>("Mobs", new String[]{"Mob"}, "Choose to enable on mobs.", true);
+    public final Value<Boolean> animals = new Value<Boolean>("Animals", new String[]{"Animal"}, "Choose to enable on animals.", true);
+    public final Value<Boolean> vehicles = new Value<Boolean>("Vehicles", new String[]{"Vehic", "Vehicle"}, "Choose to enable on vehicles.", true);
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode"}, 0, new String[]{"Normal", "Texture", "Flat", "WireFrame"});
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode"}, "The chams mode to use.", Mode.NORMAL);
+
+    private enum Mode {
+        NORMAL, TEXTURE, FLAT, WIREFRAME
+    }
 
     public ChamsModule() {
         super("Chams", new String[]{"Cham", "Chameleon"}, "Allows you to see entities through walls", "NONE", -1, ModuleType.RENDER);
@@ -40,7 +43,7 @@ public final class ChamsModule extends Module {
 
     @Override
     public String getMetaData() {
-        return this.mode.getSelectedOption();
+        return this.mode.getValue().name();
     }
 
     @Listener
@@ -54,15 +57,15 @@ public final class ChamsModule extends Module {
                 Minecraft.getMinecraft().getRenderManager().setRenderShadow(false);
                 Minecraft.getMinecraft().getRenderManager().setRenderOutlines(false);
 
-                switch (this.mode.getInt()) {
-                    case 0:
+                switch (this.mode.getValue()) {
+                    case NORMAL:
                         GlStateManager.pushMatrix();
                         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
                         glEnable(GL11.GL_POLYGON_OFFSET_FILL);
                         glPolygonOffset(1.0f, -1100000.0f);
                         GlStateManager.popMatrix();
                         break;
-                    case 1:
+                    case TEXTURE:
                         GlStateManager.pushMatrix();
                         glEnable(GL11.GL_POLYGON_OFFSET_FILL);
                         glPolygonOffset(1.0f, -1100000.0f);
@@ -70,7 +73,7 @@ public final class ChamsModule extends Module {
                         GlStateManager.color(1, 1, 1);
                         GlStateManager.popMatrix();
                         break;
-                    case 2:
+                    case FLAT:
                         GlStateManager.pushMatrix();
                         glEnable(GL11.GL_POLYGON_OFFSET_FILL);
                         glPolygonOffset(1.0f, -1100000.0f);
@@ -79,7 +82,7 @@ public final class ChamsModule extends Module {
                         GlStateManager.color(1, 1, 1);
                         GlStateManager.popMatrix();
                         break;
-                    case 3:
+                    case WIREFRAME:
                         GlStateManager.pushMatrix();
                         glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
                         glEnable(GL11.GL_POLYGON_OFFSET_LINE);
@@ -98,21 +101,21 @@ public final class ChamsModule extends Module {
 
                 Minecraft.getMinecraft().getRenderManager().setRenderShadow(shadow);
 
-                switch (this.mode.getInt()) {
-                    case 0:
+                switch (this.mode.getValue()) {
+                    case NORMAL:
                         GlStateManager.pushMatrix();
                         glDisable(GL11.GL_POLYGON_OFFSET_FILL);
                         glPolygonOffset(1.0f, 1100000.0f);
                         GlStateManager.popMatrix();
                         break;
-                    case 1:
+                    case TEXTURE:
                         GlStateManager.pushMatrix();
                         glDisable(GL11.GL_POLYGON_OFFSET_FILL);
                         glPolygonOffset(1.0f, 1100000.0f);
                         glEnable(GL11.GL_TEXTURE_2D);
                         GlStateManager.popMatrix();
                         break;
-                    case 2:
+                    case FLAT:
                         GlStateManager.pushMatrix();
                         glDisable(GL11.GL_POLYGON_OFFSET_FILL);
                         glPolygonOffset(1.0f, 1100000.0f);
@@ -120,7 +123,7 @@ public final class ChamsModule extends Module {
                         glEnable(GL11.GL_LIGHTING);
                         GlStateManager.popMatrix();
                         break;
-                    case 3:
+                    case WIREFRAME:
                         GlStateManager.pushMatrix();
                         glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
                         glDisable(GL11.GL_POLYGON_OFFSET_LINE);
@@ -148,19 +151,19 @@ public final class ChamsModule extends Module {
             ret = false;
         }
 
-        if (this.players.getBoolean() && entity instanceof EntityPlayer && entity != Minecraft.getMinecraft().player) {
+        if (this.players.getValue() && entity instanceof EntityPlayer && entity != Minecraft.getMinecraft().player) {
             ret = true;
         }
 
-        if (this.animals.getBoolean() && entity instanceof IAnimals) {
+        if (this.animals.getValue() && entity instanceof IAnimals) {
             ret = true;
         }
 
-        if (this.mobs.getBoolean() && entity instanceof IMob) {
+        if (this.mobs.getValue() && entity instanceof IMob) {
             ret = true;
         }
 
-        if (this.vehicles.getBoolean() && (entity instanceof EntityBoat || entity instanceof EntityMinecart || entity instanceof EntityMinecartContainer)) {
+        if (this.vehicles.getValue() && (entity instanceof EntityBoat || entity instanceof EntityMinecart || entity instanceof EntityMinecartContainer)) {
             ret = true;
         }
 

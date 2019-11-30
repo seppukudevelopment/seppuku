@@ -11,9 +11,7 @@ import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.GLUProjection;
 import me.rigamortis.seppuku.api.util.RenderUtil;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -37,18 +35,24 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public final class PortalFinderModule extends Module {
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode"}, 0, new String[]{"2D", "3D"});
-    public final BooleanValue chat = new BooleanValue("Chat", new String[]{"Chat", "ChatMessages", "ChatNotifications"}, true);
-    public final BooleanValue remove = new BooleanValue("Remove", new String[]{"R", "Delete"}, true);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode"}, "Rendering mode to use for drawing found portals.", Mode.TWO_DIMENSIONAL);
 
-    public final NumberValue<Integer> removeDistance = new NumberValue<Integer>("RemoveDistance", new String[]{"RD", "RemoveRange"}, 200, Integer.class, 1, 2000, 1);
-    public final BooleanValue showInfo = new BooleanValue("ShowInfo", new String[]{"SI", "DrawInfo", "DrawText"}, true);
-    public final NumberValue<Float> infoScale = new NumberValue<Float>("InfoScale", new String[]{"IS", "Scale", "TextScale"}, 1.0f, Float.class, 0.0f, 3.0f, 0.25f);
+    private enum Mode {
+        TWO_DIMENSIONAL, THREE_DIMENSIONAL
+    }
 
-    public final NumberValue<Float> width = new NumberValue<Float>("Width", new String[]{"W", "Width"}, 0.5f, Float.class, 0.0f, 5.0f, 0.1f);
-    public final NumberValue<Float> red = new NumberValue<Float>("Red", new String[]{"R"}, 255.0f, Float.class, 0.0f, 255.0f, 1.0f);
-    public final NumberValue<Float> green = new NumberValue<Float>("Green", new String[]{"G"}, 255.0f, Float.class, 0.0f, 255.0f, 1.0f);
-    public final NumberValue<Float> blue = new NumberValue<Float>("Blue", new String[]{"B"}, 255.0f, Float.class, 0.0f, 255.0f, 1.0f);
+    public final Value<Boolean> chat = new Value<Boolean>("Chat", new String[]{"Chat", "ChatMessages", "ChatNotifications"}, "Display a message in chat when a portal is found (Hover the message for more info).", true);
+
+    public final Value<Boolean> remove = new Value<Boolean>("Remove", new String[]{"R", "Delete"}, "Removes a portal from being drawn if the player is a distance aways from it.", true);
+    public final Value<Integer> removeDistance = new Value<Integer>("RemoveDistance", new String[]{"RD", "RemoveRange"}, "Minimum distance in blocks the player must be from a portal for it to stop being drawn.", 200, 1, 2000, 1);
+
+    public final Value<Boolean> showInfo = new Value<Boolean>("ShowInfo", new String[]{"SI", "DrawInfo", "DrawText"}, "Draws information about the portal at it's location.", true);
+    public final Value<Float> infoScale = new Value<Float>("InfoScale", new String[]{"IS", "Scale", "TextScale"}, "Scale of the text size on the drawn information.", 1.0f, 0.0f, 3.0f, 0.25f);
+
+    public final Value<Float> width = new Value<Float>("Width", new String[]{"W", "Width"}, "Width of each line that is drawn to indicate a portal's location.", 0.5f, 0.0f, 5.0f, 0.1f);
+    public final Value<Float> red = new Value<Float>("Red", new String[]{"R"}, "Red value for each drawn line.", 255.0f, 0.0f, 255.0f, 1.0f);
+    public final Value<Float> green = new Value<Float>("Green", new String[]{"G"}, "Green value for each drawn line.", 255.0f, 0.0f, 255.0f, 1.0f);
+    public final Value<Float> blue = new Value<Float>("Blue", new String[]{"B"}, "Blue value for each drawn line.", 255.0f, 0.0f, 255.0f, 1.0f);
 
     private final List<Vec3d> portals = new CopyOnWriteArrayList<>();
 
@@ -66,16 +70,16 @@ public final class PortalFinderModule extends Module {
 
     @Listener
     public void render2D(EventRender2D event) {
-        if (this.mode.getInt() == 0) {
+        if (this.mode.getValue() == Mode.TWO_DIMENSIONAL) {
             final Minecraft mc = Minecraft.getMinecraft();
 
             for (Vec3d portal : this.portals) {
                 final GLUProjection.Projection projection = GLUProjection.getInstance().project(portal.x - mc.getRenderManager().viewerPosX, portal.y - mc.getRenderManager().viewerPosY, portal.z - mc.getRenderManager().viewerPosZ, GLUProjection.ClampMode.NONE, true);
                 if (projection != null) {
-                    RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), event.getScaledResolution().getScaledWidth() / 2, event.getScaledResolution().getScaledHeight() / 2, this.width.getFloat(), new Color(red.getFloat() / 255.0f, green.getFloat() / 255.0f, blue.getFloat() / 255.0f).getRGB());
+                    RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), event.getScaledResolution().getScaledWidth() / 2, event.getScaledResolution().getScaledHeight() / 2, this.width.getValue(), new Color(red.getValue() / 255.0f, green.getValue() / 255.0f, blue.getValue() / 255.0f).getRGB());
 
-                    if (this.showInfo.getBoolean() && projection.isType(GLUProjection.Projection.Type.INSIDE)) {
-                        final float scale = this.infoScale.getFloat();
+                    if (this.showInfo.getValue() && projection.isType(GLUProjection.Projection.Type.INSIDE)) {
+                        final float scale = this.infoScale.getValue();
                         GlStateManager.pushMatrix();
                         GlStateManager.scale(scale, scale, scale);
                         this.drawPortalInfoText(portal, (float) projection.getX() / scale, (float) projection.getY() / scale);
@@ -89,7 +93,7 @@ public final class PortalFinderModule extends Module {
 
     @Listener
     public void render3D(EventRender3D event) {
-        if (this.mode.getInt() == 1) {
+        if (this.mode.getValue() == Mode.THREE_DIMENSIONAL) {
             final Minecraft mc = Minecraft.getMinecraft();
 
             for (Vec3d portal : this.portals) {
@@ -101,11 +105,11 @@ public final class PortalFinderModule extends Module {
                 final Vec3d forward = new Vec3d(0, 0, 1).rotatePitch(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationPitch)).rotateYaw(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationYaw));
 
                 // Line
-                RenderUtil.drawLine3D((float) forward.x, (float) forward.y + mc.player.getEyeHeight(), (float) forward.z, (float) (portal.x - mc.getRenderManager().renderPosX), (float) (portal.y - mc.getRenderManager().renderPosY), (float) (portal.z - mc.getRenderManager().renderPosZ), this.width.getFloat(), new Color(red.getFloat() / 255.0f, green.getFloat() / 255.0f, blue.getFloat() / 255.0f).getRGB());
+                RenderUtil.drawLine3D((float) forward.x, (float) forward.y + mc.player.getEyeHeight(), (float) forward.z, (float) (portal.x - mc.getRenderManager().renderPosX), (float) (portal.y - mc.getRenderManager().renderPosY), (float) (portal.z - mc.getRenderManager().renderPosZ), this.width.getValue(), new Color(red.getValue() / 255.0f, green.getValue() / 255.0f, blue.getValue() / 255.0f).getRGB());
 
                 // Info
-                if (this.showInfo.getBoolean()) {
-                    RenderUtil.glBillboardDistanceScaled((float) portal.x, (float) portal.y, (float) portal.z, mc.player, this.infoScale.getFloat());
+                if (this.showInfo.getValue()) {
+                    RenderUtil.glBillboardDistanceScaled((float) portal.x, (float) portal.y, (float) portal.z, mc.player, this.infoScale.getValue());
                     GlStateManager.disableDepth();
                     this.drawPortalInfoText(portal, 0, 0);
                     GlStateManager.enableDepth();
@@ -155,7 +159,7 @@ public final class PortalFinderModule extends Module {
                                     if (!isPortalCached(position.getX(), position.getY(), position.getZ())) {
                                         final Vec3d portal = new Vec3d(position.getX(), position.getY(), position.getZ());
                                         this.portals.add(portal);
-                                        if (this.chat.getBoolean()) {
+                                        if (this.chat.getValue()) {
                                             this.printPortalToChat(portal);
                                         }
                                         return;
@@ -167,9 +171,9 @@ public final class PortalFinderModule extends Module {
                 }
                 break;
             case UNLOAD:
-                if (this.remove.getBoolean()) {
+                if (this.remove.getValue()) {
                     for (Vec3d portal : this.portals) {
-                        if (mc.player.getDistance(portal.x, portal.y, portal.z) > this.removeDistance.getInt()) {
+                        if (mc.player.getDistance(portal.x, portal.y, portal.z) > this.removeDistance.getValue()) {
                             this.portals.remove(portal);
                         }
                     }
