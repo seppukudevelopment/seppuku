@@ -112,7 +112,7 @@ public final class CommandManager {
     public void loadValueCommands() {
         for (final Module module : Seppuku.INSTANCE.getModuleManager().getModuleList()) {
             if (module.getValueList().size() > 0) {
-                this.commandList.add(new Command(module.getDisplayName(), module.getAlias(), module.getDesc() != null ? module.getDesc() : "There is no description for this command", module.toUsageString()) {
+                this.commandList.add(new Command(module.getDisplayName(), module.getAlias(), module.getDesc() != null ? module.getDesc() : "There is no description for this command", module.toUsageTextComponent()) {
 
                     @Override
                     public void exec(String input) {

@@ -38,7 +38,7 @@ public final class ModuleCommand extends Command {
             if (mod != null) {
                 msg.appendSibling(new TextComponentString((mod.isEnabled() ? "\247a" : "\247c") + mod.getDisplayName() + "\2477" + ((i == size - 1) ? "" : ", "))
                         .setStyle(new Style()
-                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("\2476" + (mod.getDesc() == null ? "There is no description for this module" : mod.getDesc()) + "\247f").appendSibling(new TextComponentString((mod.toUsageString() == null ? "" : "\n" + mod.toUsageString()) + "\247f"))))
+                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("\2476" + (mod.getDesc() == null ? "There is no description for this module" : mod.getDesc()) + "\247f").appendSibling(new TextComponentString((mod.toUsageTextComponent() == null ? "" : "\n" + mod.toUsageTextComponent().getText()) + "\247f"))))
                                 .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, commandsModule.getPrefix().getValue() + "toggle" + " " + mod.getDisplayName()))));
             }
         }

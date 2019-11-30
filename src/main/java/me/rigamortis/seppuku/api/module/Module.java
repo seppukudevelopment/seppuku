@@ -1,8 +1,13 @@
 package me.rigamortis.seppuku.api.module;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.value.Value;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.event.HoverEvent;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,9 +74,9 @@ public class Module {
 
     public void toggle() {
         this.setEnabled(!this.isEnabled());
-        if(this.isEnabled()) {
+        if (this.isEnabled()) {
             this.onEnable();
-        }else{
+        } else {
             this.onDisable();
         }
         this.onToggle();
@@ -81,24 +86,27 @@ public class Module {
         return null;
     }
 
-    public String toUsageString() {
-        if(this.valueList.size() <= 0) {
+    public TextComponentString toUsageTextComponent() {
+        if (this.valueList.size() <= 0) {
             return null;
         }
 
-        final StringBuilder sb = new StringBuilder();
+        final TextComponentString msg = new TextComponentString("");
+        final DecimalFormat df = new DecimalFormat("#.##");
 
-        for(Value v : this.getValueList()) {
+        for (Value v : this.getValueList()) {
+            final Style style = new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(ChatFormatting.GOLD + ((v.getDesc() == null || v.getDesc().equals("")) ? "There is no description for this module" : v.getDesc()) + ChatFormatting.RESET)));
+
             if (v.getValue() instanceof Boolean) {
-                sb.append(v.getName() + "\n");
+                msg.appendSibling(new TextComponentString(v.getName() + ChatFormatting.DARK_GRAY + " | " + ((Boolean) v.getValue() ? ChatFormatting.GREEN : ChatFormatting.RED) + v.getValue()).setStyle(style));
             }
 
             if (v.getValue() instanceof Number && !(v.getValue() instanceof Enum)) {
-                sb.append(v.getName() + " <Amount>\n");
+                msg.appendSibling(new TextComponentString(v.getName() + ChatFormatting.GRAY + " <Amount>" + ChatFormatting.DARK_GRAY + " | " + ChatFormatting.AQUA + (df.format(v.getValue()))).setStyle(style));
             }
 
             if (v.getValue() instanceof String) {
-                sb.append(v.getName() + " <String>\n");
+                msg.appendSibling(new TextComponentString(v.getName() + ChatFormatting.GRAY + " <String>" + ChatFormatting.DARK_GRAY + " | " + ChatFormatting.WHITE + v.getValue()).setStyle(style));
             }
 
             if (v.getValue() instanceof Enum) {
@@ -111,20 +119,18 @@ public class Module {
                 for (int i = 0; i < size; i++) {
                     final Enum option = val.getClass().getEnumConstants()[i];
 
-                    options.append(option.name() + ((i == size - 1) ? "" : " | "));
+                    options.append(option.name() + ((i == size - 1) ? "" : ", "));
                 }
 
-                sb.append(v.getName() + " <" + options.toString() + ">\n");
+                msg.appendSibling(new TextComponentString(v.getName() + ChatFormatting.GRAY + " <" + options.toString() + ">" + ChatFormatting.DARK_GRAY + " | " + ChatFormatting.YELLOW + v.getValue()).setStyle(style));
             }
         }
 
-        final String s = sb.toString();
-
-        return s.substring(0, s.length() - 1);
+        return msg;
     }
 
     public Value find(String alias) {
-        for(Value v : this.getValueList()) {
+        for (Value v : this.getValueList()) {
             for (String s : v.getAlias()) {
                 if (alias.equalsIgnoreCase(s)) {
                     return v;

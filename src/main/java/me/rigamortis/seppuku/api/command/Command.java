@@ -1,6 +1,8 @@
 package me.rigamortis.seppuku.api.command;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
+import net.minecraft.util.text.TextComponentString;
 
 /**
  * Author Seth
@@ -13,6 +15,8 @@ public abstract class Command {
     private String desc;
     private String usage;
 
+    private TextComponentString textComponentUsage;
+
     public Command() {
 
     }
@@ -24,15 +28,20 @@ public abstract class Command {
         this.usage = usage;
     }
 
+    public Command(String displayName, String[] alias, String desc, TextComponentString textComponentUsage) {
+        this(displayName, alias, desc, textComponentUsage.getText());
+        this.textComponentUsage = textComponentUsage;
+    }
+
     public abstract void exec(String input);
 
     public boolean clamp(String input, int min, int max) {
         String[] split = input.split(" ");
-        if(split.length > max) {
+        if (split.length > max) {
             Seppuku.INSTANCE.errorChat("Too much input");
             return false;
         }
-        if(split.length < min) {
+        if (split.length < min) {
             Seppuku.INSTANCE.errorChat("Not enough input");
             return false;
         }
@@ -41,7 +50,7 @@ public abstract class Command {
 
     public boolean clamp(String input, int min) {
         String[] split = input.split(" ");
-        if(split.length < min) {
+        if (split.length < min) {
             Seppuku.INSTANCE.errorChat("Not enough input");
             return false;
         }
@@ -59,10 +68,14 @@ public abstract class Command {
 
     public void printUsage() {
         final String[] usage = this.getUsage().split("\n");
-        Seppuku.INSTANCE.logChat("Usage: ");
+        Seppuku.INSTANCE.logChat(ChatFormatting.GRAY + this.getDisplayName() + " usage: ");
 
-        for(String u : usage) {
-            Seppuku.INSTANCE.logChat(u);
+        if (this.textComponentUsage != null) {
+            this.getTextComponentUsage().getSiblings().forEach(Seppuku.INSTANCE::logcChat);
+        } else {
+            for (String u : usage) {
+                Seppuku.INSTANCE.logChat(u);
+            }
         }
     }
 
@@ -96,5 +109,13 @@ public abstract class Command {
 
     public void setUsage(String usage) {
         this.usage = usage;
+    }
+
+    public TextComponentString getTextComponentUsage() {
+        return textComponentUsage;
+    }
+
+    public void setTextComponentUsage(TextComponentString textComponentUsage) {
+        this.textComponentUsage = textComponentUsage;
     }
 }
