@@ -34,7 +34,7 @@ public final class FreeCamModule extends Module {
     private float yaw;
     private float pitch;
 
-    public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd"}, "Speed of free-cam flight, higher number equals quicker motion.", 1.0f, 0.0f, 10.0f, 0.1f);
+    public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd"}, "Speed of freecam flight, higher number equals quicker motion.", 1.0f, 0.0f, 10.0f, 0.1f);
 
     public final Value<Boolean> view = new Value<Boolean>("3D", new String[]{"View"}, "The old Nodus client style free-cam, kind of like an elytra. (Hold forward key & move the mouse to turn)", false);
 

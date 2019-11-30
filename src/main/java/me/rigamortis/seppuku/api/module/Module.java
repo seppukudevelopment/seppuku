@@ -91,22 +91,21 @@ public class Module {
             return null;
         }
 
+        final String valuePrefix = " " + ChatFormatting.RESET;
         final TextComponentString msg = new TextComponentString("");
         final DecimalFormat df = new DecimalFormat("#.##");
 
         for (Value v : this.getValueList()) {
-            final Style style = new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(ChatFormatting.GOLD + ((v.getDesc() == null || v.getDesc().equals("")) ? "There is no description for this module" : v.getDesc()) + ChatFormatting.RESET)));
-
             if (v.getValue() instanceof Boolean) {
-                msg.appendSibling(new TextComponentString(v.getName() + ChatFormatting.DARK_GRAY + " | " + ((Boolean) v.getValue() ? ChatFormatting.GREEN : ChatFormatting.RED) + v.getValue()).setStyle(style));
+                msg.appendSibling(new TextComponentString(valuePrefix + v.getName() + ": " + ((Boolean) v.getValue() ? ChatFormatting.GREEN : ChatFormatting.RED) + v.getValue()).setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(v.getName() + "\n" + ChatFormatting.GOLD + ((v.getDesc() == null || v.getDesc().equals("")) ? "There is no description for this boolean value." : v.getDesc()) + ChatFormatting.RESET + "\n " + ChatFormatting.GRAY + "<true / false>")))));
             }
 
             if (v.getValue() instanceof Number && !(v.getValue() instanceof Enum)) {
-                msg.appendSibling(new TextComponentString(v.getName() + ChatFormatting.GRAY + " <Amount>" + ChatFormatting.DARK_GRAY + " | " + ChatFormatting.AQUA + (df.format(v.getValue()))).setStyle(style));
+                msg.appendSibling(new TextComponentString(valuePrefix + v.getName() + ChatFormatting.GRAY + " <amount>" + ChatFormatting.RESET + ": " + ChatFormatting.AQUA + (df.format(v.getValue()))).setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(v.getName() + "\n" + ChatFormatting.GOLD + ((v.getDesc() == null || v.getDesc().equals("")) ? "There is no description for this number value." : v.getDesc()) + ChatFormatting.RESET + "\n " + ChatFormatting.GRAY + "<" + v.getMin() + " - " + v.getMax() + ">")))));
             }
 
             if (v.getValue() instanceof String) {
-                msg.appendSibling(new TextComponentString(v.getName() + ChatFormatting.GRAY + " <String>" + ChatFormatting.DARK_GRAY + " | " + ChatFormatting.WHITE + v.getValue()).setStyle(style));
+                msg.appendSibling(new TextComponentString(valuePrefix + v.getName() + ChatFormatting.GRAY + " <text>" + ChatFormatting.RESET + ": " + v.getValue()).setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(v.getName() + "\n" + ChatFormatting.GOLD + ((v.getDesc() == null || v.getDesc().equals("")) ? "There is no description for this string value." : v.getDesc()) + ChatFormatting.RESET + "\n " + ChatFormatting.GRAY + "<text>")))));
             }
 
             if (v.getValue() instanceof Enum) {
@@ -119,7 +118,7 @@ public class Module {
                     options.append(option.name().toLowerCase() + ((i == size - 1) ? "" : ", "));
                 }
 
-                msg.appendSibling(new TextComponentString(v.getName() + ChatFormatting.GRAY + " <" + options.toString() + ">" + ChatFormatting.DARK_GRAY + " | " + ChatFormatting.YELLOW + val.name().toLowerCase()).setStyle(style));
+                msg.appendSibling(new TextComponentString(valuePrefix + v.getName() + ChatFormatting.GRAY + " <" + options.toString() + ">" + ChatFormatting.RESET + ": " + ChatFormatting.YELLOW + val.name().toLowerCase()).setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(v.getName() + "\n" + ChatFormatting.GOLD + ((v.getDesc() == null || v.getDesc().equals("")) ? "There is no description for this enum value." : v.getDesc()) + ChatFormatting.RESET + "\n " + ChatFormatting.GRAY + "<" + options.toString() + ">")))));
             }
         }
 
