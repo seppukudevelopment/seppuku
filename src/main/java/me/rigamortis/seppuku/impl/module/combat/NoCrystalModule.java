@@ -5,7 +5,7 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.MathUtil;
-import me.rigamortis.seppuku.api.value.BooleanValue;
+import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.module.player.FreeCamModule;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -29,10 +29,8 @@ public final class NoCrystalModule extends Module {
 
     private final Minecraft mc = Minecraft.getMinecraft();
 
-    public final BooleanValue disable = new BooleanValue("Disable", new String[]{"dis"}, false);
-
-    // When false, NoCrystal will not place while the player is sneaking
-    public final BooleanValue sneak = new BooleanValue("PlaceOnSneak", new String[]{"sneak", "s", "pos", "sneakPlace"}, false);
+    public final Value<Boolean> disable = new Value<Boolean>("Disable", new String[]{"dis"}, "Automatically disable after it places.", false);
+    public final Value<Boolean> sneak = new Value<Boolean>("PlaceOnSneak", new String[]{"sneak", "s", "pos", "sneakPlace"}, "When false, NoCrystal will not place while the player is sneaking.", false);
 
     public NoCrystalModule() {
         super("NoCrystal", new String[]{"AntiCrystal", "FeetPlace"}, "Automatically places obsidian in 4 cardinal directions", "NONE", -1, ModuleType.COMBAT);
@@ -66,7 +64,7 @@ public final class NoCrystalModule extends Module {
             final int slot = findStackHotbar(Blocks.OBSIDIAN);
             if (hasStack(Blocks.OBSIDIAN) || slot != -1) {
                 if ((mc.player.onGround && playerSpeed <= 0.005f)
-                     && (sneak.getBoolean() || (!mc.gameSettings.keyBindSneak.isKeyDown()))) {
+                        && (this.sneak.getValue() || (!mc.gameSettings.keyBindSneak.isKeyDown()))) {
 
                     lastSlot = mc.player.inventory.currentItem;
                     mc.player.inventory.currentItem = slot;
@@ -105,7 +103,7 @@ public final class NoCrystalModule extends Module {
                     }
                     mc.playerController.updateController();
 
-                    if(this.disable.getBoolean()) {
+                    if (this.disable.getValue()) {
                         this.toggle();
                     }
                 }
