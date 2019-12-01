@@ -23,7 +23,6 @@ public final class ChatTimeStampsModule extends Module {
         TWELVE, TWENTY_FOUR
     }
 
-
     public ChatTimeStampsModule() {
         super("ChatTimeStamps", new String[]{"ChatStamp", "ChatStamps"}, "Appends a time stamp on chat messages", "NONE", -1, ModuleType.MISC);
     }
