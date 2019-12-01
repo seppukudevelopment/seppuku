@@ -170,7 +170,7 @@ public final class CommandManager {
                                 if (v.getValue().getClass() == Float.class) {
                                     if (StringUtil.isFloat(split[2])) {
                                         v.setValue(Float.parseFloat(split[2]));
-                                        Seppuku.INSTANCE.logChat(module.getDisplayName() + " \2477" + v.getName() + "\247b set to \247b" + Float.parseFloat(split[2]));
+                                        Seppuku.INSTANCE.logChat(module.getDisplayName() + " \2477" + v.getName() + "\247f set to \247b" + Float.parseFloat(split[2]));
                                         Seppuku.INSTANCE.getConfigManager().saveAll();
                                     } else {
                                         Seppuku.INSTANCE.errorChat("Invalid input " + "\"" + split[2] + "\" expected a number");
