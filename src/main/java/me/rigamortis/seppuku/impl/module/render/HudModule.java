@@ -3,10 +3,12 @@ package me.rigamortis.seppuku.impl.module.render;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.gui.EventRenderPotions;
 import me.rigamortis.seppuku.api.event.render.EventRender2D;
+import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.gui.hud.component.HudComponent;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
+import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -40,7 +42,20 @@ public final class HudModule extends Module {
         GlStateManager.enableBlend();
         for (HudComponent component : Seppuku.INSTANCE.getHudManager().getComponentList()) {
             if (component.isVisible()) {
-                component.render(0, 0, mc.getRenderPartialTicks());
+
+                //dont render components with the TOP_CENTER anchor if we are looking at the tab list
+                if (component instanceof DraggableHudComponent) {
+                    final DraggableHudComponent draggableComponent = (DraggableHudComponent) component;
+                    if (draggableComponent.getAnchorPoint() != null && draggableComponent.getAnchorPoint().getPoint() == AnchorPoint.Point.TOP_CENTER) {
+                        if (!mc.gameSettings.keyBindPlayerList.isKeyDown()) {
+                            draggableComponent.render(0, 0, mc.getRenderPartialTicks());
+                        }
+                    } else {
+                        draggableComponent.render(0, 0, mc.getRenderPartialTicks());
+                    }
+                } else {
+                    component.render(0, 0, mc.getRenderPartialTicks());
+                }
             }
         }
         GlStateManager.disableBlend();

@@ -13,7 +13,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class VanillaTabModule extends Module {
 
     public VanillaTabModule() {
-        super("VanillaTab", new String[]{"VTab", "VanillaT"}, "", "NONE", -1, ModuleType.MISC);
+        super("VanillaTab", new String[]{"VTab", "VanillaT"}, "Removes the Header and Footer from the tab menu.", "NONE", -1, ModuleType.MISC);
     }
 
     @Listener

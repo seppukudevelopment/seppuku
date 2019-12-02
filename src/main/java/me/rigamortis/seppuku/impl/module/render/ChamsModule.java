@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityBoat;
+import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.item.EntityMinecartContainer;
 import net.minecraft.entity.monster.IMob;
@@ -30,6 +31,7 @@ public final class ChamsModule extends Module {
     public final Value<Boolean> mobs = new Value<Boolean>("Mobs", new String[]{"Mob"}, "Choose to enable on mobs.", true);
     public final Value<Boolean> animals = new Value<Boolean>("Animals", new String[]{"Animal"}, "Choose to enable on animals.", true);
     public final Value<Boolean> vehicles = new Value<Boolean>("Vehicles", new String[]{"Vehic", "Vehicle"}, "Choose to enable on vehicles.", true);
+    public final Value<Boolean> crystals = new Value<Boolean>("Crystals", new String[]{"crystal", "crystals", "endcrystal", "endcrystals"}, "Choose to enable on end crystals.", true);
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode"}, "The chams mode to use.", Mode.NORMAL);
 
@@ -147,7 +149,7 @@ public final class ChamsModule extends Module {
 
         final Entity riding = Minecraft.getMinecraft().player.getRidingEntity();
 
-        if(riding != null && entity == riding) {
+        if (riding != null && entity == riding) {
             ret = false;
         }
 
@@ -164,6 +166,10 @@ public final class ChamsModule extends Module {
         }
 
         if (this.vehicles.getValue() && (entity instanceof EntityBoat || entity instanceof EntityMinecart || entity instanceof EntityMinecartContainer)) {
+            ret = true;
+        }
+
+        if (this.crystals.getValue() && entity instanceof EntityEnderCrystal) {
             ret = true;
         }
 

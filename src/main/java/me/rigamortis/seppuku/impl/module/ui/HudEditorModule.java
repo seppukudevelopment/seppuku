@@ -2,6 +2,7 @@ package me.rigamortis.seppuku.impl.module.ui;
 
 import me.rigamortis.seppuku.api.event.minecraft.EventDisplayGui;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -13,6 +14,9 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  * 7/25/2019 @ 4:16 AM.
  */
 public final class HudEditorModule extends Module {
+
+    public final Value<Boolean> blur = new Value("Blur", new String[]{"b"}, "Apply a blur effect to the Hud Editor's background.", true);
+    public final Value<Boolean> tooltips = new Value("ToolTips", new String[]{"TT", "Tool"}, "Displays tooltips for modules.", true);
 
     private boolean open;
 
@@ -29,8 +33,10 @@ public final class HudEditorModule extends Module {
         if (mc.world != null) {
             mc.displayGuiScreen(new GuiHudEditor());
 
-            if (OpenGlHelper.shadersSupported) {
-                mc.entityRenderer.loadShader(new ResourceLocation("minecraft", "shaders/post/blur.json"));
+            if(this.blur.getValue()) {
+                if (OpenGlHelper.shadersSupported) {
+                    mc.entityRenderer.loadShader(new ResourceLocation("minecraft", "shaders/post/blur.json"));
+                }
             }
             this.open = true;
         }

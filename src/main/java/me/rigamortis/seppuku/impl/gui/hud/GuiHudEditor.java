@@ -118,8 +118,14 @@ public final class GuiHudEditor extends GuiScreen {
     public void onGuiClosed() {
         Seppuku.INSTANCE.getConfigManager().saveAll();
 
-        if (OpenGlHelper.shadersSupported) {
-            mc.entityRenderer.stopUseShader();
+        final HudEditorModule mod = (HudEditorModule) Seppuku.INSTANCE.getModuleManager().find(HudEditorModule.class);
+
+        if (mod != null) {
+            if (mod.blur.getValue()) {
+                if (OpenGlHelper.shadersSupported) {
+                    mc.entityRenderer.stopUseShader();
+                }
+            }
         }
 
         for (HudComponent component : Seppuku.INSTANCE.getHudManager().getComponentList()) {

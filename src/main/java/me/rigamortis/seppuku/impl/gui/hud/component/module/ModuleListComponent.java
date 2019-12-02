@@ -5,6 +5,7 @@ import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
+import me.rigamortis.seppuku.impl.module.ui.HudEditorModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +26,8 @@ public final class ModuleListComponent extends DraggableHudComponent {
     private final int SCROLL_WIDTH = 4;
     private final int BORDER = 2;
     private final int TEXT_GAP = 1;
+
+    private final HudEditorModule hudEditorModule = (HudEditorModule) Seppuku.INSTANCE.getModuleManager().find(HudEditorModule.class);
 
     public ModuleListComponent(Module.ModuleType type) {
         super(StringUtils.capitalize(type.name().toLowerCase()));
@@ -80,6 +83,28 @@ public final class ModuleListComponent extends DraggableHudComponent {
         }
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
+        if (this.hudEditorModule != null && this.hudEditorModule.tooltips.getValue()) {
+            final boolean inside = mouseX >= this.getX() && mouseX <= this.getX() + this.getW() && mouseY >= this.getY() && mouseY <= this.getY() + this.getH();
+
+            if (inside) {
+                int height = BORDER;
+                for (Module module : Seppuku.INSTANCE.getModuleManager().getModuleList(this.type)) {
+                    final boolean insideComponent = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1 + height - this.scroll) && mouseY <= (this.getY() + BORDER + (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT * 2) + 1 + height - this.scroll);
+                    if (!insideTitlebar && insideComponent) {
+                        final int tooltipWidth = mc.fontRenderer.getStringWidth(module.getDesc());
+                        final int tooltipHeight = mc.fontRenderer.FONT_HEIGHT;
+                        // Tooltip background
+                        RenderUtil.drawRect(mouseX - tooltipWidth / 2 - 2, mouseY - tooltipHeight - 2, mouseX + tooltipWidth / 2 + 2, mouseY + 2, 0x99101010);
+                        RenderUtil.drawRect(mouseX - tooltipWidth / 2 - 1, mouseY - tooltipHeight - 1, mouseX + tooltipWidth / 2 + 1, mouseY + 1, 0xFF101010);
+
+                        // Tooltip
+                        mc.fontRenderer.drawStringWithShadow(module.getDesc(), mouseX - tooltipWidth / 2, mouseY - tooltipHeight, 0xFFC255FF);
+                    }
+                    height += Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + TEXT_GAP;
+                }
+            }
+        }
+//
         this.totalHeight = BORDER + TEXT_GAP + offsetY + BORDER;
     }
 
@@ -95,6 +120,7 @@ public final class ModuleListComponent extends DraggableHudComponent {
                 final boolean insideComponent = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1 + offsetY - this.scroll) && mouseY <= (this.getY() + BORDER + (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT * 2) + 1 + offsetY - this.scroll);
                 if (!insideTitlebar && insideComponent) {
                     module.toggle();
+                    this.setDragging(false);
                 }
                 offsetY += Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + TEXT_GAP;
             }

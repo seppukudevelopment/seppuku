@@ -39,10 +39,7 @@ import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -64,6 +61,7 @@ public final class WallHackModule extends Module {
     public final Value<Boolean> items = new Value<Boolean>("Items", new String[]{"Item"}, "Choose to enable on items.", true);
     public final Value<Boolean> local = new Value<Boolean>("Local", new String[]{"Self"}, "Choose to enable on self/local-player.", true);
     public final Value<Boolean> crystals = new Value<Boolean>("Crystals", new String[]{"crystal", "crystals", "endcrystal", "endcrystals"}, "Choose to enable on end crystals.", true);
+    public final Value<Boolean> pearls = new Value<Boolean>("Pearls", new String[]{"Pearl"}, "Choose to enable on ender pearls.", true);
     public final Value<Boolean> armorStand = new Value<Boolean>("ArmorStands", new String[]{"ArmorStand", "ArmourStand", "ArmourStands", "ArmStand"}, "Choose to enable on armor-stands.", true);
     public final Value<Boolean> footsteps = new Value<Boolean>("FootSteps", new String[]{"FootStep", "Steps"}, "Choose to draw entity footsteps.", false);
 
@@ -429,6 +427,12 @@ public final class WallHackModule extends Module {
         if (entity instanceof EntityEnderCrystal) {
             return "End Crystal";
         }
+        if (entity instanceof EntityEnderPearl) {
+            final EntityEnderPearl pearl = (EntityEnderPearl) entity;
+            //TODO resolve and draw username
+//            return pearl.getCachedUniqueIdString();
+            return "Ender Pearl";
+        }
         if (entity instanceof EntityMinecart) {
             final EntityMinecart minecart = (EntityMinecart) entity;
             return minecart.getCartItem().getDisplayName();
@@ -463,6 +467,11 @@ public final class WallHackModule extends Module {
         if (this.armorStand.getValue() && entity instanceof EntityArmorStand) {
             ret = true;
         }
+
+        if (this.pearls.getValue() && entity instanceof EntityEnderPearl) {
+            ret = true;
+        }
+
         if (Minecraft.getMinecraft().player.getRidingEntity() != null && entity == Minecraft.getMinecraft().player.getRidingEntity()) {
             ret = false;
         }
@@ -486,6 +495,9 @@ public final class WallHackModule extends Module {
             ret = 0xFF00FFAA;
         }
         if (entity instanceof EntityEnderCrystal) {
+            ret = 0xFFCD00CD;
+        }
+        if (entity instanceof EntityEnderPearl) {
             ret = 0xFFCD00CD;
         }
         if (entity instanceof EntityPlayer) {
