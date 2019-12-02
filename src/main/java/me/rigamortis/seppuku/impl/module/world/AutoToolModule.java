@@ -4,7 +4,7 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventSendPacket;
 import me.rigamortis.seppuku.api.event.player.EventPlayerDamageBlock;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -25,7 +25,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class AutoToolModule extends Module {
 
-    public final BooleanValue silent = new BooleanValue("Silent", new String[]{"Sil"}, true);
+    public final Value<Boolean> silent = new Value<Boolean>("Silent", new String[]{"Sil"}, "Hold any item and spoof your mining tool.", true);
 
     private boolean send;
 
@@ -136,7 +136,7 @@ public final class AutoToolModule extends Module {
     @Listener
     public void damageBlock(EventPlayerDamageBlock event) {
         final Minecraft mc = Minecraft.getMinecraft();
-        if (this.silent.getBoolean()) {
+        if (this.silent.getValue()) {
             final int slot = getToolInventory(event.getPos());
             if (slot != -1) {
                 mc.playerController.curBlockDamageMP += blockStrength(event.getPos(), mc.player.inventoryContainer.getSlot(slot).getStack());
@@ -162,7 +162,7 @@ public final class AutoToolModule extends Module {
                 this.send = false;
                 return;
             }
-            if (event.getPacket() instanceof CPacketPlayerDigging && this.silent.getBoolean()) {
+            if (event.getPacket() instanceof CPacketPlayerDigging && this.silent.getValue()) {
                 final CPacketPlayerDigging packet = (CPacketPlayerDigging) event.getPacket();
                 if (packet.getAction() == CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK) {
                     this.position = packet.getPosition();

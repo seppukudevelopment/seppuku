@@ -5,7 +5,7 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.network.EventSendPacket;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.network.Packet;
 import net.minecraft.util.StringUtils;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -19,15 +19,13 @@ public final class PacketLoggerModule extends Module {
 
     private Packet[] packets;
 
-    public final BooleanValue incoming = new BooleanValue("Incoming", new String[]{"in"}, true);
+    public final Value<Boolean> incoming = new Value<Boolean>("Incoming", new String[]{"in"}, "Log incoming packets when enabled.", true);
+    public final Value<Boolean> outgoing = new Value<Boolean>("Outgoing", new String[]{"out"}, "Log outgoing packets when enabled.", true);
 
-    public final BooleanValue outgoing = new BooleanValue("Outgoing", new String[]{"out"}, true);
+    public final Value<Boolean> chat = new Value<Boolean>("Chat", new String[]{"ch"}, "Logs packet traffic to chat.", true);
+    public final Value<Boolean> console = new Value<Boolean>("Console", new String[]{"con"}, "Logs packet traffic to console.", true);
 
-    public final BooleanValue chat = new BooleanValue("Chat", new String[]{"ch"}, true);
-
-    public final BooleanValue console = new BooleanValue("Console", new String[]{"con"}, true);
-
-    public final BooleanValue data = new BooleanValue("Data", new String[]{"dat"}, true);
+    public final Value<Boolean> data = new Value<Boolean>("Data", new String[]{"dat"}, "Include data about the packet's class in the log when enabled.", true);
 
     public PacketLoggerModule() {
         super("PacketLogger", new String[]{"pktlgr"}, "Log incoming and/or outgoing packets to console.", "NONE", -1, ModuleType.MISC);
@@ -41,12 +39,12 @@ public final class PacketLoggerModule extends Module {
 
     @Listener
     public void receivePacket(EventReceivePacket event) {
-        if (this.incoming.getBoolean()) {
+        if (this.incoming.getValue()) {
             if (event.getStage() == EventStageable.EventStage.PRE) {
-                if (this.console.getBoolean()) {
+                if (this.console.getValue()) {
                     System.out.println("\2477IN: \247r" + event.getPacket().getClass().getSimpleName() + " {");
 
-                    if (this.data.getBoolean()) {
+                    if (this.data.getValue()) {
                         try {
 
                             Class clazz = event.getPacket().getClass();
@@ -72,10 +70,10 @@ public final class PacketLoggerModule extends Module {
                     System.out.println("}");
                 }
 
-                if (this.chat.getBoolean()) {
+                if (this.chat.getValue()) {
                     Seppuku.INSTANCE.logChat("\2477IN: \247r" + event.getPacket().getClass().getSimpleName() + " {");
 
-                    if (this.data.getBoolean()) {
+                    if (this.data.getValue()) {
                         try {
 
                             Class clazz = event.getPacket().getClass();
@@ -106,12 +104,12 @@ public final class PacketLoggerModule extends Module {
 
     @Listener
     public void sendPacket(EventSendPacket event) {
-        if (this.outgoing.getBoolean()) {
+        if (this.outgoing.getValue()) {
             if (event.getStage() == EventStageable.EventStage.PRE) {
-                if (this.console.getBoolean()) {
+                if (this.console.getValue()) {
                     System.out.println("\2477OUT: \247r" + event.getPacket().getClass().getSimpleName() + " {");
 
-                    if (this.data.getBoolean()) {
+                    if (this.data.getValue()) {
                         try {
 
                             Class clazz = event.getPacket().getClass();
@@ -137,10 +135,10 @@ public final class PacketLoggerModule extends Module {
                     System.out.println("}");
                 }
 
-                if (this.chat.getBoolean()) {
+                if (this.chat.getValue()) {
                     Seppuku.INSTANCE.logChat("\2477OUT: \247r" + event.getPacket().getClass().getSimpleName() + " {");
 
-                    if (this.data.getBoolean()) {
+                    if (this.data.getValue()) {
                         try {
 
                             Class clazz = event.getPacket().getClass();

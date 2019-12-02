@@ -4,9 +4,7 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.Timer;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
-import me.rigamortis.seppuku.api.value.old.StringValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiCrafting;
 import net.minecraft.client.gui.inventory.GuiInventory;
@@ -22,9 +20,9 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class AutoCraftModule extends Module {
 
-    public final BooleanValue drop = new BooleanValue("Drop", new String[]{"d"}, false);
-    public final StringValue recipe = new StringValue("Recipe", new String[]{"Recipes", "Rec", "Rec"}, "");
-    public final NumberValue delay = new NumberValue("Delay", new String[]{"Del"}, 50.0f, Float.class, 0.0f, 1000.0f, 1.0f);
+    public final Value<Boolean> drop = new Value("Drop", new String[]{"d"}, "Automatically drop the crafted item.", false);
+    public final Value<String> recipe = new Value("Recipe", new String[]{"Recipes", "Rec", "Rec"}, "The recipe name of what you want to craft.", "");
+    public final Value<Float> delay = new Value("Delay", new String[]{"Del"}, "The crafting delay in milliseconds.", 50.0f, 0.0f, 1000.0f, 1.0f);
 
     private Timer timer = new Timer();
 
@@ -37,11 +35,11 @@ public final class AutoCraftModule extends Module {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             final Minecraft mc = Minecraft.getMinecraft();
 
-            if (this.recipe.getString().length() > 0 && this.timer.passed(this.delay.getFloat())) {
+            if (this.recipe.getValue().length() > 0 && this.timer.passed(this.delay.getValue())) {
                 if (mc.currentScreen == null || mc.currentScreen instanceof GuiInventory || mc.currentScreen instanceof GuiCrafting) {
-                    mc.player.connection.sendPacket(new CPacketPlaceRecipe(mc.player.openContainer.windowId, CraftingManager.getRecipe(new ResourceLocation(this.recipe.getString().toLowerCase())), true));
+                    mc.player.connection.sendPacket(new CPacketPlaceRecipe(mc.player.openContainer.windowId, CraftingManager.getRecipe(new ResourceLocation(this.recipe.getValue().toLowerCase())), true));
 
-                    mc.playerController.windowClick(mc.player.openContainer.windowId, 0, 0, this.drop.getBoolean() ? ClickType.THROW : ClickType.QUICK_MOVE, mc.player);
+                    mc.playerController.windowClick(mc.player.openContainer.windowId, 0, 0, this.drop.getValue() ? ClickType.THROW : ClickType.QUICK_MOVE, mc.player);
                     mc.playerController.updateController();
                 }
 

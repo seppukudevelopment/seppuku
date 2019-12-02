@@ -4,7 +4,7 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventSendPacket;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.module.hidden.CommandsModule;
 import net.minecraft.network.play.client.CPacketChatMessage;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -17,7 +17,7 @@ import java.util.Random;
  */
 public final class ChatMutatorModule extends Module {
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"L33t", "Fancy", "Retard", "Console"});
+    public final Value<Mode> mode = new Value("Mode", new String[]{"Mode", "M"}, "The chat mutator mode to use.", Mode.LEET);
 
     public ChatMutatorModule() {
         super("ChatMutator", new String[]{"ChatMutate", "ChatM"}, "Modify your outgoing chat messages", "NONE", -1, ModuleType.MISC);
@@ -25,7 +25,7 @@ public final class ChatMutatorModule extends Module {
 
     @Override
     public String getMetaData() {
-        return this.mode.getSelectedOption();
+        return this.mode.getValue().name();
     }
 
     @Listener
@@ -37,21 +37,21 @@ public final class ChatMutatorModule extends Module {
                 final CommandsModule cmds = (CommandsModule) Seppuku.INSTANCE.getModuleManager().find(CommandsModule.class);
 
                 if (cmds != null) {
-                    if (packet.getMessage().startsWith("/") || packet.getMessage().startsWith(cmds.prefix.getString())) {
+                    if (packet.getMessage().startsWith("/") || packet.getMessage().startsWith(cmds.prefix.getValue())) {
                         return;
                     }
 
-                    switch (this.mode.getInt()) {
-                        case 0:
+                    switch (this.mode.getValue()) {
+                        case LEET:
                             packet.message = leetSpeak(packet.message);
                             break;
-                        case 1:
+                        case FANCY:
                             packet.message = fancy(packet.message);
                             break;
-                        case 2:
+                        case RETARD:
                             packet.message = retard(packet.message);
                             break;
-                        case 3:
+                        case CONSOLE:
                             packet.message = console(packet.message);
                             break;
                     }
@@ -76,9 +76,9 @@ public final class ChatMutatorModule extends Module {
         final StringBuilder sb = new StringBuilder();
 
         for (char c : input.toCharArray()) {
-            if(c >= 0x21 && c <= 0x80) {
+            if (c >= 0x21 && c <= 0x80) {
                 sb.append(Character.toChars(c + 0xFEE0));
-            }else{
+            } else {
                 sb.append(c);
             }
         }
@@ -99,7 +99,7 @@ public final class ChatMutatorModule extends Module {
     public String console(String input) {
         String ret = "";
 
-        final char[] unicodeChars = new char[] {'\u2E3B',
+        final char[] unicodeChars = new char[]{'\u2E3B',
                 '\u26D0',
                 '\u26E8',
                 '\u26BD',
@@ -116,14 +116,14 @@ public final class ChatMutatorModule extends Module {
         final int length = input.length();
 
         for (int i = 1, current = 0; i <= length || current < length; current = i, i += 1) {
-            if(current != 0) {
+            if (current != 0) {
                 final Random random = new Random();
 
-                for(int j = 0; j <= 2; j++) {
+                for (int j = 0; j <= 2; j++) {
                     ret += unicodeChars[random.nextInt(unicodeChars.length)];
                 }
             }
-            if(i <= length) {
+            if (i <= length) {
                 ret += input.substring(current, i);
             } else {
                 ret += input.substring(current);
@@ -131,6 +131,10 @@ public final class ChatMutatorModule extends Module {
         }
 
         return ret;
+    }
+
+    private enum Mode {
+        LEET, FANCY, RETARD, CONSOLE
     }
 
 }

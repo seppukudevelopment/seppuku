@@ -6,8 +6,7 @@ import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.api.util.GLUProjection;
 import me.rigamortis.seppuku.api.util.RenderUtil;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
@@ -19,9 +18,9 @@ import java.text.DecimalFormat;
  */
 public final class WaypointsModule extends Module {
 
-    public final BooleanValue tracers = new BooleanValue("Tracers", new String[]{"Tracer", "Trace"}, false);
+    public final Value<Boolean> tracers = new Value<Boolean>("Tracers", new String[]{"Tracer", "Trace"}, "Draws a line from the center of the screen to each waypoint.", false);
 
-    public final NumberValue width = new NumberValue("Width", new String[]{"Wid"}, 0.5f, Float.class, 0.0f, 5.0f, 0.1f);
+    public final Value<Float> width = new Value<Float>("Width", new String[]{"Wid"}, "Pixel width of each tracer line.", 0.5f, 0.0f, 5.0f, 0.1f);
 
     public WaypointsModule() {
         super("Waypoints", new String[] {"Wp", "Waypoint"}, "Highlights waypoints", "NONE", -1, ModuleType.WORLD);
@@ -45,11 +44,11 @@ public final class WaypointsModule extends Module {
                             mc.fontRenderer.drawStringWithShadow(name, (float) projection.getX() - mc.fontRenderer.getStringWidth(name) / 2, (float) projection.getY() - mc.fontRenderer.FONT_HEIGHT / 2, waypointData.getColor());
                         }
 
-                        if(this.tracers.getBoolean()) {
+                        if (this.tracers.getValue()) {
                             final GLUProjection.Projection screen = GLUProjection.getInstance().project(waypointData.getX() - mc.getRenderManager().viewerPosX, waypointData.getY() - mc.getRenderManager().viewerPosY, waypointData.getZ() - mc.getRenderManager().viewerPosZ, GLUProjection.ClampMode.NONE, true);
 
                             if (screen != null) {
-                                RenderUtil.drawLine((float) screen.getX(), (float) screen.getY(), event.getScaledResolution().getScaledWidth() / 2, event.getScaledResolution().getScaledHeight() / 2, this.width.getFloat(), -1);
+                                RenderUtil.drawLine((float) screen.getX(), (float) screen.getY(), event.getScaledResolution().getScaledWidth() / 2, event.getScaledResolution().getScaledHeight() / 2, this.width.getValue(), -1);
                             }
                         }
                     }

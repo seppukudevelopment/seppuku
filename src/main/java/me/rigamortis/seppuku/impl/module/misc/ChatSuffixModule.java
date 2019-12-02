@@ -25,7 +25,7 @@ public final class ChatSuffixModule extends Module {
         if (cmds == null)
             return;
 
-        if (event.getMessage().startsWith("/") || event.getMessage().startsWith(cmds.prefix.getString()))
+        if (event.getMessage().startsWith("/") || event.getMessage().startsWith(cmds.prefix.getValue()))
             return;
 
         event.setCanceled(true);

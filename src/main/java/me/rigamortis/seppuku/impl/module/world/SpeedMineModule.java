@@ -6,8 +6,7 @@ import me.rigamortis.seppuku.api.event.player.EventPlayerDamageBlock;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.event.player.EventResetBlockRemoving;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -22,10 +21,14 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class SpeedMineModule extends Module {
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"Packet", "Damage", "Instant"});
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The speed-mine mode to use.", Mode.PACKET);
 
-    public final BooleanValue reset = new BooleanValue("Reset", new String[]{"Res"}, true);
-    public final BooleanValue doubleBreak = new BooleanValue("DoubleBreak", new String[]{"DoubleBreak", "Double", "DB"}, false);
+    private enum Mode {
+        PACKET, DAMAGE, INSTANT
+    }
+
+    public final Value<Boolean> reset = new Value<Boolean>("Reset", new String[]{"Res"}, "Stops current block destroy damage from resetting if enabled.", true);
+    public final Value<Boolean> doubleBreak = new Value<Boolean>("DoubleBreak", new String[]{"DoubleBreak", "Double", "DB"}, "Mining a block will also mine the block above it, if enabled.", false);
 
     public SpeedMineModule() {
         super("SpeedMine", new String[]{"FastMine"}, "Allows you to break blocks faster", "NONE", -1, ModuleType.WORLD);
@@ -33,7 +36,7 @@ public final class SpeedMineModule extends Module {
 
     @Override
     public String getMetaData() {
-        return this.mode.getSelectedOption();
+        return this.mode.getValue().name();
     }
 
     @Listener
@@ -41,7 +44,7 @@ public final class SpeedMineModule extends Module {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             Minecraft.getMinecraft().playerController.blockHitDelay = 0;
 
-            if (this.reset.getBoolean() && Minecraft.getMinecraft().gameSettings.keyBindUseItem.isKeyDown()) {
+            if (this.reset.getValue() && Minecraft.getMinecraft().gameSettings.keyBindUseItem.isKeyDown()) {
                 Minecraft.getMinecraft().playerController.isHittingBlock = false;
             }
         }
@@ -49,14 +52,14 @@ public final class SpeedMineModule extends Module {
 
     @Listener
     public void resetBlockDamage(EventResetBlockRemoving event) {
-        if (this.reset.getBoolean()) {
+        if (this.reset.getValue()) {
             event.setCanceled(true);
         }
     }
 
     @Listener
     public void clickBlock(EventClickBlock event) {
-        if (this.reset.getBoolean()) {
+        if (this.reset.getValue()) {
             if (Minecraft.getMinecraft().playerController.curBlockDamageMP > 0.1f) {
                 Minecraft.getMinecraft().playerController.isHittingBlock = true;
             }
@@ -69,23 +72,23 @@ public final class SpeedMineModule extends Module {
 
             final Minecraft mc = Minecraft.getMinecraft();
 
-            if (this.reset.getBoolean()) {
+            if (this.reset.getValue()) {
                 mc.playerController.isHittingBlock = false;
             }
 
-            switch (this.mode.getInt()) {
-                case 0:
+            switch (this.mode.getValue()) {
+                case PACKET:
                     mc.player.swingArm(EnumHand.MAIN_HAND);
                     mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, event.getPos(), event.getFace()));
                     mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, event.getPos(), event.getFace()));
                     event.setCanceled(true);
                     break;
-                case 1:
+                case DAMAGE:
                     if (mc.playerController.curBlockDamageMP >= 0.7f) {
                         mc.playerController.curBlockDamageMP = 1.0f;
                     }
                     break;
-                case 2:
+                case INSTANT:
                     mc.player.swingArm(EnumHand.MAIN_HAND);
                     mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, event.getPos(), event.getFace()));
                     mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, event.getPos(), event.getFace()));
@@ -95,7 +98,7 @@ public final class SpeedMineModule extends Module {
             }
         }
 
-        if (this.doubleBreak.getBoolean()) {
+        if (this.doubleBreak.getValue()) {
             final BlockPos above = event.getPos().add(0, 1, 0);
 
             final Minecraft mc = Minecraft.getMinecraft();

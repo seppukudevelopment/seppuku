@@ -6,7 +6,7 @@ import me.rigamortis.seppuku.api.event.minecraft.EventRunTick;
 import me.rigamortis.seppuku.api.event.network.EventSendPacket;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.Timer;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiDisconnected;
 import net.minecraft.client.multiplayer.GuiConnecting;
@@ -25,7 +25,7 @@ public final class ReconnectModule extends Module {
     private boolean reconnect;
     private Timer timer = new Timer();
 
-    public final NumberValue delay = new NumberValue("Delay", new String[]{"Del"}, 3000.0f, Float.class, 0.0f, 10000.0f, 500.0f);
+    public final Value<Float> delay = new Value<Float>("Delay", new String[]{"Del"}, "Delay in MS (milliseconds) between reconnect attempts.", 3000.0f, 0.0f, 10000.0f, 500.0f);
 
     public ReconnectModule() {
         super("Reconnect", new String[]{"Rejoin", "Recon", "AutoReconnect"}, "Automatically reconnects to the last server after being kicked", "NONE", -1, ModuleType.MISC);
@@ -46,9 +46,9 @@ public final class ReconnectModule extends Module {
 
     @Listener
     public void runTick(EventRunTick event) {
-        if(event.getStage() == EventStageable.EventStage.POST) {
-            if(this.lastIp != null && this.lastPort > 0 && this.reconnect) {
-                if(this.timer.passed(delay.getFloat())) {
+        if (event.getStage() == EventStageable.EventStage.POST) {
+            if (this.lastIp != null && this.lastPort > 0 && this.reconnect) {
+                if (this.timer.passed(this.delay.getValue())) {
                     Minecraft.getMinecraft().displayGuiScreen(new GuiConnecting(null, Minecraft.getMinecraft(), this.lastIp, this.lastPort));
                     this.timer.reset();
                     this.reconnect = false;

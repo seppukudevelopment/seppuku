@@ -1,8 +1,13 @@
 package me.rigamortis.seppuku.api.module;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.value.old.*;
+import me.rigamortis.seppuku.api.value.Value;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.event.HoverEvent;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,9 +74,9 @@ public class Module {
 
     public void toggle() {
         this.setEnabled(!this.isEnabled());
-        if(this.isEnabled()) {
+        if (this.isEnabled()) {
             this.onEnable();
-        }else{
+        } else {
             this.onDisable();
         }
         this.onToggle();
@@ -81,53 +86,54 @@ public class Module {
         return null;
     }
 
-    public String toUsageString() {
-        if(this.valueList.size() <= 0) {
+    public TextComponentString toUsageTextComponent() {
+        if (this.valueList.size() <= 0) {
             return null;
         }
 
-        final StringBuilder sb = new StringBuilder();
+        final String valuePrefix = " " + ChatFormatting.RESET;
+        final TextComponentString msg = new TextComponentString("");
+        final DecimalFormat df = new DecimalFormat("#.##");
 
-        for(Value v : this.getValueList()) {
-            if(v instanceof BooleanValue) {
-                sb.append(v.getDisplayName() + "\n");
+        for (Value v : this.getValueList()) {
+            if (v.getValue() instanceof Boolean) {
+                msg.appendSibling(new TextComponentString(valuePrefix + v.getName() + ": " + ((Boolean) v.getValue() ? ChatFormatting.GREEN : ChatFormatting.RED) + v.getValue()).setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(v.getName() + "\n" + ChatFormatting.GOLD + ((v.getDesc() == null || v.getDesc().equals("")) ? "There is no description for this boolean value." : v.getDesc()) + ChatFormatting.RESET + "\n " + ChatFormatting.GRAY + "<true / false>")))));
             }
-            if(v instanceof NumberValue && !(v instanceof OptionalValue)) {
-                sb.append(v.getDisplayName() + " <Amount>\n");
-            }
-            if(v instanceof StringValue) {
-                sb.append(v.getDisplayName() + " <String>\n");
-            }
-            if(v instanceof OptionalValue) {
-                final OptionalValue val = (OptionalValue) v;
 
+            if (v.getValue() instanceof Number && !(v.getValue() instanceof Enum)) {
+                msg.appendSibling(new TextComponentString(valuePrefix + v.getName() + ChatFormatting.GRAY + " <amount>" + ChatFormatting.RESET + ": " + ChatFormatting.AQUA + (df.format(v.getValue()))).setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(v.getName() + "\n" + ChatFormatting.GOLD + ((v.getDesc() == null || v.getDesc().equals("")) ? "There is no description for this number value." : v.getDesc()) + ChatFormatting.RESET + "\n " + ChatFormatting.GRAY + "<" + v.getMin() + " - " + v.getMax() + ">")))));
+            }
+
+            if (v.getValue() instanceof String) {
+                msg.appendSibling(new TextComponentString(valuePrefix + v.getName() + ChatFormatting.GRAY + " <text>" + ChatFormatting.RESET + ": " + v.getValue()).setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(v.getName() + "\n" + ChatFormatting.GOLD + ((v.getDesc() == null || v.getDesc().equals("")) ? "There is no description for this string value." : v.getDesc()) + ChatFormatting.RESET + "\n " + ChatFormatting.GRAY + "<text>")))));
+            }
+
+            if (v.getValue() instanceof Enum) {
+                final Enum val = (Enum) v.getValue();
                 final StringBuilder options = new StringBuilder();
+                final int size = val.getClass().getEnumConstants().length;
 
-                final int size = val.getOptions().length;
-
-                for(int i = 0; i < val.getOptions().length; i++) {
-                    final String option = val.getOptions()[i];
-
-                    options.append(option + ((i == size - 1) ? "" : "|"));
+                for (int i = 0; i < size; i++) {
+                    final Enum option = val.getClass().getEnumConstants()[i];
+                    options.append(option.name().toLowerCase() + ((i == size - 1) ? "" : ", "));
                 }
 
-                sb.append(v.getDisplayName() + " <" + options.toString() + ">\n");
+                msg.appendSibling(new TextComponentString(valuePrefix + v.getName() + ChatFormatting.GRAY + " <" + options.toString() + ">" + ChatFormatting.RESET + ": " + ChatFormatting.YELLOW + val.name().toLowerCase()).setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(v.getName() + "\n" + ChatFormatting.GOLD + ((v.getDesc() == null || v.getDesc().equals("")) ? "There is no description for this enum value." : v.getDesc()) + ChatFormatting.RESET + "\n " + ChatFormatting.GRAY + "<" + options.toString() + ">")))));
             }
         }
 
-        final String s = sb.toString();
-
-        return s.substring(0, s.length() - 1);
+        return msg;
     }
 
     public Value find(String alias) {
-        for(Value v : this.getValueList()) {
-            for(String s : v.getAlias()) {
-                if(alias.equalsIgnoreCase(s)) {
+        for (Value v : this.getValueList()) {
+            for (String s : v.getAlias()) {
+                if (alias.equalsIgnoreCase(s)) {
                     return v;
                 }
             }
-            if(v.getDisplayName().equalsIgnoreCase(alias)) {
+
+            if (v.getName().equalsIgnoreCase(alias)) {
                 return v;
             }
         }

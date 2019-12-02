@@ -9,8 +9,7 @@ import me.rigamortis.seppuku.api.event.world.EventAddCollisionBox;
 import me.rigamortis.seppuku.api.event.world.EventSetOpaqueCube;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.MathUtil;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.network.play.client.CPacketPlayer;
@@ -23,9 +22,13 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class PhaseModule extends Module {
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"Sand", "Packet", "Skip", "NoClip"});
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The phase mode to use.", Mode.SAND);
 
-    public final BooleanValue floor = new BooleanValue("Floor", new String[]{"Fl"}, true);
+    private enum Mode {
+        SAND, PACKET, SKIP, NOCLIP
+    }
+
+    public final Value<Boolean> floor = new Value<Boolean>("Floor", new String[]{"Fl"}, "Prevents falling out of the world if enabled.", true);
 
     public PhaseModule() {
         super("Phase", new String[]{"NoClip"}, "Allows you to glitch through blocks", "NONE", -1, ModuleType.WORLD);
@@ -33,7 +36,7 @@ public final class PhaseModule extends Module {
 
     @Override
     public String getMetaData() {
-        return this.mode.getSelectedOption();
+        return this.mode.getValue().name();
     }
 
     @Listener
@@ -72,9 +75,9 @@ public final class PhaseModule extends Module {
 
         if (mc.player != null) {
 
-            final boolean floor = this.floor.getBoolean() ? event.getPos().getY() >= 1 : true;
+            final boolean floor = this.floor.getValue() ? event.getPos().getY() >= 1 : true;
 
-            if (this.mode.getInt() == 0) {
+            if (this.mode.getValue() == Mode.SAND) {
                 if (mc.player.getRidingEntity() != null && event.getEntity() == mc.player.getRidingEntity()) {
                     if (mc.gameSettings.keyBindSprint.isKeyDown() && floor) {
                         event.setCanceled(true);
@@ -101,7 +104,7 @@ public final class PhaseModule extends Module {
             }
         }
 
-        if (this.mode.getInt() == 3) {
+        if (this.mode.getValue() == Mode.NOCLIP) {
             if (event.getEntity() == mc.player || mc.player.getRidingEntity() != null && event.getEntity() == mc.player.getRidingEntity()) {
                 event.setCanceled(true);
             }
@@ -111,7 +114,7 @@ public final class PhaseModule extends Module {
     @Listener
     public void sendPacket(EventSendPacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
-            if (this.mode.getInt() == 3) {
+            if (this.mode.getValue() == Mode.NOCLIP) {
                 if (event.getPacket() instanceof CPacketPlayer && !(event.getPacket() instanceof CPacketPlayer.Position)) {
                     event.setCanceled(true);
                 }
@@ -124,7 +127,7 @@ public final class PhaseModule extends Module {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             final Minecraft mc = Minecraft.getMinecraft();
 
-            if (this.mode.getInt() == 3) {
+            if (this.mode.getValue() == Mode.NOCLIP) {
                 mc.player.setVelocity(0, 0, 0);
                 if (mc.gameSettings.keyBindForward.isKeyDown() || mc.gameSettings.keyBindBack.isKeyDown() || mc.gameSettings.keyBindLeft.isKeyDown() || mc.gameSettings.keyBindRight.isKeyDown()) {
                     final double[] speed = MathUtil.directionSpeed(0.06f);
@@ -149,8 +152,7 @@ public final class PhaseModule extends Module {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             final Minecraft mc = Minecraft.getMinecraft();
 
-            if (this.mode.getInt() == 0) {
-
+            if (this.mode.getValue() == Mode.SAND) {
                 if (mc.gameSettings.keyBindJump.isKeyDown()) {
                     if (mc.player.getRidingEntity() != null && mc.player.getRidingEntity() instanceof EntityBoat) {
                         final EntityBoat boat = (EntityBoat) mc.player.getRidingEntity();
@@ -161,7 +163,7 @@ public final class PhaseModule extends Module {
                 }
             }
 
-            if (this.mode.getInt() == 1) {
+            if (this.mode.getValue() == Mode.PACKET) {
                 final Vec3d dir = MathUtil.direction(mc.player.rotationYaw);
                 if (dir != null) {
                     if (mc.player.onGround && mc.player.collidedHorizontally) {
@@ -171,7 +173,7 @@ public final class PhaseModule extends Module {
                 }
             }
 
-            if (this.mode.getInt() == 2) {
+            if (this.mode.getValue() == Mode.SKIP) {
                 final Vec3d dir = MathUtil.direction(mc.player.rotationYaw);
                 if (dir != null) {
                     if (mc.player.onGround && mc.player.collidedHorizontally) {

@@ -10,8 +10,7 @@ import me.rigamortis.seppuku.api.event.render.EventRenderName;
 import me.rigamortis.seppuku.api.friend.Friend;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.*;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -52,28 +51,40 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public final class WallHackModule extends Module {
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"None", "Box"});
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The mode of the drawn esp/wallhack.", Mode.OPAQUE);
 
-    public final BooleanValue players = new BooleanValue("Players", new String[]{"Player"}, true);
-    public final BooleanValue mobs = new BooleanValue("Mobs", new String[]{"Mob"}, true);
-    public final BooleanValue animals = new BooleanValue("Animals", new String[]{"Animal"}, true);
-    public final BooleanValue vehicles = new BooleanValue("Vehicles", new String[]{"Vehic", "Vehicle"}, true);
-    public final BooleanValue local = new BooleanValue("Local", new String[]{"Self"}, true);
-    public final BooleanValue items = new BooleanValue("Items", new String[]{"Item"}, true);
-    public final BooleanValue crystals = new BooleanValue("Crystals", new String[]{"crystal", "crystals", "endcrystal", "endcrystals"}, true);
-    public final BooleanValue footsteps = new BooleanValue("FootSteps", new String[]{"FootStep", "Steps"}, false);
-    public final BooleanValue armorStand = new BooleanValue("ArmorStands", new String[]{"ArmorStand", "ArmourStand", "ArmourStands", "ArmStand"}, true);
+    private enum Mode {
+        OPAQUE, BOX
+    }
 
-    public final BooleanValue name = new BooleanValue("Name", new String[]{"Nam"}, true);
-    public final BooleanValue ping = new BooleanValue("Ping", new String[]{"Ms"}, true);
-    public final BooleanValue armor = new BooleanValue("Armor", new String[]{"Arm"}, true);
-    public final BooleanValue hearts = new BooleanValue("Hearts", new String[]{"Hrts"}, true);
-    public final BooleanValue enchants = new BooleanValue("Enchants", new String[]{"Ench"}, true);
-    public final OptionalValue potions = new OptionalValue("Potions", new String[]{"Pot", "Pots", "PotsMode"}, 1, new String[]{"None", "Icons", "Text"});
+    public final Value<Boolean> players = new Value<Boolean>("Players", new String[]{"Player"}, "Choose to enable on players.", true);
+    public final Value<Boolean> mobs = new Value<Boolean>("Mobs", new String[]{"Mob"}, "Choose to enable on mobs.", true);
+    public final Value<Boolean> animals = new Value<Boolean>("Animals", new String[]{"Animal"}, "Choose to enable on animals.", true);
+    public final Value<Boolean> vehicles = new Value<Boolean>("Vehicles", new String[]{"Vehic", "Vehicle"}, "Choose to enable on vehicles.", true);
+    public final Value<Boolean> items = new Value<Boolean>("Items", new String[]{"Item"}, "Choose to enable on items.", true);
+    public final Value<Boolean> local = new Value<Boolean>("Local", new String[]{"Self"}, "Choose to enable on self/local-player.", true);
+    public final Value<Boolean> crystals = new Value<Boolean>("Crystals", new String[]{"crystal", "crystals", "endcrystal", "endcrystals"}, "Choose to enable on end crystals.", true);
+    public final Value<Boolean> armorStand = new Value<Boolean>("ArmorStands", new String[]{"ArmorStand", "ArmourStand", "ArmourStands", "ArmStand"}, "Choose to enable on armor-stands.", true);
+    public final Value<Boolean> footsteps = new Value<Boolean>("FootSteps", new String[]{"FootStep", "Steps"}, "Choose to draw entity footsteps.", false);
 
-    public final BooleanValue background = new BooleanValue("Background", new String[]{"Bg"}, true);
+    public final Value<Boolean> name = new Value<Boolean>("Name", new String[]{"Nam"}, "Draw the entity's name.", true);
+    public final Value<Boolean> ping = new Value<Boolean>("Ping", new String[]{"Ms"}, "Draw the entity's ping (only works on players).", true);
+    public final Value<Boolean> armor = new Value<Boolean>("Armor", new String[]{"Arm"}, "Draw the entity's equipped armor.", true);
+    public final Value<Boolean> hearts = new Value<Boolean>("Hearts", new String[]{"Hrts"}, "Draw the entity's hearts in decimal format.", true);
+    public final Value<Boolean> enchants = new Value<Boolean>("Enchants", new String[]{"Ench"}, "Draw enchant names above the entity's equipped armor. (requires Armor value to be enabled.", true);
+    public final Value<PotionsMode> potions = new Value<PotionsMode>("Potions", new String[]{"Pot", "Pots", "PotsMode"}, "Rendering mode for active potion-effects on the entity.", PotionsMode.NONE);
 
-    public final OptionalValue hpMode = new OptionalValue("Hp", new String[]{"Health", "HpMode"}, 0, new String[]{"None", "Bar", "BarText"});
+    private enum PotionsMode {
+        NONE, ICON, TEXT
+    }
+
+    public final Value<Boolean> background = new Value<Boolean>("Background", new String[]{"Bg"}, "Draw a transparent black background behind any text or icon drawn.", true);
+
+    public final Value<HealthMode> hpMode = new Value<HealthMode>("Hp", new String[]{"Health", "HpMode"}, "Rendering mode for the health bar.", HealthMode.NONE);
+
+    private enum HealthMode {
+        NONE, BAR, BARTEXT
+    }
 
     private ICamera camera = new Frustum();
     private final ResourceLocation inventory = new ResourceLocation("textures/gui/container/inventory.png");
@@ -89,7 +100,7 @@ public final class WallHackModule extends Module {
     public void render2D(EventRender2D event) {
         final Minecraft mc = Minecraft.getMinecraft();
 
-        if (this.footsteps.getBoolean()) {
+        if (this.footsteps.getValue()) {
             for (FootstepData data : this.footstepDataList) {
                 final GLUProjection.Projection projection = GLUProjection.getInstance().project(data.x - mc.getRenderManager().viewerPosX, data.y - mc.getRenderManager().viewerPosY, data.z - mc.getRenderManager().viewerPosZ, GLUProjection.ClampMode.NONE, false);
                 if (projection != null && projection.getType() == GLUProjection.Projection.Type.INSIDE) {
@@ -108,7 +119,7 @@ public final class WallHackModule extends Module {
                     final float[] bounds = this.convertBounds(e, event.getPartialTicks(), event.getScaledResolution().getScaledWidth(), event.getScaledResolution().getScaledHeight());
 
                     if (bounds != null) {
-                        if (this.mode.getInt() == 1) {
+                        if (this.mode.getValue() == Mode.BOX) {
                             RenderUtil.drawOutlineRect(bounds[0], bounds[1], bounds[2], bounds[3], 1.5f, 0xAA000000);
                             RenderUtil.drawOutlineRect(bounds[0] - 0.5f, bounds[1] - 0.5f, bounds[2] + 0.5f, bounds[3] + 0.5f, 0.5f, this.getColor(e));
                         }
@@ -117,7 +128,7 @@ public final class WallHackModule extends Module {
                         String heartsFormatted = null;
                         String pingFormatted = null;
 
-                        if (this.name.getBoolean()) {
+                        if (this.name.getValue()) {
                             int color = -1;
 
                             final Friend friend = Seppuku.INSTANCE.getFriendManager().isFriend(e);
@@ -127,7 +138,7 @@ public final class WallHackModule extends Module {
                                 color = 0xFF9900EE;
                             }
 
-                            if (this.background.getBoolean()) {
+                            if (this.background.getValue()) {
                                 RenderUtil.drawRect(bounds[0] + (bounds[2] - bounds[0]) / 2 - mc.fontRenderer.getStringWidth(name) / 2 - 1, bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 2, bounds[0] + (bounds[2] - bounds[0]) / 2 + mc.fontRenderer.getStringWidth(name) / 2 + 1, bounds[1] + (bounds[3] - bounds[1]) - 1, 0x75101010);
                             }
 
@@ -136,7 +147,7 @@ public final class WallHackModule extends Module {
 
                         if (e instanceof EntityPlayer) {
                             final EntityPlayer player = (EntityPlayer) e;
-                            if (this.ping.getBoolean()) {
+                            if (this.ping.getValue()) {
                                 int responseTime = -1;
                                 try {
                                     responseTime = (int) MathUtil.clamp(mc.getConnection().getPlayerInfo(player.getUniqueID()).getResponseTime(), 0, 300);
@@ -145,15 +156,15 @@ public final class WallHackModule extends Module {
                                 pingFormatted = responseTime + "ms";
 
                                 float startX = -mc.fontRenderer.getStringWidth(pingFormatted) / 2.0f;
-                                if (this.name.getBoolean())
+                                if (this.name.getValue())
                                     startX = (mc.fontRenderer.getStringWidth(name) / 2.0f) + 2.0f;
-                                else if (this.hearts.getBoolean())
+                                else if (this.hearts.getValue())
                                     startX = (mc.fontRenderer.getStringWidth(heartsFormatted) / 2.0f) + (mc.fontRenderer.getStringWidth(heartsFormatted) / 2.0f);
 
                                 int pingRounded = Math.round(255.0f - (responseTime * 255.0f / 300.0f)); // 300 = max response time (red, laggy)
                                 int pingColor = 255 - pingRounded << 16 | pingRounded << 8;
 
-                                if (this.background.getBoolean()) {
+                                if (this.background.getValue()) {
                                     RenderUtil.drawRect(bounds[0] + (bounds[2] - bounds[0]) / 2 + startX, bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 2, bounds[0] + (bounds[2] - bounds[0]) / 2 + startX + mc.fontRenderer.getStringWidth(pingFormatted), bounds[1] + (bounds[3] - bounds[1]) - 1, 0x75101010);
                                 }
 
@@ -164,7 +175,7 @@ public final class WallHackModule extends Module {
                         if (e instanceof EntityLivingBase) {
                             final EntityLivingBase entityLiving = (EntityLivingBase) e;
 
-                            if (this.hearts.getBoolean()) {
+                            if (this.hearts.getValue()) {
                                 final float hearts = entityLiving.getHealth() / 2.0f;
 
                                 if (hearts <= 0)
@@ -178,28 +189,28 @@ public final class WallHackModule extends Module {
                                 }
 
                                 float startX = -mc.fontRenderer.getStringWidth(heartsFormatted) / 2.0f;
-                                if (this.name.getBoolean())
+                                if (this.name.getValue())
                                     startX = -(mc.fontRenderer.getStringWidth(name) / 2.0f) - 2.0f - mc.fontRenderer.getStringWidth(heartsFormatted);
-                                else if (this.ping.getBoolean() && entityLiving instanceof EntityPlayer)
+                                else if (this.ping.getValue() && entityLiving instanceof EntityPlayer)
                                     startX = -(mc.fontRenderer.getStringWidth(pingFormatted) / 2.0f) - (mc.fontRenderer.getStringWidth(heartsFormatted) / 2.0f);
 
                                 int heartsRounded = Math.round(255.0f - (hearts * 255.0f / (entityLiving.getMaxHealth() / 2)));
                                 int heartsColor = 255 - heartsRounded << 8 | heartsRounded << 16;
 
-                                if (this.background.getBoolean()) {
+                                if (this.background.getValue()) {
                                     RenderUtil.drawRect(bounds[0] + (bounds[2] - bounds[0]) / 2 + startX, bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 2, bounds[0] + (bounds[2] - bounds[0]) / 2 + startX + mc.fontRenderer.getStringWidth(heartsFormatted), bounds[1] + (bounds[3] - bounds[1]) - 1, 0x75101010);
                                 }
 
                                 mc.fontRenderer.drawStringWithShadow(heartsFormatted, bounds[0] + (bounds[2] - bounds[0]) / 2 + startX, bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 1, heartsColor);
                             }
 
-                            if (this.hpMode.getInt() != 0) {
+                            if (this.hpMode.getValue() != HealthMode.NONE) {
                                 RenderUtil.drawRect(bounds[2] - 0.5f, bounds[1], bounds[2] - 2, bounds[3], 0xAA000000);
                                 final float hpHeight = ((((EntityLivingBase) e).getHealth() * (bounds[3] - bounds[1])) / ((EntityLivingBase) e).getMaxHealth());
 
                                 RenderUtil.drawRect(bounds[2] - 1, bounds[1] - 0.5f, bounds[2] - 1.5f, (bounds[1] - bounds[3]) + bounds[3] + hpHeight + 0.5f, getHealthColor(e));
 
-                                if (this.hpMode.getInt() == 2) {
+                                if (this.hpMode.getValue() == HealthMode.BARTEXT) {
                                     if (((EntityLivingBase) e).getHealth() < ((EntityLivingBase) e).getMaxHealth() && ((EntityLivingBase) e).getHealth() > 0) {
                                         final String hp = new DecimalFormat("#.#").format((int) ((EntityLivingBase) e).getHealth());
                                         mc.fontRenderer.drawStringWithShadow(hp, (bounds[2] - 1 - mc.fontRenderer.getStringWidth(hp) / 2), ((bounds[1] - bounds[3]) + bounds[3] + hpHeight + 0.5f - mc.fontRenderer.FONT_HEIGHT / 2), -1);
@@ -207,7 +218,7 @@ public final class WallHackModule extends Module {
                                 }
                             }
 
-                            if (this.potions.getInt() != 0) {
+                            if (this.potions.getValue() != PotionsMode.NONE) {
                                 float scale = 0.5f;
                                 int offsetX = 0;
                                 int offsetY = 0;
@@ -216,7 +227,7 @@ public final class WallHackModule extends Module {
                                     if (effect.getDuration() <= 0)
                                         continue;
                                     final Potion potion = effect.getPotion();
-                                    if (this.potions.getInt() == 1) {
+                                    if (this.potions.getValue() == PotionsMode.ICON) {
                                         if (potion.hasStatusIcon()) {
                                             GlStateManager.pushMatrix();
                                             mc.getTextureManager().bindTexture(this.inventory);// bind the inventory texture
@@ -232,7 +243,7 @@ public final class WallHackModule extends Module {
                                             }
 
                                             // check to draw the transparent background behind the icon
-                                            if (this.background.getBoolean()) {
+                                            if (this.background.getValue()) {
                                                 RenderUtil.drawRect(offsetX, offsetY, offsetX + 16, offsetY + 16, 0x75101010);
                                             }
 
@@ -242,7 +253,7 @@ public final class WallHackModule extends Module {
 
                                             offsetY += 16;
                                         }
-                                    } else if (this.potions.getInt() == 2) {
+                                    } else if (this.potions.getValue() == PotionsMode.TEXT) {
                                         final List<String> potStringsToDraw = Lists.newArrayList();
                                         final String effectString = PotionUtil.getNameDurationString(effect);
 
@@ -261,9 +272,11 @@ public final class WallHackModule extends Module {
                                                 offsetY = 0;
                                                 offsetX += 16;
                                             }
-                                            if (this.background.getBoolean()) {
+
+                                            if (this.background.getValue()) {
                                                 RenderUtil.drawRect(0, 0, mc.fontRenderer.getStringWidth(pString), mc.fontRenderer.FONT_HEIGHT - 1, 0x75101010);
                                             }
+
                                             mc.fontRenderer.drawStringWithShadow(pString, 0, 0, -1);
 
                                             GlStateManager.scale(2, 2, 2);
@@ -277,7 +290,7 @@ public final class WallHackModule extends Module {
                             }
                         }
 
-                        if (this.armor.getBoolean()) {
+                        if (this.armor.getValue()) {
                             final Iterator<ItemStack> items = e.getEquipmentAndArmor().iterator();
                             final ArrayList<ItemStack> stacks = new ArrayList<>();
 
@@ -301,7 +314,7 @@ public final class WallHackModule extends Module {
                                         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
                                         RenderHelper.enableGUIStandardItemLighting();
                                         GlStateManager.translate(bounds[0] + (bounds[2] - bounds[0]) / 2 + x - (16 * stacks.size() / 2), bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 19, 0);
-                                        if (this.background.getBoolean()) {
+                                        if (this.background.getValue()) {
                                             RenderUtil.drawRect(0, 0, 16, 16, 0x75101010);
                                         }
                                         mc.getRenderItem().renderItemAndEffectIntoGUI(stack, 0, 0);
@@ -312,7 +325,7 @@ public final class WallHackModule extends Module {
                                         GlStateManager.popMatrix();
                                         x += 16;
 
-                                        if (this.enchants.getBoolean()) {
+                                        if (this.enchants.getValue()) {
                                             final List<String> stringsToDraw = Lists.newArrayList();
                                             int y = 0;
 
@@ -350,7 +363,7 @@ public final class WallHackModule extends Module {
                                                 GlStateManager.disableDepth();
                                                 GlStateManager.translate(bounds[0] + (bounds[2] - bounds[0]) / 2 + x - ((16.0f * stacks.size()) / 2.0f) - (16.0f / 2.0f) - (mc.fontRenderer.getStringWidth(string) / 4.0f), bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 23 - y, 0);
                                                 GlStateManager.scale(0.5f, 0.5f, 0.5f);
-                                                if (this.background.getBoolean()) {
+                                                if (this.background.getValue()) {
                                                     RenderUtil.drawRect(0, 0, mc.fontRenderer.getStringWidth(string), mc.fontRenderer.FONT_HEIGHT - 1, 0x75101010);
                                                 }
                                                 mc.fontRenderer.drawStringWithShadow(string, 0, 0, -1);
@@ -426,28 +439,28 @@ public final class WallHackModule extends Module {
     private boolean checkFilter(Entity entity) {
         boolean ret = false;
 
-        if (this.local.getBoolean() && (entity == Minecraft.getMinecraft().player) && (Minecraft.getMinecraft().gameSettings.thirdPersonView != 0)) {
+        if (this.local.getValue() && (entity == Minecraft.getMinecraft().player) && (Minecraft.getMinecraft().gameSettings.thirdPersonView != 0)) {
             ret = true;
         }
-        if (this.players.getBoolean() && entity instanceof EntityPlayer && entity != Minecraft.getMinecraft().player) {
+        if (this.players.getValue() && entity instanceof EntityPlayer && entity != Minecraft.getMinecraft().player) {
             ret = true;
         }
-        if (this.mobs.getBoolean() && entity instanceof IMob) {
+        if (this.mobs.getValue() && entity instanceof IMob) {
             ret = true;
         }
-        if (this.animals.getBoolean() && entity instanceof IAnimals && !(entity instanceof IMob)) {
+        if (this.animals.getValue() && entity instanceof IAnimals && !(entity instanceof IMob)) {
             ret = true;
         }
-        if (this.items.getBoolean() && entity instanceof EntityItem) {
+        if (this.items.getValue() && entity instanceof EntityItem) {
             ret = true;
         }
-        if (this.crystals.getBoolean() && entity instanceof EntityEnderCrystal) {
+        if (this.crystals.getValue() && entity instanceof EntityEnderCrystal) {
             ret = true;
         }
-        if (this.vehicles.getBoolean() && (entity instanceof EntityBoat || entity instanceof EntityMinecart || entity instanceof EntityMinecartContainer)) {
+        if (this.vehicles.getValue() && (entity instanceof EntityBoat || entity instanceof EntityMinecart || entity instanceof EntityMinecartContainer)) {
             ret = true;
         }
-        if (this.armorStand.getBoolean() && entity instanceof EntityArmorStand) {
+        if (this.armorStand.getValue() && entity instanceof EntityArmorStand) {
             ret = true;
         }
         if (Minecraft.getMinecraft().player.getRidingEntity() != null && entity == Minecraft.getMinecraft().player.getRidingEntity()) {

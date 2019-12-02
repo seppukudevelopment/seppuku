@@ -6,9 +6,7 @@ import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.api.util.GLUProjection;
 import me.rigamortis.seppuku.api.util.RenderUtil;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.culling.ICamera;
@@ -24,22 +22,26 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class StorageESPModule extends Module {
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 1, new String[]{"2D", "3D"});
-    public final BooleanValue name = new BooleanValue("Name", new String[]{"Nam", "N", "Names"}, true);
-    public final NumberValue opacity = new NumberValue("Opacity", new String[]{"Opacity", "Transparency", "Alpha"}, 128, Integer.class, 0, 255, 1);
-    //(String displayName, String[] alias, Object value, Object type, T min, T max, T increment
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Rendering mode", Mode.THREE_DIMENSIONAL);
+
+    private enum Mode {
+        TWO_DIMENSIONAL, THREE_DIMENSIONAL
+    }
+
+    public final Value<Boolean> name = new Value<Boolean>("Name", new String[]{"Nam", "N", "Names"}, "Renders the name of the drawn storage object.", false);
+    public final Value<Integer> opacity = new Value<Integer>("Opacity", new String[]{"Opacity", "Transparency", "Alpha"}, "Opacity of the rendered esp.", 128, 0, 255, 1);
 
     private ICamera camera = new Frustum();
 
     public StorageESPModule() {
-        super("Storage", new String[]{"StorageESP", "ChestFinder", "ChestESP"}, "Highlights different types of storage entities", "NONE", -1, ModuleType.RENDER);
+        super("Storage", new String[]{"StorageESP", "ChestFinder", "ChestESP"}, "Highlights different types of storage entities.", "NONE", -1, ModuleType.RENDER);
     }
 
     @Listener
     public void render2D(EventRender2D event) {
         final Minecraft mc = Minecraft.getMinecraft();
 
-        if (this.mode.getInt() == 1 && !this.name.getBoolean()) // if 3D and names are off, return
+        if (this.mode.getValue() == Mode.THREE_DIMENSIONAL && !this.name.getValue()) // if 3D and names are off, return
             return;
 
         for (TileEntity te : mc.world.loadedTileEntityList) {
@@ -49,15 +51,15 @@ public final class StorageESPModule extends Module {
                     if (bb != null) {
                         final float[] bounds = this.convertBounds(bb, event.getScaledResolution().getScaledWidth(), event.getScaledResolution().getScaledHeight());
                         if (bounds != null) {
-                            if (this.mode.getInt() == 0) { // 2D
-                                RenderUtil.drawOutlineRect(bounds[0], bounds[1], bounds[2], bounds[3], 1.5f, ColorUtil.changeAlpha(0xAA000000, opacity.getInt()));
-                                RenderUtil.drawOutlineRect(bounds[0] - 0.5f, bounds[1] - 0.5f, bounds[2] + 0.5f, bounds[3] + 0.5f, 0.5f, ColorUtil.changeAlpha(this.getColor(te), opacity.getInt()));
+                            if (this.mode.getValue() == Mode.TWO_DIMENSIONAL) { // 2D
+                                RenderUtil.drawOutlineRect(bounds[0], bounds[1], bounds[2], bounds[3], 1.5f, ColorUtil.changeAlpha(0xAA000000, this.opacity.getValue()));
+                                RenderUtil.drawOutlineRect(bounds[0] - 0.5f, bounds[1] - 0.5f, bounds[2] + 0.5f, bounds[3] + 0.5f, 0.5f, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
                             }
 
-                            if (this.name.getBoolean()) {
+                            if (this.name.getValue()) {
                                 final String name = te.getBlockType().getLocalizedName();
                                 GL11.glEnable(GL11.GL_BLEND);
-                                mc.fontRenderer.drawStringWithShadow(name, bounds[0] + (bounds[2] - bounds[0]) / 2 - mc.fontRenderer.getStringWidth(name) / 2, bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 1, ColorUtil.changeAlpha(0xFFFFFFFF, opacity.getInt()));
+                                mc.fontRenderer.drawStringWithShadow(name, bounds[0] + (bounds[2] - bounds[0]) / 2 - mc.fontRenderer.getStringWidth(name) / 2, bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 1, ColorUtil.changeAlpha(0xFFFFFFFF, this.opacity.getValue()));
                                 GL11.glDisable(GL11.GL_BLEND);
                             }
                         }
@@ -70,7 +72,7 @@ public final class StorageESPModule extends Module {
     @Listener
     public void render3D(EventRender3D event) {
         final Minecraft mc = Minecraft.getMinecraft();
-        if (this.mode.getInt() == 1) {
+        if (this.mode.getValue() == Mode.THREE_DIMENSIONAL) {
             for (TileEntity te : mc.world.loadedTileEntityList) {
                 if (te != null) {
                     if (this.isTileStorage(te)) {
@@ -84,8 +86,8 @@ public final class StorageESPModule extends Module {
                                     bb.maxX + mc.getRenderManager().viewerPosX,
                                     bb.maxY + mc.getRenderManager().viewerPosY,
                                     bb.maxZ + mc.getRenderManager().viewerPosZ))) {
-                                RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(this.getColor(te), opacity.getInt()));
-                                RenderUtil.drawBoundingBox(bb, 1.5f, ColorUtil.changeAlpha(this.getColor(te), opacity.getInt()));
+                                RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
+                                RenderUtil.drawBoundingBox(bb, 1.5f, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
                             }
                         }
                     }

@@ -7,9 +7,7 @@ import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.GLUProjection;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
@@ -28,15 +26,19 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class TracersModule extends Module {
 
-    public final BooleanValue players = new BooleanValue("Players", new String[]{"Player"}, true);
-    public final BooleanValue mobs = new BooleanValue("Mobs", new String[]{"Mob"}, true);
-    public final BooleanValue animals = new BooleanValue("Animals", new String[]{"Animal"}, true);
-    public final BooleanValue vehicles = new BooleanValue("Vehicles", new String[]{"Vehic", "Vehicle"}, true);
-    public final BooleanValue items = new BooleanValue("Items", new String[]{"Item"}, true);
+    public final Value<Boolean> players = new Value<Boolean>("Players", new String[]{"Player"}, "Choose to enable on players.", true);
+    public final Value<Boolean> mobs = new Value<Boolean>("Mobs", new String[]{"Mob"}, "Choose to enable on mobs.", true);
+    public final Value<Boolean> animals = new Value<Boolean>("Animals", new String[]{"Animal"}, "Choose to enable on animals.", true);
+    public final Value<Boolean> vehicles = new Value<Boolean>("Vehicles", new String[]{"Vehic", "Vehicle"}, "Choose to enable on vehicles.", true);
+    public final Value<Boolean> items = new Value<Boolean>("Items", new String[]{"Item"}, "Choose to enable on items.", true);
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode"}, 0, new String[]{"2D", "3D"});
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode"}, "The rendering mode to use for drawing the tracer-line.", Mode.TWO_DIMENSIONAL);
 
-    public final NumberValue width = new NumberValue("Width", new String[]{"Wid"}, 0.5f, Float.class, 0.0f, 5.0f, 0.1f);
+    private enum Mode {
+        TWO_DIMENSIONAL, THREE_DIMENSIONAL
+    }
+
+    public final Value<Float> width = new Value<Float>("Width", new String[]{"Wid"}, "Pixel width of each tracer-line.", 0.5f, 0.0f, 5.0f, 0.1f);
 
     public TracersModule() {
         super("Tracers", new String[]{"Trace", "Tracer", "Snapline", "Snaplines"}, "Draws a line to entities", "NONE", -1, ModuleType.RENDER);
@@ -44,12 +46,12 @@ public final class TracersModule extends Module {
 
     @Override
     public String getMetaData() {
-        return this.mode.getSelectedOption();
+        return this.mode.getValue().name();
     }
 
     @Listener
     public void render2D(EventRender2D event) {
-        if (this.mode.getInt() == 0) {
+        if (this.mode.getValue() == Mode.TWO_DIMENSIONAL) {
             final Minecraft mc = Minecraft.getMinecraft();
 
             for (Entity e : mc.world.loadedEntityList) {
@@ -60,7 +62,7 @@ public final class TracersModule extends Module {
                         if (pos != null) {
                             final GLUProjection.Projection projection = GLUProjection.getInstance().project(pos.x - mc.getRenderManager().viewerPosX, pos.y - mc.getRenderManager().viewerPosY, pos.z - mc.getRenderManager().viewerPosZ, GLUProjection.ClampMode.NONE, true);
                             if (projection != null) {
-                                RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), event.getScaledResolution().getScaledWidth() / 2, event.getScaledResolution().getScaledHeight() / 2, this.width.getFloat(), this.getColor(e));
+                                RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), event.getScaledResolution().getScaledWidth() / 2, event.getScaledResolution().getScaledHeight() / 2, this.width.getValue(), this.getColor(e));
                             }
                         }
                     }
@@ -71,7 +73,7 @@ public final class TracersModule extends Module {
 
     @Listener
     public void render3D(EventRender3D event) {
-        if (this.mode.getInt() == 1) {
+        if (this.mode.getValue() == Mode.THREE_DIMENSIONAL) {
             final Minecraft mc = Minecraft.getMinecraft();
 
             for (Entity e : mc.world.loadedEntityList) {
@@ -84,7 +86,7 @@ public final class TracersModule extends Module {
                             mc.gameSettings.viewBobbing = false;
                             mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
                             final Vec3d forward = new Vec3d(0, 0, 1).rotatePitch(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationPitch)).rotateYaw(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationYaw));
-                            RenderUtil.drawLine3D((float) forward.x, (float) forward.y + mc.player.getEyeHeight(), (float) forward.z, (float) pos.x, (float) pos.y, (float) pos.z, this.width.getFloat(), this.getColor(e));
+                            RenderUtil.drawLine3D((float) forward.x, (float) forward.y + mc.player.getEyeHeight(), (float) forward.z, (float) pos.x, (float) pos.y, (float) pos.z, this.width.getValue(), this.getColor(e));
                             mc.gameSettings.viewBobbing = bobbing;
                             mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
                         }
@@ -97,19 +99,23 @@ public final class TracersModule extends Module {
     private boolean checkFilter(Entity entity) {
         boolean ret = false;
 
-        if (this.players.getBoolean() && entity instanceof EntityPlayer && entity != Minecraft.getMinecraft().player) {
+        if (this.players.getValue() && entity instanceof EntityPlayer && entity != Minecraft.getMinecraft().player) {
             ret = true;
         }
-        if (this.mobs.getBoolean() && entity instanceof IMob) {
+
+        if (this.mobs.getValue() && entity instanceof IMob) {
             ret = true;
         }
-        if (this.animals.getBoolean() && entity instanceof IAnimals && !(entity instanceof IMob)) {
+
+        if (this.animals.getValue() && entity instanceof IAnimals && !(entity instanceof IMob)) {
             ret = true;
         }
-        if (this.vehicles.getBoolean() && (entity instanceof EntityBoat || entity instanceof EntityMinecart || entity instanceof EntityMinecartContainer)) {
+
+        if (this.vehicles.getValue() && (entity instanceof EntityBoat || entity instanceof EntityMinecart || entity instanceof EntityMinecartContainer)) {
             ret = true;
         }
-        if (this.items.getBoolean() && entity instanceof EntityItem) {
+
+        if (this.items.getValue() && entity instanceof EntityItem) {
             ret = true;
         }
 
@@ -122,15 +128,19 @@ public final class TracersModule extends Module {
         if (entity instanceof IAnimals && !(entity instanceof IMob)) {
             ret = 0xFF00FF44;
         }
+
         if (entity instanceof IMob) {
             ret = 0xFFFFAA00;
         }
+
         if (entity instanceof EntityBoat || entity instanceof EntityMinecart || entity instanceof EntityMinecartContainer) {
             ret = 0xFF00FFAA;
         }
+
         if (entity instanceof EntityItem) {
             ret = 0xFF00FFAA;
         }
+
         if (entity instanceof EntityPlayer) {
             ret = 0xFFFF4444;
 
@@ -138,6 +148,7 @@ public final class TracersModule extends Module {
                 ret = 0xFF9900EE;
             }
         }
+
         return ret;
     }
 

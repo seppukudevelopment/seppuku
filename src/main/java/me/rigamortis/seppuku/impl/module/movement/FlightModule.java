@@ -3,13 +3,10 @@ package me.rigamortis.seppuku.impl.module.movement;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.network.EventSendPacket;
-import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.MathUtil;
-import me.rigamortis.seppuku.api.value.old.BooleanValue;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiDownloadTerrain;
 import net.minecraft.network.play.client.CPacketConfirmTeleport;
@@ -27,11 +24,15 @@ import java.util.List;
  */
 public final class FlightModule extends Module {
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"Vanilla", "Packet"});
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The flight mode to use.", Mode.VANILLA);
 
-    public final NumberValue speed = new NumberValue("Speed", new String[]{"Spd"}, 0.06f, Float.class, 0.0f, 10.0f, 0.01f);
+    private enum Mode {
+        VANILLA, PACKET
+    }
 
-    public final BooleanValue noKick = new BooleanValue("NoKick", new String[]{"AntiKick", "Kick"}, true);
+    public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd"}, "Speed multiplier for flight, higher values equals more speed.", 1.0f, 0.0f, 5.0f, 0.01f);
+
+    public final Value<Boolean> noKick = new Value<Boolean>("NoKick", new String[]{"AntiKick", "Kick"}, "Bypass the server kicking you for flying while in flight.", true);
 
     private int teleportId;
     private List<CPacketPlayer> packets = new ArrayList<>();
@@ -43,7 +44,7 @@ public final class FlightModule extends Module {
     @Override
     public void onEnable() {
         super.onEnable();
-        if (this.mode.getInt() == 1) {
+        if (this.mode.getValue() == Mode.PACKET) {
             final Minecraft mc = Minecraft.getMinecraft();
 
             if (mc.world != null) {
@@ -63,14 +64,7 @@ public final class FlightModule extends Module {
 
     @Override
     public String getMetaData() {
-        return this.mode.getSelectedOption();
-    }
-
-    @Listener
-    public void onUpdate(EventPlayerUpdate event) {
-        if (event.getStage() == EventStageable.EventStage.PRE) {
-            final Minecraft mc = Minecraft.getMinecraft();
-        }
+        return this.mode.getValue().name();
     }
 
     @Listener
@@ -78,18 +72,18 @@ public final class FlightModule extends Module {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             final Minecraft mc = Minecraft.getMinecraft();
 
-            if (this.mode.getInt() == 0) {
+            if (this.mode.getValue() == Mode.VANILLA) {
                 mc.player.setVelocity(0, 0, 0);
 
-                mc.player.jumpMovementFactor = speed.getFloat();
+                mc.player.jumpMovementFactor = this.speed.getValue();
 
-                if (this.noKick.getBoolean()) {
+                if (this.noKick.getValue()) {
                     if (mc.player.ticksExisted % 4 == 0) {
                         mc.player.motionY = -0.04f;
                     }
                 }
 
-                final double[] dir = MathUtil.directionSpeed(speed.getFloat());
+                final double[] dir = MathUtil.directionSpeed(this.speed.getValue());
 
                 if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
                     mc.player.motionX = dir[0];
@@ -100,19 +94,19 @@ public final class FlightModule extends Module {
                 }
 
                 if (mc.gameSettings.keyBindJump.isKeyDown()) {
-                    if (this.noKick.getBoolean()) {
-                        mc.player.motionY = mc.player.ticksExisted % 20 == 0 ? -0.04f : speed.getFloat();
+                    if (this.noKick.getValue()) {
+                        mc.player.motionY = mc.player.ticksExisted % 20 == 0 ? -0.04f : this.speed.getValue();
                     } else {
-                        mc.player.motionY += speed.getFloat();
+                        mc.player.motionY += this.speed.getValue();
                     }
                 }
 
                 if (mc.gameSettings.keyBindSneak.isKeyDown()) {
-                    mc.player.motionY -= speed.getFloat();
+                    mc.player.motionY -= this.speed.getValue();
                 }
             }
 
-            if (this.mode.getInt() == 1) {
+            if (this.mode.getValue() == Mode.PACKET) {
                 if (this.teleportId <= 0) {
                     final CPacketPlayer bounds = new CPacketPlayer.Position(Minecraft.getMinecraft().player.posX, 0, Minecraft.getMinecraft().player.posZ, Minecraft.getMinecraft().player.onGround);
                     this.packets.add(bounds);
@@ -127,7 +121,7 @@ public final class FlightModule extends Module {
 
                     if (mc.gameSettings.keyBindJump.isKeyDown()) {
 
-                        if (this.noKick.getBoolean()) {
+                        if (this.noKick.getValue()) {
                             ySpeed = mc.player.ticksExisted % 20 == 0 ? -0.04f : 0.062f;
                         } else {
                             ySpeed = 0.062f;
@@ -135,10 +129,10 @@ public final class FlightModule extends Module {
                     } else if (mc.gameSettings.keyBindSneak.isKeyDown()) {
                         ySpeed = -0.062d;
                     } else {
-                        ySpeed = mc.world.getCollisionBoxes(mc.player, mc.player.getEntityBoundingBox().expand(-0.0625d, -0.0625d, -0.0625d)).isEmpty() ? (mc.player.ticksExisted % 4 == 0) ? (this.noKick.getBoolean() ? -0.04f : 0.0f) : 0.0f : 0.0f;
+                        ySpeed = mc.world.getCollisionBoxes(mc.player, mc.player.getEntityBoundingBox().expand(-0.0625d, -0.0625d, -0.0625d)).isEmpty() ? (mc.player.ticksExisted % 4 == 0) ? (this.noKick.getValue() ? -0.04f : 0.0f) : 0.0f : 0.0f;
                     }
 
-                    final double[] directionalSpeed = MathUtil.directionSpeed(this.speed.getFloat());
+                    final double[] directionalSpeed = MathUtil.directionSpeed(this.speed.getValue());
 
                     if (mc.gameSettings.keyBindJump.isKeyDown() || mc.gameSettings.keyBindSneak.isKeyDown() || mc.gameSettings.keyBindForward.isKeyDown() || mc.gameSettings.keyBindBack.isKeyDown() || mc.gameSettings.keyBindRight.isKeyDown() || mc.gameSettings.keyBindLeft.isKeyDown()) {
                         if (directionalSpeed[0] != 0.0d || ySpeed != 0.0d || directionalSpeed[1] != 0.0d) {
@@ -166,7 +160,7 @@ public final class FlightModule extends Module {
                             }
                         }
                     } else {
-                        if (this.noKick.getBoolean()) {
+                        if (this.noKick.getValue()) {
                             if (mc.world.getCollisionBoxes(mc.player, mc.player.getEntityBoundingBox().expand(-0.0625d, -0.0625d, -0.0625d)).isEmpty()) {
                                 mc.player.setVelocity(0, (mc.player.ticksExisted % 2 == 0) ? 0.04f : -0.04f, 0);
                                 move(0, (mc.player.ticksExisted % 2 == 0) ? 0.04f : -0.04f, 0);
@@ -197,7 +191,7 @@ public final class FlightModule extends Module {
     @Listener
     public void sendPacket(EventSendPacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
-            if (this.mode.getInt() == 1) {
+            if (this.mode.getValue() == Mode.PACKET) {
                 if (event.getPacket() instanceof CPacketPlayer && !(event.getPacket() instanceof CPacketPlayer.Position)) {
                     event.setCanceled(true);
                 }
@@ -216,7 +210,7 @@ public final class FlightModule extends Module {
     @Listener
     public void recievePacket(EventReceivePacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
-            if (this.mode.getInt() == 1) {
+            if (this.mode.getValue() == Mode.PACKET) {
                 if (event.getPacket() instanceof SPacketPlayerPosLook) {
                     final SPacketPlayerPosLook packet = (SPacketPlayerPosLook) event.getPacket();
                     if (Minecraft.getMinecraft().player.isEntityAlive() && Minecraft.getMinecraft().world.isBlockLoaded(new BlockPos(Minecraft.getMinecraft().player.posX, Minecraft.getMinecraft().player.posY, Minecraft.getMinecraft().player.posZ)) && !(Minecraft.getMinecraft().currentScreen instanceof GuiDownloadTerrain)) {

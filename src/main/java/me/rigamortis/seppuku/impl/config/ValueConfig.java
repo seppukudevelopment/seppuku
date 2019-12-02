@@ -4,7 +4,7 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.config.Configurable;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.StringUtil;
-import me.rigamortis.seppuku.api.value.old.*;
+import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.management.ConfigManager;
 
 import java.io.*;
@@ -22,7 +22,7 @@ public final class ValueConfig extends Configurable {
     @Override
     public void load() {
         try {
-            for(Module mod : Seppuku.INSTANCE.getModuleManager().getModuleList()) {
+            for (Module mod : Seppuku.INSTANCE.getModuleManager().getModuleList()) {
                 final File file = new File(this.getPath() + mod.getDisplayName() + ".cfg");
 
                 if (!file.exists()) {
@@ -37,40 +37,41 @@ public final class ValueConfig extends Configurable {
                     final String[] split = line.split(":");
                     final Value v = mod.find(split[0]);
                     if (v != null) {
-                        if (v instanceof BooleanValue) {
-                            final BooleanValue val = (BooleanValue) v;
+                        if (v.getValue() instanceof Boolean) {
                             if (StringUtil.isBoolean(split[1])) {
-                                val.setBoolean(Boolean.parseBoolean(split[1]));
+                                v.setValue(Boolean.parseBoolean(split[1]));
                             }
                         }
-                        if (v instanceof NumberValue && !(v instanceof OptionalValue)) {
-                            final NumberValue val = (NumberValue) v;
-                            if (split[2].equals("Float") && val.getType() == Float.class) {
+
+                        if (v.getValue() instanceof Number && !(v.getValue() instanceof Enum)) {
+                            if (split[2].equals("Float") && v.getValue().getClass() == Float.class) {
                                 if (StringUtil.isFloat(split[1])) {
-                                    val.setFloat(Float.parseFloat(split[1]));
+                                    v.setValue(Float.parseFloat(split[1]));
                                 }
                             }
-                            if (split[2].equals("Integer") && val.getType() == Integer.class) {
-                                if(StringUtil.isInt(split[1])) {
-                                    val.setInt(Integer.parseInt(split[1]));
+
+                            if (split[2].equals("Integer") && v.getValue().getClass() == Integer.class) {
+                                if (StringUtil.isInt(split[1])) {
+                                    v.setValue(Integer.parseInt(split[1]));
                                 }
                             }
-                            if (split[2].equals("Double") && val.getType() == Double.class) {
-                                if(StringUtil.isDouble(split[1])) {
-                                    val.setDouble(Double.parseDouble(split[1]));
+
+                            if (split[2].equals("Double") && v.getValue().getClass() == Double.class) {
+                                if (StringUtil.isDouble(split[1])) {
+                                    v.setValue(Double.parseDouble(split[1]));
                                 }
                             }
                         }
-                        if (v instanceof OptionalValue) {
-                            final OptionalValue val = (OptionalValue) v;
-                            if(StringUtil.isInt(split[1])) {
-                                val.setInt(Integer.parseInt(split[1]));
+
+                        if (v.getValue() instanceof Enum) {
+                            if (split.length > 1) {
+                                v.setEnumValue(split[1]);
                             }
                         }
-                        if(v instanceof StringValue) {
-                            final StringValue val = (StringValue) v;
-                            if(split.length > 1) {
-                                val.setString(split[1]);
+
+                        if (v.getValue() instanceof String) {
+                            if (split.length > 1) {
+                                v.setValue(split[1]);
                             }
                         }
                     }
@@ -86,10 +87,10 @@ public final class ValueConfig extends Configurable {
     @Override
     public void save() {
         try {
-            for(Module mod : Seppuku.INSTANCE.getModuleManager().getModuleList()) {
+            for (Module mod : Seppuku.INSTANCE.getModuleManager().getModuleList()) {
                 final File file = new File(this.getPath() + mod.getDisplayName() + ".cfg");
 
-                if(!file.exists()) {
+                if (!file.exists()) {
                     file.getParentFile().mkdirs();
                     file.createNewFile();
                 }
@@ -97,32 +98,26 @@ public final class ValueConfig extends Configurable {
                 final BufferedWriter writer = new BufferedWriter(new FileWriter(this.getPath() + mod.getDisplayName() + ".cfg"));
 
                 for (Value val : mod.getValueList()) {
-                    if (val instanceof BooleanValue) {
-                        final BooleanValue v = (BooleanValue) val;
-                        writer.write(val.getDisplayName() + ":" + v.getBoolean());
+                    if (val.getValue() instanceof Boolean) {
+                        writer.write(val.getName() + ":" + val.getValue());
                         writer.newLine();
                     }
-                    if (val instanceof NumberValue && !(val instanceof OptionalValue)) {
-                        final NumberValue v = (NumberValue) val;
-                        if (v.getType() == Float.class) {
-                            writer.write(val.getDisplayName() + ":" + v.getFloat() + ":Float");
+
+                    if (val.getValue() instanceof Number && !(val.getValue() instanceof Enum)) {
+                        if (val.getValue().getClass() == Float.class) {
+                            writer.write(val.getName() + ":" + val.getValue() + ":Float");
                             writer.newLine();
-                        } else if (v.getType() == Integer.class) {
-                            writer.write(val.getDisplayName() + ":" + v.getInt() + ":Integer");
+                        } else if (val.getValue().getClass() == Integer.class) {
+                            writer.write(val.getName() + ":" + val.getValue() + ":Integer");
                             writer.newLine();
-                        } else if (v.getType() == Double.class) {
-                            writer.write(val.getDisplayName() + ":" + v.getDouble() + ":Double");
+                        } else if (val.getValue().getClass() == Double.class) {
+                            writer.write(val.getName() + ":" + val.getValue() + ":Double");
                             writer.newLine();
                         }
                     }
-                    if (val instanceof OptionalValue) {
-                        final OptionalValue v = (OptionalValue) val;
-                        writer.write(val.getDisplayName() + ":" + v.getInt());
-                        writer.newLine();
-                    }
-                    if(val instanceof StringValue) {
-                        final StringValue v = (StringValue) val;
-                        writer.write(val.getDisplayName() + ":" + v.getString());
+
+                    if (val.getValue() instanceof Enum || val.getValue() instanceof String) {
+                        writer.write(val.getName() + ":" + val.getValue());
                         writer.newLine();
                     }
                 }

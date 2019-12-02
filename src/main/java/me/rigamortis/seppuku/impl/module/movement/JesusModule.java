@@ -5,8 +5,7 @@ import me.rigamortis.seppuku.api.event.network.EventSendPacket;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.event.world.EventLiquidCollisionBB;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
-import me.rigamortis.seppuku.api.value.old.OptionalValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockLiquid;
@@ -24,9 +23,13 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class JesusModule extends Module {
 
-    public final OptionalValue mode = new OptionalValue("Mode", new String[]{"Mode", "M"}, 0, new String[]{"Vanilla", "NCP", "Bounce"});
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The current Jesus/WaterWalk mode to use.", Mode.NCP);
 
-    public final NumberValue offset = new NumberValue("Offset", new String[]{"Off", "O"}, 0.05f, Float.class, 0.0f, 0.9f, 0.01f);
+    private enum Mode {
+        VANILLA, NCP, BOUNCE
+    }
+
+    public final Value<Float> offset = new Value<Float>("Offset", new String[]{"Off", "O"}, "Amount to offset the player into the water's bounding box.", 0.05f, 0.0f, 0.9f, 0.01f);
 
     public JesusModule() {
         super("Jesus", new String[]{"LiquidWalk", "WaterWalk"}, "Allows you to walk on water", "NONE", -1, ModuleType.MOVEMENT);
@@ -34,17 +37,17 @@ public final class JesusModule extends Module {
 
     @Override
     public String getMetaData() {
-        return this.mode.getSelectedOption();
+        return this.mode.getValue().name();
     }
 
     @Listener
     public void getLiquidCollisionBB(EventLiquidCollisionBB event) {
         if(Minecraft.getMinecraft().world != null && Minecraft.getMinecraft().player != null) {
-            if (this.checkCollide() && !(Minecraft.getMinecraft().player.motionY >= 0.1f) && event.getBlockPos().getY() < Minecraft.getMinecraft().player.posY - this.offset.getFloat()) {
+            if (this.checkCollide() && !(Minecraft.getMinecraft().player.motionY >= 0.1f) && event.getBlockPos().getY() < Minecraft.getMinecraft().player.posY - this.offset.getValue()) {
                 if (Minecraft.getMinecraft().player.getRidingEntity() != null) {
-                    event.setBoundingBox(new AxisAlignedBB(0, 0, 0, 1, 1 - this.offset.getFloat(), 1));
+                    event.setBoundingBox(new AxisAlignedBB(0, 0, 0, 1, 1 - this.offset.getValue(), 1));
                 } else {
-                    if (this.mode.getInt() == 2) {
+                    if (this.mode.getValue() == Mode.BOUNCE) {
                         event.setBoundingBox(new AxisAlignedBB(0, 0, 0, 1, 0.9f, 1));
                     } else {
                         event.setBoundingBox(Block.FULL_BLOCK_AABB);
@@ -68,11 +71,11 @@ public final class JesusModule extends Module {
     public void sendPacket(EventSendPacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             if (event.getPacket() instanceof CPacketPlayer) {
-                if (this.mode.getInt() != 0 && Minecraft.getMinecraft().player.getRidingEntity() == null && !Minecraft.getMinecraft().gameSettings.keyBindJump.isKeyDown()) {
+                if (this.mode.getValue() != Mode.VANILLA && Minecraft.getMinecraft().player.getRidingEntity() == null && !Minecraft.getMinecraft().gameSettings.keyBindJump.isKeyDown()) {
                     final CPacketPlayer packet = (CPacketPlayer) event.getPacket();
 
-                    if (!isInLiquid() && isOnLiquid(this.offset.getFloat()) && checkCollide() && Minecraft.getMinecraft().player.ticksExisted % 3 == 0) {
-                        packet.y -= this.offset.getFloat();
+                    if (!isInLiquid() && isOnLiquid(this.offset.getValue()) && checkCollide() && Minecraft.getMinecraft().player.ticksExisted % 3 == 0) {
+                        packet.y -= this.offset.getValue();
                     }
                 }
             }

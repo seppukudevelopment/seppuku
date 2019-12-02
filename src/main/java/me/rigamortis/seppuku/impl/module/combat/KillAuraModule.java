@@ -35,7 +35,7 @@ public final class KillAuraModule extends Module {
     public final Value<Boolean> mobs = new Value("Mobs", new String[]{"Mob"}, "Choose to target mobs.", true);
     public final Value<Boolean> animals = new Value("Animals", new String[]{"Animal"}, "Choose to target animals.", true);
     public final Value<Boolean> vehicles = new Value("Vehicles", new String[]{"Vehic", "Vehicle"}, "Choose to target vehicles.", true);
-    public final Value<Boolean> projectiles = new Value("Projectile", new String[]{"Proj"}, "Choose to target projectiles", true);
+    public final Value<Boolean> projectiles = new Value("Projectiles", new String[]{"Projectile", "Proj"}, "Choose to target projectiles.", true);
 
     public final Value<Float> range = new Value<>("Range", new String[]{"Dist"}, "The minimum range to attack.", 4.5f, 0.0f, 5.0f, 0.1f);
     public final Value<Boolean> coolDown = new Value("CoolDown", new String[]{"CoolD"}, "Delay your hits to gain damage.", true);
@@ -53,7 +53,7 @@ public final class KillAuraModule extends Module {
 
             final Entity target = findTarget();
 
-            if(target != null) {
+            if (target != null) {
                 final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), target.getPositionEyes(mc.getRenderPartialTicks()));
                 Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
 
@@ -64,12 +64,12 @@ public final class KillAuraModule extends Module {
                 final ItemStack stack = mc.player.getHeldItem(EnumHand.OFF_HAND);
 
                 //TODO interp
-                if(this.teleport.getValue()) {
+                if (this.teleport.getValue()) {
                     Seppuku.INSTANCE.getPositionManager().setPlayerPosition(target.posX, target.posY, target.posZ);
                 }
 
-                if(canAttack) {
-                    if(stack != null && stack.getItem() == Items.SHIELD) {
+                if (canAttack) {
+                    if (stack != null && stack.getItem() == Items.SHIELD) {
                         mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, mc.player.getHorizontalFacing()));
                     }
 
@@ -93,7 +93,7 @@ public final class KillAuraModule extends Module {
                 if (this.checkFilter(e)) {
                     float currentDist = mc.player.getDistance(e);
 
-                    if(currentDist <= maxDist) {
+                    if (currentDist <= maxDist) {
                         maxDist = currentDist;
                         ent = e;
                     }
@@ -123,13 +123,13 @@ public final class KillAuraModule extends Module {
             ret = true;
         }
 
-        if(this.projectiles.getValue() && (entity instanceof EntityShulkerBullet || entity instanceof EntityFireball)) {
+        if (this.projectiles.getValue() && (entity instanceof EntityShulkerBullet || entity instanceof EntityFireball)) {
             ret = true;
         }
 
-        if(entity instanceof EntityLivingBase) {
+        if (entity instanceof EntityLivingBase) {
             final EntityLivingBase entityLivingBase = (EntityLivingBase) entity;
-            if(entityLivingBase.getHealth() <= 0) {
+            if (entityLivingBase.getHealth() <= 0) {
                 ret = false;
             }
         }

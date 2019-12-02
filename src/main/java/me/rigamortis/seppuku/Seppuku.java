@@ -7,6 +7,7 @@ import me.rigamortis.seppuku.api.logging.SeppukuFormatter;
 import me.rigamortis.seppuku.impl.gui.menu.GuiSeppukuMainMenu;
 import me.rigamortis.seppuku.impl.management.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -117,8 +118,8 @@ public final class Seppuku {
         Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(new TextComponentString("\2477[Seppuku]\247f " + message));
     }
 
-    public void logcChat(TextComponentString textComponentString) {
-        Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(new TextComponentString("\2477[Seppuku]\247f ").appendSibling(textComponentString));
+    public void logcChat(ITextComponent textComponent) {
+        Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(new TextComponentString("\2477[Seppuku]\247f ").appendSibling(textComponent));
     }
 
     public void logfChat(String format, Object... objects) {

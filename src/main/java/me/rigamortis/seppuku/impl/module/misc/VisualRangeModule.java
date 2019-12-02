@@ -24,7 +24,7 @@ public final class VisualRangeModule extends Module {
 
     @Listener
     public void onEntityAdded(EventAddEntity event) {
-        if (!Minecraft.getMinecraft().player.isDead && event.getEntity() instanceof EntityPlayer && !event.getEntity().getName().equalsIgnoreCase(Minecraft.getMinecraft().player.getName())) {
+        if (Minecraft.getMinecraft().world != null && !Minecraft.getMinecraft().player.isDead && event.getEntity() instanceof EntityPlayer && !event.getEntity().getName().equalsIgnoreCase(Minecraft.getMinecraft().player.getName())) {
             final Friend friend = Seppuku.INSTANCE.getFriendManager().isFriend(event.getEntity());
             final String msg = (friend != null ? ChatFormatting.DARK_PURPLE : ChatFormatting.RED) + (friend != null ? friend.getAlias() : event.getEntity().getName()) + ChatFormatting.WHITE + " has entered your visual range.";
             Seppuku.INSTANCE.getNotificationManager().addNotification("", msg);
@@ -37,7 +37,7 @@ public final class VisualRangeModule extends Module {
 
     @Listener
     public void onEntityRemove(EventRemoveEntity event) {
-        if (!Minecraft.getMinecraft().player.isDead && event.getEntity() instanceof EntityPlayer && !event.getEntity().getName().equalsIgnoreCase(Minecraft.getMinecraft().player.getName())) {
+        if (Minecraft.getMinecraft().world != null && !Minecraft.getMinecraft().player.isDead && event.getEntity() instanceof EntityPlayer && !event.getEntity().getName().equalsIgnoreCase(Minecraft.getMinecraft().player.getName())) {
             if (this.prevPlayer != event.getEntity().getEntityId()) {
                 this.prevPlayer = event.getEntity().getEntityId();
                 final Friend friend = Seppuku.INSTANCE.getFriendManager().isFriend(event.getEntity());

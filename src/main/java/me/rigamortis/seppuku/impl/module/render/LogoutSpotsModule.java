@@ -9,7 +9,7 @@ import me.rigamortis.seppuku.api.event.render.EventRender2D;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.GLUProjection;
-import me.rigamortis.seppuku.api.value.old.NumberValue;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public final class LogoutSpotsModule extends Module {
 
-    public final NumberValue<Integer> removeDistance = new NumberValue<Integer>("RemoveDistance", new String[]{"RD", "RemoveRange"}, 200, Integer.class, 1, 2000, 1);
+    public final Value<Integer> removeDistance = new Value<Integer>("RemoveDistance", new String[]{"RD", "RemoveRange"}, "Minimum distance in blocks the player must be away from the spot for it to be removed.", 200, 1, 2000, 1);
 
     private final Map<String, EntityPlayer> playerCache = Maps.newConcurrentMap();
     private final Map<String, PlayerData> logoutCache = Maps.newConcurrentMap();
@@ -73,13 +73,11 @@ public final class LogoutSpotsModule extends Module {
             GlStateManager.pushMatrix();
             GlStateManager.enableLighting();
             GlStateManager.enableBlend();
-            GlStateManager.enableAlpha();
             GlStateManager.enableDepth();
             GlStateManager.color(1, 1, 1, 1);
             mc.getRenderManager().renderEntity(data.ghost, data.position.x - mc.getRenderManager().renderPosX, data.position.y - mc.getRenderManager().renderPosY, data.position.z - mc.getRenderManager().renderPosZ, data.ghost.rotationYaw, mc.getRenderPartialTicks(), false);
             GlStateManager.disableLighting();
             GlStateManager.disableBlend();
-            GlStateManager.disableAlpha();
             GlStateManager.popMatrix();
         }
     }
@@ -158,7 +156,7 @@ public final class LogoutSpotsModule extends Module {
 
     private boolean isOutOfRange(PlayerData data) {
         Vec3d position = data.position;
-        return Minecraft.getMinecraft().player.getDistance(position.x, position.y, position.z) > this.removeDistance.getInt();
+        return Minecraft.getMinecraft().player.getDistance(position.x, position.y, position.z) > this.removeDistance.getValue();
     }
 
     private class PlayerData {
