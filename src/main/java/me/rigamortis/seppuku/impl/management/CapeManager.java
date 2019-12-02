@@ -94,6 +94,7 @@ public final class CapeManager {
 
     /**
      * Returns a ResourceLocation for a player
+     *
      * @param player
      * @return
      */

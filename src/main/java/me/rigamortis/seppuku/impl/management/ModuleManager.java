@@ -158,8 +158,8 @@ public final class ModuleManager {
      */
     public void loadExternalModules() {
         try {
-            //create a directory at "Seppuku 1.12.2/Modules"
-            final File dir = new File("Seppuku 1.12.2/Modules");
+            //create a directory at "Seppuku/Modules"
+            final File dir = new File("Seppuku/Modules");
 
             //if it doesnt exist create it
             if (!dir.exists()) {

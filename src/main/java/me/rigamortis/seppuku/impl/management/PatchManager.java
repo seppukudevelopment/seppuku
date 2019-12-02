@@ -70,8 +70,8 @@ public final class PatchManager {
      */
     void loadExternalPatches() {
         try {
-            //create a directory at "Seppuku 1.12.2/Patches"
-            final File dir = new File("Seppuku 1.12.2/Patches");
+            //create a directory at "Seppuku/Patches"
+            final File dir = new File("Seppuku/Patches");
 
             //if it doesnt exist create it
             if (!dir.exists()) {
@@ -83,11 +83,11 @@ public final class PatchManager {
             for (Class clazz : ReflectionUtil.getClassesEx(dir.getPath())) {
                 if (clazz != null) {
                     //if we have found a class and the class inherits "ClassPatch"
-                    if(ClassPatch.class.isAssignableFrom(clazz)) {
+                    if (ClassPatch.class.isAssignableFrom(clazz)) {
                         //create a new instance of the class
                         final ClassPatch patch = (ClassPatch) clazz.newInstance();
 
-                        if(patch != null) {
+                        if (patch != null) {
                             //add the class to our list of patches
                             this.patchList.add(patch);
                             System.out.println("[Seppuku] Found external patch " + patch.getMcpName().replace(".", "/"));
@@ -95,28 +95,29 @@ public final class PatchManager {
                     }
                 }
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
      * Find a matching patch based on the input class name and our set environment
+     *
      * @param name
      * @return
      */
     public ClassPatch findClassPatch(String name) {
-        for(ClassPatch patch : this.patchList) {
-            if(patch != null) {
+        for (ClassPatch patch : this.patchList) {
+            if (patch != null) {
                 String patchName = patch.getMcpName();
 
-                if(this.env == Environment.RELEASE) {
-                    if(patch.getNotchName() != null && patch.getNotchName().length() > 0) {
+                if (this.env == Environment.RELEASE) {
+                    if (patch.getNotchName() != null && patch.getNotchName().length() > 0) {
                         patchName = patch.getNotchName();
                     }
                 }
 
-                if(name.equals(patchName)) {
+                if (name.equals(patchName)) {
                     return patch;
                 }
             }

@@ -14,8 +14,8 @@ public final class WaypointManager {
     private List<WaypointsModule.WaypointData> waypointDataList = new ArrayList<>();
 
     public WaypointsModule.WaypointData find(String host, String name) {
-        for(WaypointsModule.WaypointData data : this.waypointDataList) {
-            if(data.getHost().equalsIgnoreCase(host) && data.getName().equalsIgnoreCase(name)) {
+        for (WaypointsModule.WaypointData data : this.waypointDataList) {
+            if (data.getHost().equalsIgnoreCase(host) && data.getName().equalsIgnoreCase(name)) {
                 return data;
             }
         }

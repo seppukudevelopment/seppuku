@@ -1,65 +1,43 @@
 package me.rigamortis.seppuku.impl.config;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.config.Configurable;
-import me.rigamortis.seppuku.api.ignore.Ignored;
-import me.rigamortis.seppuku.impl.management.ConfigManager;
+import me.rigamortis.seppuku.api.util.FileUtil;
 
-import java.io.*;
+import java.io.File;
 
 /**
- * Author Seth
- * 6/29/2019 @ 9:14 AM.
+ * @author noil
  */
 public final class IgnoreConfig extends Configurable {
 
-    public IgnoreConfig() {
-        super(ConfigManager.CONFIG_PATH + "Ignored.cfg");
+    public IgnoreConfig(File dir) {
+        super(FileUtil.createJsonFile(dir, "Ignored"));
     }
 
     @Override
-    public void load() {
-        try{
-            final File file = new File(this.getPath());
+    public void onLoad() {
+        super.onLoad();
 
-            if (!file.exists()) {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-            }
+        final JsonArray ignoredJsonArray = this.getJsonObject().get("Ignored").getAsJsonArray();
 
-            final BufferedReader reader = new BufferedReader(new FileReader(this.getPath()));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                Seppuku.INSTANCE.getIgnoredManager().add(line);
-            }
-
-            reader.close();
-        }catch (Exception e) {
-            e.printStackTrace();
+        for (JsonElement jsonElement : ignoredJsonArray) {
+            final String blacklistedName = jsonElement.getAsString();
+            Seppuku.INSTANCE.getIgnoredManager().add(blacklistedName);
         }
     }
 
     @Override
-    public void save() {
-        try{
-            final File file = new File(this.getPath());
-
-            if (!file.exists()) {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-            }
-
-            final BufferedWriter writer = new BufferedWriter(new FileWriter(this.getPath()));
-
-            for(Ignored ignored : Seppuku.INSTANCE.getIgnoredManager().getIgnoredList()) {
-                writer.write(ignored.getName());
-                writer.newLine();
-            }
-
-            writer.close();
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void onSave() {
+        JsonObject save = new JsonObject();
+        JsonArray ignoredJsonArray = new JsonArray();
+        Seppuku.INSTANCE.getIgnoredManager().getIgnoredList().forEach(ignored -> {
+            ignoredJsonArray.add(ignored.getName());
+        });
+        save.add("Ignored", ignoredJsonArray);
+        this.saveJsonObjectToFile(save);
     }
 }

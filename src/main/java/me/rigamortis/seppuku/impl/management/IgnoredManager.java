@@ -21,8 +21,8 @@ public final class IgnoredManager {
     }
 
     public Ignored find(String name) {
-        for(Ignored ignored : this.ignoredList) {
-            if(ignored.getName().equalsIgnoreCase(name)) {
+        for (Ignored ignored : this.ignoredList) {
+            if (ignored.getName().equalsIgnoreCase(name)) {
                 return ignored;
             }
         }

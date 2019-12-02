@@ -32,32 +32,23 @@ public class Module {
 
     }
 
-    public Module(String displayName, String[] alias, String desc, String key, int color, boolean hidden, boolean enabled, ModuleType type) {
-        this.displayName = displayName;
-        this.alias = alias;
-        this.desc = desc;
-        this.key = key;
-        this.color = color;
-        this.hidden = hidden;
-        this.enabled = enabled;
-        this.type = type;
-    }
-
-    public Module(String displayName, String[] alias, String desc, String key, int color, ModuleType type) {
-        this.displayName = displayName;
-        this.alias = alias;
-        this.desc = desc;
-        this.key = key;
-        this.color = color;
-        this.type = type;
-    }
-
     public Module(String displayName, String[] alias, String key, int color, ModuleType type) {
         this.displayName = displayName;
         this.alias = alias;
         this.key = key;
         this.color = color;
         this.type = type;
+    }
+
+    public Module(String displayName, String[] alias, String desc, String key, int color, ModuleType type) {
+        this(displayName, alias, key, color, type);
+        this.desc = desc;
+    }
+
+    public Module(String displayName, String[] alias, String desc, String key, int color, boolean hidden, boolean enabled, ModuleType type) {
+        this(displayName, alias, desc, key, color, type);
+        this.hidden = hidden;
+        this.enabled = enabled;
     }
 
     public void onEnable() {
