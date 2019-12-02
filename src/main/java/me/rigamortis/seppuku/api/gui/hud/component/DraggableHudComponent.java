@@ -25,6 +25,8 @@ public class DraggableHudComponent extends HudComponent {
     private DraggableHudComponent glued;
     private GlueSide glueSide;
 
+    private static final double ANCHOR_THRESHOLD = 80;
+
     public DraggableHudComponent(String name) {
         this.setName(name);
         this.setVisible(false);
@@ -194,7 +196,7 @@ public class DraggableHudComponent extends HudComponent {
 
     private AnchorPoint findClosest(int x, int y) {
         AnchorPoint ret = null;
-        double max = 100;
+        double max = ANCHOR_THRESHOLD;
         for (AnchorPoint point : Seppuku.INSTANCE.getHudManager().getAnchorPoints()) {
             final double deltaX = x - point.getX();
             final double deltaY = y - point.getY();
