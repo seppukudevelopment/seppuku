@@ -181,7 +181,7 @@ public final class RenderUtil {
         GlStateManager.popMatrix();
     }
 
-    public static void drawBoundingBox(AxisAlignedBB bb, float width, int color) {
+    public static void drawBoundingBox(AxisAlignedBB bb, float width, float red, float green, float blue, float alpha) {
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.disableDepth();
@@ -191,11 +191,6 @@ public final class RenderUtil {
         glEnable(GL_LINE_SMOOTH);
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
         glLineWidth(width);
-
-        final float alpha = (color >> 24 & 0xFF) / 255.0F;
-        final float red = (color >> 16 & 0xFF) / 255.0F;
-        final float green = (color >> 8 & 0xFF) / 255.0F;
-        final float blue = (color & 0xFF) / 255.0F;
 
         final Tessellator tessellator = Tessellator.getInstance();
         final BufferBuilder bufferbuilder = tessellator.getBuffer();
@@ -226,6 +221,14 @@ public final class RenderUtil {
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
+    }
+
+    public static void drawBoundingBox(AxisAlignedBB bb, float width, int color) {
+        final float alpha = (color >> 24 & 0xFF) / 255.0F;
+        final float red = (color >> 16 & 0xFF) / 255.0F;
+        final float green = (color >> 8 & 0xFF) / 255.0F;
+        final float blue = (color & 0xFF) / 255.0F;
+        drawBoundingBox(bb, width, red, green, blue, alpha);
     }
 
     public static void drawPlane(double x, double y, double z, AxisAlignedBB bb, float width, int color) {

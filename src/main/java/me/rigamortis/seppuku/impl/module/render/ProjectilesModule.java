@@ -4,6 +4,7 @@ import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -44,6 +45,12 @@ public final class ProjectilesModule extends Module {
 
     private final Queue<Vec3d> flightPoint = new ConcurrentLinkedQueue<>();
 
+    public final Value<Float> width = new Value<Float>("Width", new String[]{"W", "Width"}, "Pixel width of the projectile path.", 1.0f, 0.0f, 5.0f, 0.1f);
+    public final Value<Float> red = new Value<Float>("Red", new String[]{"R"}, "Red value for the projectile path.", 255.0f, 0.0f, 255.0f, 1.0f);
+    public final Value<Float> green = new Value<Float>("Green", new String[]{"G"}, "Green value for the projectile path.", 255.0f, 0.0f, 255.0f, 1.0f);
+    public final Value<Float> blue = new Value<Float>("Blue", new String[]{"B"}, "Blue value for the projectile path.", 255.0f, 0.0f, 255.0f, 1.0f);
+    public final Value<Float> alpha = new Value<Float>("Alpha", new String[]{"A"}, "Alpha value for the projectile path.", 255.0f, 0.0f, 255.0f, 1.0f);
+
     public ProjectilesModule() {
         super("Projectiles", new String[]{"Proj"}, "Projects the possible path of an entity that was fired.", "NONE", -1, ModuleType.RENDER);
     }
@@ -68,12 +75,6 @@ public final class ProjectilesModule extends Module {
                     flightPath.position.z - mc.getRenderManager().viewerPosZ));
         }
 
-        final int hex = 0xFF9900EE;
-        float red = (hex >> 16 & 0xFF) / 255.0F;
-        float green = (hex >> 8 & 0xFF) / 255.0F;
-        float blue = (hex & 0xFF) / 255.0F;
-        float alpha = (hex >> 24 & 0xFF) / 255.0F;
-
         final boolean bobbing = mc.gameSettings.viewBobbing;
         mc.gameSettings.viewBobbing = false;
         mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
@@ -83,7 +84,7 @@ public final class ProjectilesModule extends Module {
         GlStateManager.disableAlpha();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GlStateManager.shadeModel(GL_SMOOTH);
-        glLineWidth(1.5f);
+        glLineWidth(width.getValue());
         glEnable(GL_LINE_SMOOTH);
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
         GlStateManager.disableDepth();
@@ -94,11 +95,11 @@ public final class ProjectilesModule extends Module {
         while (!flightPoint.isEmpty()) {
             bufferbuilder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
             Vec3d head = flightPoint.poll();
-            bufferbuilder.pos(head.x, head.y, head.z).color(red, green, blue, alpha).endVertex();
+            bufferbuilder.pos(head.x, head.y, head.z).color(red.getValue() / 255.0f, green.getValue() / 255.0f, blue.getValue() / 255.0f, alpha.getValue() / 255.0f).endVertex();
 
             if (flightPoint.peek() != null) {
                 Vec3d point = flightPoint.peek();
-                bufferbuilder.pos(point.x, point.y, point.z).color(red, green, blue, alpha).endVertex();
+                bufferbuilder.pos(point.x, point.y, point.z).color(red.getValue() / 255.0f, green.getValue() / 255.0f, blue.getValue() / 255.0f, alpha.getValue() / 255.0f).endVertex();
             }
 
             tessellator.draw();
@@ -136,7 +137,7 @@ public final class ProjectilesModule extends Module {
             }
 
             if (bb != null) {
-                RenderUtil.drawBoundingBox(bb, 1.5f, hex);
+                RenderUtil.drawBoundingBox(bb, width.getValue(), red.getValue() / 255.0f, green.getValue() / 255.0f, blue.getValue() / 255.0f, alpha.getValue() / 255.0f);
             }
         }
     }
