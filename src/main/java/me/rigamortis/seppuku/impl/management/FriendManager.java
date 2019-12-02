@@ -25,6 +25,7 @@ public final class FriendManager {
 
     /**
      * When we add friends we grab their UUID from mojangs api
+     *
      * @param name
      * @param alias
      */
@@ -34,13 +35,13 @@ public final class FriendManager {
 
         Seppuku.INSTANCE.getConfigManager().saveAll();
 
-        if(grabUUID) {
-            try{
+        if (grabUUID) {
+            try {
                 new Thread(() -> {
                     final String url = "https://api.mojang.com/users/profiles/minecraft/" + name;
                     try {
                         final String json = IOUtils.toString(new URL(url));
-                        if(json.isEmpty()) {
+                        if (json.isEmpty()) {
                             return;
                         }
 
@@ -56,7 +57,7 @@ public final class FriendManager {
                         e.printStackTrace();
                     }
                 }).start();
-            }catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -64,12 +65,13 @@ public final class FriendManager {
 
     /**
      * Returns a friend based on the alias
+     *
      * @param alias
      * @return
      */
     public Friend find(String alias) {
-        for(Friend friend : this.getFriendList()) {
-            if(alias.equalsIgnoreCase(friend.getAlias()) || alias.equalsIgnoreCase(friend.getName())) {
+        for (Friend friend : this.getFriendList()) {
+            if (alias.equalsIgnoreCase(friend.getAlias()) || alias.equalsIgnoreCase(friend.getName())) {
                 return friend;
             }
         }
@@ -78,12 +80,13 @@ public final class FriendManager {
 
     /**
      * Returns a friend based on the uuid
+     *
      * @param uuid
      * @return
      */
     public Friend findUUID(String uuid) {
-        for(Friend friend : this.getFriendList()) {
-            if(uuid.equals(friend.getUuid())) {
+        for (Friend friend : this.getFriendList()) {
+            if (uuid.equals(friend.getUuid())) {
                 return friend;
             }
         }
@@ -95,13 +98,13 @@ public final class FriendManager {
 
         final Friend byName = this.find(e.getName());
 
-        if(byName != null) {
+        if (byName != null) {
             ret = byName;
         }
 
         final Friend byUUID = this.findUUID(e.getUniqueID().toString().replace("-", ""));
 
-        if(byUUID != null) {
+        if (byUUID != null) {
             ret = byUUID;
         }
 
@@ -110,6 +113,7 @@ public final class FriendManager {
 
     /**
      * Returns the most similar friend based on the input
+     *
      * @param input
      * @return
      */
@@ -117,10 +121,10 @@ public final class FriendManager {
         Friend friend = null;
         double similarity = 0.0f;
 
-        for(Friend f : this.getFriendList()) {
+        for (Friend f : this.getFriendList()) {
             final double currentSimilarity = StringUtil.levenshteinDistance(input, friend.getName());
 
-            if(currentSimilarity >= similarity) {
+            if (currentSimilarity >= similarity) {
                 similarity = currentSimilarity;
                 friend = f;
             }

@@ -1,67 +1,43 @@
 package me.rigamortis.seppuku.impl.config;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.config.Configurable;
 import me.rigamortis.seppuku.api.macro.Macro;
-import me.rigamortis.seppuku.impl.management.ConfigManager;
+import me.rigamortis.seppuku.api.util.FileUtil;
 
-import java.io.*;
+import java.io.File;
 
 /**
- * Author Seth
- * 5/7/2019 @ 9:57 PM.
+ * @author noil
  */
 public final class MacroConfig extends Configurable {
 
-    public MacroConfig() {
-        super(ConfigManager.CONFIG_PATH + "Macros.cfg");
-    }
-
-
-    @Override
-    public void load() {
-        try{
-            final File file = new File(this.getPath());
-
-            if (!file.exists()) {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-            }
-
-            final BufferedReader reader = new BufferedReader(new FileReader(this.getPath()));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                final String[] split = line.split(":");
-                Seppuku.INSTANCE.getMacroManager().getMacroList().add(new Macro(split[0], split[1], split[2]));
-            }
-
-            reader.close();
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
+    public MacroConfig(File dir) {
+        super(FileUtil.createJsonFile(dir, "Macros"));
     }
 
     @Override
-    public void save() {
-        try{
-            final File file = new File(this.getPath());
+    public void onLoad() {
+        super.onLoad();
+        this.getJsonObject().entrySet().forEach(entry -> {
+            final String name = entry.getKey();
+            final String key = entry.getValue().getAsJsonArray().get(0).getAsString();
+            final String macro = entry.getValue().getAsJsonArray().get(1).getAsString();
+            Seppuku.INSTANCE.getMacroManager().getMacroList().add(new Macro(name, key, macro));
+        });
+    }
 
-            if (!file.exists()) {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-            }
-
-            final BufferedWriter writer = new BufferedWriter(new FileWriter(this.getPath()));
-
-            for(Macro macro : Seppuku.INSTANCE.getMacroManager().getMacroList()) {
-                writer.write(macro.getName() + ":" + macro.getKey() + ":" + macro.getMacro());
-                writer.newLine();
-            }
-
-            writer.close();
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
+    @Override
+    public void onSave() {
+        JsonObject macroListObject = new JsonObject();
+        Seppuku.INSTANCE.getMacroManager().getMacroList().forEach(macro -> {
+            JsonArray array = new JsonArray();
+            array.add(macro.getKey());
+            array.add(macro.getMacro());
+            macroListObject.add(macro.getName(), array);
+        });
+        this.saveJsonObjectToFile(macroListObject.getAsJsonObject());
     }
 }

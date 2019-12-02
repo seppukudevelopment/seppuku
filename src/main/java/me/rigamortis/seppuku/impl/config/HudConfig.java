@@ -1,112 +1,74 @@
 package me.rigamortis.seppuku.impl.config;
 
+import com.google.gson.JsonObject;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.config.Configurable;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
-import me.rigamortis.seppuku.api.gui.hud.component.HudComponent;
+import me.rigamortis.seppuku.api.util.FileUtil;
 import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
-import me.rigamortis.seppuku.impl.management.ConfigManager;
 
-import java.io.*;
+import java.io.File;
 
 /**
- * created by noil on 8/25/2019 at 12:23 PM
+ * @author noil
  */
 public final class HudConfig extends Configurable {
 
-    public HudConfig() {
-        super(ConfigManager.CONFIG_PATH + "Hud.cfg");
+    private DraggableHudComponent hudComponent;
+
+    public HudConfig(File dir, DraggableHudComponent hudComponent) {
+        super(FileUtil.createJsonFile(dir, hudComponent.getName()));
+        this.hudComponent = hudComponent;
     }
 
     @Override
-    public void load() {
-        try {
-            final File file = new File(this.getPath());
+    public void onLoad() {
+        super.onLoad();
 
-            if (!file.exists()) {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-            }
-
-            final BufferedReader reader = new BufferedReader(new FileReader(this.getPath()));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                final String[] split = line.split(":");
-
-                final HudComponent component = Seppuku.INSTANCE.getHudManager().findComponent(split[0]);
-                if (component != null) {
-                    if (!split[1].equals("")) {
-                        component.setX(Float.valueOf(split[1]));
-                    }
-                    if (!split[2].equals("")) {
-                        component.setY(Float.valueOf(split[2]));
-                    }
-                    if (!split[3].equals("")) {
-                        component.setVisible(Boolean.valueOf(split[3]));
-                    }
-                    if (!split[4].equals("")) {
-                        final DraggableHudComponent draggable = (DraggableHudComponent) component;
-                        if (!split[4].equals("NULL_ANCHOR")) {
-                            for (AnchorPoint anchorPoint : Seppuku.INSTANCE.getHudManager().getAnchorPoints()) {
-                                if (anchorPoint.getPoint().equals(AnchorPoint.Point.valueOf(split[4]))) {
-                                    draggable.setAnchorPoint(anchorPoint);
-                                }
+        this.getJsonObject().entrySet().forEach(entry -> {
+            switch (entry.getKey()) {
+                case "X":
+                    hudComponent.setX(entry.getValue().getAsFloat());
+                    break;
+                case "Y":
+                    hudComponent.setY(entry.getValue().getAsFloat());
+                    break;
+                case "Visible":
+                    hudComponent.setVisible(entry.getValue().getAsBoolean());
+                    break;
+                case "Anchor":
+                    if (!entry.getValue().getAsString().equals("NONE")) {
+                        for (AnchorPoint anchorPoint : Seppuku.INSTANCE.getHudManager().getAnchorPoints()) {
+                            if (anchorPoint.getPoint().equals(AnchorPoint.Point.valueOf(entry.getValue().getAsString()))) {
+                                hudComponent.setAnchorPoint(anchorPoint);
                             }
                         }
-                        if (!split[5].equals("NULL_GLUED") && !split[6].equals("NULL_GLUE_SIDE")) {
-                            draggable.setGlued((DraggableHudComponent) Seppuku.INSTANCE.getHudManager().findComponent(split[5]));
-                            draggable.setGlueSide(DraggableHudComponent.GlueSide.valueOf(split[6]));
-                        }
                     }
-                }
+                    break;
+                case "Glue":
+                    if (!entry.getValue().getAsString().equals("NONE")) {
+                        hudComponent.setGlued((DraggableHudComponent) Seppuku.INSTANCE.getHudManager().findComponent(entry.getValue().getAsString()));
+                    }
+                    break;
+                case "GlueSide":
+                    if (!entry.getValue().getAsString().equals("NONE")) {
+                        hudComponent.setGlueSide(DraggableHudComponent.GlueSide.valueOf(entry.getValue().getAsString()));
+                    }
+                    break;
             }
-
-            reader.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        });
     }
 
     @Override
-    public void save() {
-        try {
-            final File file = new File(this.getPath());
-
-            if (!file.exists()) {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-            }
-
-            final BufferedWriter writer = new BufferedWriter(new FileWriter(this.getPath()));
-
-            if (Seppuku.INSTANCE.getHudManager().getComponentList() != null) {
-                for (HudComponent component : Seppuku.INSTANCE.getHudManager().getComponentList()) {
-                    writer.write(component.getName() + ":" + component.getX() + ":" + component.getY() + ":" + component.isVisible());
-                    if (component instanceof DraggableHudComponent) {
-                        final DraggableHudComponent draggable = (DraggableHudComponent) component;
-
-                        // Anchor Point
-                        if (draggable.getAnchorPoint() != null) {
-                            writer.write(":" + draggable.getAnchorPoint().getPoint().name());
-                        } else {
-                            writer.write(":" + "NULL_ANCHOR");
-                        }
-
-                        // Glued
-                        if (draggable.getGlued() != null) {
-                            writer.write(":" + draggable.getGlued().getName() + ":" + draggable.getGlueSide());
-                        } else {
-                            writer.write(":" + "NULL_GLUED" + ":" + "NULL_GLUE_SIDE");
-                        }
-                    }
-                    writer.newLine();
-                }
-            }
-
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void onSave() {
+        JsonObject componentsListJsonObject = new JsonObject();
+        componentsListJsonObject.addProperty("Name", hudComponent.getName());
+        componentsListJsonObject.addProperty("X", hudComponent.getX());
+        componentsListJsonObject.addProperty("Y", hudComponent.getY());
+        componentsListJsonObject.addProperty("Visible", hudComponent.isVisible());
+        componentsListJsonObject.addProperty("Anchor", hudComponent.getAnchorPoint() == null ? "NONE" : hudComponent.getAnchorPoint().getPoint().name());
+        componentsListJsonObject.addProperty("Glue", hudComponent.getGlued() == null ? "NONE" : hudComponent.getGlued().getName());
+        componentsListJsonObject.addProperty("GlueSide", hudComponent.getGlued() == null ? "NONE" : hudComponent.getGlueSide().name());
+        this.saveJsonObjectToFile(componentsListJsonObject);
     }
 }

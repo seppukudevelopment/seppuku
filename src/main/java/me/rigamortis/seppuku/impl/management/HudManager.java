@@ -122,7 +122,7 @@ public final class HudManager {
 
     public void loadExternalHudComponents() {
         try {
-            final File dir = new File("Seppuku 1.12.2/Hud");
+            final File dir = new File("Seppuku/Hud");
 
             if (!dir.exists()) {
                 dir.mkdirs();

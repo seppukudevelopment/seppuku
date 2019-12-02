@@ -8,6 +8,7 @@ import me.rigamortis.seppuku.api.util.ReflectionUtil;
 import me.rigamortis.seppuku.api.util.StringUtil;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.command.*;
+import net.minecraft.util.text.TextComponentString;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -78,8 +79,8 @@ public final class CommandManager {
      */
     public void loadExternalCommands() {
         try {
-            //create a directory at "Seppuku 1.12.2/Commands"
-            final File dir = new File("Seppuku 1.12.2/Commands");
+            //create a directory at "Seppuku/Commands"
+            final File dir = new File("Seppuku/Commands");
 
             //if it doesnt exist create it
             if (!dir.exists()) {
@@ -113,6 +114,11 @@ public final class CommandManager {
         for (final Module module : Seppuku.INSTANCE.getModuleManager().getModuleList()) {
             if (module.getValueList().size() > 0) {
                 this.commandList.add(new Command(module.getDisplayName(), module.getAlias(), module.getDesc() != null ? module.getDesc() : "There is no description for this command", module.toUsageTextComponent()) {
+
+                    @Override
+                    public TextComponentString getTextComponentUsage() {
+                        return module.toUsageTextComponent();
+                    }
 
                     @Override
                     public void exec(String input) {

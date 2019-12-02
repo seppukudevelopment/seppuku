@@ -16,8 +16,8 @@ public final class WorldManager {
     }
 
     public WorldData find(String host) {
-        for(WorldData worldData : this.worldDataList) {
-            if(worldData.getHost().equalsIgnoreCase(host)) {
+        for (WorldData worldData : this.worldDataList) {
+            if (worldData.getHost().equalsIgnoreCase(host)) {
                 return worldData;
             }
         }

@@ -23,7 +23,7 @@ public final class WaypointsModule extends Module {
     public final Value<Float> width = new Value<Float>("Width", new String[]{"Wid"}, "Pixel width of each tracer line.", 0.5f, 0.0f, 5.0f, 0.1f);
 
     public WaypointsModule() {
-        super("Waypoints", new String[] {"Wp", "Waypoint"}, "Highlights waypoints", "NONE", -1, ModuleType.WORLD);
+        super("Waypoints", new String[]{"Wp", "Waypoint"}, "Highlights waypoints", "NONE", -1, ModuleType.WORLD);
     }
 
     @Listener
@@ -32,11 +32,11 @@ public final class WaypointsModule extends Module {
 
         final String host = mc.getCurrentServerData() == null ? "localhost" : mc.getCurrentServerData().serverIP;
 
-        for(WaypointData waypointData : Seppuku.INSTANCE.getWaypointManager().getWaypointDataList()) {
-            if(waypointData != null) {
-                if(host.equalsIgnoreCase(waypointData.getHost()) && mc.player.dimension == waypointData.dimension) {
+        for (WaypointData waypointData : Seppuku.INSTANCE.getWaypointManager().getWaypointDataList()) {
+            if (waypointData != null) {
+                if (host.equalsIgnoreCase(waypointData.getHost()) && mc.player.dimension == waypointData.dimension) {
                     final double dist = mc.player.getDistance(waypointData.getX(), waypointData.getY(), waypointData.getZ());
-                    if(dist >= 5.0f) {
+                    if (dist >= 5.0f) {
                         final GLUProjection.Projection projection = GLUProjection.getInstance().project(waypointData.getX() - mc.getRenderManager().viewerPosX, waypointData.getY() - mc.getRenderManager().viewerPosY, waypointData.getZ() - mc.getRenderManager().viewerPosZ, GLUProjection.ClampMode.NONE, false);
 
                         if (projection != null && projection.getType() == GLUProjection.Projection.Type.INSIDE) {

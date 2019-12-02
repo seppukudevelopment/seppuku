@@ -18,8 +18,8 @@ public final class MacroManager {
     }
 
     public Macro find(String name) {
-        for(Macro macro : this.macroList) {
-            if(macro.getName().equalsIgnoreCase(name)) {
+        for (Macro macro : this.macroList) {
+            if (macro.getName().equalsIgnoreCase(name)) {
                 return macro;
             }
         }

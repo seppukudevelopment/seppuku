@@ -1,69 +1,42 @@
 package me.rigamortis.seppuku.impl.config;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.config.Configurable;
-import me.rigamortis.seppuku.impl.management.ConfigManager;
+import me.rigamortis.seppuku.api.util.FileUtil;
 import me.rigamortis.seppuku.impl.management.WorldManager;
 
-import java.io.*;
+import java.io.File;
 
 /**
- * Author Seth
- * 6/11/2019 @ 7:29 AM.
+ * @author noil
  */
 public final class WorldConfig extends Configurable {
 
-    public WorldConfig() {
-        super(ConfigManager.CONFIG_PATH + "Worlds.cfg");
+    public WorldConfig(File dir) {
+        super(FileUtil.createJsonFile(dir, "Worlds"));
     }
 
     @Override
-    public void load() {
-        try{
-            final File file = new File(this.getPath());
+    public void onLoad() {
+        super.onLoad();
 
-            if (!file.exists()) {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-            }
-
-            final BufferedReader reader = new BufferedReader(new FileReader(this.getPath()));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                final String[] split = line.split(":");
-                final String host = split[0];
-                final String seed = split[1];
-
-                Seppuku.INSTANCE.getWorldManager().getWorldDataList().add(new WorldManager.WorldData(host, Long.parseLong(seed)));
-            }
-
-            reader.close();
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
+        this.getJsonObject().entrySet().forEach(entry -> {
+            final String host = entry.getKey();
+            final String seed = entry.getValue().getAsJsonArray().get(0).getAsString();
+            Seppuku.INSTANCE.getWorldManager().getWorldDataList().add(new WorldManager.WorldData(host, Long.parseLong(seed)));
+        });
     }
 
     @Override
-    public void save() {
-        try{
-            final File file = new File(this.getPath());
-
-            if (!file.exists()) {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
-            }
-
-            final BufferedWriter writer = new BufferedWriter(new FileWriter(this.getPath()));
-
-            for(WorldManager.WorldData worldData : Seppuku.INSTANCE.getWorldManager().getWorldDataList()) {
-                writer.write(worldData.getHost() + ":" + worldData.getSeed());
-                writer.newLine();
-            }
-
-            writer.close();
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void onSave() {
+        JsonObject worldListJsonObject = new JsonObject();
+        Seppuku.INSTANCE.getWorldManager().getWorldDataList().forEach(worldData -> {
+            final JsonArray array = new JsonArray();
+            array.add(worldData.getSeed());
+            worldListJsonObject.add(worldData.getHost(), array);
+        });
+        this.saveJsonObjectToFile(worldListJsonObject);
     }
 }

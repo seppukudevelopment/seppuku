@@ -45,7 +45,7 @@ public final class ChatManager {
                 this.chatBuffer.clear();
             }
 
-            for(int i = 0; i < this.chatBuffer.size(); i++) {
+            for (int i = 0; i < this.chatBuffer.size(); i++) {
                 final String s = this.chatBuffer.get(i);
                 if (s != null) {
                     if (this.timer.passed(200.0f)) {

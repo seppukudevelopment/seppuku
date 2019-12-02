@@ -78,8 +78,8 @@ public final class Seppuku {
         this.initLogger();
         this.eventManager = new AnnotatedEventManager();
         this.apiManager = new APIManager();
-        this.moduleManager = new ModuleManager();
-        this.commandManager = new CommandManager();
+        this.configManager = new ConfigManager();
+        this.ignoredManager = new IgnoredManager();
         this.friendManager = new FriendManager();
         this.rotationManager = new RotationManager();
         this.macroManager = new MacroManager();
@@ -87,16 +87,17 @@ public final class Seppuku {
         this.tickRateManager = new TickRateManager();
         this.chatManager = new ChatManager();
         this.worldManager = new WorldManager();
-        this.ignoredManager = new IgnoredManager();
         this.capeManager = new CapeManager();
         this.positionManager = new PositionManager();
         this.joinLeaveManager = new JoinLeaveManager();
-        this.hudManager = new HudManager();
         this.animationManager = new AnimationManager();
         this.notificationManager = new NotificationManager();
+        this.moduleManager = new ModuleManager();
+        this.commandManager = new CommandManager();
+        this.hudManager = new HudManager();
         //this.seppukuMainMenu = new GuiSeppukuMainMenu();
 
-        this.configManager = new ConfigManager(); // Keep last, so we load configs after everything inits
+        this.configManager.init(); // Keep last, so we load configs after everything else inits
 
         this.prevTitle = Display.getTitle();
         Display.setTitle("Seppuku 1.12.2");

@@ -31,7 +31,7 @@ public final class TickRateManager {
         int tickCount = 0;
         float tickRate = 0.0f;
 
-        for(int i = 0; i < this.ticks.length; i++) {
+        for (int i = 0; i < this.ticks.length; i++) {
             final float tick = this.ticks[i];
 
             if (tick > 0.0f) {
@@ -49,8 +49,8 @@ public final class TickRateManager {
 
     @Listener
     public void receivePacket(EventReceivePacket event) {
-        if(event.getStage() == EventStageable.EventStage.PRE) {
-            if(event.getPacket() instanceof SPacketTimeUpdate) {
+        if (event.getStage() == EventStageable.EventStage.PRE) {
+            if (event.getPacket() instanceof SPacketTimeUpdate) {
                 if (this.prevTime != -1) {
                     this.ticks[this.currentTick % this.ticks.length] = MathHelper.clamp((20.0f / ((float) (System.currentTimeMillis() - this.prevTime) / 1000.0f)), 0.0f, 20.0f);
                     this.currentTick++;
