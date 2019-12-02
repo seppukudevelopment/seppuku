@@ -156,11 +156,22 @@ public final class PortalFinderModule extends Module {
                                 final int worldY = y + extendedBlockStorage.getYLocation();
                                 if (blockState.getBlock().equals(Blocks.PORTAL)) {
                                     BlockPos position = new BlockPos(event.getChunk().getPos().getXStart() + x, worldY, event.getChunk().getPos().getZStart() + z);
-                                    if (!isPortalCached(position.getX(), position.getY(), position.getZ())) {
+                                    if (!isPortalCached(position.getX(), position.getY(), position.getZ(), 0)) {
                                         final Vec3d portal = new Vec3d(position.getX(), position.getY(), position.getZ());
                                         this.portals.add(portal);
                                         if (this.chat.getValue()) {
                                             this.printPortalToChat(portal);
+                                        }
+                                        return;
+                                    }
+                                }
+                                if (blockState.getBlock().equals(Blocks.END_PORTAL)) {
+                                    BlockPos position = new BlockPos(event.getChunk().getPos().getXStart() + x, worldY, event.getChunk().getPos().getZStart() + z);
+                                    if (!isPortalCached(position.getX(), position.getY(), position.getZ(), 3)) {
+                                        final Vec3d portal = new Vec3d(position.getX(), position.getY(), position.getZ());
+                                        this.portals.add(portal);
+                                        if (this.chat.getValue()) {
+                                            this.printEndPortalToChat(portal);
                                         }
                                         return;
                                     }
@@ -182,13 +193,30 @@ public final class PortalFinderModule extends Module {
         }
     }
 
-    private boolean isPortalCached(int x, int y, int z) {
+    private boolean isPortalCached(int x, int y, int z, float dist) {
         for (int i = this.portals.size() - 1; i >= 0; i--) {
             Vec3d searchPortal = this.portals.get(i);
+
+            if (searchPortal.distanceTo(new Vec3d(x, y, z)) <= dist)
+                return true;
+
             if (searchPortal.x == x && searchPortal.y == y && searchPortal.z == z)
                 return true;
         }
         return false;
+    }
+
+    private void printEndPortalToChat(Vec3d portal) {
+        final TextComponentString portalTextComponent = new TextComponentString("End Portal found!");
+
+        String coords = String.format("X: %s, Y: %s, Z: %s", (int) portal.x, (int) portal.y, (int) portal.z);
+        int playerDistance = (int) Minecraft.getMinecraft().player.getDistance(portal.x, portal.y, portal.z);
+        String distance = ChatFormatting.GRAY + "" + playerDistance + "m away";
+
+        String hoverText = coords + "\n" + distance;
+        portalTextComponent.setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(hoverText))));
+
+        Seppuku.INSTANCE.logcChat(portalTextComponent);
     }
 
     private void printPortalToChat(Vec3d portal) {

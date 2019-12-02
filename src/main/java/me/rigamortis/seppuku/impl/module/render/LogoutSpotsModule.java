@@ -69,6 +69,7 @@ public final class LogoutSpotsModule extends Module {
             data.ghost.prevLimbSwingAmount = 0;
             data.ghost.limbSwing = 0;
             data.ghost.limbSwingAmount = 0;
+            data.ghost.hurtTime = 0;
 
             GlStateManager.pushMatrix();
             GlStateManager.enableLighting();
@@ -157,6 +158,14 @@ public final class LogoutSpotsModule extends Module {
     private boolean isOutOfRange(PlayerData data) {
         Vec3d position = data.position;
         return Minecraft.getMinecraft().player.getDistance(position.x, position.y, position.z) > this.removeDistance.getValue();
+    }
+
+    public Map<String, EntityPlayer> getPlayerCache() {
+        return playerCache;
+    }
+
+    public Map<String, PlayerData> getLogoutCache() {
+        return logoutCache;
     }
 
     private class PlayerData {
