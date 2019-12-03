@@ -119,6 +119,9 @@ public final class NoCrystalModule extends Module {
                                     place(west, EnumFacing.EAST);
                                 }
                                 placeIndex = 0;
+                                if (this.disable.getValue()) {
+                                    this.toggle();
+                                }
                                 break;
                         }
                         this.placeTimer.reset();
@@ -128,11 +131,6 @@ public final class NoCrystalModule extends Module {
                         mc.player.inventory.currentItem = lastSlot;
                     }
                     mc.playerController.updateController();
-
-                    if (this.disable.getValue()) {
-                        this.toggle();
-                    }
-
                 }
             }
         }
