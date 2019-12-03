@@ -5,10 +5,12 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.MathUtil;
+import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.module.player.FreeCamModule;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -19,6 +21,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentString;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
@@ -30,10 +33,15 @@ public final class NoCrystalModule extends Module {
     private final Minecraft mc = Minecraft.getMinecraft();
 
     public final Value<Boolean> disable = new Value<Boolean>("Disable", new String[]{"dis"}, "Automatically disable after it places.", false);
-    public final Value<Boolean> sneak = new Value<Boolean>("PlaceOnSneak", new String[]{"sneak", "s", "pos", "sneakPlace"}, "When false, NoCrystal will not place while the player is sneaking.", false);
+    public final Value<Boolean> sneak = new Value<Boolean> ("PlaceOnSneak", new String[]{"sneak", "s", "pos", "sneakPlace"}, "When false, NoCrystal will not place while the player is sneaking.", false);
+    public final Value<Float> placeDelay = new Value("Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay between obsidian blocks being placed.", 100.0f, 0.0f, 1000.0f, 1.0f);
+
+
+    private Timer placeTimer = new Timer();
+    private int placeIndex;
 
     public NoCrystalModule() {
-        super("NoCrystal", new String[]{"AntiCrystal", "FeetPlace"}, "Automatically places obsidian in 4 cardinal directions", "NONE", -1, ModuleType.COMBAT);
+        super("NoCrystal", new String[]{"AntiCrystal", "FeetPlace", "Surround"}, "Automatically places obsidian in 4 cardinal directions", "NONE", -1, ModuleType.COMBAT);
     }
 
     @Listener
@@ -69,35 +77,55 @@ public final class NoCrystalModule extends Module {
                     lastSlot = mc.player.inventory.currentItem;
                     mc.player.inventory.currentItem = slot;
                     mc.playerController.updateController();
-
-                    // Place supporting blocks
-                    if (valid(northBelow)) {
-                        place(northBelow, EnumFacing.SOUTH);
+                    if (this.placeTimer.passed(this.placeDelay.getValue())) {
+                        switch (placeIndex) {
+                            // Place supporting blocks
+                            case 0:
+                                if (valid(northBelow)) {
+                                    place(northBelow, EnumFacing.SOUTH);
+                                }
+                                break;
+                            case 1:
+                                if (valid(southBelow)) {
+                                    place(southBelow, EnumFacing.NORTH);
+                                }
+                                break;
+                            case 2:
+                                if (valid(eastBelow)) {
+                                    place(eastBelow, EnumFacing.WEST);
+                                }
+                                break;
+                            case 3:
+                                if (valid(westBelow)) {
+                                    place(westBelow, EnumFacing.EAST);
+                                }
+                                break;
+                            // Place protecting blocks
+                            case 4:
+                                if (valid(north)) {
+                                    place(north, EnumFacing.SOUTH);
+                                }
+                                break;
+                            case 5:
+                                if (valid(south)) {
+                                    place(south, EnumFacing.NORTH);
+                                }
+                                break;
+                            case 6:
+                                if (valid(east)) {
+                                    place(east, EnumFacing.WEST);
+                                }
+                                break;
+                            case 7:
+                                if (valid(west)) {
+                                    place(west, EnumFacing.EAST);
+                                }
+                                placeIndex = 0;
+                                break;
+                        }
+                        this.placeTimer.reset();
+                        placeIndex++;
                     }
-                    if (valid(southBelow)) {
-                        place(southBelow, EnumFacing.NORTH);
-                    }
-                    if (valid(eastBelow)) {
-                        place(eastBelow, EnumFacing.WEST);
-                    }
-                    if (valid(westBelow)) {
-                        place(westBelow, EnumFacing.EAST);
-                    }
-
-                    // Place protecting blocks
-                    if (valid(north)) {
-                        place(north, EnumFacing.SOUTH);
-                    }
-                    if (valid(south)) {
-                        place(south, EnumFacing.NORTH);
-                    }
-                    if (valid(east)) {
-                        place(east, EnumFacing.WEST);
-                    }
-                    if (valid(west)) {
-                        place(west, EnumFacing.EAST);
-                    }
-
                     if (!slotEqualsBlock(lastSlot, Blocks.OBSIDIAN)) {
                         mc.player.inventory.currentItem = lastSlot;
                     }
@@ -106,6 +134,7 @@ public final class NoCrystalModule extends Module {
                     if (this.disable.getValue()) {
                         this.toggle();
                     }
+
                 }
             }
         }
