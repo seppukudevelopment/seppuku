@@ -8,6 +8,7 @@ import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import me.rigamortis.seppuku.impl.module.ui.HudEditorModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -93,12 +94,15 @@ public final class ModuleListComponent extends DraggableHudComponent {
                     if (!insideTitlebar && insideComponent) {
                         final int tooltipWidth = mc.fontRenderer.getStringWidth(module.getDesc());
                         final int tooltipHeight = mc.fontRenderer.FONT_HEIGHT;
+
+                        GlStateManager.translate(mouseX - tooltipWidth / 2, mouseY - tooltipHeight, 0);
                         // Tooltip background
-                        RenderUtil.drawRect(mouseX - tooltipWidth / 2 - 2, mouseY - tooltipHeight - 2, mouseX + tooltipWidth / 2 + 2, mouseY + 2, 0x99101010);
-                        RenderUtil.drawRect(mouseX - tooltipWidth / 2 - 1, mouseY - tooltipHeight - 1, mouseX + tooltipWidth / 2 + 1, mouseY + 1, 0xFF101010);
+                        RenderUtil.drawRect(-2, -6, tooltipWidth + 2, 5, 0x80101010);
+                        RenderUtil.drawRect(-1, -5, tooltipWidth + 1, 4, 0xAD101010);
 
                         // Tooltip
-                        mc.fontRenderer.drawStringWithShadow(module.getDesc(), mouseX - tooltipWidth / 2, mouseY - tooltipHeight, 0xFFC255FF);
+                        mc.fontRenderer.drawStringWithShadow(module.getDesc(), 0, -5, 0xADC255FF);
+                        GlStateManager.translate(-(mouseX - tooltipWidth / 2), -(mouseY - tooltipHeight), 0);
                     }
                     height += Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + TEXT_GAP;
                 }
