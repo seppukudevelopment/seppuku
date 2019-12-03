@@ -81,39 +81,39 @@ public final class NoCrystalModule extends Module {
                             case 0:
                                 if (valid(northBelow)) {
                                     place(northBelow, EnumFacing.SOUTH);
+                                    break;
                                 }
-                                break;
                             case 1:
                                 if (valid(southBelow)) {
                                     place(southBelow, EnumFacing.NORTH);
+                                    break;
                                 }
-                                break;
                             case 2:
                                 if (valid(eastBelow)) {
                                     place(eastBelow, EnumFacing.WEST);
+                                    break;
                                 }
-                                break;
                             case 3:
                                 if (valid(westBelow)) {
                                     place(westBelow, EnumFacing.EAST);
+                                    break;
                                 }
-                                break;
                             // Place protecting blocks
                             case 4:
                                 if (valid(north)) {
                                     place(north, EnumFacing.SOUTH);
+                                    break;
                                 }
-                                break;
                             case 5:
                                 if (valid(south)) {
                                     place(south, EnumFacing.NORTH);
+                                    break;
                                 }
-                                break;
                             case 6:
                                 if (valid(east)) {
                                     place(east, EnumFacing.WEST);
+                                    break;
                                 }
-                                break;
                             case 7:
                                 if (valid(west)) {
                                     place(west, EnumFacing.EAST);
