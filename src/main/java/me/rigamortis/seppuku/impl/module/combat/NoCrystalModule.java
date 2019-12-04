@@ -14,6 +14,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketEntityAction;
+import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -29,6 +30,7 @@ public final class NoCrystalModule extends Module {
 
     private final Minecraft mc = Minecraft.getMinecraft();
 
+    public final Value<Mode> mode = new Value("Mode", new String[]{"Mode", "M"}, "The NoCrystal mode to use. Visible shows the swing animation and makes a sound, whereas packet does not.", Mode.PACKET);
     public final Value<Boolean> disable = new Value<Boolean>("Disable", new String[]{"dis"}, "Automatically disable after it places.", false);
     public final Value<Boolean> sneak = new Value<Boolean> ("PlaceOnSneak", new String[]{"sneak", "s", "pos", "sneakPlace"}, "When false, NoCrystal will not place while the player is sneaking.", false);
     public final Value<Float> placeDelay = new Value("Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay between obsidian blocks being placed.", 100.0f, 0.0f, 1000.0f, 1.0f);
@@ -39,6 +41,14 @@ public final class NoCrystalModule extends Module {
 
     public NoCrystalModule() {
         super("NoCrystal", new String[]{"AntiCrystal", "FeetPlace", "Surround"}, "Automatically places obsidian in 4 cardinal directions", "NONE", -1, ModuleType.COMBAT);
+    }
+    @Override
+    public String getMetaData() {
+        return this.mode.getValue().name();
+    }
+
+    private enum Mode {
+        VISIBLE, PACKET
     }
 
     @Listener
@@ -183,9 +193,13 @@ public final class NoCrystalModule extends Module {
         if (activated) {
             mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
         }
-//        this.mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, direction, EnumHand.MAIN_HAND, 0.5F, 0.5F, 0.5F));
-        if (mc.playerController.processRightClickBlock(mc.player, mc.world, pos, direction, new Vec3d(0.0F, 0.0F, 0.0F), EnumHand.MAIN_HAND) != EnumActionResult.FAIL) {
-            mc.player.swingArm(EnumHand.MAIN_HAND);
+
+        if (mode.getValue() == Mode.PACKET) {
+            this.mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, direction, EnumHand.MAIN_HAND, 0.5F, 0.5F, 0.5F));
+        } else if (mode.getValue() == Mode.VISIBLE) {
+            if (mc.playerController.processRightClickBlock(mc.player, mc.world, pos, direction, new Vec3d(0.0F, 0.0F, 0.0F), EnumHand.MAIN_HAND) != EnumActionResult.FAIL) {
+                mc.player.swingArm(EnumHand.MAIN_HAND);
+            }
         }
 
         if (activated) {
