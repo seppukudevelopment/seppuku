@@ -14,14 +14,13 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketEntityAction;
-import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
-
 /**
  * Author Seth
  * 5/15/2019 @ 9:20 AM.
@@ -61,10 +60,10 @@ public final class NoCrystalModule extends Module {
             final BlockPos east = interpPos.east();
             final BlockPos west = interpPos.west();
 
-            final BlockPos northBelow = interpPos.north().down();
-            final BlockPos southBelow = interpPos.south().down();
-            final BlockPos eastBelow = interpPos.east().down();
-            final BlockPos westBelow = interpPos.west().down();
+            final BlockPos northBelow = north.down();
+            final BlockPos southBelow = south.down();
+            final BlockPos eastBelow = east.down();
+            final BlockPos westBelow = west.down();
 
             int lastSlot;
             final int slot = findStackHotbar(Blocks.OBSIDIAN);
@@ -184,8 +183,10 @@ public final class NoCrystalModule extends Module {
         if (activated) {
             mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
         }
-
-        this.mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, direction, EnumHand.MAIN_HAND, 0.0F, 0.0F, 0.0F));
+//        this.mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, direction, EnumHand.MAIN_HAND, 0.5F, 0.5F, 0.5F));
+        if (mc.playerController.processRightClickBlock(mc.player, mc.world, pos, direction, new Vec3d(0.0F, 0.0F, 0.0F), EnumHand.MAIN_HAND) != EnumActionResult.FAIL) {
+            mc.player.swingArm(EnumHand.MAIN_HAND);
+        }
 
         if (activated) {
             mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
