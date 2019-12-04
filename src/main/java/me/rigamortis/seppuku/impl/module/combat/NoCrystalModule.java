@@ -75,6 +75,8 @@ public final class NoCrystalModule extends Module {
             final BlockPos eastBelow = east.down();
             final BlockPos westBelow = west.down();
 
+            final boolean instant = placeDelay.getValue() == 0;
+
             int lastSlot;
             final int slot = findStackHotbar(Blocks.OBSIDIAN);
             if (hasStack(Blocks.OBSIDIAN) || slot != -1) {
@@ -84,44 +86,44 @@ public final class NoCrystalModule extends Module {
                     lastSlot = mc.player.inventory.currentItem;
                     mc.player.inventory.currentItem = slot;
                     mc.playerController.updateController();
-                    if (this.placeTimer.passed(this.placeDelay.getValue())) {
+                    if (this.placeTimer.passed(this.placeDelay.getValue()) || instant) {
                         switch (placeIndex) {
                             // Place supporting blocks
                             case 0:
                                 if (valid(northBelow)) {
                                     place(northBelow, EnumFacing.SOUTH);
-                                    break;
+                                    if (!instant) {break;}
                                 }
                             case 1:
                                 if (valid(southBelow)) {
                                     place(southBelow, EnumFacing.NORTH);
-                                    break;
+                                    if (!instant) {break;}
                                 }
                             case 2:
                                 if (valid(eastBelow)) {
                                     place(eastBelow, EnumFacing.WEST);
-                                    break;
+                                    if (!instant) {break;}
                                 }
                             case 3:
                                 if (valid(westBelow)) {
                                     place(westBelow, EnumFacing.EAST);
-                                    break;
+                                    if (!instant) {break;}
                                 }
                             // Place protecting blocks
                             case 4:
                                 if (valid(north)) {
                                     place(north, EnumFacing.SOUTH);
-                                    break;
+                                    if (!instant) {break;}
                                 }
                             case 5:
                                 if (valid(south)) {
                                     place(south, EnumFacing.NORTH);
-                                    break;
+                                    if (!instant) {break;}
                                 }
                             case 6:
                                 if (valid(east)) {
                                     place(east, EnumFacing.WEST);
-                                    break;
+                                    if (!instant) {break;}
                                 }
                             case 7:
                                 if (valid(west)) {
@@ -133,7 +135,7 @@ public final class NoCrystalModule extends Module {
                                 }
                                 break;
                         }
-                        this.placeTimer.reset();
+                        if(placeDelay.getValue() == 0) {this.placeTimer.reset();}
                         placeIndex++;
                     }
                     if (!slotEqualsBlock(lastSlot, Blocks.OBSIDIAN)) {
@@ -195,7 +197,7 @@ public final class NoCrystalModule extends Module {
         }
 
         if (mode.getValue() == Mode.PACKET) {
-            this.mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, direction, EnumHand.MAIN_HAND, 0.5F, 0.5F, 0.5F));
+            this.mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, direction, EnumHand.MAIN_HAND, 0.0F, 0.0F, 0.0F));
         } else if (mode.getValue() == Mode.VISIBLE) {
             if (mc.playerController.processRightClickBlock(mc.player, mc.world, pos, direction, new Vec3d(0.0F, 0.0F, 0.0F), EnumHand.MAIN_HAND) != EnumActionResult.FAIL) {
                 mc.player.swingArm(EnumHand.MAIN_HAND);
