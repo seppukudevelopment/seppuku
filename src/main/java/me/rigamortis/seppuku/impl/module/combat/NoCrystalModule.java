@@ -9,6 +9,7 @@ import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.module.player.FreeCamModule;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
@@ -31,6 +32,7 @@ public final class NoCrystalModule extends Module {
     private final Minecraft mc = Minecraft.getMinecraft();
 
     public final Value<Mode> mode = new Value("Mode", new String[]{"Mode", "M"}, "The NoCrystal mode to use. Visible shows the swing animation and makes a sound, whereas packet does not.", Mode.PACKET);
+    public final Value<Boolean> rotate = new Value("Rotate", new String[]{"rotation", "r", "rotate"}, "Rotate to place blocks", true);
     public final Value<Boolean> disable = new Value<Boolean>("Disable", new String[]{"dis"}, "Automatically disable after it places.", false);
     public final Value<Boolean> sneak = new Value<Boolean> ("PlaceOnSneak", new String[]{"sneak", "s", "pos", "sneakPlace"}, "When false, NoCrystal will not place while the player is sneaking.", false);
     public final Value<Float> placeDelay = new Value("Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay between obsidian blocks being placed.", 100.0f, 0.0f, 1000.0f, 1.0f);
@@ -91,43 +93,43 @@ public final class NoCrystalModule extends Module {
                             // Place supporting blocks
                             case 0:
                                 if (valid(northBelow)) {
-                                    place(northBelow, EnumFacing.SOUTH);
+                                    place(northBelow);
                                     if (!instant) {break;}
                                 }
                             case 1:
                                 if (valid(southBelow)) {
-                                    place(southBelow, EnumFacing.NORTH);
+                                    place(southBelow);
                                     if (!instant) {break;}
                                 }
                             case 2:
                                 if (valid(eastBelow)) {
-                                    place(eastBelow, EnumFacing.WEST);
+                                    place(eastBelow);
                                     if (!instant) {break;}
                                 }
                             case 3:
                                 if (valid(westBelow)) {
-                                    place(westBelow, EnumFacing.EAST);
+                                    place(westBelow);
                                     if (!instant) {break;}
                                 }
                             // Place protecting blocks
                             case 4:
                                 if (valid(north)) {
-                                    place(north, EnumFacing.SOUTH);
+                                    place(north);
                                     if (!instant) {break;}
                                 }
                             case 5:
                                 if (valid(south)) {
-                                    place(south, EnumFacing.NORTH);
+                                    place(south);
                                     if (!instant) {break;}
                                 }
                             case 6:
                                 if (valid(east)) {
-                                    place(east, EnumFacing.WEST);
+                                    place(east);
                                     if (!instant) {break;}
                                 }
                             case 7:
                                 if (valid(west)) {
-                                    place(west, EnumFacing.EAST);
+                                    place(west);
                                 }
                                 placeIndex = 0;
                                 if (this.disable.getValue()) {
@@ -135,7 +137,9 @@ public final class NoCrystalModule extends Module {
                                 }
                                 break;
                         }
-                        if(placeDelay.getValue() == 0) {this.placeTimer.reset();}
+                        if (!instant) {
+                            this.placeTimer.reset();
+                        }
                         placeIndex++;
                     }
                     if (!slotEqualsBlock(lastSlot, Blocks.OBSIDIAN)) {
@@ -188,24 +192,47 @@ public final class NoCrystalModule extends Module {
         return mc.world.getBlockState(pos).getBlock().isReplaceable(mc.world, pos);
     }
 
-    private void place (BlockPos pos, EnumFacing direction) {
+    private void place(BlockPos pos) {
         final Block block = mc.world.getBlockState(pos).getBlock();
+        final EnumFacing direction = calcSide(pos);
         final boolean activated = block.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, EnumHand.MAIN_HAND, direction, 0, 0, 0);
 
         if (activated) {
             mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
         }
+        if (direction != null) {
+            final EnumFacing otherside = direction.getOpposite();
+            final BlockPos sideoffset = pos.offset(direction);
 
-        if (mode.getValue() == Mode.PACKET) {
-            this.mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, direction, EnumHand.MAIN_HAND, 0.0F, 0.0F, 0.0F));
-        } else if (mode.getValue() == Mode.VISIBLE) {
-            if (mc.playerController.processRightClickBlock(mc.player, mc.world, pos, direction, new Vec3d(0.0F, 0.0F, 0.0F), EnumHand.MAIN_HAND) != EnumActionResult.FAIL) {
-                mc.player.swingArm(EnumHand.MAIN_HAND);
+            if (rotate.getValue()) {
+                final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f));
+                Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
+            }
+            if (mode.getValue() == Mode.PACKET) {
+                this.mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(sideoffset, otherside, EnumHand.MAIN_HAND, 0.5F, 0.5F, 0.5F));
+            } else if (mode.getValue() == Mode.VISIBLE) {
+                if (mc.playerController.processRightClickBlock(mc.player, mc.world, sideoffset, otherside, new Vec3d(0.5F, 0.5F, 0.5F), EnumHand.MAIN_HAND) != EnumActionResult.FAIL) {
+                    mc.player.swingArm(EnumHand.MAIN_HAND);
+                }
             }
         }
-
         if (activated) {
             mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
         }
+    }
+
+    private EnumFacing calcSide(BlockPos pos) {
+        for (EnumFacing side : EnumFacing.values()) {
+            BlockPos sideoffset = pos.offset(side);
+            IBlockState offsetstate = mc.world.getBlockState(sideoffset);
+            if (!offsetstate.getBlock().canCollideCheck(offsetstate, false)) {
+                continue;
+            }
+            if (!offsetstate.getMaterial().isReplaceable()) {
+                return side;
+            }
+
+        }
+        return null;
     }
 }
