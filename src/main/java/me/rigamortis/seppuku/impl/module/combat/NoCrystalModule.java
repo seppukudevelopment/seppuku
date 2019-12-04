@@ -16,7 +16,6 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -209,11 +208,11 @@ public final class NoCrystalModule extends Module {
                 Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
             }
             if (mode.getValue() == Mode.PACKET) {
-                this.mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(sideoffset, otherside, EnumHand.MAIN_HAND, 0.5F, 0.5F, 0.5F));
+                mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(sideoffset, otherside, EnumHand.MAIN_HAND, 0.5F, 0.5F, 0.5F));
+                mc.player.swingArm(EnumHand.MAIN_HAND);
             } else if (mode.getValue() == Mode.VISIBLE) {
-                if (mc.playerController.processRightClickBlock(mc.player, mc.world, sideoffset, otherside, new Vec3d(0.5F, 0.5F, 0.5F), EnumHand.MAIN_HAND) != EnumActionResult.FAIL) {
-                    mc.player.swingArm(EnumHand.MAIN_HAND);
-                }
+                mc.playerController.processRightClickBlock(mc.player, mc.world, sideoffset, otherside, new Vec3d(0.5F, 0.5F, 0.5F), EnumHand.MAIN_HAND);
+                mc.player.swingArm(EnumHand.MAIN_HAND);
             }
         }
         if (activated) {
