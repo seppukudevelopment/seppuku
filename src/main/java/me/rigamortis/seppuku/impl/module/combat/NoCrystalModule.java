@@ -73,12 +73,7 @@ public final class NoCrystalModule extends Module {
                 final BlockPos east = interpPos.east();
                 final BlockPos west = interpPos.west();
 
-                final BlockPos northBelow = north.down();
-                final BlockPos southBelow = south.down();
-                final BlockPos eastBelow = east.down();
-                final BlockPos westBelow = west.down();
-
-                final BlockPos[] surroundBlocks = {northBelow, southBelow, eastBelow, westBelow,
+                final BlockPos[] surroundBlocks = {north.down(), south.down(), east.down(), west.down(),
                         north, south, east, west};
 
                 int lastSlot = 0;
@@ -129,10 +124,7 @@ public final class NoCrystalModule extends Module {
             final ItemStack stack = Minecraft.getMinecraft().player.inventory.getStackInSlot(i);
             if (stack.getItem() instanceof ItemBlock) {
                 final ItemBlock block = (ItemBlock) stack.getItem();
-
-                if (block.getBlock() == type) {
-                    return i;
-                }
+                if (block.getBlock() == type) return i;
             }
         }
         return -1;
@@ -140,10 +132,7 @@ public final class NoCrystalModule extends Module {
 
     private boolean valid (BlockPos pos) {
         // There are no entities to block placement,
-        if (!mc.world.checkNoEntityCollision(new AxisAlignedBB(pos))) {
-            return false;
-        }
-
+        if (!mc.world.checkNoEntityCollision(new AxisAlignedBB(pos))) return false;
         // Check if the block is replaceable
         return mc.world.getBlockState(pos).getBlock().isReplaceable(mc.world, pos);
     }
@@ -153,9 +142,8 @@ public final class NoCrystalModule extends Module {
         final EnumFacing direction = calcSide(pos);
         final boolean activated = block.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, EnumHand.MAIN_HAND, direction, 0, 0, 0);
 
-        if (activated) {
+        if (activated)
             mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
-        }
         if (direction != null) {
             final EnumFacing otherSide = direction.getOpposite();
             final BlockPos sideOffset = pos.offset(direction);
@@ -172,22 +160,16 @@ public final class NoCrystalModule extends Module {
                 mc.player.swingArm(EnumHand.MAIN_HAND);
             }
         }
-        if (activated) {
+        if (activated)
             mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
-        }
     }
 
     private EnumFacing calcSide(BlockPos pos) {
         for (EnumFacing side : EnumFacing.values()) {
             BlockPos sideOffset = pos.offset(side);
             IBlockState offsetState = mc.world.getBlockState(sideOffset);
-            if (!offsetState.getBlock().canCollideCheck(offsetState, false)) {
-                continue;
-            }
-            if (!offsetState.getMaterial().isReplaceable()) {
-                return side;
-            }
-
+            if (!offsetState.getBlock().canCollideCheck(offsetState, false)) continue;
+            if (!offsetState.getMaterial().isReplaceable()) return side;
         }
         return null;
     }
