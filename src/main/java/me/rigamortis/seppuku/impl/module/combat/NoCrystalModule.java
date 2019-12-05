@@ -54,77 +54,88 @@ public final class NoCrystalModule extends Module {
 
     @Listener
     public void onWalkingUpdate(EventUpdateWalkingPlayer event) {
-        if (event.getStage() == EventStageable.EventStage.PRE) {
-            final FreeCamModule freeCam = (FreeCamModule) Seppuku.INSTANCE.getModuleManager().find(FreeCamModule.class);
+        final boolean instant = placeDelay.getValue() == 0;
+        if (this.placeTimer.passed(this.placeDelay.getValue()) || instant) {
+            if (event.getStage() == EventStageable.EventStage.PRE) {
+                final FreeCamModule freeCam = (FreeCamModule) Seppuku.INSTANCE.getModuleManager().find(FreeCamModule.class);
 
-            if(freeCam != null && freeCam.isEnabled()) {
-                return;
-            }
+                if (freeCam != null && freeCam.isEnabled()) {
+                    return;
+                }
 
-            final Vec3d pos = MathUtil.interpolateEntity(mc.player, mc.getRenderPartialTicks());
-            final float playerSpeed = (float) MathUtil.getDistance(pos, mc.player.posX, mc.player.posY, mc.player.posZ);
+                final Vec3d pos = MathUtil.interpolateEntity(mc.player, mc.getRenderPartialTicks());
+                final float playerSpeed = (float) MathUtil.getDistance(pos, mc.player.posX, mc.player.posY, mc.player.posZ);
 
-            final BlockPos interpPos = new BlockPos(pos.x, pos.y, pos.z);
+                final BlockPos interpPos = new BlockPos(pos.x, pos.y, pos.z);
 
-            final BlockPos north = interpPos.north();
-            final BlockPos south = interpPos.south();
-            final BlockPos east = interpPos.east();
-            final BlockPos west = interpPos.west();
+                final BlockPos north = interpPos.north();
+                final BlockPos south = interpPos.south();
+                final BlockPos east = interpPos.east();
+                final BlockPos west = interpPos.west();
 
-            final BlockPos northBelow = north.down();
-            final BlockPos southBelow = south.down();
-            final BlockPos eastBelow = east.down();
-            final BlockPos westBelow = west.down();
+                final BlockPos northBelow = north.down();
+                final BlockPos southBelow = south.down();
+                final BlockPos eastBelow = east.down();
+                final BlockPos westBelow = west.down();
 
-            final boolean instant = placeDelay.getValue() == 0;
-
-            int lastSlot;
-            final int slot = findStackHotbar(Blocks.OBSIDIAN);
-            if (hasStack(Blocks.OBSIDIAN) || slot != -1) {
-                if ((mc.player.onGround && playerSpeed <= 0.005f)
-                        && (this.sneak.getValue() || (!mc.gameSettings.keyBindSneak.isKeyDown()))) {
-
-                    lastSlot = mc.player.inventory.currentItem;
-                    mc.player.inventory.currentItem = slot;
-                    mc.playerController.updateController();
-                    if (this.placeTimer.passed(this.placeDelay.getValue()) || instant) {
+                int lastSlot = 0;
+                final int slot = findStackHotbar(Blocks.OBSIDIAN);
+                if (hasStack(Blocks.OBSIDIAN) || slot != -1) {
+                    if ((mc.player.onGround && playerSpeed <= 0.005f) && (this.sneak.getValue() || (!mc.gameSettings.keyBindSneak.isKeyDown()))) {
+                        lastSlot = mc.player.inventory.currentItem;
+                        mc.player.inventory.currentItem = slot;
+                        mc.playerController.updateController();
                         switch (placeIndex) {
                             // Place supporting blocks
                             case 0:
                                 if (valid(northBelow)) {
                                     place(northBelow);
-                                    if (!instant) {break;}
+                                    if (!instant) {
+                                        break;
+                                    }
                                 }
                             case 1:
                                 if (valid(southBelow)) {
                                     place(southBelow);
-                                    if (!instant) {break;}
+                                    if (!instant) {
+                                        break;
+                                    }
                                 }
                             case 2:
                                 if (valid(eastBelow)) {
                                     place(eastBelow);
-                                    if (!instant) {break;}
+                                    if (!instant) {
+                                        break;
+                                    }
                                 }
                             case 3:
                                 if (valid(westBelow)) {
                                     place(westBelow);
-                                    if (!instant) {break;}
+                                    if (!instant) {
+                                        break;
+                                    }
                                 }
-                            // Place protecting blocks
+                                // Place protecting blocks
                             case 4:
                                 if (valid(north)) {
                                     place(north);
-                                    if (!instant) {break;}
+                                    if (!instant) {
+                                        break;
+                                    }
                                 }
                             case 5:
                                 if (valid(south)) {
                                     place(south);
-                                    if (!instant) {break;}
+                                    if (!instant) {
+                                        break;
+                                    }
                                 }
                             case 6:
                                 if (valid(east)) {
                                     place(east);
-                                    if (!instant) {break;}
+                                    if (!instant) {
+                                        break;
+                                    }
                                 }
                             case 7:
                                 if (valid(west)) {
@@ -222,12 +233,12 @@ public final class NoCrystalModule extends Module {
 
     private EnumFacing calcSide(BlockPos pos) {
         for (EnumFacing side : EnumFacing.values()) {
-            BlockPos sideoffset = pos.offset(side);
-            IBlockState offsetstate = mc.world.getBlockState(sideoffset);
-            if (!offsetstate.getBlock().canCollideCheck(offsetstate, false)) {
+            BlockPos sideOffset = pos.offset(side);
+            IBlockState offsetState = mc.world.getBlockState(sideOffset);
+            if (!offsetState.getBlock().canCollideCheck(offsetState, false)) {
                 continue;
             }
-            if (!offsetstate.getMaterial().isReplaceable()) {
+            if (!offsetState.getMaterial().isReplaceable()) {
                 return side;
             }
 
