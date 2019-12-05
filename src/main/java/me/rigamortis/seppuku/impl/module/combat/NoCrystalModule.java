@@ -38,7 +38,7 @@ public final class NoCrystalModule extends Module {
 
 
     private Timer placeTimer = new Timer();
-    private int placeIndex;
+    private int placeIndex = 0;
 
     public NoCrystalModule() {
         super("NoCrystal", new String[]{"AntiCrystal", "FeetPlace", "Surround"}, "Automatically places obsidian in 4 cardinal directions", "NONE", -1, ModuleType.COMBAT);
@@ -78,8 +78,8 @@ public final class NoCrystalModule extends Module {
                 final BlockPos eastBelow = east.down();
                 final BlockPos westBelow = west.down();
 
-                final BlockPos[] surroundBlocks = {north, south, east, west,
-                        northBelow, southBelow, eastBelow, westBelow};
+                final BlockPos[] surroundBlocks = {northBelow, southBelow, eastBelow, westBelow,
+                        north, south, east, west};
 
                 int lastSlot = 0;
                 final int slot = findStackHotbar(Blocks.OBSIDIAN);
@@ -93,11 +93,10 @@ public final class NoCrystalModule extends Module {
                             place(surroundBlocks[placeIndex]);
 
                         if (!instant) this.placeTimer.reset();
-                        if (placeIndex >= 7) {
+                        if (placeIndex >= surroundBlocks.length - 1) {
                             placeIndex = 0;
                             if (this.disable.getValue()) this.toggle();
-                        }
-                        placeIndex++;
+                        } else placeIndex++;
                     }
                     if (!slotEqualsBlock(lastSlot, Blocks.OBSIDIAN)) {
                         mc.player.inventory.currentItem = lastSlot;
@@ -158,18 +157,18 @@ public final class NoCrystalModule extends Module {
             mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
         }
         if (direction != null) {
-            final EnumFacing otherside = direction.getOpposite();
-            final BlockPos sideoffset = pos.offset(direction);
+            final EnumFacing otherSide = direction.getOpposite();
+            final BlockPos sideOffset = pos.offset(direction);
 
             if (rotate.getValue()) {
                 final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f));
                 Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
             }
             if (mode.getValue() == Mode.PACKET) {
-                mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(sideoffset, otherside, EnumHand.MAIN_HAND, 0.5F, 0.5F, 0.5F));
+                mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(sideOffset, otherSide, EnumHand.MAIN_HAND, 0.5F, 0.5F, 0.5F));
                 mc.player.swingArm(EnumHand.MAIN_HAND);
             } else if (mode.getValue() == Mode.VISIBLE) {
-                mc.playerController.processRightClickBlock(mc.player, mc.world, sideoffset, otherside, new Vec3d(0.5F, 0.5F, 0.5F), EnumHand.MAIN_HAND);
+                mc.playerController.processRightClickBlock(mc.player, mc.world, sideOffset, otherSide, new Vec3d(0.5F, 0.5F, 0.5F), EnumHand.MAIN_HAND);
                 mc.player.swingArm(EnumHand.MAIN_HAND);
             }
         }
