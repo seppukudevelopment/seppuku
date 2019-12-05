@@ -78,6 +78,9 @@ public final class NoCrystalModule extends Module {
                 final BlockPos eastBelow = east.down();
                 final BlockPos westBelow = west.down();
 
+                final BlockPos[] surroundBlocks = {north, south, east, west,
+                        northBelow, southBelow, eastBelow, westBelow};
+
                 int lastSlot = 0;
                 final int slot = findStackHotbar(Blocks.OBSIDIAN);
                 if (hasStack(Blocks.OBSIDIAN) || slot != -1) {
@@ -85,70 +88,14 @@ public final class NoCrystalModule extends Module {
                         lastSlot = mc.player.inventory.currentItem;
                         mc.player.inventory.currentItem = slot;
                         mc.playerController.updateController();
-                        switch (placeIndex) {
-                            // Place supporting blocks
-                            case 0:
-                                if (valid(northBelow)) {
-                                    place(northBelow);
-                                    if (!instant) {
-                                        break;
-                                    }
-                                }
-                            case 1:
-                                if (valid(southBelow)) {
-                                    place(southBelow);
-                                    if (!instant) {
-                                        break;
-                                    }
-                                }
-                            case 2:
-                                if (valid(eastBelow)) {
-                                    place(eastBelow);
-                                    if (!instant) {
-                                        break;
-                                    }
-                                }
-                            case 3:
-                                if (valid(westBelow)) {
-                                    place(westBelow);
-                                    if (!instant) {
-                                        break;
-                                    }
-                                }
-                                // Place protecting blocks
-                            case 4:
-                                if (valid(north)) {
-                                    place(north);
-                                    if (!instant) {
-                                        break;
-                                    }
-                                }
-                            case 5:
-                                if (valid(south)) {
-                                    place(south);
-                                    if (!instant) {
-                                        break;
-                                    }
-                                }
-                            case 6:
-                                if (valid(east)) {
-                                    place(east);
-                                    if (!instant) {
-                                        break;
-                                    }
-                                }
-                            case 7:
-                                if (valid(west)) {
-                                    place(west);
-                                }
-                                placeIndex = 0;
-                                if (this.disable.getValue()) {
-                                    this.toggle();
-                                }
-                                break;
-                        }
-                        if (!instant) {
-                            this.placeTimer.reset();
+
+                        if (valid(surroundBlocks[placeIndex]))
+                            place(surroundBlocks[placeIndex]);
+
+                        if (!instant) this.placeTimer.reset();
+                        if (placeIndex >= 7) {
+                            placeIndex = 0;
+                            if (this.disable.getValue()) this.toggle();
                         }
                         placeIndex++;
                     }
