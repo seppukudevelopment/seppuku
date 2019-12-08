@@ -144,6 +144,7 @@ public final class ModuleManager {
         add(new LogoutSpotsModule());
         add(new ChatSuffixModule());
         add(new VisualRangeModule());
+        add(new HotBarRefillModule());
 
         this.loadExternalModules();
 
