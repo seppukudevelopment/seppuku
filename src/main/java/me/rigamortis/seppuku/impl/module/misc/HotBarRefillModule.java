@@ -34,10 +34,10 @@ public class HotBarRefillModule extends Module {
 
     @Listener
     public void onWalkingUpdate (EventUpdateWalkingPlayer event) {
-        Minecraft mc = Minecraft.getMinecraft();
-
         if (this.timer.passed(this.delay.getValue())) {
             if (event.getStage() == EventStageable.EventStage.PRE) {
+                Minecraft mc = Minecraft.getMinecraft();
+                
                 if (mc.currentScreen instanceof GuiInventory) {
                     return;
                 }
