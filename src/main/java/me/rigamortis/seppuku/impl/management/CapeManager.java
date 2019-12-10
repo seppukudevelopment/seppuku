@@ -1,10 +1,13 @@
 package me.rigamortis.seppuku.impl.management;
 
+import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.cape.CapeUser;
+import me.rigamortis.seppuku.api.event.player.EventCapeLocation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.ResourceLocation;
+import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import javax.imageio.ImageIO;
 import java.io.BufferedReader;
@@ -28,6 +31,18 @@ public final class CapeManager {
     public CapeManager() {
         this.downloadCapeUsers();
         this.downloadCapes();
+        Seppuku.INSTANCE.getEventManager().addEventListener(this);
+    }
+
+    @Listener
+    public void displayCape(EventCapeLocation event) {
+        if (Minecraft.getMinecraft().player != null && event.getPlayer() != Minecraft.getMinecraft().player) {
+            final ResourceLocation cape = this.getCape(event.getPlayer());
+            if (cape != null) {
+                event.setLocation(cape);
+                event.setCanceled(true);
+            }
+        }
     }
 
     /**
@@ -92,6 +107,16 @@ public final class CapeManager {
         }
     }
 
+    public boolean hasCape() {
+        for (CapeUser capeUser : this.capeUserList) {
+            if (capeUser.getUuid().equals(Minecraft.getMinecraft().session.getProfile().getId().toString().replace("-", ""))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Returns a ResourceLocation for a player
      *
@@ -126,6 +151,7 @@ public final class CapeManager {
 
     public void unload() {
         this.capeUserList.clear();
+        Seppuku.INSTANCE.getEventManager().removeEventListener(this);
     }
 
     public List<CapeUser> getCapeUserList() {

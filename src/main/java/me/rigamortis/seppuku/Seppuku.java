@@ -70,6 +70,8 @@ public final class Seppuku {
 
     private GuiSeppukuMainMenu seppukuMainMenu;
 
+    private CameraManager cameraManager;
+
     /**
      * The initialization point of the client
      * this is called post launch
@@ -94,6 +96,7 @@ public final class Seppuku {
         this.notificationManager = new NotificationManager();
         this.moduleManager = new ModuleManager();
         this.commandManager = new CommandManager();
+        this.cameraManager = new CameraManager();
         this.hudManager = new HudManager();
         //this.seppukuMainMenu = new GuiSeppukuMainMenu();
 
@@ -143,6 +146,7 @@ public final class Seppuku {
         this.animationManager.unload();
         this.notificationManager.unload();
         this.seppukuMainMenu.unload();
+        this.cameraManager.unload();
 
         this.getEventManager().dispatchEvent(new EventUnload());
 
@@ -327,10 +331,17 @@ public final class Seppuku {
     }
 
     public GuiSeppukuMainMenu getSeppukuMainMenu() {
-        if(this.seppukuMainMenu == null) {
+        if (this.seppukuMainMenu == null) {
             this.seppukuMainMenu = new GuiSeppukuMainMenu();
         }
         return this.seppukuMainMenu;
+    }
+
+    public CameraManager getCameraManager() {
+        if (this.cameraManager == null) {
+            this.cameraManager = new CameraManager();
+        }
+        return this.cameraManager;
     }
 
 }
