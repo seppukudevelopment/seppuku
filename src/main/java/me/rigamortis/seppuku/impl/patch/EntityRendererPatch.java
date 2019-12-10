@@ -62,6 +62,9 @@ public final class EntityRendererPatch extends ClassPatch {
     public static void updateCameraAndRenderHook(float partialTicks) {
         //dispatch our event so we can render stuff on our screen
         Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventRender2D(partialTicks, new ScaledResolution(Minecraft.getMinecraft())));
+
+        //update all camera fbos after we render
+        Seppuku.INSTANCE.getCameraManager().update();
     }
 
     /**

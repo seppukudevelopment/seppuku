@@ -3,20 +3,30 @@ package me.rigamortis.seppuku.impl.module.render;
 import me.rigamortis.seppuku.api.event.gui.EventRenderTooltip;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.RenderUtil;
+import me.rigamortis.seppuku.api.value.Value;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockShulkerBox;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.inventory.GuiShulkerBox;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemShulkerBox;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntityShulkerBox;
 import net.minecraft.util.NonNullList;
+import org.lwjgl.input.Mouse;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
  * created by noil on 11/4/19 at 1:59 PM
  */
 public final class ShulkerPreviewModule extends Module {
+
+    public final Value<Boolean> middleClick = new Value("MiddleClick", new String[]{"MC", "Mid"}, "Allows you to middle click shulkers and view their contents.", true);
+
+    private boolean clicked;
 
     public ShulkerPreviewModule() {
         super("ShulkerPreview", new String[]{"SPreview", "ShulkerView"}, "Hover over a shulker box to the items inside.", "NONE", -1, ModuleType.RENDER);
@@ -79,6 +89,27 @@ public final class ShulkerPreviewModule extends Module {
                 }
             }
 
+            if(this.middleClick.getValue()) {
+                if (Mouse.isButtonDown(2)) {
+                    if (!this.clicked) {
+                        final BlockShulkerBox shulkerBox = (BlockShulkerBox) Block.getBlockFromItem(shulker.getItem());
+                        if (shulkerBox != null) {
+                            final NBTTagCompound tag = shulker.getTagCompound();
+                            if (tag != null && tag.hasKey("BlockEntityTag", 10)) {
+                                final NBTTagCompound entityTag = tag.getCompoundTag("BlockEntityTag");
+
+                                final TileEntityShulkerBox te = new TileEntityShulkerBox();
+                                te.setWorld(mc.world);
+                                te.readFromNBT(entityTag);
+                                mc.displayGuiScreen(new GuiShulkerBox(mc.player.inventory, te));
+                            }
+                        }
+                    }
+                    this.clicked = true;
+                } else {
+                    this.clicked = false;
+                }
+            }
         }
     }
 }
