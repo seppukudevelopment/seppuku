@@ -23,16 +23,16 @@ public final class GuiHudEditor extends GuiScreen {
     @Override
     public void keyTyped(char typedChar, int keyCode) throws IOException {
         super.keyTyped(typedChar, keyCode);
+        
+        System.out.println("Pressed key");
+        System.out.println(keyCode + " : " + Keyboard.KEY_ESCAPE);
 
         final HudEditorModule mod = (HudEditorModule) Seppuku.INSTANCE.getModuleManager().find(HudEditorModule.class);
-
-        if (mod != null) {
-            if (keyCode == Keyboard.getKeyIndex(mod.getKey())) {
-                if (mod.isOpen()) {
-                    mod.setOpen(false);
-                } else {
-                    Minecraft.getMinecraft().displayGuiScreen(null);
-                }
+        
+        if(mod != null) {
+            if (keyCode == Keyboard.getKeyIndex(mod.getKey()) || keyCode == Keyboard.KEY_ESCAPE) {
+                mod.setEnabled(false);
+                Minecraft.getMinecraft().displayGuiScreen(null);
             }
         }
     }

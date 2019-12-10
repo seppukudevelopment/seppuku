@@ -65,6 +65,7 @@ public final class HudManager {
         this.componentList.add(new TotemCountComponent());
         this.componentList.add(new TutorialComponent());
         this.componentList.add(new HoleOverlayComponent());
+        this.componentList.add(new PlayerPreviewComponent());
 
         for (Module.ModuleType type : Module.ModuleType.values()) {
             if (type.equals(Module.ModuleType.HIDDEN) || type.equals(Module.ModuleType.UI))
