@@ -26,19 +26,14 @@ public final class HudEditorModule extends Module {
     }
     
     @Override
-    public void onEnable() {}
-    
-    @Override
-    public void onDisable() {}
-
-    @Override
-    public void onToggle() {
-        super.onToggle();
-
+    public void onEnable() {
         if (Minecraft.getMinecraft().world != null) {
             Seppuku.INSTANCE.getEventManager().addEventListener(this);
         }
     }
+    
+    @Override
+    public void onDisable() {}
     
     @Listener
     public void onPlayerUpdate(EventPlayerUpdate event) {
