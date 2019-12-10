@@ -2,16 +2,21 @@ package me.rigamortis.seppuku.impl.gui.hud.component;
 
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
+import org.lwjgl.opengl.GL11;
 
 /**
  * @author cookiedragon234 10/Dec/2019
  */
 public class PlayerPreviewComponent extends DraggableHudComponent {
+	
+	private static final int INVENTORY_WIDTH = 49;
+	private static final int INVENTORY_HEIGHT = 70;
 	
 	public PlayerPreviewComponent() {
 		super("Player Preview");
@@ -28,10 +33,8 @@ public class PlayerPreviewComponent extends DraggableHudComponent {
 		GlStateManager.color(1, 1, 1);
 		RenderHelper.enableStandardItemLighting();
 		GlStateManager.enableAlpha();
-		GlStateManager.shadeModel(7424);
-		GlStateManager.enableAlpha();
+		GlStateManager.shadeModel(GL11.GL_FLAT);
 		GlStateManager.enableDepth();
-		GlStateManager.rotate(0, 0, 5, 0);
 		
 		GlStateManager.enableColorMaterial();
 		GlStateManager.pushMatrix();
@@ -55,12 +58,11 @@ public class PlayerPreviewComponent extends DraggableHudComponent {
 		GlStateManager.disableTexture2D();
 		GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
 		
-		GlStateManager.depthFunc(515);
-		GlStateManager.resetColor();
+		GlStateManager.depthFunc(GL11.GL_LEQUAL);
 		GlStateManager.disableDepth();
 		GlStateManager.popMatrix();
 		
-		this.setW(25);
-		this.setH(25);
+		this.setW(INVENTORY_HEIGHT);
+		this.setH(INVENTORY_WIDTH);
 	}
 }

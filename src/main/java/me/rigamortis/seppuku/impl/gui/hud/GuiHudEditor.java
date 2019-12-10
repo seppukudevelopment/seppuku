@@ -19,14 +19,14 @@ import java.io.IOException;
  * 7/25/2019 @ 4:15 AM.
  */
 public final class GuiHudEditor extends GuiScreen {
-
+    
+    private static final HudEditorModule mod = (HudEditorModule) Seppuku.INSTANCE.getModuleManager().find(HudEditorModule.class);
+    
     @Override
     public void keyTyped(char typedChar, int keyCode) throws IOException {
         super.keyTyped(typedChar, keyCode);
-
-        final HudEditorModule mod = (HudEditorModule) Seppuku.INSTANCE.getModuleManager().find(HudEditorModule.class);
         
-        if(mod != null) {
+        if (mod != null) {
             if (keyCode == Keyboard.getKeyIndex(mod.getKey()) || keyCode == Keyboard.KEY_ESCAPE) {
                 mod.setEnabled(false);
                 Minecraft.getMinecraft().displayGuiScreen(null);
