@@ -23,8 +23,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 /**
- * Author Seth
- * 5/15/2019 @ 9:20 AM.
+ * @author Seth
+ * @since 5/15/2019 @ 9:20 AM.
  */
 public final class NoCrystalModule extends Module {
 
@@ -57,11 +57,9 @@ public final class NoCrystalModule extends Module {
         final boolean instant = placeDelay.getValue() == 0;
         if (this.placeTimer.passed(this.placeDelay.getValue()) || instant) {
             if (event.getStage() == EventStageable.EventStage.PRE) {
-                final FreeCamModule freeCam = (FreeCamModule) Seppuku.INSTANCE.getModuleManager().find(FreeCamModule.class);
 
-                if (freeCam != null && freeCam.isEnabled()) {
-                    return;
-                }
+                final FreeCamModule freeCam = (FreeCamModule) Seppuku.INSTANCE.getModuleManager().find(FreeCamModule.class);
+                if (freeCam != null && freeCam.isEnabled()) return;
 
                 final Vec3d pos = MathUtil.interpolateEntity(mc.player, mc.getRenderPartialTicks());
                 final float playerSpeed = (float) MathUtil.getDistance(pos, mc.player.posX, mc.player.posY, mc.player.posZ);
@@ -79,13 +77,14 @@ public final class NoCrystalModule extends Module {
                 int lastSlot = 0;
                 final int slot = findStackHotbar(Blocks.OBSIDIAN);
                 if (slot != -1) {
+                    // 0.005f: Absolute minimum velocity to register as standing still.
+                    // Don't ask me why, I'm just a comment.
                     if ((mc.player.onGround && playerSpeed <= 0.005f) && (this.sneak.getValue() || (!mc.gameSettings.keyBindSneak.isKeyDown()))) {
                         lastSlot = mc.player.inventory.currentItem;
                         mc.player.inventory.currentItem = slot;
                         mc.playerController.updateController();
 
-                        if (valid(surroundBlocks[placeIndex]))
-                            place(surroundBlocks[placeIndex]);
+                        place(surroundBlocks[placeIndex]);
 
                         if (!instant) this.placeTimer.reset();
                         if (placeIndex >= surroundBlocks.length - 1) {
@@ -93,9 +92,7 @@ public final class NoCrystalModule extends Module {
                             if (this.disable.getValue()) this.toggle();
                         } else placeIndex++;
                     }
-                    if (!slotEqualsBlock(lastSlot, Blocks.OBSIDIAN)) {
-                        mc.player.inventory.currentItem = lastSlot;
-                    }
+                    if (!slotEqualsBlock(lastSlot, Blocks.OBSIDIAN)) mc.player.inventory.currentItem = lastSlot;
                     mc.playerController.updateController();
                 }
             }
@@ -128,6 +125,8 @@ public final class NoCrystalModule extends Module {
         final Block block = mc.world.getBlockState(pos).getBlock();
         final EnumFacing direction = calcSide(pos);
         final boolean activated = block.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, EnumHand.MAIN_HAND, direction, 0, 0, 0);
+
+        if (!valid(pos)) return;
 
         if (activated)
             mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
