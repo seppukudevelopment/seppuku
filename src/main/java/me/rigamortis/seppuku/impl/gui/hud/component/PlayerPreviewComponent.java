@@ -62,7 +62,7 @@ public class PlayerPreviewComponent extends DraggableHudComponent {
 		GlStateManager.disableDepth();
 		GlStateManager.popMatrix();
 		
-		this.setW(INVENTORY_HEIGHT);
-		this.setH(INVENTORY_WIDTH);
+		this.setW(INVENTORY_WIDTH);
+		this.setH(INVENTORY_HEIGHT);
 	}
 }
