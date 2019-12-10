@@ -23,9 +23,6 @@ public final class GuiHudEditor extends GuiScreen {
     @Override
     public void keyTyped(char typedChar, int keyCode) throws IOException {
         super.keyTyped(typedChar, keyCode);
-        
-        System.out.println("Pressed key");
-        System.out.println(keyCode + " : " + Keyboard.KEY_ESCAPE);
 
         final HudEditorModule mod = (HudEditorModule) Seppuku.INSTANCE.getModuleManager().find(HudEditorModule.class);
         
