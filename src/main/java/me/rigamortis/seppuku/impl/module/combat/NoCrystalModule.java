@@ -13,7 +13,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.CPacketAnimation;
 import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.util.EnumFacing;
@@ -78,7 +78,7 @@ public final class NoCrystalModule extends Module {
 
                 int lastSlot = 0;
                 final int slot = findStackHotbar(Blocks.OBSIDIAN);
-                if (hasStack(Blocks.OBSIDIAN) || slot != -1) {
+                if (slot != -1) {
                     if ((mc.player.onGround && playerSpeed <= 0.005f) && (this.sneak.getValue() || (!mc.gameSettings.keyBindSneak.isKeyDown()))) {
                         lastSlot = mc.player.inventory.currentItem;
                         mc.player.inventory.currentItem = slot;
@@ -102,30 +102,17 @@ public final class NoCrystalModule extends Module {
         }
     }
 
-    private boolean hasStack(Block type) {
-        if (mc.player.inventory.getCurrentItem().getItem() instanceof ItemBlock) {
-            final ItemBlock block = (ItemBlock) mc.player.inventory.getCurrentItem().getItem();
-            return block.getBlock() == type;
-        }
-        return false;
-    }
-
     private boolean slotEqualsBlock (int slot, Block type) {
         if (mc.player.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock) {
             final ItemBlock block = (ItemBlock) mc.player.inventory.getStackInSlot(slot).getItem();
             return block.getBlock() == type;
         }
-
         return false;
     }
 
     private int findStackHotbar(Block type) {
         for (int i = 0; i < 9; i++) {
-            final ItemStack stack = Minecraft.getMinecraft().player.inventory.getStackInSlot(i);
-            if (stack.getItem() instanceof ItemBlock) {
-                final ItemBlock block = (ItemBlock) stack.getItem();
-                if (block.getBlock() == type) return i;
-            }
+            if (slotEqualsBlock(i, type)) return i;
         }
         return -1;
     }
@@ -154,7 +141,7 @@ public final class NoCrystalModule extends Module {
             }
             if (mode.getValue() == Mode.PACKET) {
                 mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(sideOffset, otherSide, EnumHand.MAIN_HAND, 0.5F, 0.5F, 0.5F));
-                mc.player.swingArm(EnumHand.MAIN_HAND);
+                mc.player.connection.sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
             } else if (mode.getValue() == Mode.VISIBLE) {
                 mc.playerController.processRightClickBlock(mc.player, mc.world, sideOffset, otherSide, new Vec3d(0.5F, 0.5F, 0.5F), EnumHand.MAIN_HAND);
                 mc.player.swingArm(EnumHand.MAIN_HAND);
