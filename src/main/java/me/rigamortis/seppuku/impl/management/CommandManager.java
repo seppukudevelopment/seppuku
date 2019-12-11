@@ -12,6 +12,8 @@ import net.minecraft.util.text.TextComponentString;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -70,6 +72,8 @@ public final class CommandManager {
 
         //load our external commands
         loadExternalCommands();
+
+        Collections.sort(commandList, Comparator.comparing(Command::getDisplayName));
     }
 
     /**

@@ -18,11 +18,12 @@ import me.rigamortis.seppuku.impl.module.player.*;
 import me.rigamortis.seppuku.impl.module.render.*;
 import me.rigamortis.seppuku.impl.module.ui.HudEditorModule;
 import me.rigamortis.seppuku.impl.module.world.*;
-import net.minecraft.client.Minecraft;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -154,6 +155,8 @@ public final class ModuleManager {
 
         for (final Module module : moduleList)
             Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventModulePostLoaded(module));
+
+        Collections.sort(moduleList, Comparator.comparing(Module::getDisplayName));
     }
 
     /**
