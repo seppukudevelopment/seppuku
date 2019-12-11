@@ -3,6 +3,14 @@ package me.rigamortis.seppuku.api.util;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.*;
+import org.objectweb.asm.util.Printer;
+import org.objectweb.asm.util.Textifier;
+import org.objectweb.asm.util.TraceMethodVisitor;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Iterator;
+import java.util.ListIterator;
 
 import static org.objectweb.asm.ClassWriter.COMPUTE_FRAMES;
 import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
@@ -75,5 +83,18 @@ public final class ASMUtil {
         ClassWriter writer = new ClassWriter(COMPUTE_MAXS | COMPUTE_FRAMES);
         classNode.accept(writer);
         return writer.toByteArray();
+    }
+    
+    public static void printInstructions(InsnList instructions) {
+        Printer printer = new Textifier();
+        TraceMethodVisitor mp = new TraceMethodVisitor(printer);
+    
+        for (int i = 0; i < instructions.size(); i++) {
+            instructions.get(i).accept(mp);
+            StringWriter sw = new StringWriter();
+            printer.print(new PrintWriter(sw));
+            printer.getText().clear();
+            System.out.print(sw.toString());
+        }
     }
 }

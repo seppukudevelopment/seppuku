@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.gui.hud.component;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
@@ -31,12 +32,11 @@ public class PlayerPreviewComponent extends DraggableHudComponent {
 		
 		GlStateManager.pushMatrix();
 		GlStateManager.color(1, 1, 1);
-		RenderHelper.enableStandardItemLighting();
 		GlStateManager.enableAlpha();
-		GlStateManager.shadeModel(GL11.GL_FLAT);
+		//GlStateManager.shadeModel(GL11.GL_FLAT);
 		GlStateManager.enableDepth();
 		
-		GlStateManager.enableColorMaterial();
+		//GlStateManager.enableColorMaterial();
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(getX() + getW(), getY() + getH(), 50.0F);
 		GlStateManager.scale((-50), 50, 50);
@@ -46,20 +46,19 @@ public class PlayerPreviewComponent extends DraggableHudComponent {
 		GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
 		GlStateManager.rotate(-((float)Math.atan((double)(getY() / 40.0F))) * 20.0F, 1.0F, 0.0F, 0.0F);
 		GlStateManager.translate(0.0F, 0.0F, 0.0F);
-		RenderManager rendermanager = mc.getRenderManager();
-		rendermanager.setPlayerViewY(180.0F);
-		rendermanager.setRenderShadow(false);
-		rendermanager.renderEntity(ent, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, false);
-		rendermanager.setRenderShadow(true);
+		RenderManager renderManager = mc.getRenderManager();
+		renderManager.setPlayerViewY(180.0F);
+		renderManager.setRenderShadow(false);
+		renderManager.renderEntity(ent, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, false);
+		renderManager.setRenderShadow(true);
 		GlStateManager.popMatrix();
 		RenderHelper.disableStandardItemLighting();
-		GlStateManager.disableRescaleNormal();
-		GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-		GlStateManager.disableTexture2D();
-		GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+		//GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+		//GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
 		
-		GlStateManager.depthFunc(GL11.GL_LEQUAL);
-		GlStateManager.disableDepth();
+		//GlStateManager.depthFunc(GL11.GL_LEQUAL);
+		//GlStateManager.disableDepth();
+		GlStateManager.disableAlpha();
 		GlStateManager.popMatrix();
 		
 		this.setW(INVENTORY_WIDTH);

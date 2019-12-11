@@ -57,6 +57,7 @@ public final class PatchManager {
         this.patchList.add(new NetHandlerPlayClientPatch());
         this.patchList.add(new ChunkPatch());
         this.patchList.add(new GuiScreenPatch());
+        this.patchList.add(new GuiChatPatch());
 
         //load custom external patches
         //TODO this needs more testing

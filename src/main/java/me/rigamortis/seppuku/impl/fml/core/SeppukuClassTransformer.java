@@ -129,6 +129,9 @@ public final class SeppukuClassTransformer implements IClassTransformer {
                                     method.invoke(patch, methodNode, PATCH_MANAGER.getEnv());
                                     System.out.println("[Seppuku] Patched " + patch.getMcpName().replace(".", "/") + "." + methodPatch.mcpName());
                                 }
+                                else {
+                                    System.out.println("[Seppuku] Warning! Couldn't find method for patch '" + classNode + "." + methodName + ":" + methodDesc);
+                                }
                             }
                         }
                     }

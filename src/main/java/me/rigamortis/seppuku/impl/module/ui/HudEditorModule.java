@@ -27,23 +27,15 @@ public final class HudEditorModule extends Module {
     
     @Override
     public void onEnable() {
-        if (Minecraft.getMinecraft().world != null) {
-            Seppuku.INSTANCE.getEventManager().addEventListener(this);
+        final Minecraft mc = Minecraft.getMinecraft();
+        if (mc.world != null) {
+            mc.displayGuiScreen(new GuiHudEditor());
+            if (this.blur.getValue() && OpenGlHelper.shadersSupported) {
+                mc.entityRenderer.loadShader(new ResourceLocation("minecraft", "shaders/post/blur.json"));
+            }
         }
     }
     
     @Override
     public void onDisable() {}
-    
-    @Listener
-    public void onPlayerUpdate(EventPlayerUpdate event) {
-        Seppuku.INSTANCE.getEventManager().removeEventListener(this);
-        
-        final Minecraft mc = Minecraft.getMinecraft();
-        
-        mc.displayGuiScreen(new GuiHudEditor());
-        if (this.blur.getValue() && OpenGlHelper.shadersSupported) {
-            mc.entityRenderer.loadShader(new ResourceLocation("minecraft", "shaders/post/blur.json"));
-        }
-    }
 }
