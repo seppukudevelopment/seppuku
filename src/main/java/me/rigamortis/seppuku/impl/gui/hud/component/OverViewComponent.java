@@ -51,6 +51,11 @@ public final class OverViewComponent extends ResizableHudComponent {
                 this.overviewCamera.render(this.getX() + 2, this.getY() + 12, this.getX() + this.getW() - 2, this.getY() + this.getH() - 2);
             }
         }
+
+        final boolean inside = mouseX >= this.getX() && mouseX <= this.getX() + this.getW() && mouseY >= this.getY() && mouseY <= this.getY() + this.getH();
+
+        if (inside)
+            Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("Zoom: " + this.distance, this.getX() + 4, this.getY() + this.getH() - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - 2, 0xFFFFFFFF);
     }
 
     private Vec3d getGround(float partialTicks) {
@@ -82,15 +87,15 @@ public final class OverViewComponent extends ResizableHudComponent {
         if (inside && Mouse.hasWheel()) {
             this.scroll += -(Mouse.getDWheel() / 100);
 
-            if(this.scroll <= 0) {
+            if (this.scroll <= 0) {
                 this.scroll = 0;
             }
 
-            if(this.scroll >= 8) {
-                this.scroll = 8;
+            if (this.scroll >= 10) {
+                this.scroll = 10;
             }
 
-            if(this.lastScroll != this.scroll) {
+            if (this.lastScroll != this.scroll) {
                 this.lastScroll = this.scroll;
                 this.distance = this.scroll * 10;
                 //TODO update fbo
