@@ -1,5 +1,6 @@
 package me.rigamortis.seppuku.impl.module.misc;
 
+import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
@@ -13,8 +14,6 @@ import net.minecraft.inventory.ClickType;
 import net.minecraft.item.ItemStack;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
-import java.util.ArrayList;
-
 /**
  * Automatically refills the players hotbar.
  *
@@ -23,13 +22,13 @@ import java.util.ArrayList;
  */
 public class HotBarRefillModule extends Module {
     public final Value<Float> delay = new Value<>("Delay", new String[]{"Del"}, "The amount of delay in milliseconds.", 50.0f);
-    public final Value<Integer> refills = new Value<>("NumPerRefill", new String[]{"refill"}, "The number of total slots to be refilled at a time.", 2, 1, 10, 1);
+    public final Value<Integer> percentage = new Value<>("RefillPercentage", new String[]{"percent", "p", "percent"}, "The percentage a slot should be filled to get refilled.", 50, 0, 100, 1);
     public final Value<Boolean> offHand = new Value<>("OffHand", new String[]{"oh", "off", "hand"}, "If the off hand should be refilled.", true);
 
     private Timer timer = new Timer();
 
     public HotBarRefillModule() {
-        super("HotBarRefill", new String[]{"Replenish", "Refill", "AutoHotBar", "hbr"}, "NONE", -1, ModuleType.MISC);
+        super("HotBarRefill", new String[]{"Replenish", "Refill", "AutoHotBar", "hbr", "Restock", "HBRestock", "HBRefill", "Hotbar"}, "NONE", -1, ModuleType.MISC);
     }
 
     @Listener
@@ -42,12 +41,9 @@ public class HotBarRefillModule extends Module {
                     return;
                 }
 
-                ArrayList<Integer> toRefill = getRefillable(mc.player, getHotbar(mc.player));
-
-                if (!toRefill.isEmpty()) {
-                    for (int i = 0; i < toRefill.size() && i < refills.getValue(); i++) {
-                        refillHotbarSlot(mc, toRefill.get(i));
-                    }
+                int toRefill = getRefillable(mc.player);
+                if (toRefill != -1) {
+                    refillHotbarSlot(mc, toRefill);
                 }
             }
 
@@ -56,84 +52,70 @@ public class HotBarRefillModule extends Module {
     }
 
     /**
-     * Gets a list of slots in a hotbar that can be refilled.
-     * If offhand is on the list includes the offhand
-     *
-     * @param hotbar The hotbar
-     * @return A list of slots in a hotbar that can be refilled
-     */
-    private ArrayList<Integer> getRefillable(EntityPlayerSP player, ItemStack[] hotbar) {
-        ArrayList<Integer> ret = new ArrayList<>();
-
-        for (int i = 0; i < hotbar.length; i++) {
-            ItemStack stack = hotbar[i];
-            if (stack.getCount() < stack.getMaxStackSize() && stack.getItem() != Items.AIR) {
-                ret.add(i);
-            }
-        }
-
-        if (offHand.getValue()) {
-            if (player.getHeldItemOffhand().getCount() < player.getHeldItemOffhand().getMaxStackSize()) {
-                ret.add(45);
-            }
-        }
-
-        return ret;
-    }
-
-    /**
-     * Returns a given player's hotbar.
-     *
-     * @param player The player who's hotbar should be returned.
-     * @return The passed player's hotbar as a primitive array.
-     */
-    private ItemStack[] getHotbar (EntityPlayerSP player) {
-        ItemStack[] ret = new ItemStack[9];
-
-        if (player != null) {
-            for (int i = 0; i <= 8; i++) {
-                    ret[i] = player.inventory.mainInventory.get(i);
-            }
-        }
-
-        return ret;
-    }
-
-    /**
-     * Retrieves the largest stack of a given ItemStack's Item in the player's inventory.
+     * Checks all items in the hotbar that can be refilled
+     * If offhand is on, it is checked first
      *
      * @param player The player
-     * @param item The item type that should be found
-     * @param includeHotbar If the search should include the hobar
-     * @return The index of the largest stack of the given item, -1 if the given item does not exist.
+     * @return The index of the first item to be refilled, -1 if there are no refillable items
      */
-    public int getBiggestStack (EntityPlayerSP player, ItemStack item, boolean includeHotbar) {
-        if (item == null) {
+    private int getRefillable(EntityPlayerSP player) {
+        if (offHand.getValue()) {
+            if (player.getHeldItemOffhand().getItem() != Items.AIR
+                && player.getHeldItemOffhand().getCount() < player.getHeldItemOffhand().getMaxStackSize()
+                && (double) player.getHeldItemOffhand().getCount() / player.getHeldItemOffhand().getMaxStackSize() <= (percentage.getValue() / 100.0)) {
+                return 45;
+            }
+        }
+
+        for (int i = 0; i < 9; i++) {
+            ItemStack stack = player.inventory.mainInventory.get(i);
+            if (stack.getItem() != Items.AIR && stack.getCount() < stack.getMaxStackSize()
+                && (double) stack.getCount() / stack.getMaxStackSize() <= (percentage.getValue() / 100.0)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
+     * Searches the player's inventory for the smallest stack.
+     * Gets the smallest stack so that there are not a a bunch
+     * of partially full stacks left in the player's inventory.
+     *
+     * @param player The player
+     * @param itemStack The item type that should be found
+     * @return The index of the smallest stack of the given item, -1 if the given item does not exist
+     */
+    private int getSmallestStack(EntityPlayerSP player, ItemStack itemStack) {
+        if (itemStack == null) {
             return -1;
         }
 
-        int maxCount = -1;
-        int maxIndex = -1;
-        for (int i = includeHotbar ? 0 : 9; i < player.inventory.mainInventory.size(); i++) {
+        int minCount = itemStack.getMaxStackSize() + 1;
+        int minIndex = -1;
+
+        // i starts at 9 so that the hotbar is not checked
+        for (int i = 9; i < player.inventory.mainInventory.size(); i++) {
             ItemStack stack = player.inventory.mainInventory.get(i);
 
             if (stack.getItem() != Items.AIR
-                && stack.getItem() == item.getItem()
-                && stack.getCount() > maxCount) {
+                && stack.getItem() == itemStack.getItem()
+                && stack.getCount() < minCount) {
 
-                maxCount = stack.getCount();
-                maxIndex = i;
+                minCount = stack.getCount();
+                minIndex = i;
             }
         }
 
-        return maxIndex;
+        return minIndex;
     }
 
     /**
      * Refills a given slot in the hotbar from an item in the player's inventory.
      * Uses the slot's current ItemStack to decide what it should be refilled with.
      *
-     * @param mc The passed Mincraft instance
+     * @param mc The Mincraft instance
      * @param slot The slot that should be refilled
      */
     public void refillHotbarSlot(Minecraft mc, int slot) {
@@ -150,7 +132,7 @@ public class HotBarRefillModule extends Module {
         }
 
         // The slot can't be refilled if there is nothing to refill it with
-        int biggestStack = getBiggestStack(mc.player, stack, false);
+        int biggestStack = getSmallestStack(mc.player, stack);
         if (biggestStack == -1) {
             return;
         }
@@ -170,16 +152,11 @@ public class HotBarRefillModule extends Module {
             }
         }
 
+        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, biggestStack, 0, ClickType.QUICK_MOVE, mc.player);
 
-        if (overflow == -1) { // If the hotbar is full we can just shift click biggestStack to refill slot
-            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, biggestStack, 0, ClickType.QUICK_MOVE, mc.player);
-        } else { // If the hotbar isn't full, we might have to click the overflow stack back into the inventory
-            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, biggestStack, 0, ClickType.QUICK_MOVE, mc.player);
-
-            // If the two stacks don't overflow when combined we don't have to move overflow
-            if (mc.player.inventory.mainInventory.get(overflow).getItem() != Items.AIR) {
-                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, biggestStack, overflow, ClickType.SWAP, mc.player);
-            }
+        // If the two stacks don't overflow when combined we don't have to move overflow
+        if (overflow != -1 && mc.player.inventory.mainInventory.get(overflow).getItem() != Items.AIR) {
+            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, biggestStack, overflow, ClickType.SWAP, mc.player);
         }
     }
 }
