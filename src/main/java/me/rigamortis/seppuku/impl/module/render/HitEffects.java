@@ -41,8 +41,18 @@ public final class HitEffects extends Module {
     public final BooleanValue totem = new BooleanValue("Totem", new String[]{"Totem"}, false);
     public final BooleanValue sounds = new BooleanValue("Sounds", new String[]{"Sounds"}, true);
 
-    protected static final Minecraft mc = Minecraft.getMinecraft();
-
+    private final Minecraft mc = Minecraft.getMinecraft();
+ 
+    public final ResourceLocation explodelocal = new ResourceLocation("minecraft", "entity.generic.explode");
+    public final ResourceLocation totemlocal = new ResourceLocation("minecraft", "item.totem.use");
+    public final ResourceLocation lightningimpactlocal = new ResourceLocation("minecraft", "entity.lightning.impact");
+    public final ResourceLocation thunderlocal = new ResourceLocation("minecraft", "entity.lightning.thunder");
+ 
+    public final SoundEvent explosionsound = new SoundEvent(explodelocal);
+    public final SoundEvent thundersound = new SoundEvent(thunderlocal);
+    public final SoundEvent lightningimpactsound = new SoundEvent(lightningimpactlocal);
+    public final SoundEvent totemsound = new SoundEvent(totemlocal);
+    
     public HitEffects() {
         super("Hit Effects", new String[]{"Hit Effects"}, "Wacky Hit Effects", "NONE", -1, ModuleType.RENDER);
     }
@@ -50,27 +60,19 @@ public final class HitEffects extends Module {
     @Listener
     public void sendPacket(EventSendPacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
-            if (Minecraft.getMinecraft().world != null) {
+            if (mc.world != null) {
                     if (event.getPacket() instanceof CPacketUseEntity) {
                         CPacketUseEntity packet = (CPacketUseEntity)event.getPacket();
                         if (packet.getAction().equals(CPacketUseEntity.Action.ATTACK)) {
                             Entity entity = packet.getEntityFromWorld(mc.world);
-                            ResourceLocation explodelocal = new ResourceLocation("minecraft", "entity.generic.explode");
-                            SoundEvent explosionsound = new SoundEvent(explodelocal);
-                            ResourceLocation thunderlocal = new ResourceLocation("minecraft", "entity.lightning.thunder");
-                            SoundEvent thundersound = new SoundEvent(thunderlocal);
-                            ResourceLocation lightningimpactlocal = new ResourceLocation("minecraft", "entity.lightning.impact");
-                            SoundEvent lightningimpactsound = new SoundEvent(lightningimpactlocal);
-                            ResourceLocation totemlocal = new ResourceLocation("minecraft", "item.totem.use");
-                            SoundEvent totemsound = new SoundEvent(totemlocal);
+                            BlockPos NiggaPenis = new BlockPos(entity.posX, entity.posY, entity.posZ);
 
                             if (lightning.getBoolean()) {
-                                EntityLightningBolt lightning = new EntityLightningBolt(mc.world, entity.posX, entity.posY + 1, entity.posZ, true);
-                                mc.world.spawnEntity(lightning);
+                                mc.world.spawnEntity(new EntityLightningBolt(mc.world, entity.posX, entity.posY + 1, entity.posZ, true));
                                 if (sounds.getBoolean()) {
                                     //mc.player.playSound(thundersound, 1, 1);
-                                    mc.world.playSound(mc.player, new BlockPos(entity.posX, entity.posY, entity.posZ), thundersound, SoundCategory.WEATHER, 1, 1);
-                                    mc.world.playSound(mc.player, new BlockPos(entity.posX, entity.posY, entity.posZ), lightningimpactsound, SoundCategory.WEATHER, 1, 1);
+                                    mc.world.playSound(mc.player,NiggaPenis, thundersound, SoundCategory.WEATHER, 1, 1);
+                                    mc.world.playSound(mc.player, NiggaPenis, lightningimpactsound, SoundCategory.WEATHER, 1, 1);
                                 }
                             }
                             if (explosion.getBoolean()) {
@@ -79,7 +81,7 @@ public final class HitEffects extends Module {
                                 mc.world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, entity.posX, entity.posY, entity.posZ, 0, 0, 0);
                                 if (sounds.getBoolean()) {
                                     //mc.player.playSound(explosionsound, 1, 1);
-                                    mc.world.playSound(mc.player, new BlockPos(entity.posX, entity.posY, entity.posZ), explosionsound, SoundCategory.BLOCKS, 1, 1);
+                                    mc.world.playSound(mc.player, NiggaPenis, explosionsound, SoundCategory.BLOCKS, 1, 1);
                                 }
                             }
                             if (totem.getBoolean()) {
@@ -88,7 +90,7 @@ public final class HitEffects extends Module {
                                     mc.world.spawnParticle(EnumParticleTypes.TOTEM, entity.posX, entity.posY, entity.posZ, (r.nextInt(1 + 1) - 1), (r.nextInt(2 + 2) - 2), (r.nextInt(1 + 1) - 1));
                                 if (sounds.getBoolean()) {
                                     //mc.player.playSound(explosionsound, 1, 1);
-                                    mc.world.playSound(mc.player, new BlockPos(entity.posX, entity.posY, entity.posZ), totemsound, SoundCategory.BLOCKS, 1, 1);
+                                    mc.world.playSound(mc.player, NiggaPenis, totemsound, SoundCategory.BLOCKS, 1, 1);
                                 }
                         }
                     }
