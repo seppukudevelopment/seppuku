@@ -136,4 +136,18 @@ public final class MathUtil {
         return (double) MathHelper.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
     }
 
+    public static double[] calcIntersection(double[] line, double[] line2) {
+        final double a1 = line[3] - line[1];
+        final double b1 = line[0] - line[2];
+        final double c1 = a1 * line[0] + b1 * line[1];
+
+        final double a2 = line2[3] - line2[1];
+        final double b2 = line2[0] - line2[2];
+        final double c2 = a2 * line2[0] + b2 * line2[1];
+
+        final double delta = a1 * b2 - a2 * b1;
+
+        return new double[]{(b2 * c1 - b1 * c2) / delta, (a1 * c2 - a2 * c1) / delta};
+    }
+
 }

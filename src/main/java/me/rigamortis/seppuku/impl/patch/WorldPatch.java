@@ -8,6 +8,7 @@ import me.rigamortis.seppuku.api.event.world.EventRemoveEntity;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
 import me.rigamortis.seppuku.impl.management.PatchManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
@@ -59,6 +60,10 @@ public final class WorldPatch extends ClassPatch {
     public static boolean checkLightForHook() {
         final EventLightUpdate event = new EventLightUpdate();
         Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        if (Minecraft.getMinecraft().isSingleplayer()) {
+            return false;
+        }
 
         return event.isCanceled();
     }

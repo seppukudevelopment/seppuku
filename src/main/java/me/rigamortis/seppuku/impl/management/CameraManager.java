@@ -23,7 +23,7 @@ public final class CameraManager {
     }
 
     public void update() {
-        if (Minecraft.getMinecraft().inGameHasFocus) {
+        if (Minecraft.getMinecraft().inGameHasFocus && Minecraft.getMinecraft().currentScreen == null) {
             for (Camera cam : this.cameraList) {
                 if (cam != null && !cam.isRecording() && cam.isRendering()) {
                     cam.updateFbo();

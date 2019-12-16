@@ -32,7 +32,7 @@ public final class PitchCommand extends Command {
                 Minecraft.getMinecraft().player.getRidingEntity().rotationPitch = num;
             }
 
-            Seppuku.INSTANCE.logChat("Set yaw to " + num);
+            Seppuku.INSTANCE.logChat("Set pitch to " + num);
         } else {
             Seppuku.INSTANCE.errorChat("Unknown number " + "\247f\"" + split[1] + "\"");
         }
