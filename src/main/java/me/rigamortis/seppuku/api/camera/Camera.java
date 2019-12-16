@@ -30,6 +30,8 @@ public class Camera {
 
     private boolean rendering;
 
+    private boolean firstUpdate;
+
     private Framebuffer frameBuffer;
 
     private final int WIDTH_RESOLUTION = 800;
@@ -72,7 +74,11 @@ public class Camera {
     }
 
     public void updateFbo() {
-        if (mc.player != null && !Mouse.isButtonDown(2)) {
+        if (!this.firstUpdate) {
+            mc.renderGlobal.loadRenderers();
+            this.firstUpdate = true;
+        }
+        if (mc.player != null) {
             double posX = mc.player.posX;
             double posY = mc.player.posY;
             double posZ = mc.player.posZ;
