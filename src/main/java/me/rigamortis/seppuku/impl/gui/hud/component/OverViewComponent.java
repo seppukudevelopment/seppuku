@@ -45,6 +45,17 @@ public final class OverViewComponent extends ResizableHudComponent {
             final Vec3d ground = this.getGround(partialTicks);
 
             if (ground != null) {
+
+                /*
+                "isometric" view
+                final Vec3d forward = MathUtil.direction(Minecraft.getMinecraft().player.rotationYaw);
+                final float factor = 30.0f;
+                this.overviewCamera.setPos(ground.add(0, this.getDist(partialTicks), 0).subtract(forward.x * factor, forward.y * factor, forward.z * factor));
+                this.overviewCamera.setYaw(Minecraft.getMinecraft().player.rotationYaw);
+                this.overviewCamera.setPitch(65.0f);
+                this.overviewCamera.render(this.getX() + 2, this.getY() + 12, this.getX() + this.getW() - 2, this.getY() + this.getH() - 2);
+                */
+
                 this.overviewCamera.setPos(ground.add(0, this.getDist(partialTicks), 0));
                 this.overviewCamera.setYaw(Minecraft.getMinecraft().player.rotationYaw);
                 this.overviewCamera.setPitch(90.0f);

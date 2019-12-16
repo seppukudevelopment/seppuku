@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.input.Mouse;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 
@@ -141,12 +140,10 @@ public class Camera {
             mc.gameSettings.limitFramerate = 10;
             mc.gameSettings.fovSetting = 110;
 
-            //TODO backup fire overlay, and effects(blindness), fog
-
             this.setRecording(true);
             frameBuffer.bindFramebuffer(true);
 
-            mc.entityRenderer.updateCameraAndRender(mc.timer.renderPartialTicks, System.nanoTime());
+            mc.entityRenderer.renderWorld(mc.timer.renderPartialTicks, System.nanoTime());
 
             frameBuffer.unbindFramebuffer();
             this.setRecording(false);

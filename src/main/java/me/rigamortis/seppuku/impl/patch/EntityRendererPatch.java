@@ -1,6 +1,7 @@
 package me.rigamortis.seppuku.impl.patch;
 
 import me.rigamortis.seppuku.Seppuku;
+import me.rigamortis.seppuku.api.event.player.EventFovModifier;
 import me.rigamortis.seppuku.api.event.render.EventHurtCamEffect;
 import me.rigamortis.seppuku.api.event.render.EventOrientCamera;
 import me.rigamortis.seppuku.api.event.render.EventRender2D;
@@ -13,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
+import team.stiff.pomelo.EventManager;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -62,9 +64,6 @@ public final class EntityRendererPatch extends ClassPatch {
     public static void updateCameraAndRenderHook(float partialTicks) {
         //dispatch our event so we can render stuff on our screen
         Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventRender2D(partialTicks, new ScaledResolution(Minecraft.getMinecraft())));
-
-        //update all camera fbos after we render
-        Seppuku.INSTANCE.getCameraManager().update();
     }
 
     /**
@@ -103,6 +102,9 @@ public final class EntityRendererPatch extends ClassPatch {
      * @param partialTicks
      */
     public static void renderWorldPassHook(float partialTicks) {
+        if (Seppuku.INSTANCE.getCameraManager().isCameraRecording()) {
+            return;
+        }
         //dispatch our event and pass partial ticks in
         Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventRender3D(partialTicks));
     }
@@ -156,7 +158,7 @@ public final class EntityRendererPatch extends ClassPatch {
     public void orientCamera(MethodNode methodNode, PatchManager.Environment env) {
         final AbstractInsnNode target = ASMUtil.findMethodInsn(methodNode, INVOKEVIRTUAL, env == PatchManager.Environment.IDE ? "net/minecraft/client/multiplayer/WorldClient" : "bsb", env == PatchManager.Environment.IDE ? "rayTraceBlocks" : "a", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Vec3d;)Lnet/minecraft/util/math/RayTraceResult;" : "(Lbhe;Lbhe;)Lbhc;");
 
-        if(target != null) {
+        if (target != null) {
             final InsnList insnList = new InsnList();
             insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "orientCameraHook", "()Z", false));
             final LabelNode jmp = new LabelNode();
@@ -172,6 +174,34 @@ public final class EntityRendererPatch extends ClassPatch {
         final EventOrientCamera event = new EventOrientCamera();
         Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
         return event.isCanceled();
+    }
+
+    @MethodPatch(
+            mcpName = "getFOVModifier",
+            notchName = "a",
+            mcpDesc = "(FZ)F")
+    public void getFovModifier(MethodNode methodNode, PatchManager.Environment env) {
+        final InsnList insnList = new InsnList();
+        insnList.add(new TypeInsnNode(NEW, Type.getInternalName(EventFovModifier.class)));
+        insnList.add(new InsnNode(DUP));
+        insnList.add(new MethodInsnNode(INVOKESPECIAL, Type.getInternalName(EventFovModifier.class), "<init>", "()V", false));
+        insnList.add(new VarInsnNode(ASTORE, 5));
+
+        insnList.add(new FieldInsnNode(GETSTATIC, Type.getInternalName(Seppuku.class), "INSTANCE", "Lme/rigamortis/seppuku/Seppuku;"));
+        insnList.add(new MethodInsnNode(INVOKEVIRTUAL, Type.getInternalName(Seppuku.class), "getEventManager", "()Lteam/stiff/pomelo/EventManager;", false));
+        insnList.add(new VarInsnNode(ALOAD, 5));
+        insnList.add(new MethodInsnNode(INVOKEINTERFACE, Type.getInternalName(EventManager.class), "dispatchEvent", "(Ljava/lang/Object;)Ljava/lang/Object;", true));
+        insnList.add(new InsnNode(POP));
+
+        insnList.add(new VarInsnNode(ALOAD, 5));
+        insnList.add(new MethodInsnNode(INVOKEVIRTUAL, Type.getInternalName(EventFovModifier.class), "isCanceled", "()Z", false));
+        final LabelNode label = new LabelNode();
+        insnList.add(new JumpInsnNode(IFEQ, label));
+        insnList.add(new VarInsnNode(ALOAD, 5));
+        insnList.add(new MethodInsnNode(INVOKEVIRTUAL, Type.getInternalName(EventFovModifier.class), "getFov", "()F", false));
+        insnList.add(new InsnNode(FRETURN));
+        insnList.add(label);
+        methodNode.instructions.insert(insnList);
     }
 
 }

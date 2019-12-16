@@ -3,6 +3,9 @@ package me.rigamortis.seppuku.impl.management;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.camera.Camera;
 import me.rigamortis.seppuku.api.event.minecraft.EventUpdateFramebufferSize;
+import me.rigamortis.seppuku.api.event.player.EventFovModifier;
+import me.rigamortis.seppuku.api.event.render.EventHurtCamEffect;
+import me.rigamortis.seppuku.api.event.render.EventRenderEntityOutlines;
 import me.rigamortis.seppuku.api.event.render.EventRenderOverlay;
 import net.minecraft.client.Minecraft;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -34,12 +37,8 @@ public final class CameraManager {
 
     @Listener
     public void renderOverlay(EventRenderOverlay event) {
-        if (Minecraft.getMinecraft().inGameHasFocus && Minecraft.getMinecraft().currentScreen == null) {
-            for (Camera cam : this.cameraList) {
-                if (cam != null && cam.isRecording()) {
-                    event.setCanceled(true);
-                }
-            }
+        if (this.isCameraRecording()) {
+            event.setCanceled(true);
         }
     }
 
@@ -52,6 +51,28 @@ public final class CameraManager {
         }
     }
 
+    @Listener
+    public void fovModifier(EventFovModifier event) {
+        if (this.isCameraRecording()) {
+            event.setFov(90.0f);
+            event.setCanceled(true);
+        }
+    }
+
+    @Listener
+    public void renderOutlines(EventRenderEntityOutlines event) {
+        if (this.isCameraRecording()) {
+            event.setCanceled(true);
+        }
+    }
+
+    @Listener
+    public void hurtCamEffect(EventHurtCamEffect event) {
+        if (this.isCameraRecording()) {
+            event.setCanceled(true);
+        }
+    }
+
     public void addCamera(Camera cam) {
         this.cameraList.add(cam);
     }
@@ -59,6 +80,17 @@ public final class CameraManager {
     public void unload() {
         this.cameraList.clear();
         Seppuku.INSTANCE.getEventManager().removeEventListener(this);
+    }
+
+    public boolean isCameraRecording() {
+        if (Minecraft.getMinecraft().inGameHasFocus && Minecraft.getMinecraft().currentScreen == null) {
+            for (Camera cam : this.cameraList) {
+                if (cam != null && cam.isRecording()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public List<Camera> getCameraList() {

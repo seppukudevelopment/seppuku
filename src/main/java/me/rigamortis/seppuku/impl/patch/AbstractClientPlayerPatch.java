@@ -52,4 +52,5 @@ public final class AbstractClientPlayerPatch extends ClassPatch {
 
         methodNode.instructions.insert(insnList);
     }
+
 }
