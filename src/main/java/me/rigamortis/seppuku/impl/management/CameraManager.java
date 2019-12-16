@@ -3,7 +3,7 @@ package me.rigamortis.seppuku.impl.management;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.camera.Camera;
 import me.rigamortis.seppuku.api.event.minecraft.EventUpdateFramebufferSize;
-import me.rigamortis.seppuku.api.event.render.EventRender2D;
+import me.rigamortis.seppuku.api.event.render.EventRenderOverlay;
 import net.minecraft.client.Minecraft;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
@@ -27,6 +27,17 @@ public final class CameraManager {
             for (Camera cam : this.cameraList) {
                 if (cam != null && !cam.isRecording() && cam.isRendering()) {
                     cam.updateFbo();
+                }
+            }
+        }
+    }
+
+    @Listener
+    public void renderOverlay(EventRenderOverlay event) {
+        if (Minecraft.getMinecraft().inGameHasFocus && Minecraft.getMinecraft().currentScreen == null) {
+            for (Camera cam : this.cameraList) {
+                if (cam != null && cam.isRecording()) {
+                    event.setCanceled(true);
                 }
             }
         }
