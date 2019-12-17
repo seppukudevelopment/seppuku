@@ -1,7 +1,9 @@
 package me.rigamortis.seppuku.impl.patch;
 
 import me.rigamortis.seppuku.Seppuku;
+import me.rigamortis.seppuku.api.event.render.EventRenderBlockDamage;
 import me.rigamortis.seppuku.api.event.render.EventRenderEntityOutlines;
+import me.rigamortis.seppuku.api.event.render.EventRenderSky;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
 import me.rigamortis.seppuku.impl.management.PatchManager;
@@ -37,6 +39,50 @@ public final class RenderGlobalPatch extends ClassPatch {
 
     public static boolean isRenderEntityOutlinesHook() {
         final EventRenderEntityOutlines event = new EventRenderEntityOutlines();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    @MethodPatch(
+            mcpName = "renderSky",
+            notchName = "a",
+            mcpDesc = "(FI)V",
+            notchDesc = "(FI)V")
+    public void renderSky(MethodNode methodNode, PatchManager.Environment env) {
+        final InsnList insnList = new InsnList();
+        insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "renderSkyHook", "()Z", false));
+        final LabelNode jmp = new LabelNode();
+        insnList.add(new JumpInsnNode(IFEQ, jmp));
+        insnList.add(new InsnNode(RETURN));
+        insnList.add(jmp);
+        methodNode.instructions.insert(insnList);
+    }
+
+    public static boolean renderSkyHook() {
+        final EventRenderSky event = new EventRenderSky();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    @MethodPatch(
+            mcpName = "drawBlockDamageTexture",
+            notchName = "a",
+            mcpDesc = "(Lnet/minecraft/client/renderer/Tessellator;Lnet/minecraft/client/renderer/BufferBuilder;Lnet/minecraft/entity/Entity;F)V",
+            notchDesc = "(Lbve;Lbuk;Lvg;F)V")
+    public void drawBlockDamageTexture(MethodNode methodNode, PatchManager.Environment env) {
+        final InsnList insnList = new InsnList();
+        insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "drawBlockDamageTextureHook", "()Z", false));
+        final LabelNode jmp = new LabelNode();
+        insnList.add(new JumpInsnNode(IFEQ, jmp));
+        insnList.add(new InsnNode(RETURN));
+        insnList.add(jmp);
+        methodNode.instructions.insert(insnList);
+    }
+
+    public static boolean drawBlockDamageTextureHook() {
+        final EventRenderBlockDamage event = new EventRenderBlockDamage();
         Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
 
         return event.isCanceled();

@@ -4,9 +4,7 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.camera.Camera;
 import me.rigamortis.seppuku.api.event.minecraft.EventUpdateFramebufferSize;
 import me.rigamortis.seppuku.api.event.player.EventFovModifier;
-import me.rigamortis.seppuku.api.event.render.EventHurtCamEffect;
-import me.rigamortis.seppuku.api.event.render.EventRenderEntityOutlines;
-import me.rigamortis.seppuku.api.event.render.EventRenderOverlay;
+import me.rigamortis.seppuku.api.event.render.*;
 import net.minecraft.client.Minecraft;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
@@ -68,6 +66,20 @@ public final class CameraManager {
 
     @Listener
     public void hurtCamEffect(EventHurtCamEffect event) {
+        if (this.isCameraRecording()) {
+            event.setCanceled(true);
+        }
+    }
+
+    @Listener
+    public void renderSky(EventRenderSky event) {
+        if (this.isCameraRecording()) {
+            event.setCanceled(true);
+        }
+    }
+
+    @Listener
+    public void renderBlockDamage(EventRenderBlockDamage event) {
         if (this.isCameraRecording()) {
             event.setCanceled(true);
         }

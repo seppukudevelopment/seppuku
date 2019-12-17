@@ -53,7 +53,6 @@ public class Camera {
             GlStateManager.disableLighting();
             GlStateManager.disableAlpha();
             GlStateManager.disableBlend();
-            GlStateManager.enableColorMaterial();
 
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             frameBuffer.bindFramebufferTexture();
@@ -68,6 +67,7 @@ public class Camera {
             tessellator.draw();
 
             frameBuffer.unbindFramebufferTexture();
+
             GlStateManager.popMatrix();
         }
     }
@@ -144,6 +144,7 @@ public class Camera {
             frameBuffer.bindFramebuffer(true);
 
             mc.entityRenderer.renderWorld(mc.timer.renderPartialTicks, System.nanoTime());
+            mc.entityRenderer.setupOverlayRendering();
 
             frameBuffer.unbindFramebuffer();
             this.setRecording(false);

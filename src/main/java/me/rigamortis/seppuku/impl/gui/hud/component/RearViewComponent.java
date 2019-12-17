@@ -32,7 +32,7 @@ public final class RearViewComponent extends ResizableHudComponent {
         this.rearviewCamera.setRendering(true);
 
         if (this.rearviewCamera.isValid()) {
-            this.rearviewCamera.setPos(Minecraft.getMinecraft().player.getPositionEyes(partialTicks));
+            this.rearviewCamera.setPos(Minecraft.getMinecraft().player.getPositionEyes(partialTicks).subtract(0, 1, 0));
             this.rearviewCamera.setYaw(Minecraft.getMinecraft().player.rotationYaw - 180.0f);
             this.rearviewCamera.setPitch(0.0f);
             this.rearviewCamera.render(this.getX() + 2, this.getY() + 12, this.getX() + this.getW() - 2, this.getY() + this.getH() - 2);
