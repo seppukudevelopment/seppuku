@@ -19,8 +19,7 @@ import java.lang.reflect.Method;
  * 4/4/2019 @ 11:49 PM.
  */
 public final class SeppukuClassTransformer implements IClassTransformer {
-
-    private static final PatchManager PATCH_MANAGER = new PatchManager(PatchManager.Environment.IDE);
+    public static PatchManager PATCH_MANAGER = null;
 
     /**
      * Every time a class is loaded we can intercept it and modify the bytecode
@@ -32,6 +31,9 @@ public final class SeppukuClassTransformer implements IClassTransformer {
      */
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
+        if (PATCH_MANAGER == null)
+            return basicClass;
+
         try {
             //find a patch based on the class name
             final ClassPatch patch = PATCH_MANAGER.findClassPatch(name);

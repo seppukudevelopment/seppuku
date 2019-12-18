@@ -1,5 +1,6 @@
 package me.rigamortis.seppuku.impl.fml.core;
 
+import me.rigamortis.seppuku.impl.management.PatchManager;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
 import javax.annotation.Nullable;
@@ -33,7 +34,9 @@ public final class SeppukuLoadingPlugin implements IFMLLoadingPlugin {
 
     @Override
     public void injectData(Map<String, Object> data) {
-
+        final boolean runtimeDeobfuscationEnabled =
+                (boolean) data.getOrDefault("runtimeDeobfuscationEnabled", false);
+        SeppukuClassTransformer.PATCH_MANAGER = new PatchManager(!runtimeDeobfuscationEnabled);
     }
 
     @Override
