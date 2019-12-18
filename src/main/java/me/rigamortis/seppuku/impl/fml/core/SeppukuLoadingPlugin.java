@@ -35,7 +35,7 @@ public final class SeppukuLoadingPlugin implements IFMLLoadingPlugin {
     @Override
     public void injectData(Map<String, Object> data) {
         final boolean runtimeDeobfuscationEnabled =
-                (boolean) data.getOrDefault("runtimeDeobfuscationEnabled", false);
+                (boolean) data.getOrDefault("runtimeDeobfuscationEnabled", true);
         SeppukuClassTransformer.PATCH_MANAGER = new PatchManager(!runtimeDeobfuscationEnabled);
     }
 
