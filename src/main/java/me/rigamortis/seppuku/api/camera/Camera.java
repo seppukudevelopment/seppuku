@@ -53,6 +53,7 @@ public class Camera {
             GlStateManager.disableLighting();
             GlStateManager.disableAlpha();
             GlStateManager.disableBlend();
+            GlStateManager.enableColorMaterial();
 
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             frameBuffer.bindFramebufferTexture();

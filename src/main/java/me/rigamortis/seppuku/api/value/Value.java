@@ -52,7 +52,8 @@ public class Value<T> {
             final Number val = (Number) value;
             final Number min = (Number) this.min;
             final Number max = (Number) this.max;
-            this.value = (T) this.clamp(val, min, max);
+            this.value = (T) val;
+            //this.value = (T) this.clamp(val, min, max);
         } else {
             this.value = value;
         }
