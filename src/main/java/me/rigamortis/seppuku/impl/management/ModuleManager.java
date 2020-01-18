@@ -148,6 +148,7 @@ public final class ModuleManager {
         add(new ChatSuffixModule());
         add(new VisualRangeModule());
         add(new HotBarRefillModule());
+        add(new QuickCraftModule());
 
         //p2w experience
         if (Seppuku.INSTANCE.getCapeManager().hasCape())
