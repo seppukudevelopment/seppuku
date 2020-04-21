@@ -160,41 +160,44 @@ public final class ElytraFlyModule extends Module {
                             }
                             break;
                         case CONTROL:
+                            final double speedHalved = this.speed.getValue() / 2;
+                            mc.player.motionY = 0;
                             if (mc.gameSettings.keyBindJump.isKeyDown()) {
-                                mc.player.motionY = this.speed.getValue() / 2;
+                                mc.player.motionY = speedHalved;
                             } else if (mc.gameSettings.keyBindSneak.isKeyDown()) {
-                                mc.player.motionY = -this.speed.getValue() / 2;
-                            } else {
-                                mc.player.motionY = 0;
+                                mc.player.motionY = -speedHalved;
                             }
 
+                            final double sinSpeed = Math.sin(rotationYaw) * this.speed.getValue();
+                            final double cosSpeed = Math.cos(rotationYaw) * this.speed.getValue();
+                            double Xavg = 0;
+                            double Zavg = 0;
+                            boolean avgbit = false;
+                            final boolean invBit = rotationYaw/90%2==1;
                             if (mc.gameSettings.keyBindForward.isKeyDown()) {
-                                mc.player.motionX = -Math.sin(rotationYaw) * this.speed.getValue();
-                                mc.player.motionZ = Math.cos(rotationYaw) * this.speed.getValue();
+                                Xavg = -sinSpeed;
+                                Zavg = cosSpeed;
+                                avgbit = true;
                             } else if (mc.gameSettings.keyBindBack.isKeyDown()) {
-                                mc.player.motionX = Math.sin(rotationYaw) * this.speed.getValue();
-                                mc.player.motionZ = -Math.cos(rotationYaw) * this.speed.getValue();
-                            } else if (mc.gameSettings.keyBindRight.isKeyDown()) {
-                                if (rotationYaw/90%2==1) {
-                                    mc.player.motionX = Math.cos(rotationYaw) * this.speed.getValue();
-                                    mc.player.motionZ = Math.sin(rotationYaw) * this.speed.getValue();
-                                } else {
-                                    mc.player.motionX = -Math.cos(rotationYaw) * this.speed.getValue();
-                                    mc.player.motionZ = -Math.sin(rotationYaw) * this.speed.getValue();
-                                }
-                            } else if (mc.gameSettings.keyBindLeft.isKeyDown()) {
-                                if (rotationYaw/90%2==1) {
-                                    mc.player.motionX = -Math.cos(rotationYaw) * this.speed.getValue();
-                                    mc.player.motionZ = -Math.sin(rotationYaw) * this.speed.getValue();
-                                } else {
-                                    mc.player.motionX = Math.cos(rotationYaw) * this.speed.getValue();
-                                    mc.player.motionZ = Math.sin(rotationYaw) * this.speed.getValue();
-                                }
-                            } else {
-                                mc.player.motionX = 0;
-                                mc.player.motionZ = 0;
+                                Xavg = sinSpeed;
+                                Zavg = -cosSpeed;
+                                avgbit = true;
                             }
+                            if ((mc.gameSettings.keyBindRight.isKeyDown() && invBit) || mc.gameSettings.keyBindLeft.isKeyDown()) {
+                                Xavg += cosSpeed;
+                                Zavg += sinSpeed;
+                            } else if ((mc.gameSettings.keyBindLeft.isKeyDown() && invBit) || mc.gameSettings.keyBindRight.isKeyDown()) {
+                                Xavg += -cosSpeed;
+                                Zavg += -sinSpeed;
+                            }
+                            if (avgbit) {
+                                Xavg *= 0.5;
+                                Zavg *= 0.5;
+                            }
+                            mc.player.motionX = Xavg;
+                            mc.player.motionZ = Zavg;
                             break;
+
                     }
                 }
 
