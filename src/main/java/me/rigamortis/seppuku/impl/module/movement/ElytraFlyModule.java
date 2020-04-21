@@ -25,7 +25,7 @@ public final class ElytraFlyModule extends Module {
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Mode to use for elytra flight.", Mode.VANILLA);
 
     private enum Mode {
-        VANILLA, PACKET, BYPASS
+        VANILLA, PACKET, BYPASS, CONTROL
     }
 
     public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd"}, "Speed multiplier for elytra flight, higher values equals more speed.", 1.0f, 0.0f, 5.0f, 0.01f);
@@ -154,6 +154,42 @@ public final class ElytraFlyModule extends Module {
                             if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
                                 mc.player.motionX = directionSpeedBypass[0];
                                 mc.player.motionZ = directionSpeedBypass[1];
+                            } else {
+                                mc.player.motionX = 0;
+                                mc.player.motionZ = 0;
+                            }
+                            break;
+                        case CONTROL:
+                            if (mc.gameSettings.keyBindJump.isKeyDown()) {
+                                mc.player.motionY = this.speed.getValue() / 2;
+                            } else if (mc.gameSettings.keyBindSneak.isKeyDown()) {
+                                mc.player.motionY = -this.speed.getValue() / 2;
+                            } else {
+                                mc.player.motionY = 0;
+                            }
+
+                            if (mc.gameSettings.keyBindForward.isKeyDown()) {
+                                mc.player.motionX = -Math.sin(rotationYaw) * this.speed.getValue();
+                                mc.player.motionZ = Math.cos(rotationYaw) * this.speed.getValue();
+                            } else if (mc.gameSettings.keyBindBack.isKeyDown()) {
+                                mc.player.motionX = Math.sin(rotationYaw) * this.speed.getValue();
+                                mc.player.motionZ = -Math.cos(rotationYaw) * this.speed.getValue();
+                            } else if (mc.gameSettings.keyBindRight.isKeyDown()) {
+                                if (rotationYaw/90%2==1) {
+                                    mc.player.motionX = Math.cos(rotationYaw) * this.speed.getValue();
+                                    mc.player.motionZ = Math.sin(rotationYaw) * this.speed.getValue();
+                                } else {
+                                    mc.player.motionX = -Math.cos(rotationYaw) * this.speed.getValue();
+                                    mc.player.motionZ = -Math.sin(rotationYaw) * this.speed.getValue();
+                                }
+                            } else if (mc.gameSettings.keyBindLeft.isKeyDown()) {
+                                if (rotationYaw/90%2==1) {
+                                    mc.player.motionX = -Math.cos(rotationYaw) * this.speed.getValue();
+                                    mc.player.motionZ = -Math.sin(rotationYaw) * this.speed.getValue();
+                                } else {
+                                    mc.player.motionX = Math.cos(rotationYaw) * this.speed.getValue();
+                                    mc.player.motionZ = Math.sin(rotationYaw) * this.speed.getValue();
+                                }
                             } else {
                                 mc.player.motionX = 0;
                                 mc.player.motionZ = 0;
