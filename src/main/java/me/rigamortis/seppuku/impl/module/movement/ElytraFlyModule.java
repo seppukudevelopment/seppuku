@@ -25,7 +25,7 @@ public final class ElytraFlyModule extends Module {
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Mode to use for elytra flight.", Mode.VANILLA);
 
     private enum Mode {
-        VANILLA, PACKET, BYPASS
+        VANILLA, PACKET, BYPASS, CONTROL
     }
 
     public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd"}, "Speed multiplier for elytra flight, higher values equals more speed.", 1.0f, 0.0f, 5.0f, 0.01f);
@@ -159,6 +159,45 @@ public final class ElytraFlyModule extends Module {
                                 mc.player.motionZ = 0;
                             }
                             break;
+                        case CONTROL:
+                            final double speedHalved = this.speed.getValue() / 2;
+                            mc.player.motionY = 0;
+                            if (mc.gameSettings.keyBindJump.isKeyDown()) {
+                                mc.player.motionY = speedHalved;
+                            } else if (mc.gameSettings.keyBindSneak.isKeyDown()) {
+                                mc.player.motionY = -speedHalved;
+                            }
+
+                            final double sinSpeed = Math.sin(rotationYaw) * this.speed.getValue();
+                            final double cosSpeed = Math.cos(rotationYaw) * this.speed.getValue();
+                            double Xavg = 0;
+                            double Zavg = 0;
+                            boolean avgbit = false;
+                            final boolean invBit = rotationYaw/90%2==1;
+                            if (mc.gameSettings.keyBindForward.isKeyDown()) {
+                                Xavg = -sinSpeed;
+                                Zavg = cosSpeed;
+                                avgbit = true;
+                            } else if (mc.gameSettings.keyBindBack.isKeyDown()) {
+                                Xavg = sinSpeed;
+                                Zavg = -cosSpeed;
+                                avgbit = true;
+                            }
+                            if ((mc.gameSettings.keyBindRight.isKeyDown() && invBit) || mc.gameSettings.keyBindLeft.isKeyDown()) {
+                                Xavg += cosSpeed;
+                                Zavg += sinSpeed;
+                            } else if ((mc.gameSettings.keyBindLeft.isKeyDown() && invBit) || mc.gameSettings.keyBindRight.isKeyDown()) {
+                                Xavg += -cosSpeed;
+                                Zavg += -sinSpeed;
+                            }
+                            if (avgbit) {
+                                Xavg *= 0.5;
+                                Zavg *= 0.5;
+                            }
+                            mc.player.motionX = Xavg;
+                            mc.player.motionZ = Zavg;
+                            break;
+
                     }
                 }
 
