@@ -17,8 +17,6 @@ import me.rigamortis.seppuku.impl.module.misc.*;
 import me.rigamortis.seppuku.impl.module.movement.*;
 import me.rigamortis.seppuku.impl.module.player.*;
 import me.rigamortis.seppuku.impl.module.render.*;
-import me.rigamortis.seppuku.impl.module.ui.HudEditorModule;
-import me.rigamortis.seppuku.impl.module.world.*;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -134,7 +132,7 @@ public final class ModuleManager {
         add(new ObsidianReplaceModule());
         add(new ChatTimeStampsModule());
         add(new HudEditorModule());
-        add(new ChestAlertModule());
+        add(new StorageAlertModule());
         add(new StrafeModule());
         add(new MapBypassModule());
         add(new NoBossHealthModule());
