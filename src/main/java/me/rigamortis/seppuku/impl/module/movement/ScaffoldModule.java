@@ -83,7 +83,7 @@ public final class ScaffoldModule extends Module {
                 }
             }
 
-            if ((mc.player.movementInput.moveForward != 0 || mc.player.movementInput.moveStrafe != 0)) {
+            if ((mc.player.movementInput.moveForward != 0 || mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.jump) && !mc.player.movementInput.sneak) {
                 final double[] dir = MathUtil.directionSpeed(1);
 
                 if (mc.player.getHeldItemMainhand().getItem() != Items.AIR && mc.player.getHeldItemMainhand().getItem() instanceof ItemBlock && canPlace(mc.player.getHeldItemMainhand())) {
@@ -280,17 +280,17 @@ public final class ScaffoldModule extends Module {
     }
 
     private Vec3d getFirstBlock(double[] dir) {
-        for (int i = 0; i <= ((int) 4.5f); i++) {
-            Vec3d pos = new Vec3d(Minecraft.getMinecraft().player.posX + -dir[0] * i, Minecraft.getMinecraft().player.posY - 1, Minecraft.getMinecraft().player.posZ + -dir[1] * i);
-            Vec3d before = new Vec3d(Minecraft.getMinecraft().player.posX + -dir[0] * (i - 1), Minecraft.getMinecraft().player.posY - 1, Minecraft.getMinecraft().player.posZ + -dir[1] * (i - 1));
-
-            final Block firstBlock = Minecraft.getMinecraft().world.getBlockState(new BlockPos(before.x, before.y, before.z)).getBlock();
-            final Block secondBlock = Minecraft.getMinecraft().world.getBlockState(new BlockPos(before.x, before.y, before.z)).getBlock();
-
-            if ((firstBlock != Blocks.AIR) || !(firstBlock instanceof BlockLiquid) && (secondBlock == Blocks.AIR) || (secondBlock instanceof BlockLiquid)) {
-                return before;
+        final Minecraft mc = Minecraft.getMinecraft();
+        Vec3d pos = new Vec3d(mc.player.posX, mc.player.posY - 1, mc.player.posZ);
+        Vec3d dirpos = new Vec3d(mc.player.posX + dir[0], mc.player.posY - 1, mc.player.posZ + dir[1]);
+        if (mc.world.getBlockState(new BlockPos(pos.x, pos.y, pos.z)).getBlock() == Blocks.AIR)
+            return pos;
+        if (mc.world.getBlockState(new BlockPos(dirpos.x, dirpos.y, dirpos.z)).getBlock() == Blocks.AIR)
+            if (mc.world.getBlockState(new BlockPos(pos.x, dirpos.y, dirpos.z)).getBlock() == Blocks.AIR && mc.world.getBlockState(new BlockPos(dirpos.x, dirpos.y, pos.z)).getBlock() == Blocks.AIR) {
+                return new Vec3d(dirpos.x, pos.y, pos.z);
+            } else {
+                return dirpos;
             }
-        }
         return null;
     }
 
