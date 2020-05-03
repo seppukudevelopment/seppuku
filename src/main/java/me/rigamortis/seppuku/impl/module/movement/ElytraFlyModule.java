@@ -1,9 +1,11 @@
 package me.rigamortis.seppuku.impl.module.movement;
 
+import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.impl.module.player.NoHungerModule;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
@@ -44,6 +46,11 @@ public final class ElytraFlyModule extends Module {
     @Override
     public void onEnable() {
         super.onEnable();
+        final NoHungerModule nohunger = (NoHungerModule) Seppuku.INSTANCE.getModuleManager().find(NoHungerModule.class);
+        if (nohunger != null && nohunger.isEnabled()) {
+            nohunger.toggle();
+            Seppuku.INSTANCE.logChat("Toggled \247c" + nohunger.getDisplayName() + "\247r because it conflicts with \247a" + this.getDisplayName());
+        }
     }
 
     @Override
@@ -92,24 +99,19 @@ public final class ElytraFlyModule extends Module {
                     switch (this.mode.getValue()) {
                         case VANILLA:
                             final float speedScaled = this.speed.getValue() * 0.05f; // 5/100 of original value
-
-                            if (mc.gameSettings.keyBindJump.isKeyDown()) {
-                                mc.player.motionY += speedScaled;
+                            final double[] directionSpeedVanilla = MathUtil.directionSpeed(speedScaled);
+                            if (mc.player.movementInput.jump) {
+                                mc.player.motionY = this.speed.getValue();
                             }
 
-                            if (mc.gameSettings.keyBindSneak.isKeyDown()) {
-                                mc.player.motionY -= speedScaled;
+                            if (mc.player.movementInput.sneak) {
+                                mc.player.motionY = -this.speed.getValue();
+                            }
+                            if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
+                                mc.player.motionX += directionSpeedVanilla[0];
+                                mc.player.motionZ += directionSpeedVanilla[1];
                             }
 
-                            if (mc.gameSettings.keyBindForward.isKeyDown()) {
-                                mc.player.motionX -= Math.sin(rotationYaw) * speedScaled;
-                                mc.player.motionZ += Math.cos(rotationYaw) * speedScaled;
-                            }
-
-                            if (mc.gameSettings.keyBindBack.isKeyDown()) {
-                                mc.player.motionX += Math.sin(rotationYaw) * speedScaled;
-                                mc.player.motionZ -= Math.cos(rotationYaw) * speedScaled;
-                            }
                             break;
                         case PACKET:
                             this.freezePlayer(mc.player);
@@ -160,44 +162,20 @@ public final class ElytraFlyModule extends Module {
                             }
                             break;
                         case CONTROL:
-                            final double speedHalved = this.speed.getValue() / 2;
-                            mc.player.motionY = 0;
-                            if (mc.gameSettings.keyBindJump.isKeyDown()) {
-                                mc.player.motionY = speedHalved;
-                            } else if (mc.gameSettings.keyBindSneak.isKeyDown()) {
-                                mc.player.motionY = -speedHalved;
+                            final double[] directionSpeedControl = MathUtil.directionSpeed(this.speed.getValue());
+                            mc.player.motionY = -this.idlefall.getValue();
+                            mc.player.motionX = 0;
+                            mc.player.motionZ = 0;
+                            if (mc.player.movementInput.jump) {
+                                mc.player.motionY = this.upspd.getValue();
+                            } else if (mc.player.movementInput.sneak) {
+                                mc.player.motionY = -this.downspd.getValue();
                             }
-
-                            final double sinSpeed = Math.sin(rotationYaw) * this.speed.getValue();
-                            final double cosSpeed = Math.cos(rotationYaw) * this.speed.getValue();
-                            double Xavg = 0;
-                            double Zavg = 0;
-                            boolean avgbit = false;
-                            final boolean invBit = rotationYaw/90%2==1;
-                            if (mc.gameSettings.keyBindForward.isKeyDown()) {
-                                Xavg = -sinSpeed;
-                                Zavg = cosSpeed;
-                                avgbit = true;
-                            } else if (mc.gameSettings.keyBindBack.isKeyDown()) {
-                                Xavg = sinSpeed;
-                                Zavg = -cosSpeed;
-                                avgbit = true;
+                            if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
+                                mc.player.motionX = directionSpeedControl[0];
+                                mc.player.motionZ = directionSpeedControl[1];
                             }
-                            if ((mc.gameSettings.keyBindRight.isKeyDown() && invBit) || mc.gameSettings.keyBindLeft.isKeyDown()) {
-                                Xavg += cosSpeed;
-                                Zavg += sinSpeed;
-                            } else if ((mc.gameSettings.keyBindLeft.isKeyDown() && invBit) || mc.gameSettings.keyBindRight.isKeyDown()) {
-                                Xavg += -cosSpeed;
-                                Zavg += -sinSpeed;
-                            }
-                            if (avgbit) {
-                                Xavg *= 0.5;
-                                Zavg *= 0.5;
-                            }
-                            mc.player.motionX = Xavg;
-                            mc.player.motionZ = Zavg;
                             break;
-
                     }
                 }
 
