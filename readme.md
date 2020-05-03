@@ -1,6 +1,6 @@
 # ![Seppuku](res/seppuku_full.png)
 
-Seppuku is a free, lightweight, open-source [_Minecraft Forge_](https://files.minecraftforge.net/) mod for Minecraft 1.12.2. Oriented towards the 9B9T anarchy server, this is a fully featured client-side mod with an external plugin API, unique exploits, and a [solid community](https://discord.gg/9SJUfUa).
+Seppuku is a free, lightweight, open-source [_Minecraft Forge_](https://files.minecraftforge.net/) mod for Minecraft 1.12.2. Oriented towards the 9B9T anarchy server, this is a fully featured client-side mod with an external plugin API, unique exploits, and a [solid community](https://discord.gg/UzWBZPe).
 
 # Requirements
 - **JDK 8** (https://adoptopenjdk.net/, https://aws.amazon.com/corretto/)
