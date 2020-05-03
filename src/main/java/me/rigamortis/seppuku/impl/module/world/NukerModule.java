@@ -132,7 +132,7 @@ public final class NukerModule extends Module {
                     for (float z = maxDist; z >= -maxDist; z--) {
                         final BlockPos pos = new BlockPos(mc.player.posX + x, mc.player.posY + y, mc.player.posZ + z);
                         final double dist = mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ());
-                        if (dist <= maxDist && (mc.world.getBlockState(pos).getBlock() != Blocks.AIR && !(mc.world.getBlockState(pos).getBlock() instanceof BlockLiquid)) && canBreak(pos)) {
+                        if (dist <= maxDist && (mc.world.getBlockState(pos).getBlock() != Blocks.AIR && !(mc.world.getBlockState(pos).getBlock() instanceof BlockLiquid)) && canBreak(pos) && ((selection && mc.world.getBlockState(pos).getBlock() == this.selected) || true)) {
                             if (pos.getY() >= mc.player.posY) {
                                 maxDist = (float) dist;
                                 ret = pos;
