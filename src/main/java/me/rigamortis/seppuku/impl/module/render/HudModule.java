@@ -9,6 +9,7 @@ import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
+import me.rigamortis.seppuku.impl.module.movement.FlightModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -19,6 +20,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class HudModule extends Module {
 
+    public final Value<HudModule.Mode> mode = new Value<HudModule.Mode>("Sorting Mode", new String[]{"Sorting", "sort"}, "Changes arraylist sorting.", HudModule.Mode.LENGTH);
     public final Value<Boolean> hidePotions = new Value<Boolean>("HidePotions", new String[]{"HidePotions", "HidePots", "Hide_Potions"}, "Hides the Vanilla potion hud (at the top right of the screen).", true);
 
     public HudModule() {
@@ -67,5 +69,9 @@ public final class HudModule extends Module {
         if (this.hidePotions.getValue()) {
             event.setCanceled(true);
         }
+    }
+
+    public enum Mode {
+        LENGTH, ALPHABET, UNSORTED;
     }
 }

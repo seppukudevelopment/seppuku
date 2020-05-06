@@ -60,6 +60,7 @@ public final class CommandManager {
         this.commandList.add(new JoinDateCommand());
         this.commandList.add(new EnchantCommand());
         this.commandList.add(new RenameCommand());
+        this.commandList.add(new RenameModuleCommand());
         this.commandList.add(new SpawnEggCommand());
         this.commandList.add(new StackSizeCommand());
         this.commandList.add(new CrashSlimeCommand());
