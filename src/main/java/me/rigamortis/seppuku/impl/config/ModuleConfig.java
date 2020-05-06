@@ -72,7 +72,7 @@ public class ModuleConfig extends Configurable {
     public void onSave() {
         JsonObject moduleJsonObject = new JsonObject();
         moduleJsonObject.addProperty("Name", module.getDisplayName());
-        moduleJsonObject.addProperty("Alias", module.getCustomAlias());
+        moduleJsonObject.addProperty("Alias", module.getDisplayName());
         moduleJsonObject.addProperty("Color", Integer.toHexString(module.getColor()).toUpperCase());
         moduleJsonObject.addProperty("Hidden", module.isHidden());
         moduleJsonObject.addProperty("Keybind", (module.getKey() != null) ? module.getKey() : "NONE");
