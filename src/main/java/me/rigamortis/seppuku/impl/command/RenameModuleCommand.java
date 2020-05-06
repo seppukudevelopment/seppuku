@@ -17,7 +17,7 @@ import net.minecraft.network.play.client.CPacketCreativeInventoryAction;
 public final class RenameModuleCommand extends Command {
 
     public RenameModuleCommand() {
-        super("RenameModule", new String[]{"rm", "renamemod", "renamemodule"}, "Rename modules.", "rm / renamemod / renamemodule <module name> <new module name>");
+        super("RenameModule", new String[]{"rm", "renamemod", "renamemodule"}, "Rename modules.", "renamemodule <module> <name>");
     }
 
     @Override

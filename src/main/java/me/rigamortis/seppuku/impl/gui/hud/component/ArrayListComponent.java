@@ -37,7 +37,7 @@ public final class ArrayListComponent extends DraggableHudComponent {
         }
 
 
-        Object sorting_mode = Seppuku.INSTANCE.getModuleManager().find(ArrayListModule.class).find("Sorting Mode").getValue();
+        Object sorting_mode = Seppuku.INSTANCE.getModuleManager().find(ArrayListModule.class).find("Sorting").getValue();
         if (sorting_mode.equals(LENGTH)) {
             final Comparator<Module> lengthComparator = (first, second) -> {
                 final String firstName = first.getDisplayName() + (first.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + first.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");

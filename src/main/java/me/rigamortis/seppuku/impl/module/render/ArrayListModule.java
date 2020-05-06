@@ -9,7 +9,7 @@ import me.rigamortis.seppuku.api.value.Value;
  */
 public class ArrayListModule extends Module {
 
-    public final Value<ArrayListModule.Mode> mode = new Value<ArrayListModule.Mode>("Sorting Mode", new String[]{"Sorting", "sort"}, "Changes arraylist sorting.", ArrayListModule.Mode.LENGTH);
+    public final Value<ArrayListModule.Mode> mode = new Value<ArrayListModule.Mode>("Sorting", new String[]{"Sorting", "sort"}, "Changes arraylist sorting.", ArrayListModule.Mode.LENGTH);
 
     public ArrayListModule() {
         super("Arraylist", new String[]{"Arraylist"}, "Sorting", "NONE", -1, ModuleType.RENDER);
