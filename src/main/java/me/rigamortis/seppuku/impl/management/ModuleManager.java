@@ -39,6 +39,7 @@ public final class ModuleManager {
         add(new KeybindsModule());
         add(new CommandsModule());
         add(new HudModule());
+        add(new ArrayListModule());
         add(new NoOverlayModule());
         add(new NoPushModule());
         add(new GodModeModule());

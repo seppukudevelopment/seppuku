@@ -17,7 +17,7 @@ import net.minecraft.network.play.client.CPacketCreativeInventoryAction;
 public final class RenameModuleCommand extends Command {
 
     public RenameModuleCommand() {
-        super("RenameModule", new String[]{"rm", "renamemod", "renamemodule"}, "Rename modules.", "Enchant <Enchantment / All> <Level / Max> ([true/false] Disable Curses)");
+        super("RenameModule", new String[]{"rm", "renamemod", "renamemodule"}, "Rename modules.", "rm / renamemod / renamemodule <module name> <new module name>");
     }
 
     @Override
@@ -36,6 +36,8 @@ public final class RenameModuleCommand extends Command {
             Module mod = Seppuku.INSTANCE.getModuleManager().find(originalModuleName);
 
             mod.setDisplayName(newModuleName);
+
+            Seppuku.INSTANCE.getConfigManager().saveAll();
             Seppuku.INSTANCE.logChat("Set " + originalModuleName + " custom alias to " + newModuleName);
         } else {
             Seppuku.INSTANCE.logChat(originalModuleName + " does not exist!");

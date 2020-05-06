@@ -20,7 +20,6 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class HudModule extends Module {
 
-    public final Value<HudModule.Mode> mode = new Value<HudModule.Mode>("Sorting Mode", new String[]{"Sorting", "sort"}, "Changes arraylist sorting.", HudModule.Mode.LENGTH);
     public final Value<Boolean> hidePotions = new Value<Boolean>("HidePotions", new String[]{"HidePotions", "HidePots", "Hide_Potions"}, "Hides the Vanilla potion hud (at the top right of the screen).", true);
 
     public HudModule() {
@@ -69,9 +68,5 @@ public final class HudModule extends Module {
         if (this.hidePotions.getValue()) {
             event.setCanceled(true);
         }
-    }
-
-    public enum Mode {
-        LENGTH, ALPHABET, UNSORTED;
     }
 }
