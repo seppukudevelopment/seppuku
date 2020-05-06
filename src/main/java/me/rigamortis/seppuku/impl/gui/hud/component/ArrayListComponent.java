@@ -35,13 +35,6 @@ public final class ArrayListComponent extends DraggableHudComponent {
             }
         }
 
-        final Comparator<Module> comparator = (first, second) -> {
-            final String firstName = first.getDisplayName() + (first.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + first.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");
-            final String secondName = second.getDisplayName() + (second.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + second.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");
-            final float dif = Minecraft.getMinecraft().fontRenderer.getStringWidth(secondName) - Minecraft.getMinecraft().fontRenderer.getStringWidth(firstName);
-            return dif != 0 ? (int) dif : secondName.compareTo(firstName);
-        };
-
         final Comparator<Module> lengthComparator = (first, second) -> {
             final String firstName = first.getDisplayName() + (first.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + first.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");
             final String secondName = second.getDisplayName() + (second.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + second.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");
@@ -72,7 +65,7 @@ public final class ArrayListComponent extends DraggableHudComponent {
         for (Module mod : mods) {
             if (mod != null && mod.getType() != Module.ModuleType.HIDDEN && mod.isEnabled() && !mod.isHidden()) {
 
-                String name = (Boolean)Seppuku.INSTANCE.getModuleManager().find(HudModule.class).find("Custom Aliases").getValue() ? mod.getCustomAlias() != null ? mod.getCustomAlias() : mod.getDisplayName() + (mod.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + mod.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "")  : mod.getDisplayName() + (mod.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + mod.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");
+                final String name = mod.getDisplayName() + (mod.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + mod.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");
 
                 final float width = Minecraft.getMinecraft().fontRenderer.getStringWidth(name);
 
