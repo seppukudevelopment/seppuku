@@ -22,7 +22,7 @@ public final class HudModule extends Module {
     public final Value<Boolean> hidePotions = new Value<Boolean>("HidePotions", new String[]{"HidePotions", "HidePots", "Hide_Potions"}, "Hides the Vanilla potion hud (at the top right of the screen).", true);
 
     public HudModule() {
-        super("Hud", new String[]{"Overlay"}, "Shows lots of useful info", "NONE", -1, ModuleType.RENDER);
+        super("Hud", new String[]{"Overlay"}, "Renders hud components on the screen.", "NONE", -1, ModuleType.RENDER);
         this.setHidden(true);
     }
 
@@ -30,11 +30,7 @@ public final class HudModule extends Module {
     public void render(EventRender2D event) {
         final Minecraft mc = Minecraft.getMinecraft();
 
-        if (mc.gameSettings.showDebugInfo) {
-            return;
-        }
-
-        if (mc.currentScreen instanceof GuiHudEditor) {
+        if (mc.gameSettings.showDebugInfo || mc.currentScreen instanceof GuiHudEditor || mc.player == null) {
             return;
         }
 
@@ -42,7 +38,6 @@ public final class HudModule extends Module {
         GlStateManager.enableBlend();
         for (HudComponent component : Seppuku.INSTANCE.getHudManager().getComponentList()) {
             if (component.isVisible()) {
-
                 //dont render components with the TOP_CENTER anchor if we are looking at the tab list
                 if (component instanceof DraggableHudComponent) {
                     final DraggableHudComponent draggableComponent = (DraggableHudComponent) component;

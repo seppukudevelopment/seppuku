@@ -18,7 +18,7 @@ public final class ConfigManager {
     private File moduleConfigDir;
     private File hudComponentConfigDir;
 
-    private boolean firstLaunch;
+    private boolean firstLaunch = false;
 
     private List<Configurable> configurableList = new ArrayList<>();
 
@@ -31,7 +31,7 @@ public final class ConfigManager {
     private void generateDirectories() {
         this.configDir = new File(CONFIG_PATH);
         if (!this.configDir.exists()) {
-            this.firstLaunch = true;
+            this.setFirstLaunch(true);
             this.configDir.mkdirs();
         }
 
