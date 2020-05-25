@@ -33,12 +33,12 @@ public final class TutorialComponent extends PopupComponent {
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
-        super.render(mouseX, mouseY, partialTicks);
-
         final Minecraft mc = Minecraft.getMinecraft();
 
         if (!(mc.currentScreen instanceof GuiHudEditor)) // ensure we are in the hud editor screen only
             return;
+
+        super.render(mouseX, mouseY, partialTicks);
 
         // drag me!
         mc.fontRenderer.drawStringWithShadow("(drag me!)", this.getX() + this.getW() - 80, this.getY() + 10, 0xFFAAAAAA);

@@ -30,9 +30,6 @@ public class PopupComponent extends DraggableHudComponent {
 
         final Minecraft mc = Minecraft.getMinecraft();
 
-        if (!(mc.currentScreen instanceof GuiHudEditor)) // ensure we are in the hud editor screen only
-            return;
-
         // background
         RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0xFF202020);
 
@@ -54,7 +51,7 @@ public class PopupComponent extends DraggableHudComponent {
                 mouseY <= this.getY() + CLOSE_BUTTON_SIZE;
 
         if (insideCloseButton && button == 0) {
-            this.setVisible(false);
+            this.onCloseButton();
         }
     }
 
@@ -64,5 +61,9 @@ public class PopupComponent extends DraggableHudComponent {
 
     public void setTextData(String textData) {
         this.textData = textData;
+    }
+
+    public void onCloseButton() {
+        this.setVisible(false);
     }
 }

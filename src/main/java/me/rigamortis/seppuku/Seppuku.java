@@ -107,7 +107,15 @@ public final class Seppuku {
 
         this.getEventManager().dispatchEvent(new EventLoad());
 
-        this.logger.info("Loaded");
+        // Add runtime hook to listen for shutdown to save configs
+        Runtime.getRuntime().addShutdownHook(new Thread("Seppuku Shutdown Hook") {
+            @Override
+            public void run() {
+                getConfigManager().saveAll();
+            }
+        });
+
+        this.logger.info("Seppuku Loaded Successfully");
     }
 
     public void errorChat(String message) {

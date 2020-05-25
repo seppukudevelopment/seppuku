@@ -167,9 +167,9 @@ public final class ElytraFlyModule extends Module {
                             mc.player.motionX = 0;
                             mc.player.motionZ = 0;
                             if (mc.player.movementInput.jump) {
-                            mc.player.motionY = this.speed.getValue() / 2;
+                                mc.player.motionY = this.speed.getValue() / 2;
                             } else if (mc.player.movementInput.sneak) {
-                            mc.player.motionY = -this.speed.getValue() / 2;
+                                mc.player.motionY = -this.speed.getValue() / 2;
                             }
                             if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
                                 mc.player.motionX = directionSpeedControl[0];
