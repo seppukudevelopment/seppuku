@@ -36,6 +36,11 @@ public class ModuleConfig extends Configurable {
             if (entry.getKey().equalsIgnoreCase("Keybind")) {
                 module.setKey(entry.getValue().getAsString());
             }
+
+            if (entry.getKey().equalsIgnoreCase("Name")) {
+                module.setDisplayName(entry.getValue().getAsString());
+            }
+
             // Check if we are already enabled
             if (entry.getKey().equalsIgnoreCase("Enabled") && !module.isEnabled() && module.getType() != Module.ModuleType.HIDDEN) {
                 if (entry.getValue().getAsBoolean()) {

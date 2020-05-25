@@ -4,11 +4,15 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.impl.module.render.ArrayListModule;
+import me.rigamortis.seppuku.impl.module.render.HudModule;
 import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
+import static me.rigamortis.seppuku.impl.module.render.ArrayListModule.Mode.*;
 
 /**
  * Author Seth
@@ -32,14 +36,26 @@ public final class ArrayListComponent extends DraggableHudComponent {
             }
         }
 
-        final Comparator<Module> comparator = (first, second) -> {
-            final String firstName = first.getDisplayName() + (first.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + first.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");
-            final String secondName = second.getDisplayName() + (second.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + second.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");
-            final float dif = Minecraft.getMinecraft().fontRenderer.getStringWidth(secondName) - Minecraft.getMinecraft().fontRenderer.getStringWidth(firstName);
-            return dif != 0 ? (int) dif : secondName.compareTo(firstName);
-        };
 
-        mods.sort(comparator);
+        Object sorting_mode = Seppuku.INSTANCE.getModuleManager().find(ArrayListModule.class).find("Sorting").getValue();
+        if (sorting_mode.equals(LENGTH)) {
+            final Comparator<Module> lengthComparator = (first, second) -> {
+                final String firstName = first.getDisplayName() + (first.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + first.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");
+                final String secondName = second.getDisplayName() + (second.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + second.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");
+                final float dif = Minecraft.getMinecraft().fontRenderer.getStringWidth(secondName) - Minecraft.getMinecraft().fontRenderer.getStringWidth(firstName);
+                return dif != 0 ? (int) dif : secondName.compareTo(firstName);
+            };
+            mods.sort(lengthComparator);
+        } else if (sorting_mode.equals(ALPHABET)) {
+            final Comparator<Module> alphabeticalComparator = (first, second) -> {
+                final String firstName = first.getDisplayName() + (first.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + first.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");
+                final String secondName = second.getDisplayName() + (second.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + second.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");
+                return firstName.compareToIgnoreCase(secondName);
+            };
+            mods.sort(alphabeticalComparator);
+        } else if (sorting_mode.equals(UNSORTED)) {
+
+        }
 
         float xOffset = 0;
         float yOffset = 0;
@@ -47,6 +63,7 @@ public final class ArrayListComponent extends DraggableHudComponent {
 
         for (Module mod : mods) {
             if (mod != null && mod.getType() != Module.ModuleType.HIDDEN && mod.isEnabled() && !mod.isHidden()) {
+
                 final String name = mod.getDisplayName() + (mod.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + mod.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");
 
                 final float width = Minecraft.getMinecraft().fontRenderer.getStringWidth(name);
