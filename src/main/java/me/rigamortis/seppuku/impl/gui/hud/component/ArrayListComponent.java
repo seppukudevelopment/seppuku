@@ -4,15 +4,14 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.impl.module.render.ArrayListModule;
-import me.rigamortis.seppuku.impl.module.render.HudModule;
+import me.rigamortis.seppuku.impl.module.hidden.ArrayListModule;
 import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static me.rigamortis.seppuku.impl.module.render.ArrayListModule.Mode.*;
+import static me.rigamortis.seppuku.impl.module.hidden.ArrayListModule.Mode.*;
 
 /**
  * Author Seth
