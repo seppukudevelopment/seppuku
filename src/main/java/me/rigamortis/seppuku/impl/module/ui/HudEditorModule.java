@@ -1,13 +1,11 @@
 package me.rigamortis.seppuku.impl.module.ui;
 
-import me.rigamortis.seppuku.api.event.minecraft.EventDisplayGui;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
-import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
  * Author Seth
@@ -39,15 +37,6 @@ public final class HudEditorModule extends Module {
                 }
             }
             this.open = true;
-        }
-    }
-
-    @Listener
-    public void displayGui(EventDisplayGui event) {
-        if (Minecraft.getMinecraft().currentScreen instanceof GuiHudEditor) {
-            if (event.getScreen() == null && this.open) {
-                event.setCanceled(true);
-            }
         }
     }
 

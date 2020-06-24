@@ -12,6 +12,8 @@ import net.minecraft.util.text.TextComponentString;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -58,18 +60,22 @@ public final class CommandManager {
         this.commandList.add(new JoinDateCommand());
         this.commandList.add(new EnchantCommand());
         this.commandList.add(new RenameCommand());
+        this.commandList.add(new RenameModuleCommand());
         this.commandList.add(new SpawnEggCommand());
         this.commandList.add(new StackSizeCommand());
         this.commandList.add(new CrashSlimeCommand());
         this.commandList.add(new SignBookCommand());
         this.commandList.add(new SkullCommand());
         this.commandList.add(new GiveCommand());
+        this.commandList.add(new CalcStrongholdCommand());
 
         //create commands for every value within every module
         loadValueCommands();
 
         //load our external commands
         loadExternalCommands();
+
+        Collections.sort(commandList, Comparator.comparing(Command::getDisplayName));
     }
 
     /**

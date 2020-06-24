@@ -11,9 +11,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * // todo; needs further testing
  *
@@ -21,7 +18,6 @@ import java.util.List;
  * @author Daniel E
  */
 public class PullDownModule extends Module {
-    private final List<RayTraceResult> rayTraceResults = new ArrayList<>(8);
     private static final float VELOCITY_MAX = 10.0f;
     public final Value<Boolean> jumpDisables =
             new Value<Boolean>("JumpDisables", new String[]{"jump"}, "When enabled, holding the jump key will disable any pulldown events from triggering.", true);
@@ -46,31 +42,20 @@ public class PullDownModule extends Module {
                 return;
 
             final Vec3d playerPosition = mc.player.getPositionVector();
-            final boolean doesPlayerCollide = recomputeHullTraces(mc.player, playerPosition
-                    .subtract(0.0d, 3.0d, 0.0d)).stream()
-                    .anyMatch(this::hitsCollidableBlock);
-            if (!doesPlayerCollide)
+            if (!hullCollidesWithBlock(mc.player, playerPosition.subtract(0.0d,
+                    3.0d, 0.0d)))
                 mc.player.motionY = -this.speed.getValue();
         }
     }
 
-    private boolean hitsCollidableBlock(final RayTraceResult rayTraceResult) {
-        return rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK;
-    }
-
-    private List<RayTraceResult> recomputeHullTraces(final Entity entity, final Vec3d nextPosition) {
-        rayTraceResults.clear();
-
+    private boolean hullCollidesWithBlock(final Entity entity,
+            final Vec3d nextPosition) {
         final AxisAlignedBB boundingBox = entity.getEntityBoundingBox();
         final Vec3d[] boundingBoxCorners = {
                 new Vec3d(boundingBox.minX, boundingBox.minY, boundingBox.minZ),
                 new Vec3d(boundingBox.minX, boundingBox.minY, boundingBox.maxZ),
-                new Vec3d(boundingBox.minX, boundingBox.maxY, boundingBox.minZ),
-                new Vec3d(boundingBox.minX, boundingBox.maxY, boundingBox.maxZ),
                 new Vec3d(boundingBox.maxX, boundingBox.minY, boundingBox.minZ),
-                new Vec3d(boundingBox.maxX, boundingBox.minY, boundingBox.maxZ),
-                new Vec3d(boundingBox.maxX, boundingBox.maxY, boundingBox.minZ),
-                new Vec3d(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ)
+                new Vec3d(boundingBox.maxX, boundingBox.minY, boundingBox.maxZ)
         };
 
         final Vec3d entityPosition = entity.getPositionVector();
@@ -81,9 +66,10 @@ public class PullDownModule extends Module {
             if (rayTraceResult == null)
                 continue;
 
-            rayTraceResults.add(rayTraceResult);
+            if (rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK)
+                return true;
         }
 
-        return rayTraceResults;
+        return false;
     }
 }

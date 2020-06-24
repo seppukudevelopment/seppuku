@@ -76,6 +76,11 @@ public final class EntityPlayerSPPatch extends ClassPatch {
         final EventPlayerUpdate event = new EventPlayerUpdate(stage);
         Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
 
+        if (stage == EventStageable.EventStage.PRE) {
+            //update all camera fbos after we render
+            Seppuku.INSTANCE.getCameraManager().update();
+        }
+
         return event.isCanceled();
     }
 

@@ -18,9 +18,9 @@ public final class PatchManager {
 
     private Environment env;
 
-    public PatchManager(Environment env) {
+    public PatchManager(final boolean devEnv) {
         //set our environment for mappings
-        this.setEnv(env);
+        this.setEnv(devEnv ? Environment.IDE : Environment.RELEASE);
 
         //add internal patches
         this.patchList.add(new MinecraftPatch());
@@ -57,6 +57,7 @@ public final class PatchManager {
         this.patchList.add(new NetHandlerPlayClientPatch());
         this.patchList.add(new ChunkPatch());
         this.patchList.add(new GuiScreenPatch());
+        this.patchList.add(new RenderGlobalPatch());
 
         //load custom external patches
         //TODO this needs more testing

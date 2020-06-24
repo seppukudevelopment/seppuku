@@ -83,7 +83,7 @@ public final class ScaffoldModule extends Module {
                 }
             }
 
-            if ((mc.player.movementInput.moveForward != 0 || mc.player.movementInput.moveStrafe != 0)) {
+            if ((mc.player.movementInput.moveForward != 0 || mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.jump) && !mc.player.movementInput.sneak) {
                 final double[] dir = MathUtil.directionSpeed(1);
 
                 if (mc.player.getHeldItemMainhand().getItem() != Items.AIR && mc.player.getHeldItemMainhand().getItem() instanceof ItemBlock && canPlace(mc.player.getHeldItemMainhand())) {
@@ -165,107 +165,20 @@ public final class ScaffoldModule extends Module {
 
     private void placeBlock(BlockPos pos) {
         final Minecraft mc = Minecraft.getMinecraft();
+        
+        BlockPos[][] posit = {{pos.add(0, 0, 1), pos.add(0, 0, -1)}, {pos.add(0, 1, 0), pos.add(0, -1, 0)}, {pos.add(1, 0, 0),pos.add(-1, 0, 0)}};
+        EnumFacing[][] facing = {{EnumFacing.NORTH, EnumFacing.SOUTH}, {EnumFacing.DOWN, EnumFacing.UP}, {EnumFacing.WEST, EnumFacing.EAST}}; // Facing reversed as blocks are placed while facing in the opposite direction
 
-        final Block north = mc.world.getBlockState(pos.add(0, 0, -1)).getBlock();
-        final Block south = mc.world.getBlockState(pos.add(0, 0, 1)).getBlock();
-        final Block east = mc.world.getBlockState(pos.add(1, 0, 0)).getBlock();
-        final Block west = mc.world.getBlockState(pos.add(-1, 0, 0)).getBlock();
-        final Block up = mc.world.getBlockState(pos.add(0, 1, 0)).getBlock();
-        final Block down = mc.world.getBlockState(pos.add(0, -1, 0)).getBlock();
-
-        if (up != null && up != Blocks.AIR && !(up instanceof BlockLiquid)) {
-            final boolean activated = up.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, EnumHand.MAIN_HAND, EnumFacing.DOWN, 0, 0, 0);
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
-            }
-
-            if (mc.playerController.processRightClickBlock(mc.player, mc.world, pos.add(0, 1, 0), EnumFacing.DOWN, new Vec3d(0d, 0d, 0d), EnumHand.MAIN_HAND) != EnumActionResult.FAIL) {
-                mc.player.swingArm(EnumHand.MAIN_HAND);
-            }
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
-            }
-        }
-
-        if (down != null && down != Blocks.AIR && !(down instanceof BlockLiquid)) {
-            final boolean activated = down.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, EnumHand.MAIN_HAND, EnumFacing.UP, 0, 0, 0);
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
-            }
-
-            if (mc.playerController.processRightClickBlock(mc.player, mc.world, pos.add(0, -1, 0), EnumFacing.UP, new Vec3d(0d, 0d, 0d), EnumHand.MAIN_HAND) != EnumActionResult.FAIL) {
-                mc.player.swingArm(EnumHand.MAIN_HAND);
-            }
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
-            }
-        }
-
-        if (north != null && north != Blocks.AIR && !(north instanceof BlockLiquid)) {
-            final boolean activated = north.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, EnumHand.MAIN_HAND, EnumFacing.UP, 0, 0, 0);
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
-            }
-
-            if (mc.playerController.processRightClickBlock(mc.player, mc.world, pos.add(0, 0, -1), EnumFacing.SOUTH, new Vec3d(0d, 0d, 0d), EnumHand.MAIN_HAND) != EnumActionResult.FAIL) {
-                mc.player.swingArm(EnumHand.MAIN_HAND);
-            }
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
-            }
-        }
-
-        if (south != null && south != Blocks.AIR && !(south instanceof BlockLiquid)) {
-            final boolean activated = south.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, EnumHand.MAIN_HAND, EnumFacing.UP, 0, 0, 0);
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
-            }
-
-            if (mc.playerController.processRightClickBlock(mc.player, mc.world, pos.add(0, 0, 1), EnumFacing.NORTH, new Vec3d(0d, 0d, 0d), EnumHand.MAIN_HAND) != EnumActionResult.FAIL) {
-                mc.player.swingArm(EnumHand.MAIN_HAND);
-            }
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
-            }
-        }
-
-        if (east != null && east != Blocks.AIR && !(east instanceof BlockLiquid)) {
-            final boolean activated = east.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, EnumHand.MAIN_HAND, EnumFacing.UP, 0, 0, 0);
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
-            }
-
-            if (mc.playerController.processRightClickBlock(mc.player, mc.world, pos.add(1, 0, 0), EnumFacing.WEST, new Vec3d(0d, 0d, 0d), EnumHand.MAIN_HAND) != EnumActionResult.FAIL) {
-                mc.player.swingArm(EnumHand.MAIN_HAND);
-            }
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
-            }
-        }
-
-        if (west != null && west != Blocks.AIR && !(west instanceof BlockLiquid)) {
-            final boolean activated = west.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, EnumHand.MAIN_HAND, EnumFacing.UP, 0, 0, 0);
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
-            }
-
-            if (mc.playerController.processRightClickBlock(mc.player, mc.world, pos.add(-1, 0, 0), EnumFacing.EAST, new Vec3d(0d, 0d, 0d), EnumHand.MAIN_HAND) != EnumActionResult.FAIL) {
-                mc.player.swingArm(EnumHand.MAIN_HAND);
-            }
-
-            if (activated) {
-                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
+        for (int i=0; i<6; i++) {
+            final Block block = mc.world.getBlockState(posit[i/2][i%2]).getBlock();
+            final boolean activated = block.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, EnumHand.MAIN_HAND, EnumFacing.UP, 0, 0, 0);
+            if (block != null && block != Blocks.AIR && !(block instanceof BlockLiquid)) {
+                if (activated)
+                    mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
+                if (mc.playerController.processRightClickBlock(mc.player, mc.world, posit[i/2][i%2], facing[i/2][i%2], new Vec3d(0d, 0d, 0d), EnumHand.MAIN_HAND) != EnumActionResult.FAIL)
+                    mc.player.swingArm(EnumHand.MAIN_HAND);
+                if (activated)
+                    mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
             }
         }
     }
@@ -280,17 +193,17 @@ public final class ScaffoldModule extends Module {
     }
 
     private Vec3d getFirstBlock(double[] dir) {
-        for (int i = 0; i <= ((int) 4.5f); i++) {
-            Vec3d pos = new Vec3d(Minecraft.getMinecraft().player.posX + -dir[0] * i, Minecraft.getMinecraft().player.posY - 1, Minecraft.getMinecraft().player.posZ + -dir[1] * i);
-            Vec3d before = new Vec3d(Minecraft.getMinecraft().player.posX + -dir[0] * (i - 1), Minecraft.getMinecraft().player.posY - 1, Minecraft.getMinecraft().player.posZ + -dir[1] * (i - 1));
-
-            final Block firstBlock = Minecraft.getMinecraft().world.getBlockState(new BlockPos(before.x, before.y, before.z)).getBlock();
-            final Block secondBlock = Minecraft.getMinecraft().world.getBlockState(new BlockPos(before.x, before.y, before.z)).getBlock();
-
-            if ((firstBlock != Blocks.AIR) || !(firstBlock instanceof BlockLiquid) && (secondBlock == Blocks.AIR) || (secondBlock instanceof BlockLiquid)) {
-                return before;
+        final Minecraft mc = Minecraft.getMinecraft();
+        Vec3d pos = new Vec3d(mc.player.posX, mc.player.posY - 1, mc.player.posZ);
+        Vec3d dirpos = new Vec3d(mc.player.posX + dir[0], mc.player.posY - 1, mc.player.posZ + dir[1]);
+        if (mc.world.getBlockState(new BlockPos(pos.x, pos.y, pos.z)).getBlock() == Blocks.AIR)
+            return pos;
+        if (mc.world.getBlockState(new BlockPos(dirpos.x, dirpos.y, dirpos.z)).getBlock() == Blocks.AIR)
+            if (mc.world.getBlockState(new BlockPos(pos.x, dirpos.y, dirpos.z)).getBlock() == Blocks.AIR && mc.world.getBlockState(new BlockPos(dirpos.x, dirpos.y, pos.z)).getBlock() == Blocks.AIR) {
+                return new Vec3d(dirpos.x, pos.y, pos.z);
+            } else {
+                return dirpos;
             }
-        }
         return null;
     }
 

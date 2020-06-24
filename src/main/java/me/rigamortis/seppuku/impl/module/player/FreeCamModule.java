@@ -83,6 +83,9 @@ public final class FreeCamModule extends Module {
             mc.player.rotationYaw = this.yaw;
             mc.player.rotationPitch = this.pitch;
             mc.player.noClip = false;
+            mc.player.motionX = 0;
+            mc.player.motionY = 0;
+            mc.player.motionZ = 0;
         }
     }
 

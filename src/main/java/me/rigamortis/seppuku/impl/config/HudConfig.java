@@ -33,6 +33,12 @@ public final class HudConfig extends Configurable {
                 case "Y":
                     hudComponent.setY(entry.getValue().getAsFloat());
                     break;
+                case "W":
+                    hudComponent.setW(entry.getValue().getAsFloat());
+                    break;
+                case "H":
+                    hudComponent.setH(entry.getValue().getAsFloat());
+                    break;
                 case "Visible":
                     hudComponent.setVisible(entry.getValue().getAsBoolean());
                     break;
@@ -65,6 +71,8 @@ public final class HudConfig extends Configurable {
         componentsListJsonObject.addProperty("Name", hudComponent.getName());
         componentsListJsonObject.addProperty("X", hudComponent.getX());
         componentsListJsonObject.addProperty("Y", hudComponent.getY());
+        componentsListJsonObject.addProperty("W", hudComponent.getW());
+        componentsListJsonObject.addProperty("H", hudComponent.getH());
         componentsListJsonObject.addProperty("Visible", hudComponent.isVisible());
         componentsListJsonObject.addProperty("Anchor", hudComponent.getAnchorPoint() == null ? "NONE" : hudComponent.getAnchorPoint().getPoint().name());
         componentsListJsonObject.addProperty("Glue", hudComponent.getGlued() == null ? "NONE" : hudComponent.getGlued().getName());

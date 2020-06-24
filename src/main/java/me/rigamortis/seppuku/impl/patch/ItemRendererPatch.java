@@ -21,15 +21,15 @@ public final class ItemRendererPatch extends ClassPatch {
     }
 
     @MethodPatch(
-            mcpName = "renderBlockInHand",
+            mcpName = "renderSuffocationOverlay",
             notchName = "a",
             mcpDesc = "(Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;)V",
             notchDesc = "(Lcdq;)V")
-    public void renderBlockInHand(MethodNode methodNode, PatchManager.Environment env) {
+    public void renderSuffocationOverlay(MethodNode methodNode, PatchManager.Environment env) {
         //create a list of instructions and add the needed instructions to call our hook function
         final InsnList insnList = new InsnList();
         //call our hook function
-        insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "renderBlockInHandHook", "()Z", false));
+        insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "renderSuffocationOverlayHook", "()Z", false));
         //add a label to jump to
         final LabelNode jmp = new LabelNode();
         //add if equals and pass the label
@@ -42,7 +42,7 @@ public final class ItemRendererPatch extends ClassPatch {
         methodNode.instructions.insert(insnList);
     }
 
-    public static boolean renderBlockInHandHook() {
+    public static boolean renderSuffocationOverlayHook() {
         final EventRenderOverlay event = new EventRenderOverlay(EventRenderOverlay.OverlayType.BLOCK);
         Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
 

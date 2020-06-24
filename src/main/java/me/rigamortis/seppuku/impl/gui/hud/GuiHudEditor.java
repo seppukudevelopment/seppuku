@@ -35,6 +35,12 @@ public final class GuiHudEditor extends GuiScreen {
                 }
             }
         }
+
+        for (HudComponent component : Seppuku.INSTANCE.getHudManager().getComponentList()) {
+            if (component.isVisible()) {
+                component.keyTyped(typedChar, keyCode);
+            }
+        }
     }
 
     @Override

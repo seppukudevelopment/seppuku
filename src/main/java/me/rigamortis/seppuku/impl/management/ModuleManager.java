@@ -8,20 +8,19 @@ import me.rigamortis.seppuku.api.util.ReflectionUtil;
 import me.rigamortis.seppuku.api.util.StringUtil;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.module.combat.*;
-import me.rigamortis.seppuku.impl.module.hidden.CommandsModule;
-import me.rigamortis.seppuku.impl.module.hidden.IgnoreModule;
-import me.rigamortis.seppuku.impl.module.hidden.KeybindsModule;
-import me.rigamortis.seppuku.impl.module.hidden.MacroModule;
+import me.rigamortis.seppuku.impl.module.hidden.*;
 import me.rigamortis.seppuku.impl.module.misc.*;
 import me.rigamortis.seppuku.impl.module.movement.*;
 import me.rigamortis.seppuku.impl.module.player.*;
 import me.rigamortis.seppuku.impl.module.render.*;
-import me.rigamortis.seppuku.impl.module.ui.HudEditorModule;
+import me.rigamortis.seppuku.impl.module.ui.HudEditorModule;	
 import me.rigamortis.seppuku.impl.module.world.*;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -36,6 +35,7 @@ public final class ModuleManager {
         add(new KeybindsModule());
         add(new CommandsModule());
         add(new HudModule());
+        add(new ArrayListModule());
         add(new NoOverlayModule());
         add(new NoPushModule());
         add(new GodModeModule());
@@ -131,7 +131,7 @@ public final class ModuleManager {
         add(new ObsidianReplaceModule());
         add(new ChatTimeStampsModule());
         add(new HudEditorModule());
-        add(new ChestAlertModule());
+        add(new StorageAlertModule());
         add(new StrafeModule());
         add(new MapBypassModule());
         add(new NoBossHealthModule());
@@ -144,11 +144,19 @@ public final class ModuleManager {
         add(new LogoutSpotsModule());
         add(new ChatSuffixModule());
         add(new VisualRangeModule());
+        add(new HotBarRefillModule());
+        add(new QuickCraftModule());
+
+        //p2w experience
+        if (Seppuku.INSTANCE.getCapeManager().hasCape())
+            add(new CapeModule());
 
         this.loadExternalModules();
 
         for (final Module module : moduleList)
             Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventModulePostLoaded(module));
+
+        Collections.sort(moduleList, Comparator.comparing(Module::getDisplayName));
     }
 
     /**

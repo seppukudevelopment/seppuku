@@ -2,6 +2,7 @@ package me.rigamortis.seppuku.impl.gui.hud.component.module;
 
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
+import me.rigamortis.seppuku.api.gui.hud.component.ResizableHudComponent;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
@@ -9,6 +10,7 @@ import me.rigamortis.seppuku.impl.module.ui.HudEditorModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -16,7 +18,7 @@ import org.lwjgl.opengl.GL11;
 /**
  * created by noil on 11/4/19 at 12:02 PM
  */
-public final class ModuleListComponent extends DraggableHudComponent {
+public final class ModuleListComponent extends ResizableHudComponent {
 
     private Module.ModuleType type;
 
@@ -31,7 +33,7 @@ public final class ModuleListComponent extends DraggableHudComponent {
     private final HudEditorModule hudEditorModule = (HudEditorModule) Seppuku.INSTANCE.getModuleManager().find(HudEditorModule.class);
 
     public ModuleListComponent(Module.ModuleType type) {
-        super(StringUtils.capitalize(type.name().toLowerCase()));
+        super(StringUtils.capitalize(type.name().toLowerCase()), 100, 100);
         this.type = type;
         this.setSnappable(false);
         this.setW(100);
@@ -73,7 +75,7 @@ public final class ModuleListComponent extends DraggableHudComponent {
 
         // Scrollbar
         RenderUtil.drawRect(this.getX() + this.getW() - SCROLL_WIDTH, this.getY() + offsetY + BORDER, this.getX() + this.getW() - BORDER, this.getY() + this.getH() - BORDER, 0xFF101010);
-        RenderUtil.drawRect(this.getX() + this.getW() - SCROLL_WIDTH, (this.getY() + offsetY + BORDER) + ((this.getH() * this.scroll) / this.totalHeight), this.getX() + this.getW() - BORDER, (this.getY() + this.getH() - BORDER) - (this.getH() * (this.totalHeight - this.getH() - this.scroll) / this.totalHeight), 0xFF909090);
+        RenderUtil.drawRect(this.getX() + this.getW() - SCROLL_WIDTH, MathHelper.clamp((this.getY() + offsetY + BORDER) + ((this.getH() * this.scroll) / this.totalHeight), (this.getY() + offsetY + BORDER), (this.getY() + this.getH() - BORDER)), this.getX() + this.getW() - BORDER, MathHelper.clamp((this.getY() + this.getH() - BORDER) - (this.getH() * (this.totalHeight - this.getH() - this.scroll) / this.totalHeight), (this.getY() + offsetY + BORDER), (this.getY() + this.getH() - BORDER)), 0xFF909090);
 
         RenderUtil.glScissor(this.getX() + BORDER, this.getY() + offsetY + BORDER, this.getX() + this.getW() - BORDER - SCROLL_WIDTH, this.getY() + this.getH() - BORDER, sr);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);

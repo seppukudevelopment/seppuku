@@ -1,9 +1,11 @@
 package me.rigamortis.seppuku.impl.module.movement;
 
+import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.impl.module.player.NoHungerModule;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
@@ -25,7 +27,7 @@ public final class ElytraFlyModule extends Module {
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Mode to use for elytra flight.", Mode.VANILLA);
 
     private enum Mode {
-        VANILLA, PACKET, BYPASS
+        VANILLA, PACKET, BYPASS, CONTROL
     }
 
     public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd"}, "Speed multiplier for elytra flight, higher values equals more speed.", 1.0f, 0.0f, 5.0f, 0.01f);
@@ -44,6 +46,11 @@ public final class ElytraFlyModule extends Module {
     @Override
     public void onEnable() {
         super.onEnable();
+        final NoHungerModule nohunger = (NoHungerModule) Seppuku.INSTANCE.getModuleManager().find(NoHungerModule.class);
+        if (nohunger != null && nohunger.isEnabled()) {
+            nohunger.toggle();
+            Seppuku.INSTANCE.logChat("Toggled \247c" + nohunger.getDisplayName() + "\247r because it conflicts with \247a" + this.getDisplayName());
+        }
     }
 
     @Override
@@ -92,24 +99,19 @@ public final class ElytraFlyModule extends Module {
                     switch (this.mode.getValue()) {
                         case VANILLA:
                             final float speedScaled = this.speed.getValue() * 0.05f; // 5/100 of original value
-
-                            if (mc.gameSettings.keyBindJump.isKeyDown()) {
-                                mc.player.motionY += speedScaled;
+                            final double[] directionSpeedVanilla = MathUtil.directionSpeed(speedScaled);
+                            if (mc.player.movementInput.jump) {
+                                mc.player.motionY = this.speed.getValue();
                             }
 
-                            if (mc.gameSettings.keyBindSneak.isKeyDown()) {
-                                mc.player.motionY -= speedScaled;
+                            if (mc.player.movementInput.sneak) {
+                                mc.player.motionY = -this.speed.getValue();
+                            }
+                            if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
+                                mc.player.motionX += directionSpeedVanilla[0];
+                                mc.player.motionZ += directionSpeedVanilla[1];
                             }
 
-                            if (mc.gameSettings.keyBindForward.isKeyDown()) {
-                                mc.player.motionX -= Math.sin(rotationYaw) * speedScaled;
-                                mc.player.motionZ += Math.cos(rotationYaw) * speedScaled;
-                            }
-
-                            if (mc.gameSettings.keyBindBack.isKeyDown()) {
-                                mc.player.motionX += Math.sin(rotationYaw) * speedScaled;
-                                mc.player.motionZ -= Math.cos(rotationYaw) * speedScaled;
-                            }
                             break;
                         case PACKET:
                             this.freezePlayer(mc.player);
@@ -157,6 +159,21 @@ public final class ElytraFlyModule extends Module {
                             } else {
                                 mc.player.motionX = 0;
                                 mc.player.motionZ = 0;
+                            }
+                            break;
+                        case CONTROL:
+                            final double[] directionSpeedControl = MathUtil.directionSpeed(this.speed.getValue());
+                            mc.player.motionY = 0;
+                            mc.player.motionX = 0;
+                            mc.player.motionZ = 0;
+                            if (mc.player.movementInput.jump) {
+                                mc.player.motionY = this.speed.getValue() / 2;
+                            } else if (mc.player.movementInput.sneak) {
+                                mc.player.motionY = -this.speed.getValue() / 2;
+                            }
+                            if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
+                                mc.player.motionX = directionSpeedControl[0];
+                                mc.player.motionZ = directionSpeedControl[1];
                             }
                             break;
                     }

@@ -18,16 +18,15 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class RegenModule extends Module {
 
-    public final Value<Mode> mode = new Value("Mode", new String[]{"Mode", "M"}, "The regen mode to use.", Mode.GAPPLE);
-
-    public final Value<Float> health = new Value("Health", new String[]{"Hp"}, "The minimum health required to heal.", 8.0f, 0.0f, 20.0f, 0.5f);
-
-    public final Value<Boolean> refill = new Value("Refill", new String[]{"ref"}, "Automatically refill the hotbar with gapples.", true);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The regen mode to use.", Mode.GAPPLE);
+    public final Value<Float> health = new Value<Float>("Health", new String[]{"hp", "absorption"}, "The minimum health required to heal.", 8.0f, 0.0f, 20.0f, 0.5f);
+    public final Value<Boolean> refill = new Value<Boolean>("Refill", new String[]{"ref"}, "Automatically refill the hotbar with gapples.", true);
+    public final Value<Boolean> once = new Value<Boolean>("Once", new String[]{"o", "once"}, "Consume only 1 item, then toggle off", false);
 
     private int gappleSlot = -1;
 
     public RegenModule() {
-        super("Regen", new String[]{"AutoHeal"}, "Automatically heals you once your health is low enough", "NONE", -1, ModuleType.COMBAT);
+        super("Regen", new String[]{"AutoHeal", "AutoEat", "AutoGapple"}, "Automatically heals you once your health is low enough", "NONE", -1, ModuleType.COMBAT);
     }
 
     @Override
@@ -69,6 +68,7 @@ public final class RegenModule extends Module {
                             if (mc.player.getAbsorptionAmount() > 0) {
                                 mc.gameSettings.keyBindUseItem.pressed = false;
                                 gappleSlot = -1;
+                                if(this.once.getValue()) this.toggle();
                             }
                         }
                     } else {
@@ -76,7 +76,7 @@ public final class RegenModule extends Module {
                             if (this.refill.getValue()) {
                                 final int invSlot = findStackInventory(Items.GOLDEN_APPLE);
                                 if (invSlot != -1) {
-                                    final int empty = findEmptyhotbar();
+                                    final int empty = findEmptyHotbar();
                                     mc.playerController.windowClick(mc.player.inventoryContainer.windowId, invSlot, empty == -1 ? mc.player.inventory.currentItem : empty, ClickType.SWAP, mc.player);
                                     mc.playerController.updateController();
                                 }
@@ -98,7 +98,7 @@ public final class RegenModule extends Module {
         return -1;
     }
 
-    private int findEmptyhotbar() {
+    private int findEmptyHotbar() {
         for (int i = 0; i < 9; i++) {
             final ItemStack stack = Minecraft.getMinecraft().player.inventory.getStackInSlot(i);
 

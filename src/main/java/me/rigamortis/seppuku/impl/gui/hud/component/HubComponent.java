@@ -1,19 +1,20 @@
 package me.rigamortis.seppuku.impl.gui.hud.component;
 
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.gui.hud.component.HudComponent;
+import me.rigamortis.seppuku.api.gui.hud.component.ResizableHudComponent;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.util.math.MathHelper;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 /**
  * created by noil on 9/29/2019 at 12:23 PM
  */
-public final class HubComponent extends DraggableHudComponent {
+public final class HubComponent extends ResizableHudComponent {
 
     private int scroll;
 
@@ -24,7 +25,7 @@ public final class HubComponent extends DraggableHudComponent {
     private final int TEXT_GAP = 1;
 
     public HubComponent() {
-        super("Hub");
+        super("Hub", 100, 100);
         this.setVisible(true);
         this.setSnappable(false);
         this.setW(100);
@@ -66,7 +67,7 @@ public final class HubComponent extends DraggableHudComponent {
 
         // Scrollbar
         RenderUtil.drawRect(this.getX() + this.getW() - SCROLL_WIDTH, this.getY() + offsetY + BORDER, this.getX() + this.getW() - BORDER, this.getY() + this.getH() - BORDER, 0xFF101010);
-        RenderUtil.drawRect(this.getX() + this.getW() - SCROLL_WIDTH, (this.getY() + offsetY + BORDER) + ((this.getH() * this.scroll) / this.totalHeight), this.getX() + this.getW() - BORDER, (this.getY() + this.getH() - BORDER) - (this.getH() * (this.totalHeight - this.getH() - this.scroll) / this.totalHeight), 0xFF909090);
+        RenderUtil.drawRect(this.getX() + this.getW() - SCROLL_WIDTH, MathHelper.clamp((this.getY() + offsetY + BORDER) + ((this.getH() * this.scroll) / this.totalHeight), (this.getY() + offsetY + BORDER), (this.getY() + this.getH() - BORDER)), this.getX() + this.getW() - BORDER, MathHelper.clamp((this.getY() + this.getH() - BORDER) - (this.getH() * (this.totalHeight - this.getH() - this.scroll) / this.totalHeight), (this.getY() + offsetY + BORDER), (this.getY() + this.getH() - BORDER)), 0xFF909090);
 
         RenderUtil.glScissor(this.getX() + BORDER, this.getY() + offsetY + BORDER, this.getX() + this.getW() - BORDER - SCROLL_WIDTH, this.getY() + this.getH() - BORDER, sr);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);

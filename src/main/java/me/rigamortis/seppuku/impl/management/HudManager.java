@@ -5,11 +5,14 @@ import me.rigamortis.seppuku.api.event.render.EventRender2D;
 import me.rigamortis.seppuku.api.gui.hud.component.HudComponent;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.ReflectionUtil;
+import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
 import me.rigamortis.seppuku.impl.gui.hud.component.*;
 import me.rigamortis.seppuku.impl.gui.hud.component.module.ModuleListComponent;
+import me.rigamortis.seppuku.impl.module.render.HudModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.ScaledResolution;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
@@ -28,6 +31,8 @@ public final class HudManager {
 
     private List<HudComponent> componentList = new CopyOnWriteArrayList<>();
     private List<AnchorPoint> anchorPoints = new ArrayList<>();
+
+    private final FirstLaunchComponent firstLaunchComponent;
 
     public HudManager() {
         final ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
@@ -65,6 +70,9 @@ public final class HudManager {
         this.componentList.add(new TotemCountComponent());
         this.componentList.add(new TutorialComponent());
         this.componentList.add(new HoleOverlayComponent());
+        this.componentList.add(new PlayerCountComponent());
+        this.componentList.add(new OverViewComponent());
+        this.componentList.add(new RearViewComponent());
 
         for (Module.ModuleType type : Module.ModuleType.values()) {
             if (type.equals(Module.ModuleType.HIDDEN) || type.equals(Module.ModuleType.UI))
@@ -83,6 +91,9 @@ public final class HudManager {
         // Organize alphabetically
         this.componentList = this.componentList.stream().sorted((obj1, obj2) -> obj1.getName().compareTo(obj2.getName())).collect(Collectors.toList());
 
+        // Create first launch component
+        this.firstLaunchComponent = new FirstLaunchComponent();
+
         Seppuku.INSTANCE.getEventManager().addEventListener(this);
     }
 
@@ -94,6 +105,16 @@ public final class HudManager {
     @Listener
     public void onRender(EventRender2D event) {
         final Minecraft mc = Minecraft.getMinecraft();
+
+        if (this.firstLaunchComponent != null && mc.world != null) {
+            if (Seppuku.INSTANCE.getConfigManager().isFirstLaunch()) {
+                if (mc.currentScreen instanceof GuiHudEditor) {
+                    firstLaunchComponent.onClose();
+                } else if (firstLaunchComponent.isVisible()) {
+                    firstLaunchComponent.render(0, 0, event.getPartialTicks());
+                }
+            }
+        }
 
         final int chatHeight = (mc.currentScreen instanceof GuiChat) ? 14 : 0;
 

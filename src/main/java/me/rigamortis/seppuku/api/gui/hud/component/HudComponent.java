@@ -41,6 +41,10 @@ public class HudComponent {
 
     }
 
+    public void keyTyped(char typedChar, int keyCode) {
+
+    }
+
     public boolean collidesWith(HudComponent other) {
         // Collision x-axis?
         boolean collisionX = this.x + this.w > other.x &&
