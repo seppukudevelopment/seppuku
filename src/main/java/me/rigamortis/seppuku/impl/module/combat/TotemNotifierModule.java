@@ -13,13 +13,13 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * @author jvyden
- * @date 6/24/20
+ * @since 6/24/20
  */
 public class TotemNotifierModule extends Module {
     final Minecraft mc = Minecraft.getMinecraft();
