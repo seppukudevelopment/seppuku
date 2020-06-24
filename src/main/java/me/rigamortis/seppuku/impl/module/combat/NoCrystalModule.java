@@ -30,10 +30,10 @@ public final class NoCrystalModule extends Module {
 
     private final Minecraft mc = Minecraft.getMinecraft();
 
-    public final Value<Mode> mode = new Value("Mode", new String[]{"Mode", "M"}, "The NoCrystal mode to use. Visible shows the swing animation and makes a sound, whereas packet does not.", Mode.PACKET);
+    public final Value<Boolean> visible = new Value("Visible", new String[]{"Visible", "v"}, "When disabled, you will not see swing animations or sounds.", true);
     public final Value<Boolean> rotate = new Value("Rotate", new String[]{"rotation", "r", "rotate"}, "Rotate to place blocks", true);
-    public final Value<Boolean> disable = new Value<Boolean>("Disable", new String[]{"dis"}, "Automatically disable after it places.", false);
-    public final Value<Boolean> sneak = new Value<Boolean> ("PlaceOnSneak", new String[]{"sneak", "s", "pos", "sneakPlace"}, "When false, NoCrystal will not place while the player is sneaking.", false);
+    public final Value<Boolean> disable = new Value<Boolean>("Disable", new String[]{"dis"}, "Automatically disable after obsidian is placed.", false);
+    public final Value<Boolean> sneak = new Value<Boolean> ("PlaceOnSneak", new String[]{"sneak", "s", "pos", "sneakPlace"}, "When true, NoCrystal will only place while the player is sneaking.", false);
     public final Value<Float> placeDelay = new Value("Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay between obsidian blocks being placed.", 100.0f, 0.0f, 1000.0f, 1.0f);
 
 
@@ -41,21 +41,13 @@ public final class NoCrystalModule extends Module {
     private int placeIndex = 0;
 
     public NoCrystalModule() {
-        super("NoCrystal", new String[]{"AntiCrystal", "FeetPlace", "Surround"}, "Automatically places obsidian in 4 cardinal directions", "NONE", -1, ModuleType.COMBAT);
-    }
-    @Override
-    public String getMetaData() {
-        return this.mode.getValue().name();
-    }
-
-    private enum Mode {
-        VISIBLE, PACKET
+        super("NoCrystal", new String[]{"AntiCrystal", "FeetPlace", "Surround"}, "Automatically places obsidian around you to avoid crystal damage", "NONE", -1, ModuleType.COMBAT);
     }
 
     @Listener
     public void onWalkingUpdate(EventUpdateWalkingPlayer event) {
-        final boolean instant = placeDelay.getValue() == 0;
-        if (this.placeTimer.passed(this.placeDelay.getValue()) || instant) {
+        final boolean instant = placeDelay.getValue() == 0.0f;
+        if (instant || this.placeTimer.passed(this.placeDelay.getValue())) {
             if (event.getStage() == EventStageable.EventStage.PRE) {
 
                 final FreeCamModule freeCam = (FreeCamModule) Seppuku.INSTANCE.getModuleManager().find(FreeCamModule.class);
@@ -138,10 +130,10 @@ public final class NoCrystalModule extends Module {
                 final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f));
                 Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
             }
-            if (mode.getValue() == Mode.PACKET) {
+            if (!visible.getValue()) {
                 mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(sideOffset, otherSide, EnumHand.MAIN_HAND, 0.5F, 0.5F, 0.5F));
                 mc.player.connection.sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
-            } else if (mode.getValue() == Mode.VISIBLE) {
+            } else {
                 mc.playerController.processRightClickBlock(mc.player, mc.world, sideOffset, otherSide, new Vec3d(0.5F, 0.5F, 0.5F), EnumHand.MAIN_HAND);
                 mc.player.swingArm(EnumHand.MAIN_HAND);
             }
