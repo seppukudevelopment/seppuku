@@ -28,7 +28,7 @@ public class TotemNotifierModule extends Module {
         super("TotemNotifier", new String[]{"tm"}, "Notifies you when others pop totems.", "NONE", -1, ModuleType.COMBAT);
     }
 
-    public List<Integer> EntitiesWithTotems = new ArrayList<>();
+    public final List<Integer> entitiesWithTotems = new ArrayList<>();
 
     @Listener
     public void runTick(EventRunTick event) {
@@ -39,13 +39,13 @@ public class TotemNotifierModule extends Module {
                     for(ItemStack stack : stacks) {
                         final Item offhandItem = ((EntityLivingBase) entity).getItemStackFromSlot(EntityEquipmentSlot.OFFHAND).getItem();
                         if(offhandItem == Items.TOTEM_OF_UNDYING) {
-                            if(!EntitiesWithTotems.contains(entity.getEntityId())) {
-                                EntitiesWithTotems.add(entity.getEntityId());
+                            if(!entitiesWithTotems.contains(entity.getEntityId())) {
+                                entitiesWithTotems.add(entity.getEntityId());
                             }
                         } else if(offhandItem == Items.AIR) {
-                            if(EntitiesWithTotems.contains(entity.getEntityId())) {
+                            if(entitiesWithTotems.contains(entity.getEntityId())) {
                                 Seppuku.INSTANCE.getNotificationManager().addNotification("", entity.getName() + " just popped a totem.");
-                                EntitiesWithTotems.removeIf(i -> i.equals(entity.getEntityId()));
+                                entitiesWithTotems.removeIf(i -> i.equals(entity.getEntityId()));
                             }
                         }
                     }
@@ -53,9 +53,10 @@ public class TotemNotifierModule extends Module {
             }
         }
     }
+    @Listener
     public void onEntityRemove(EventRemoveEntity event) {
-        if(EntitiesWithTotems.contains(event.getEntity().getEntityId())) {
-            EntitiesWithTotems.removeIf(i -> i.equals(event.getEntity().getEntityId()));
+        if(entitiesWithTotems.contains(event.getEntity().getEntityId())) {
+            entitiesWithTotems.removeIf(i -> i.equals(event.getEntity().getEntityId()));
         }
     }
 }
