@@ -30,6 +30,9 @@ public final class NukerModule extends Module {
     }
 
     public final Value<Float> distance = new Value<Float>("Distance", new String[]{"Dist", "D"}, "Maximum distance in blocks the nuker will reach.", 4.5f, 0.0f, 5.0f, 0.1f);
+    public final Value<Boolean> fixed = new Value<Boolean>("Fixed distances", new String[]{"F", "fixed"}, "Use vertical and horizontal distances in blocks instead of distances relative to the camera.", false);
+    public final Value<Float> Vdistance = new Value<Float>("Vertical Distance", new String[]{"VDist", "VD"}, "Maximum vertical distance in blocks the nuker will reach.", 4.5f, 0.0f, 5.0f, 0.1f);
+    public final Value<Float> Hdistance = new Value<Float>("Horizontal Distance", new String[]{"HDist", "HD"}, "Maximum horizontal distance in blocks the nuker will reach.", 3f, 0.0f, 5.0f, 0.1f);
 
     private Block selected;
 
@@ -55,10 +58,10 @@ public final class NukerModule extends Module {
 
             switch (this.mode.getValue()) {
                 case SELECTION:
-                    pos = this.getClosestBlockSelection();
+                    pos = this.getClosestBlock(true);
                     break;
                 case ALL:
-                    pos = this.getClosestBlockAll();
+                    pos = this.getClosestBlock(false);
                     break;
             }
 
@@ -95,51 +98,50 @@ public final class NukerModule extends Module {
         return block.getBlockHardness(blockState, Minecraft.getMinecraft().world, pos) != -1;
     }
 
-    private BlockPos getClosestBlockAll() {
+    private BlockPos getClosestBlock(boolean selection) {
         final Minecraft mc = Minecraft.getMinecraft();
-        float maxDist = this.distance.getValue();
 
         BlockPos ret = null;
 
-        for (float x = maxDist; x >= -maxDist; x--) {
-            for (float y = maxDist; y >= -maxDist; y--) {
-                for (float z = maxDist; z >= -maxDist; z--) {
-                    final BlockPos pos = new BlockPos(mc.player.posX + x, mc.player.posY + y, mc.player.posZ + z);
-                    final double dist = mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ());
-                    if (dist <= maxDist && (mc.world.getBlockState(pos).getBlock() != Blocks.AIR && !(mc.world.getBlockState(pos).getBlock() instanceof BlockLiquid)) && canBreak(pos)) {
-                        if (pos.getY() >= mc.player.posY) {
-                            maxDist = (float) dist;
-                            ret = pos;
+        if (this.fixed.getValue()) {
+            float maxVDist = this.Vdistance.getValue();
+            float maxHDist = this.Hdistance.getValue();
+            for (float x = 0; x <= maxHDist; x++) {
+                for (float y = 0; y <= maxVDist; y++) {
+                    for (float z = 0; z <= maxHDist; z++) {
+                        for (int revX = 0; revX <= 1; revX++, x =- x) {
+                            for (int revZ = 0; revZ <= 1; revZ++, z =- z) {
+                                final BlockPos pos = new BlockPos(mc.player.posX + x, mc.player.posY + y, mc.player.posZ + z);
+                                if (
+                                    (mc.world.getBlockState(pos).getBlock() != Blocks.AIR &&
+                                    !(mc.world.getBlockState(pos).getBlock() instanceof BlockLiquid)) &&
+                                    canBreak(pos) &&
+                                    ((selection && mc.world.getBlockState(pos).getBlock() == this.selected) || true)
+                                ) {
+                                    ret = pos;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            float maxDist = this.distance.getValue();
+            for (float x = maxDist; x >= -maxDist; x--) {
+                for (float y = maxDist; y >= -maxDist; y--) {
+                    for (float z = maxDist; z >= -maxDist; z--) {
+                        final BlockPos pos = new BlockPos(mc.player.posX + x, mc.player.posY + y, mc.player.posZ + z);
+                        final double dist = mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ());
+                        if (dist <= maxDist && (mc.world.getBlockState(pos).getBlock() != Blocks.AIR && !(mc.world.getBlockState(pos).getBlock() instanceof BlockLiquid)) && canBreak(pos) && ((selection && mc.world.getBlockState(pos).getBlock() == this.selected) || true)) {
+                            if (pos.getY() >= mc.player.posY) {
+                                maxDist = (float) dist;
+                                ret = pos;
+                            }
                         }
                     }
                 }
             }
         }
-
-        return ret;
-    }
-
-    private BlockPos getClosestBlockSelection() {
-        final Minecraft mc = Minecraft.getMinecraft();
-        float maxDist = this.distance.getValue();
-
-        BlockPos ret = null;
-
-        for (float x = maxDist; x >= -maxDist; x--) {
-            for (float y = maxDist; y >= -maxDist; y--) {
-                for (float z = maxDist; z >= -maxDist; z--) {
-                    final BlockPos pos = new BlockPos(mc.player.posX + x, mc.player.posY + y, mc.player.posZ + z);
-                    final double dist = mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ());
-                    if (dist <= maxDist && (mc.world.getBlockState(pos).getBlock() != Blocks.AIR && !(mc.world.getBlockState(pos).getBlock() instanceof BlockLiquid)) && mc.world.getBlockState(pos).getBlock() == this.selected && canBreak(pos)) {
-                        if (pos.getY() >= mc.player.posY) {
-                            maxDist = (float) dist;
-                            ret = pos;
-                        }
-                    }
-                }
-            }
-        }
-
         return ret;
     }
 
