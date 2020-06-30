@@ -146,8 +146,9 @@ public final class ModuleManager {
         add(new VisualRangeModule());
         add(new HotBarRefillModule());
         add(new QuickCraftModule());
+        add(new TotemNotifierModule());
 
-        //p2w experience
+        // p2w experience
         if (Seppuku.INSTANCE.getCapeManager().hasCape())
             add(new CapeModule());
 
