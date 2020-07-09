@@ -33,6 +33,7 @@ public class TotemNotifierModule extends Module {
     @Listener
     public void runTick(EventRunTick event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
+            if(mc.world == null) return;
             for(Entity entity : mc.world.loadedEntityList) {
                 if (entity instanceof EntityLivingBase) {
                     final Iterable<ItemStack> stacks = entity.getEquipmentAndArmor();
