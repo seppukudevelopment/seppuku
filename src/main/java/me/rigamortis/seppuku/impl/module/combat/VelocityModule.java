@@ -26,6 +26,8 @@ public final class VelocityModule extends Module {
     public final Value<Boolean> explosions = new Value("Explosions", new String[]{"Explosions", "Explosion", "EXP", "EX", "Expl"}, "Apply velocity modifier on explosion velocity.", true);
     public final Value<Boolean> bobbers = new Value("Bobbers", new String[]{"Bobb", "Bob", "FishHook", "FishHooks"}, "Apply velocity modifier on fishing bobber velocity.", true);
 
+    public final Minecraft mc = Minecraft.getMinecraft();
+
     public VelocityModule() {
         super("Velocity", new String[]{"Vel", "AntiVelocity", "Knockback", "AntiKnockback"}, "Modify the velocity you take", "NONE", -1, ModuleType.COMBAT);
     }
@@ -39,13 +41,12 @@ public final class VelocityModule extends Module {
     public void receivePacket(EventReceivePacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             if (event.getPacket() instanceof SPacketEntityStatus && this.bobbers.getValue()) {
-                event.setCanceled(true);
                 final SPacketEntityStatus packet = (SPacketEntityStatus) event.getPacket();
                 if (packet.getOpCode() == 31) {
-                    final Entity entity = packet.getEntity(Minecraft.getMinecraft().world);
+                    final Entity entity = packet.getEntity(mc.world);
                     if (entity != null && entity instanceof EntityFishHook) {
                         final EntityFishHook fishHook = (EntityFishHook) entity;
-                        if (fishHook.caughtEntity == Minecraft.getMinecraft().player) {
+                        if (fishHook.caughtEntity == mc.player) {
                             event.setCanceled(true);
                         }
                     }
@@ -53,7 +54,7 @@ public final class VelocityModule extends Module {
             }
             if (event.getPacket() instanceof SPacketEntityVelocity) {
                 final SPacketEntityVelocity packet = (SPacketEntityVelocity) event.getPacket();
-                if (packet.getEntityID() == Minecraft.getMinecraft().player.getEntityId()) {
+                if (packet.getEntityID() == mc.player.getEntityId()) {
                     if (this.horizontal_vel.getValue() == 0 && this.vertical_vel.getValue() == 0) {
                         event.setCanceled(true);
                         return;
