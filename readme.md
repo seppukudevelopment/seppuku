@@ -10,10 +10,10 @@ Seppuku is a free, lightweight, open-source [_Minecraft Forge_](https://files.mi
 
 ### Linux / Mac
 1. Clone the repository: `git clone git@github.com:seppukudevelopment/seppuku.git`
-2. Run `gradlew setupDecompWorkspace` 
+2. Run `./gradlew setupDecompWorkspace` 
 3. Edit `build.gradle` and change field `buildmode` to `RELEASE`. (e.g. `def
  buildmode = "RELEASE"`)
-4. Run `gradlew build`.
+4. Run `./gradlew build`.
 
 Your .jar file is in `build/libs/`.
 
