@@ -147,6 +147,7 @@ public final class ModuleManager {
         add(new HotBarRefillModule());
         add(new QuickCraftModule());
         add(new TotemNotifierModule());
+        add(new MiddleClickPearlModule());
 
         // p2w experience
         if (Seppuku.INSTANCE.getCapeManager().hasCape())
