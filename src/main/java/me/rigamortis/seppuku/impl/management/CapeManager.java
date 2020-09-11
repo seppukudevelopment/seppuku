@@ -57,7 +57,7 @@ public final class CapeManager {
                         final ResourceLocation cape = this.findResource(user.getCape());
 
                         if (cape == null) {
-                            final DynamicTexture texture = new DynamicTexture(ImageIO.read(new URL("http://seppuku.pw/files/" + user.getCape())));
+                            final DynamicTexture texture = new DynamicTexture(ImageIO.read(new URL("https://seppuku.pw/files/" + user.getCape())));
                             if (texture != null) {
                                 final ResourceLocation location = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("seppuku/capes", texture);
                                 if (location != null) {
@@ -93,7 +93,7 @@ public final class CapeManager {
      */
     protected void downloadCapeUsers() {
         try {
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("http://seppuku.pw/files/capes.txt").openStream()));
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("https://seppuku.pw/files/capes.txt").openStream()));
 
             String line;
             while ((line = reader.readLine()) != null) {
