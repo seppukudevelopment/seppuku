@@ -9,10 +9,8 @@ import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
 import me.rigamortis.seppuku.impl.gui.hud.component.*;
 import me.rigamortis.seppuku.impl.gui.hud.component.module.ModuleListComponent;
-import me.rigamortis.seppuku.impl.module.render.HudModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.ScaledResolution;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
@@ -49,7 +47,7 @@ public final class HudManager {
         this.anchorPoints.add(TOP_CENTER);
 
         this.componentList.add(new WatermarkComponent());
-        this.componentList.add(new ArrayListComponent());
+        this.componentList.add(new EnabledModsComponent(TOP_RIGHT)); // creates the enabled mods component & by default anchors in the top right (to aid new users)
         this.componentList.add(new TpsComponent());
         this.componentList.add(new PotionEffectsComponent());
         this.componentList.add(new FpsComponent());
@@ -73,6 +71,7 @@ public final class HudManager {
         this.componentList.add(new PlayerCountComponent());
         this.componentList.add(new OverViewComponent());
         this.componentList.add(new RearViewComponent());
+        this.componentList.add(new NotificationsComponent(TOP_CENTER));
 
         for (Module.ModuleType type : Module.ModuleType.values()) {
             if (type.equals(Module.ModuleType.HIDDEN) || type.equals(Module.ModuleType.UI))
@@ -81,10 +80,6 @@ public final class HudManager {
             final ModuleListComponent moduleList = new ModuleListComponent(type);
             this.componentList.add(moduleList);
         }
-
-        NotificationsComponent notificationsComponent = new NotificationsComponent();
-        notificationsComponent.setAnchorPoint(TOP_RIGHT);
-        this.componentList.add(notificationsComponent);
 
         this.loadExternalHudComponents();
 

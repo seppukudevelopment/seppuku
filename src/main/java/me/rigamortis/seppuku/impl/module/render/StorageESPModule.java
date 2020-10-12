@@ -22,10 +22,10 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class StorageESPModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Rendering mode", Mode.THREE_DIMENSIONAL);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Rendering mode", Mode.THREE_D);
 
     private enum Mode {
-        TWO_DIMENSIONAL, THREE_DIMENSIONAL
+        TWO_D, THREE_D // TWO_DIMENSIONAL, THREE_DIMENSIONAL
     }
 
     public final Value<Boolean> nametag = new Value<Boolean>("Nametag", new String[]{"Nametag", "Tag", "Tags", "Ntag"}, "Renders the name of the drawn storage object.", false);
@@ -41,7 +41,7 @@ public final class StorageESPModule extends Module {
     public void render2D(EventRender2D event) {
         final Minecraft mc = Minecraft.getMinecraft();
 
-        if (this.mode.getValue() == Mode.THREE_DIMENSIONAL && !this.nametag.getValue()) // if 3D and names are off, return
+        if (this.mode.getValue() == Mode.THREE_D && !this.nametag.getValue()) // if 3D and names are off, return
             return;
 
         for (TileEntity te : mc.world.loadedTileEntityList) {
@@ -51,7 +51,7 @@ public final class StorageESPModule extends Module {
                     if (bb != null) {
                         final float[] bounds = this.convertBounds(bb, event.getScaledResolution().getScaledWidth(), event.getScaledResolution().getScaledHeight());
                         if (bounds != null) {
-                            if (this.mode.getValue() == Mode.TWO_DIMENSIONAL) { // 2D
+                            if (this.mode.getValue() == Mode.TWO_D) { // 2D
                                 RenderUtil.drawOutlineRect(bounds[0], bounds[1], bounds[2], bounds[3], 1.5f, ColorUtil.changeAlpha(0xAA000000, this.opacity.getValue()));
                                 RenderUtil.drawOutlineRect(bounds[0] - 0.5f, bounds[1] - 0.5f, bounds[2] + 0.5f, bounds[3] + 0.5f, 0.5f, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
                             }
@@ -72,7 +72,7 @@ public final class StorageESPModule extends Module {
     @Listener
     public void render3D(EventRender3D event) {
         final Minecraft mc = Minecraft.getMinecraft();
-        if (this.mode.getValue() == Mode.THREE_DIMENSIONAL) {
+        if (this.mode.getValue() == Mode.THREE_D) {
             for (TileEntity te : mc.world.loadedTileEntityList) {
                 if (te != null) {
                     if (this.isTileStorage(te)) {

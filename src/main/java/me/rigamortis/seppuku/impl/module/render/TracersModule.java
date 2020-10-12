@@ -32,10 +32,10 @@ public final class TracersModule extends Module {
     public final Value<Boolean> vehicles = new Value<Boolean>("Vehicles", new String[]{"Vehic", "Vehicle"}, "Choose to enable on vehicles.", true);
     public final Value<Boolean> items = new Value<Boolean>("Items", new String[]{"Item"}, "Choose to enable on items.", true);
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode"}, "The rendering mode to use for drawing the tracer-line.", Mode.TWO_DIMENSIONAL);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode"}, "The rendering mode to use for drawing the tracer-line.", Mode.TWO_D);
 
     private enum Mode {
-        TWO_DIMENSIONAL, THREE_DIMENSIONAL
+        TWO_D, THREE_D // TWO_DIMENSIONAL, THREE_DIMENSIONAL
     }
 
     public final Value<Float> width = new Value<Float>("Width", new String[]{"Wid"}, "Pixel width of each tracer-line.", 0.5f, 0.0f, 5.0f, 0.1f);
@@ -51,7 +51,7 @@ public final class TracersModule extends Module {
 
     @Listener
     public void render2D(EventRender2D event) {
-        if (this.mode.getValue() == Mode.TWO_DIMENSIONAL) {
+        if (this.mode.getValue() == Mode.TWO_D) {
             final Minecraft mc = Minecraft.getMinecraft();
 
             for (Entity e : mc.world.loadedEntityList) {
@@ -73,7 +73,7 @@ public final class TracersModule extends Module {
 
     @Listener
     public void render3D(EventRender3D event) {
-        if (this.mode.getValue() == Mode.THREE_DIMENSIONAL) {
+        if (this.mode.getValue() == Mode.THREE_D) {
             final Minecraft mc = Minecraft.getMinecraft();
 
             for (Entity e : mc.world.loadedEntityList) {

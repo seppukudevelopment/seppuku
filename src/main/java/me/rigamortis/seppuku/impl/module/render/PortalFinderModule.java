@@ -35,10 +35,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public final class PortalFinderModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode"}, "Rendering mode to use for drawing found portals.", Mode.TWO_DIMENSIONAL);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode"}, "Rendering mode to use for drawing found portals.", Mode.TWO_D);
 
     private enum Mode {
-        TWO_DIMENSIONAL, THREE_DIMENSIONAL
+        TWO_D, THREE_D // TWO_ DIMENSIONAL, THREE_ DIMENSIONAL
     }
 
     public final Value<Boolean> chat = new Value<Boolean>("Chat", new String[]{"Chat", "ChatMessages", "ChatNotifications"}, "Display a message in chat when a portal is found (Hover the message for more info).", true);
@@ -70,7 +70,7 @@ public final class PortalFinderModule extends Module {
 
     @Listener
     public void render2D(EventRender2D event) {
-        if (this.mode.getValue() == Mode.TWO_DIMENSIONAL) {
+        if (this.mode.getValue() == Mode.TWO_D) {
             final Minecraft mc = Minecraft.getMinecraft();
 
             for (Vec3d portal : this.portals) {
@@ -93,7 +93,7 @@ public final class PortalFinderModule extends Module {
 
     @Listener
     public void render3D(EventRender3D event) {
-        if (this.mode.getValue() == Mode.THREE_DIMENSIONAL) {
+        if (this.mode.getValue() == Mode.THREE_D) {
             final Minecraft mc = Minecraft.getMinecraft();
 
             for (Vec3d portal : this.portals) {

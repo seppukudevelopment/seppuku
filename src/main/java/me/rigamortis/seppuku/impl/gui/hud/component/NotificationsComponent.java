@@ -5,6 +5,7 @@ import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.notification.Notification;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
+import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
 import net.minecraft.client.Minecraft;
 
 /**
@@ -12,8 +13,9 @@ import net.minecraft.client.Minecraft;
  */
 public final class NotificationsComponent extends DraggableHudComponent {
 
-    public NotificationsComponent() {
+    public NotificationsComponent(AnchorPoint anchorPoint) {
         super("Notifications");
+        this.setAnchorPoint(anchorPoint); // by default anchors in the top center
         this.setVisible(true);
     }
 
@@ -23,10 +25,10 @@ public final class NotificationsComponent extends DraggableHudComponent {
 
         if (Minecraft.getMinecraft().currentScreen instanceof GuiHudEditor) {
             if (Seppuku.INSTANCE.getNotificationManager().getNotifications().isEmpty()) {
-                final String placeholder = "Notification Tray";
+                final String placeholder = "(notifications)";
                 this.setW(Minecraft.getMinecraft().fontRenderer.getStringWidth(placeholder));
-                this.setH(Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT);
-                Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(placeholder, this.getX(), this.getY(), 0xFFFFFFFF);
+                this.setH(Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1);
+                Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(placeholder, this.getX(), this.getY(), 0xFFAAAAAA);
                 return;
             }
         }
