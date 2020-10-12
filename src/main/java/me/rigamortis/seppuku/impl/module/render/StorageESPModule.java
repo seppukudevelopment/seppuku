@@ -28,7 +28,7 @@ public final class StorageESPModule extends Module {
         TWO_DIMENSIONAL, THREE_DIMENSIONAL
     }
 
-    public final Value<Boolean> name = new Value<Boolean>("Name", new String[]{"Nam", "N", "Names"}, "Renders the name of the drawn storage object.", false);
+    public final Value<Boolean> nametag = new Value<Boolean>("Nametag", new String[]{"Nametag", "Tag", "Tags", "Ntag"}, "Renders the name of the drawn storage object.", false);
     public final Value<Integer> opacity = new Value<Integer>("Opacity", new String[]{"Opacity", "Transparency", "Alpha"}, "Opacity of the rendered esp.", 128, 0, 255, 1);
 
     private ICamera camera = new Frustum();
@@ -41,7 +41,7 @@ public final class StorageESPModule extends Module {
     public void render2D(EventRender2D event) {
         final Minecraft mc = Minecraft.getMinecraft();
 
-        if (this.mode.getValue() == Mode.THREE_DIMENSIONAL && !this.name.getValue()) // if 3D and names are off, return
+        if (this.mode.getValue() == Mode.THREE_DIMENSIONAL && !this.nametag.getValue()) // if 3D and names are off, return
             return;
 
         for (TileEntity te : mc.world.loadedTileEntityList) {
@@ -56,7 +56,7 @@ public final class StorageESPModule extends Module {
                                 RenderUtil.drawOutlineRect(bounds[0] - 0.5f, bounds[1] - 0.5f, bounds[2] + 0.5f, bounds[3] + 0.5f, 0.5f, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
                             }
 
-                            if (this.name.getValue()) {
+                            if (this.nametag.getValue()) {
                                 final String name = te.getBlockType().getLocalizedName();
                                 GL11.glEnable(GL11.GL_BLEND);
                                 mc.fontRenderer.drawStringWithShadow(name, bounds[0] + (bounds[2] - bounds[0]) / 2 - mc.fontRenderer.getStringWidth(name) / 2, bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 1, ColorUtil.changeAlpha(0xFFFFFFFF, this.opacity.getValue()));

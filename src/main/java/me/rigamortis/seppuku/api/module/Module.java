@@ -144,6 +144,10 @@ public class Module {
     }
 
     public void setDisplayName(String displayName) {
+        if (displayName.equals("true") || displayName.equals("false")) { // bug in earlier versions of seppuku <= 3.0.6
+            this.displayName = this.getAlias()[0];
+            return;
+        }
         this.displayName = displayName;
     }
 

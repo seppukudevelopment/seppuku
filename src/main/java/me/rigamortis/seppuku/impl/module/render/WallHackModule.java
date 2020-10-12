@@ -65,7 +65,7 @@ public final class WallHackModule extends Module {
     public final Value<Boolean> armorStand = new Value<Boolean>("ArmorStands", new String[]{"ArmorStand", "ArmourStand", "ArmourStands", "ArmStand"}, "Choose to enable on armor-stands.", true);
     public final Value<Boolean> footsteps = new Value<Boolean>("FootSteps", new String[]{"FootStep", "Steps"}, "Choose to draw entity footsteps.", false);
 
-    public final Value<Boolean> name = new Value<Boolean>("Name", new String[]{"Nam"}, "Draw the entity's name.", true);
+    public final Value<Boolean> nametag = new Value<Boolean>("Nametag", new String[]{"Tag", "Tags"}, "Draw the entity's name tag.", true);
     public final Value<Boolean> ping = new Value<Boolean>("Ping", new String[]{"Ms"}, "Draw the entity's ping (only works on players).", true);
     public final Value<Boolean> armor = new Value<Boolean>("Armor", new String[]{"Arm"}, "Draw the entity's equipped armor.", true);
     public final Value<Boolean> hearts = new Value<Boolean>("Hearts", new String[]{"Hrts"}, "Draw the entity's hearts in decimal format.", true);
@@ -91,7 +91,7 @@ public final class WallHackModule extends Module {
     private List<FootstepData> footstepDataList = new CopyOnWriteArrayList<>();
 
     public WallHackModule() {
-        super("WallHack", new String[]{"Esp"}, "Highlights entities", "NONE", -1, ModuleType.RENDER);
+        super("WallHack", new String[]{"ESP"}, "Highlights entities", "NONE", -1, ModuleType.RENDER);
     }
 
     @Listener
@@ -126,7 +126,7 @@ public final class WallHackModule extends Module {
                         String heartsFormatted = null;
                         String pingFormatted = null;
 
-                        if (this.name.getValue()) {
+                        if (this.nametag.getValue()) {
                             int color = -1;
 
                             final Friend friend = Seppuku.INSTANCE.getFriendManager().isFriend(e);
@@ -154,7 +154,7 @@ public final class WallHackModule extends Module {
                                 pingFormatted = responseTime + "ms";
 
                                 float startX = -mc.fontRenderer.getStringWidth(pingFormatted) / 2.0f;
-                                if (this.name.getValue())
+                                if (this.nametag.getValue())
                                     startX = (mc.fontRenderer.getStringWidth(name) / 2.0f) + 2.0f;
                                 else if (this.hearts.getValue())
                                     startX = (mc.fontRenderer.getStringWidth(heartsFormatted) / 2.0f) + (mc.fontRenderer.getStringWidth(heartsFormatted) / 2.0f);
@@ -187,7 +187,7 @@ public final class WallHackModule extends Module {
                                 }
 
                                 float startX = -mc.fontRenderer.getStringWidth(heartsFormatted) / 2.0f;
-                                if (this.name.getValue())
+                                if (this.nametag.getValue())
                                     startX = -(mc.fontRenderer.getStringWidth(name) / 2.0f) - 2.0f - mc.fontRenderer.getStringWidth(heartsFormatted);
                                 else if (this.ping.getValue() && entityLiving instanceof EntityPlayer)
                                     startX = -(mc.fontRenderer.getStringWidth(pingFormatted) / 2.0f) - (mc.fontRenderer.getStringWidth(heartsFormatted) / 2.0f);
