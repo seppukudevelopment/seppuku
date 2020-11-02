@@ -12,6 +12,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 import javax.imageio.ImageIO;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Author Seth
- * 7/9/2019 @ 5:47 PM.
+ * @author Seth
+ * @author noil
  */
 public final class CapeManager {
 
@@ -51,20 +52,18 @@ public final class CapeManager {
      */
     protected void downloadCapes() {
         try {
-            if (Minecraft.getMinecraft().getTextureManager() != null) {
-                for (CapeUser user : this.capeUserList) {
-                    if (user != null) {
-                        final ResourceLocation cape = this.findResource(user.getCape());
+            Minecraft.getMinecraft().getTextureManager();
+            for (CapeUser user : this.capeUserList) {
+                if (user != null) {
+                    final ResourceLocation cape = this.findResource(user.getCape());
 
-                        if (cape == null) {
-                            final DynamicTexture texture = new DynamicTexture(ImageIO.read(new URL("https://seppuku.pw/files/" + user.getCape())));
-                            if (texture != null) {
-                                final ResourceLocation location = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("seppuku/capes", texture);
-                                if (location != null) {
-                                    this.capesMap.put(user.getCape(), location);
-                                }
-                            }
-                        }
+                    if (cape == null) {
+                        URL url = new URL("https://seppuku.pw/files/" + user.getCape());
+                        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                        httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.76");
+                        final DynamicTexture texture = new DynamicTexture(ImageIO.read(httpURLConnection.getInputStream()));
+                        final ResourceLocation location = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("seppuku/capes", texture);
+                        this.capesMap.put(user.getCape(), location);
                     }
                 }
             }
@@ -93,7 +92,10 @@ public final class CapeManager {
      */
     protected void downloadCapeUsers() {
         try {
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("https://seppuku.pw/files/capes.txt").openStream()));
+            URL url = new URL("https://seppuku.pw/files/capes.txt");
+            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.76");
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
 
             String line;
             while ((line = reader.readLine()) != null) {

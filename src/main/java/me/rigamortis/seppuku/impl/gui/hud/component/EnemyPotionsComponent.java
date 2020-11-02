@@ -94,7 +94,7 @@ public final class EnemyPotionsComponent extends DraggableHudComponent {
 
         if (Minecraft.getMinecraft().currentScreen instanceof GuiHudEditor) {
             if (effectCount == 0) {
-                final String placeholder = "Enemy Potions";
+                final String placeholder = "(enemy potion effects)";
                 this.setW(mc.fontRenderer.getStringWidth(placeholder));
                 this.setH(mc.fontRenderer.FONT_HEIGHT);
                 mc.fontRenderer.drawStringWithShadow(placeholder, this.getX(), this.getY(), 0xFFFFFFFF);

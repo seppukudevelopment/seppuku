@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.gui.hud.component;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.util.PotionUtil;
+import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
@@ -25,13 +26,15 @@ public final class PotionEffectsComponent extends DraggableHudComponent {
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
 
+        final Minecraft mc = Minecraft.getMinecraft();
+
         final List<PotionEffect> effects =
-                new ArrayList<>(Minecraft.getMinecraft().player.getActivePotionEffects());
+                new ArrayList<>(mc.player.getActivePotionEffects());
 
         final Comparator<PotionEffect> comparator = (first, second) -> {
             final String firstEffect = PotionUtil.getFriendlyPotionName(first) + " " + ChatFormatting.GRAY + Potion.getPotionDurationString(first, 1.0F);
             final String secondEffect = PotionUtil.getFriendlyPotionName(second) + " " + ChatFormatting.GRAY + Potion.getPotionDurationString(second, 1.0F);
-            final float dif = Minecraft.getMinecraft().fontRenderer.getStringWidth(secondEffect) - Minecraft.getMinecraft().fontRenderer.getStringWidth(firstEffect);
+            final float dif = mc.fontRenderer.getStringWidth(secondEffect) - mc.fontRenderer.getStringWidth(firstEffect);
             return dif != 0 ? (int) dif : secondEffect.compareTo(firstEffect);
         };
 
@@ -45,7 +48,7 @@ public final class PotionEffectsComponent extends DraggableHudComponent {
             if (potionEffect != null) {
                 final String effect = PotionUtil.getFriendlyPotionName(potionEffect) + " " + ChatFormatting.GRAY + Potion.getPotionDurationString(potionEffect, 1.0F);
 
-                final float width = Minecraft.getMinecraft().fontRenderer.getStringWidth(effect);
+                final float width = mc.fontRenderer.getStringWidth(effect);
 
                 if (width >= maxWidth) {
                     maxWidth = width;
@@ -54,7 +57,7 @@ public final class PotionEffectsComponent extends DraggableHudComponent {
                 if (this.getAnchorPoint() != null) {
                     switch (this.getAnchorPoint().getPoint()) {
                         case TOP_CENTER:
-                            xOffset = (this.getW() - Minecraft.getMinecraft().fontRenderer.getStringWidth(effect)) / 2;
+                            xOffset = (this.getW() - mc.fontRenderer.getStringWidth(effect)) / 2;
                             break;
                         case TOP_LEFT:
                         case BOTTOM_LEFT:
@@ -62,7 +65,7 @@ public final class PotionEffectsComponent extends DraggableHudComponent {
                             break;
                         case TOP_RIGHT:
                         case BOTTOM_RIGHT:
-                            xOffset = this.getW() - Minecraft.getMinecraft().fontRenderer.getStringWidth(effect);
+                            xOffset = this.getW() - mc.fontRenderer.getStringWidth(effect);
                             break;
                     }
                 }
@@ -72,19 +75,29 @@ public final class PotionEffectsComponent extends DraggableHudComponent {
                         case TOP_CENTER:
                         case TOP_LEFT:
                         case TOP_RIGHT:
-                            Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(effect, this.getX() + xOffset, this.getY() + yOffset, potionEffect.getPotion().getLiquidColor());
-                            yOffset += (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1);
+                            mc.fontRenderer.drawStringWithShadow(effect, this.getX() + xOffset, this.getY() + yOffset, potionEffect.getPotion().getLiquidColor());
+                            yOffset += (mc.fontRenderer.FONT_HEIGHT + 1);
                             break;
                         case BOTTOM_LEFT:
                         case BOTTOM_RIGHT:
-                            Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(effect, this.getX() + xOffset, this.getY() + (this.getH() - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT) + yOffset, potionEffect.getPotion().getLiquidColor());
-                            yOffset -= (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1);
+                            mc.fontRenderer.drawStringWithShadow(effect, this.getX() + xOffset, this.getY() + (this.getH() - mc.fontRenderer.FONT_HEIGHT) + yOffset, potionEffect.getPotion().getLiquidColor());
+                            yOffset -= (mc.fontRenderer.FONT_HEIGHT + 1);
                             break;
                     }
                 } else {
-                    Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(effect, this.getX() + xOffset, this.getY() + yOffset, potionEffect.getPotion().getLiquidColor());
-                    yOffset += (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1);
+                    mc.fontRenderer.drawStringWithShadow(effect, this.getX() + xOffset, this.getY() + yOffset, potionEffect.getPotion().getLiquidColor());
+                    yOffset += (mc.fontRenderer.FONT_HEIGHT + 1);
                 }
+            }
+        }
+
+        if (mc.currentScreen instanceof GuiHudEditor) {
+            if (effects.size() <= 0) {
+                final String placeholder = "(my potion effects)";
+                this.setW(mc.fontRenderer.getStringWidth(placeholder));
+                this.setH(mc.fontRenderer.FONT_HEIGHT);
+                mc.fontRenderer.drawStringWithShadow(placeholder, this.getX(), this.getY(), 0xFFFFFFFF);
+                return;
             }
         }
 
