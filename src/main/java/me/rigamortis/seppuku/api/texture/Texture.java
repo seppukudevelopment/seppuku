@@ -14,13 +14,14 @@ public class Texture {
 
     public Texture(String name) {
         this.textureLocation = new ResourceLocation("seppukumod", "textures/" + name);
+        this.bind();
     }
 
     public void render(float x, float y, float width, float height, float u, float v, float t, float s) {
         this.bind();
         GlStateManager.enableTexture2D();
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderUtil.drawTexture(x, y, width, height, 0, 0, 1, 1);
+        RenderUtil.drawTexture(x, y, width, height, u, v, t, s);
     }
 
     public void render(float x, float y, float width, float height) {

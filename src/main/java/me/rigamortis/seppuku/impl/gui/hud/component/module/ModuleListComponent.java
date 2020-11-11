@@ -39,8 +39,8 @@ public final class ModuleListComponent extends ResizableHudComponent {
         this.setSnappable(false);
         this.setW(100);
         this.setH(100);
-        this.setX((Minecraft.getMinecraft().displayWidth / 2) - (this.getW() / 2));
-        this.setY((Minecraft.getMinecraft().displayHeight / 2) - (this.getH() / 2));
+        this.setX((Minecraft.getMinecraft().displayWidth / 2.0f) - (this.getW() / 2));
+        this.setY((Minecraft.getMinecraft().displayHeight / 2.0f) - (this.getH() / 2));
     }
 
     @Override
@@ -117,14 +117,14 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         final int tooltipWidth = mc.fontRenderer.getStringWidth(module.getDesc());
                         final int tooltipHeight = mc.fontRenderer.FONT_HEIGHT;
 
-                        GlStateManager.translate(mouseX - tooltipWidth / 2, mouseY - tooltipHeight, 0);
+                        GlStateManager.translate(mouseX - tooltipWidth / 2.0f, mouseY - tooltipHeight, 0);
                         // Tooltip background
                         RenderUtil.drawRect(-2, -6, tooltipWidth + 2, 5, 0x80101010);
                         RenderUtil.drawRect(-1, -5, tooltipWidth + 1, 4, 0xAD101010);
 
                         // Tooltip
                         mc.fontRenderer.drawStringWithShadow(module.getDesc(), 0, -5, 0xADC255FF);
-                        GlStateManager.translate(-(mouseX - tooltipWidth / 2), -(mouseY - tooltipHeight), 0);
+                        GlStateManager.translate(-(mouseX - tooltipWidth / 2.0f), -(mouseY - tooltipHeight), 0);
                     }
                     height += Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + TEXT_GAP;
                 }
