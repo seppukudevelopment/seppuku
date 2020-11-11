@@ -18,6 +18,10 @@ public class HudComponent {
 
     }
 
+    public HudComponent(String name) {
+        this.name = name;
+    }
+
     public HudComponent(float x, float y, float w, float h) {
         this.x = x;
         this.y = y;

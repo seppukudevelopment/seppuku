@@ -46,6 +46,14 @@ public final class HudManager {
         this.anchorPoints.add(BOTTOM_RIGHT);
         this.anchorPoints.add(TOP_CENTER);
 
+        for (Module.ModuleType type : Module.ModuleType.values()) {
+            if (type.equals(Module.ModuleType.HIDDEN) || type.equals(Module.ModuleType.UI))
+                continue;
+
+            final ModuleListComponent moduleList = new ModuleListComponent(type);
+            this.componentList.add(moduleList);
+        }
+
         this.componentList.add(new WatermarkComponent());
         this.componentList.add(new EnabledModsComponent(TOP_RIGHT)); // creates the enabled mods component & by default anchors in the top right (to aid new users)
         this.componentList.add(new TpsComponent());
@@ -71,15 +79,8 @@ public final class HudManager {
         this.componentList.add(new PlayerCountComponent());
         this.componentList.add(new OverViewComponent());
         this.componentList.add(new RearViewComponent());
+        this.componentList.add(new TrayComponent());
         this.componentList.add(new NotificationsComponent(TOP_CENTER));
-
-        for (Module.ModuleType type : Module.ModuleType.values()) {
-            if (type.equals(Module.ModuleType.HIDDEN) || type.equals(Module.ModuleType.UI))
-                continue;
-
-            final ModuleListComponent moduleList = new ModuleListComponent(type);
-            this.componentList.add(moduleList);
-        }
 
         this.loadExternalHudComponents();
 
