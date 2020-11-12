@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.gui.hud.component;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.gui.hud.component.HudComponent;
 import me.rigamortis.seppuku.api.gui.hud.component.ResizableHudComponent;
+import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import net.minecraft.client.Minecraft;
@@ -24,16 +25,21 @@ public final class HubComponent extends ResizableHudComponent {
     private final int SCROLL_WIDTH = 4;
     private final int BORDER = 2;
     private final int TEXT_GAP = 1;
+    private final int TEXTURE_SIZE = 8;
     private final int TITLE_BAR_HEIGHT = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1;
+
+    private final Texture texture;
 
     public HubComponent() {
         super("Hub", 100, 100);
+        this.texture = new Texture("module-hub.png");
+
         this.setVisible(true);
         this.setSnappable(false);
         this.setW(100);
         this.setH(100);
-        this.setX((Minecraft.getMinecraft().displayWidth / 2) - (this.getW() / 2));
-        this.setY((Minecraft.getMinecraft().displayHeight / 2) - (this.getH() / 2));
+        this.setX((Minecraft.getMinecraft().displayWidth / 2.0f) - (this.getW() / 2));
+        this.setY((Minecraft.getMinecraft().displayHeight / 2.0f) - (this.getH() / 2));
     }
 
     @Override
@@ -47,7 +53,7 @@ public final class HubComponent extends ResizableHudComponent {
 
         final ScaledResolution sr = new ScaledResolution(mc);
 
-        // Render Y pos offset (make this all modular evnentually...)
+        // Render Y pos offset (make this all modular eventually...)
         int offsetY = 0;
 
         // Scrolling
@@ -62,7 +68,9 @@ public final class HubComponent extends ResizableHudComponent {
         // Background & title
         RenderUtil.drawRect(this.getX() - 1, this.getY() - 1, this.getX() + this.getW() + 1, this.getY() + this.getH() + 1, 0x99101010);
         RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0xFF202020);
-        mc.fontRenderer.drawStringWithShadow(this.getName(), this.getX() + 2, this.getY() + 2, 0xFFFFFFFF);
+        texture.bind();
+        texture.render(this.getX() + BORDER, this.getY() + BORDER, TEXTURE_SIZE, TEXTURE_SIZE);
+        mc.fontRenderer.drawStringWithShadow(this.getName(), this.getX() + BORDER + /* texture width */ TEXTURE_SIZE + BORDER, this.getY() + BORDER, 0xFFFFFFFF);
         offsetY += mc.fontRenderer.FONT_HEIGHT + 1;
 
         // Behind hub

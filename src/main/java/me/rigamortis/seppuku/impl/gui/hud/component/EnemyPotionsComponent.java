@@ -33,7 +33,7 @@ public final class EnemyPotionsComponent extends DraggableHudComponent {
         if (mc.player != null && mc.world != null) {
             for (EntityPlayer player : mc.world.playerEntities) {
 
-                // Check for self & friendds
+                // Check for self & friends
                 if ((player == mc.player) || (Seppuku.INSTANCE.getFriendManager().isFriend(player) != null))
                     continue;
 
@@ -92,13 +92,16 @@ public final class EnemyPotionsComponent extends DraggableHudComponent {
             }
         }
 
-        if (Minecraft.getMinecraft().currentScreen instanceof GuiHudEditor) {
-            if (effectCount == 0) {
+        if (effectCount == 0) {
+            if (Minecraft.getMinecraft().currentScreen instanceof GuiHudEditor) {
                 final String placeholder = "(enemy potion effects)";
-                this.setW(mc.fontRenderer.getStringWidth(placeholder));
-                this.setH(mc.fontRenderer.FONT_HEIGHT);
-                mc.fontRenderer.drawStringWithShadow(placeholder, this.getX(), this.getY(), 0xFFFFFFFF);
-                return;
+                maxWidth = mc.fontRenderer.getStringWidth(placeholder);
+                yOffset = mc.fontRenderer.FONT_HEIGHT;
+                mc.fontRenderer.drawStringWithShadow(placeholder, this.getX(), this.getY(), 0xFFAAAAAA);
+            }  else {
+                maxWidth = 0;
+                yOffset = 0;
+                this.setEmptyH(mc.fontRenderer.FONT_HEIGHT);
             }
         }
 

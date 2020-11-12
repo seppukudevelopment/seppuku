@@ -91,13 +91,16 @@ public final class PotionEffectsComponent extends DraggableHudComponent {
             }
         }
 
-        if (mc.currentScreen instanceof GuiHudEditor) {
-            if (effects.size() <= 0) {
+        if (effects.size() <= 0) {
+            if (Minecraft.getMinecraft().currentScreen instanceof GuiHudEditor) {
                 final String placeholder = "(my potion effects)";
-                this.setW(mc.fontRenderer.getStringWidth(placeholder));
-                this.setH(mc.fontRenderer.FONT_HEIGHT);
-                mc.fontRenderer.drawStringWithShadow(placeholder, this.getX(), this.getY(), 0xFFFFFFFF);
-                return;
+                maxWidth = mc.fontRenderer.getStringWidth(placeholder);
+                yOffset = mc.fontRenderer.FONT_HEIGHT;
+                mc.fontRenderer.drawStringWithShadow(placeholder, this.getX(), this.getY(), 0xFFAAAAAA);
+            }  else {
+                maxWidth = 0;
+                yOffset = 0;
+                this.setEmptyH(mc.fontRenderer.FONT_HEIGHT);
             }
         }
 

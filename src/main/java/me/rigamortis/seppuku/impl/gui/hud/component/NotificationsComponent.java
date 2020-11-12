@@ -23,16 +23,6 @@ public final class NotificationsComponent extends DraggableHudComponent {
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
 
-        if (Minecraft.getMinecraft().currentScreen instanceof GuiHudEditor) {
-            if (Seppuku.INSTANCE.getNotificationManager().getNotifications().isEmpty()) {
-                final String placeholder = "(notifications)";
-                this.setW(Minecraft.getMinecraft().fontRenderer.getStringWidth(placeholder));
-                this.setH(Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1);
-                Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(placeholder, this.getX(), this.getY(), 0xFFAAAAAA);
-                return;
-            }
-        }
-
         int offsetY = 0;
         float maxWidth = 0;
 
@@ -71,6 +61,19 @@ public final class NotificationsComponent extends DraggableHudComponent {
             }
 
             offsetY += notification.getHeight();
+        }
+
+        if (Seppuku.INSTANCE.getNotificationManager().getNotifications().isEmpty()) {
+            if (Minecraft.getMinecraft().currentScreen instanceof GuiHudEditor) {
+                final String placeholder = "(notifications)";
+                maxWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(placeholder);
+                offsetY = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
+                Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(placeholder, this.getX(), this.getY(), 0xFFAAAAAA);
+            } else {
+                maxWidth = 0;
+                offsetY = 0;
+                this.setEmptyH(Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT);
+            }
         }
 
         this.setW(maxWidth);

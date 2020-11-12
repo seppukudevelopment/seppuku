@@ -11,6 +11,8 @@ public class HudComponent {
     private float w;
     private float h;
 
+    private float emptyH;
+
     private String name;
     private boolean visible;
 
@@ -27,6 +29,7 @@ public class HudComponent {
         this.y = y;
         this.w = w;
         this.h = h;
+        this.emptyH = h;
     }
 
     public void render(int mouseX, int mouseY, float partialTicks) {
@@ -90,6 +93,14 @@ public class HudComponent {
 
     public void setH(float h) {
         this.h = h;
+    }
+
+    public float getEmptyH() {
+        return emptyH;
+    }
+
+    public void setEmptyH(float emptyH) {
+        this.emptyH = emptyH;
     }
 
     public String getName() {

@@ -22,6 +22,7 @@ public class TrayComponent extends DraggableHudComponent {
 
     public TrayComponent() {
         super("Tray");
+        buttons.add(new TrayButtonComponent("hub"));
         buttons.add(new TrayButtonComponent("combat"));
         buttons.add(new TrayButtonComponent("movement"));
         buttons.add(new TrayButtonComponent("render"));
@@ -54,6 +55,7 @@ public class TrayComponent extends DraggableHudComponent {
         if (!isInHudEditor) {
             this.setW(0);
             this.setH(0);
+            this.setEmptyH(TEXTURE_HEIGHT);
             return;
         }
 

@@ -33,8 +33,8 @@ public final class ArmorComponent extends DraggableHudComponent {
             if (!stack.isEmpty()) {
                 GlStateManager.pushMatrix();
                 RenderHelper.enableGUIStandardItemLighting();
-                mc.getRenderItem().renderItemAndEffectIntoGUI(stack, (int)this.getX() + itemSpacingWidth, (int)this.getY());
-                mc.getRenderItem().renderItemOverlays(mc.fontRenderer, stack, (int)this.getX() + itemSpacingWidth, (int)this.getY());
+                mc.getRenderItem().renderItemAndEffectIntoGUI(stack, (int) this.getX() + itemSpacingWidth, (int) this.getY());
+                mc.getRenderItem().renderItemOverlays(mc.fontRenderer, stack, (int) this.getX() + itemSpacingWidth, (int) this.getY());
                 RenderHelper.disableStandardItemLighting();
                 GlStateManager.popMatrix();
                 itemSpacingWidth += ITEM_SIZE;
@@ -42,12 +42,16 @@ public final class ArmorComponent extends DraggableHudComponent {
             }
         }
 
-        if (isInHudEditor) {
-            if (!playerHasArmor) {
+        if (!playerHasArmor) {
+            if (isInHudEditor) {
                 mc.fontRenderer.drawString("(armor)", (int) this.getX(), (int) this.getY(), 0xFFAAAAAA);
+                itemSpacingWidth = ITEM_SIZE * 4; // simulate 4 slots of armor (for a placeholder in hud editor)
+            } else {
+                this.setW(0);
+                this.setH(0);
+                this.setEmptyH(16);
+                return;
             }
-
-            itemSpacingWidth = ITEM_SIZE * 4; // simulate 4 slots of armor ( for a placeholder in hud editor )
         }
 
         this.setW(itemSpacingWidth);

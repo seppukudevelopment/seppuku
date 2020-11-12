@@ -56,6 +56,8 @@ public class DraggableHudComponent extends HudComponent {
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
 
+        boolean isHudEditor = Minecraft.getMinecraft().currentScreen instanceof GuiHudEditor;
+
         if (this.isDragging()) {
             this.setX(mouseX - this.getDeltaX());
             this.setY(mouseY - this.getDeltaY());
@@ -67,7 +69,7 @@ public class DraggableHudComponent extends HudComponent {
             RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x45FFFFFF);
         }
 
-        if (Minecraft.getMinecraft().currentScreen instanceof GuiHudEditor) {
+        if (isHudEditor) {
             RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x75101010);
         }
 
@@ -86,7 +88,16 @@ public class DraggableHudComponent extends HudComponent {
             if (this.glueSide != null) {
                 switch (this.glueSide) {
                     case TOP:
-                        this.setY(this.glued.getY() - this.getH());
+                        // math... am i right?
+                        if (!isHudEditor && this.glued.getH() <= 0 && this.getH() <= 0) {
+                            this.setY((this.glued.getY() - this.getEmptyH()) + this.glued.getEmptyH());
+                        }else if (!isHudEditor && this.glued.getH() <= 0 && this.getH() > 0) {
+                            this.setY((this.glued.getY() + this.glued.getEmptyH()) - this.getH());
+                        } else if (!isHudEditor && this.glued.getH() > 0 && this.getH() <= 0) {
+                            this.setY(this.glued.getY() - this.getEmptyH());
+                        } else {
+                            this.setY(this.glued.getY() - this.getH());
+                        }
                         break;
                     case BOTTOM:
                         this.setY(this.glued.getY() + this.glued.getH());
