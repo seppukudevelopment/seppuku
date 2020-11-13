@@ -24,6 +24,7 @@ public class DraggableHudComponent extends HudComponent {
 
     private DraggableHudComponent glued;
     private GlueSide glueSide;
+    private boolean parent;
 
     private static final double ANCHOR_THRESHOLD = 80;
 
@@ -180,20 +181,33 @@ public class DraggableHudComponent extends HudComponent {
                 for (HudComponent component : Seppuku.INSTANCE.getHudManager().getComponentList()) {
                     if (component instanceof DraggableHudComponent) {
                         DraggableHudComponent draggable = (DraggableHudComponent) component;
-                        if (draggable != this && this.collidesWith(draggable) && draggable.isVisible() && draggable.isSnappable()) {
-                            if ((this.getY() + (this.getH() / 2)) < (draggable.getY() + (draggable.getH() / 2))) { // top
-                                this.setY(draggable.getY() - this.getH());
-                                this.glueSide = GlueSide.TOP;
-                                this.glued = draggable;
-                                if (draggable.getAnchorPoint() != null) {
-                                    this.anchorPoint = draggable.getAnchorPoint();
+                        if (draggable != this && draggable.isVisible() && draggable.isSnappable()) {
+                            if (this.collidesWith(draggable)) {
+                                if ((this.getY() + (this.getH() / 2)) < (draggable.getY() + (draggable.getH() / 2))) { // top
+                                    this.setY(draggable.getY() - this.getH());
+                                    this.glueSide = GlueSide.TOP;
+                                    this.glued = draggable;
+                                    draggable.setParent(true);
+                                    if (draggable.getAnchorPoint() != null) {
+                                        this.anchorPoint = draggable.getAnchorPoint();
+                                    }
+                                } else if ((this.getY() + (this.getH() / 2)) > (draggable.getY() + (draggable.getH() / 2))) { // bottom
+                                    this.setY(draggable.getY() + draggable.getH());
+                                    this.glueSide = GlueSide.BOTTOM;
+                                    this.glued = draggable;
+                                    draggable.setParent(true);
+                                    if (draggable.getAnchorPoint() != null) {
+                                        this.anchorPoint = draggable.getAnchorPoint();
+                                    }
                                 }
-                            } else if ((this.getY() + (this.getH() / 2)) > (draggable.getY() + (draggable.getH() / 2))) { // bottom
-                                this.setY(draggable.getY() + draggable.getH());
-                                this.glueSide = GlueSide.BOTTOM;
-                                this.glued = draggable;
-                                if (draggable.getAnchorPoint() != null) {
-                                    this.anchorPoint = draggable.getAnchorPoint();
+                            } else {
+                                AnchorPoint draggableClosest = draggable.getAnchorPoint();
+                                AnchorPoint myClosest = this.findClosest(mouseX, mouseY);
+                                if (draggableClosest != null && myClosest != null) {
+                                    boolean sameAnchor = draggableClosest.getPoint().equals(myClosest.getPoint());
+                                    if (sameAnchor) {
+                                        this.anchorPoint = null;
+                                    }
                                 }
                             }
                         }
@@ -205,7 +219,7 @@ public class DraggableHudComponent extends HudComponent {
         }
     }
 
-    private AnchorPoint findClosest(int x, int y) {
+    public AnchorPoint findClosest(float x, float y) {
         AnchorPoint ret = null;
         double max = ANCHOR_THRESHOLD;
         for (AnchorPoint point : Seppuku.INSTANCE.getHudManager().getAnchorPoints()) {
@@ -218,7 +232,12 @@ public class DraggableHudComponent extends HudComponent {
                 ret = point;
             }
         }
+
         return ret;
+    }
+
+    public AnchorPoint findClosest() {
+        return findClosest(this.getX(), this.getY());
     }
 
     public void clamp() {
@@ -299,5 +318,13 @@ public class DraggableHudComponent extends HudComponent {
 
     public enum GlueSide {
         TOP, BOTTOM
+    }
+
+    public boolean isParent() {
+        return parent;
+    }
+
+    public void setParent(boolean parent) {
+        this.parent = parent;
     }
 }
