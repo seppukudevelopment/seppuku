@@ -98,9 +98,15 @@ public final class HoleOverlayComponent extends DraggableHudComponent {
             foundBlock = true;
         }
 
-        if (isInHudEditor && !foundBlock) {
-            mc.fontRenderer.drawStringWithShadow("(hole", this.getX(), this.getY(), 0xFFAAAAAA);
-            mc.fontRenderer.drawStringWithShadow("overlay)", this.getX(), this.getY() + mc.fontRenderer.FONT_HEIGHT + 1, 0xFFAAAAAA);
+        if (!foundBlock) {
+            if (isInHudEditor) {
+                mc.fontRenderer.drawStringWithShadow("(hole", this.getX(), this.getY(), 0xFFAAAAAA);
+                mc.fontRenderer.drawStringWithShadow("overlay)", this.getX(), this.getY() + mc.fontRenderer.FONT_HEIGHT + 1, 0xFFAAAAAA);
+            } else {
+                this.setW(0);
+                this.setH(0);
+                this.setEmptyH(48);
+            }
         }
     }
 

@@ -24,6 +24,7 @@ public final class EnabledModsComponent extends DraggableHudComponent {
     public EnabledModsComponent(AnchorPoint anchorPoint) {
         super("EnabledMods");
         this.setAnchorPoint(anchorPoint); // by default anchors in the top right corner of the hud
+        this.setVisible(true);
     }
 
     @Override
