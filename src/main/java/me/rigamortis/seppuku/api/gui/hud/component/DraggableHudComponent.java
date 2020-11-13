@@ -125,6 +125,9 @@ public class DraggableHudComponent extends HudComponent {
                     case TOP_CENTER:
                         this.setX(this.anchorPoint.getX() - (this.getW() / 2));
                         break;
+                    case BOTTOM_CENTER:
+                        this.setX(this.anchorPoint.getX() - (this.getW() / 2));
+                        break;
                 }
                 if (this.glueSide != null) {
                     switch (this.glueSide) {
@@ -157,6 +160,10 @@ public class DraggableHudComponent extends HudComponent {
                     case TOP_CENTER:
                         this.setX(this.anchorPoint.getX() - (this.getW() / 2));
                         this.setY(this.anchorPoint.getY());
+                        break;
+                    case BOTTOM_CENTER:
+                        this.setX(this.anchorPoint.getX() - (this.getW() / 2));
+                        this.setY(this.anchorPoint.getY() - this.getH());
                         break;
                 }
             }

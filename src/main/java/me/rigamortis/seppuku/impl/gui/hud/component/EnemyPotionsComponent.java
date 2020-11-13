@@ -54,6 +54,7 @@ public final class EnemyPotionsComponent extends DraggableHudComponent {
                         if (this.getAnchorPoint() != null) {
                             switch (this.getAnchorPoint().getPoint()) {
                                 case TOP_CENTER:
+                                case BOTTOM_CENTER:
                                     xOffset = (this.getW() - width) / 2;
                                     break;
                                 case TOP_LEFT:
@@ -75,6 +76,7 @@ public final class EnemyPotionsComponent extends DraggableHudComponent {
                                     mc.fontRenderer.drawStringWithShadow(displayLine, this.getX() + xOffset, this.getY() + yOffset, effect.getPotion().getLiquidColor());
                                     yOffset += (mc.fontRenderer.FONT_HEIGHT + 1);
                                     break;
+                                case BOTTOM_CENTER:
                                 case BOTTOM_LEFT:
                                 case BOTTOM_RIGHT:
                                     mc.fontRenderer.drawStringWithShadow(displayLine, this.getX() + xOffset, this.getY() + (this.getH() - mc.fontRenderer.FONT_HEIGHT) + yOffset, effect.getPotion().getLiquidColor());

@@ -79,6 +79,7 @@ public final class EnabledModsComponent extends DraggableHudComponent {
                 if (this.getAnchorPoint() != null) {
                     switch (this.getAnchorPoint().getPoint()) {
                         case TOP_CENTER:
+                        case BOTTOM_CENTER:
                             xOffset = (this.getW() - mc.fontRenderer.getStringWidth(name)) / 2;
                             break;
                         case TOP_LEFT:
@@ -100,6 +101,7 @@ public final class EnabledModsComponent extends DraggableHudComponent {
                             mc.fontRenderer.drawStringWithShadow(name, this.getX() + xOffset, this.getY() + yOffset, mod.getColor());
                             yOffset += (mc.fontRenderer.FONT_HEIGHT + 1);
                             break;
+                        case BOTTOM_CENTER:
                         case BOTTOM_LEFT:
                         case BOTTOM_RIGHT:
                             mc.fontRenderer.drawStringWithShadow(name, this.getX() + xOffset, this.getY() + (this.getH() - mc.fontRenderer.FONT_HEIGHT) + yOffset, mod.getColor());

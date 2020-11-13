@@ -57,6 +57,7 @@ public final class PotionEffectsComponent extends DraggableHudComponent {
                 if (this.getAnchorPoint() != null) {
                     switch (this.getAnchorPoint().getPoint()) {
                         case TOP_CENTER:
+                        case BOTTOM_CENTER:
                             xOffset = (this.getW() - mc.fontRenderer.getStringWidth(effect)) / 2;
                             break;
                         case TOP_LEFT:
@@ -78,6 +79,7 @@ public final class PotionEffectsComponent extends DraggableHudComponent {
                             mc.fontRenderer.drawStringWithShadow(effect, this.getX() + xOffset, this.getY() + yOffset, potionEffect.getPotion().getLiquidColor());
                             yOffset += (mc.fontRenderer.FONT_HEIGHT + 1);
                             break;
+                        case BOTTOM_CENTER:
                         case BOTTOM_LEFT:
                         case BOTTOM_RIGHT:
                             mc.fontRenderer.drawStringWithShadow(effect, this.getX() + xOffset, this.getY() + (this.getH() - mc.fontRenderer.FONT_HEIGHT) + yOffset, potionEffect.getPotion().getLiquidColor());

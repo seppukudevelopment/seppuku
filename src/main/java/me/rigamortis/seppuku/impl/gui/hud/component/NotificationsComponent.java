@@ -19,6 +19,11 @@ public final class NotificationsComponent extends DraggableHudComponent {
         this.setVisible(true);
     }
 
+    public NotificationsComponent() {
+        super("Notifications");
+        this.setVisible(true);
+    }
+
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
@@ -33,6 +38,7 @@ public final class NotificationsComponent extends DraggableHudComponent {
             if (this.getAnchorPoint() != null) {
                 switch (this.getAnchorPoint().getPoint()) {
                     case TOP_CENTER:
+                    case BOTTOM_CENTER:
                         offsetX = (this.getW() - Minecraft.getMinecraft().fontRenderer.getStringWidth(notification.getText())) / 2;
                         break;
                     case TOP_LEFT:

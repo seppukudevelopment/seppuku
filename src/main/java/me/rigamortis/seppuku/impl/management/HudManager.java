@@ -12,6 +12,7 @@ import me.rigamortis.seppuku.impl.gui.hud.component.module.ModuleListComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
+import scala.tools.nsc.transform.patmat.Logic;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.io.File;
@@ -39,12 +40,14 @@ public final class HudManager {
         final AnchorPoint TOP_RIGHT = new AnchorPoint(res.getScaledWidth() - 2, 2, AnchorPoint.Point.TOP_RIGHT);
         final AnchorPoint BOTTOM_LEFT = new AnchorPoint(2, res.getScaledHeight() - 2, AnchorPoint.Point.BOTTOM_LEFT);
         final AnchorPoint BOTTOM_RIGHT = new AnchorPoint(res.getScaledWidth() - 2, res.getScaledHeight() - 2, AnchorPoint.Point.BOTTOM_RIGHT);
-        final AnchorPoint TOP_CENTER = new AnchorPoint(res.getScaledWidth() / 2, 2, AnchorPoint.Point.TOP_CENTER);
+        final AnchorPoint TOP_CENTER = new AnchorPoint(res.getScaledWidth() / 2.0f, 2, AnchorPoint.Point.TOP_CENTER);
+        final AnchorPoint BOTTOM_CENTER = new AnchorPoint(res.getScaledWidth() / 2.0f, res.getScaledHeight() - 2, AnchorPoint.Point.BOTTOM_CENTER);
         this.anchorPoints.add(TOP_LEFT);
         this.anchorPoints.add(TOP_RIGHT);
         this.anchorPoints.add(BOTTOM_LEFT);
         this.anchorPoints.add(BOTTOM_RIGHT);
         this.anchorPoints.add(TOP_CENTER);
+        this.anchorPoints.add(BOTTOM_CENTER);
 
         for (Module.ModuleType type : Module.ModuleType.values()) {
             if (type.equals(Module.ModuleType.HIDDEN) || type.equals(Module.ModuleType.UI))
@@ -79,8 +82,14 @@ public final class HudManager {
         this.componentList.add(new PlayerCountComponent());
         this.componentList.add(new OverViewComponent());
         this.componentList.add(new RearViewComponent());
-        this.componentList.add(new TrayComponent());
-        this.componentList.add(new NotificationsComponent(TOP_CENTER));
+
+        TrayComponent trayComponent = new TrayComponent();
+        trayComponent.setAnchorPoint(BOTTOM_CENTER);
+        this.componentList.add(trayComponent);
+
+        NotificationsComponent notificationsComponent = new NotificationsComponent();
+        notificationsComponent.setAnchorPoint(TOP_CENTER);
+        this.componentList.add(notificationsComponent);
 
         this.loadExternalHudComponents();
 
@@ -132,8 +141,12 @@ public final class HudManager {
                 point.setY(event.getScaledResolution().getScaledHeight() - chatHeight - 2);
             }
             if (point.getPoint() == AnchorPoint.Point.TOP_CENTER) {
-                point.setX(event.getScaledResolution().getScaledWidth() / 2);
+                point.setX(event.getScaledResolution().getScaledWidth() / 2.0f);
                 point.setY(2);
+            }
+            if (point.getPoint() == AnchorPoint.Point.BOTTOM_CENTER) {
+                point.setX(event.getScaledResolution().getScaledWidth() / 2.0f);
+                point.setY(event.getScaledResolution().getScaledHeight() - 2);
             }
         }
     }
@@ -164,10 +177,7 @@ public final class HudManager {
     }
 
     public void moveToTop(HudComponent component) {
-        final Iterator it = this.componentList.iterator();
-
-        while (it.hasNext()) {
-            final HudComponent comp = (HudComponent) it.next();
+        for (HudComponent comp : this.componentList) {
             if (comp != null && comp == component) {
                 this.componentList.remove(comp);
                 this.componentList.add(comp);

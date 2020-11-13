@@ -22,6 +22,7 @@ public class TrayComponent extends DraggableHudComponent {
 
     public TrayComponent() {
         super("Tray");
+
         buttons.add(new TrayButtonComponent("hub"));
         buttons.add(new TrayButtonComponent("combat"));
         buttons.add(new TrayButtonComponent("movement"));
@@ -29,6 +30,8 @@ public class TrayComponent extends DraggableHudComponent {
         buttons.add(new TrayButtonComponent("player"));
         buttons.add(new TrayButtonComponent("world"));
         buttons.add(new TrayButtonComponent("misc"));
+
+        this.setVisible(true);
     }
 
     @Override
