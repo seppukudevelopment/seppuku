@@ -456,6 +456,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                                 } else if (value.getValue() instanceof Byte) {
                                     value.setValue(Byte.parseByte(valueNumberText.displayValue));
                                 }
+                                Seppuku.INSTANCE.getConfigManager().saveAll(); // save configs
                             } catch (NumberFormatException e) {
                                 Seppuku.INSTANCE.logfChat("%s - %s: Invalid number format.", module.getDisplayName(), value.getName());
                             }
@@ -479,6 +480,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         public void onComponentEvent() {
                             if (value.getEnum(valueText.displayValue) != -1) {
                                 value.setEnumValue(valueText.displayValue);
+                                Seppuku.INSTANCE.getConfigManager().saveAll(); // save configs
                             } else {
                                 Seppuku.INSTANCE.logfChat("%s - %s: Invalid entry.", module.getDisplayName(), value.getName());
                             }
