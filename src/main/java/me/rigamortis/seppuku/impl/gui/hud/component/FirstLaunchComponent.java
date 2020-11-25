@@ -6,6 +6,7 @@ import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.impl.module.render.HudModule;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.text.TextFormatting;
 
 /**
  * created by noil on 5/7/2020
@@ -19,13 +20,13 @@ public final class FirstLaunchComponent extends DraggableHudComponent {
     public FirstLaunchComponent() {
         super("FirstLaunch");
 
-        final String textData = "Welcome to Seppuku Client!\n\n" +
-                "Press ~ (tilda/grave) to open the GUI / hud-editor.";
+        final String textData = TextFormatting.WHITE + "Welcome to the " + TextFormatting.RESET + "Seppuku Client\n\n" +
+                TextFormatting.WHITE + "Press ~ (GRAVE) or RSHIFT to open the GUI.";
         this.setTextData(textData);
 
         this.setVisible(true);
         this.setSnappable(false);
-        this.setW(200);
+        this.setW(188);
         this.setH(38);
         this.setX(2);
         this.setY(2);
@@ -40,10 +41,10 @@ public final class FirstLaunchComponent extends DraggableHudComponent {
         final Minecraft mc = Minecraft.getMinecraft();
 
         // Background
-        RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0xFF202020);
+        RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x99202020);
 
         // Render text data
-        mc.fontRenderer.drawSplitString(this.textData, (int) this.getX() + 2, (int) this.getY() + 2, 200, 0xFFFFFFFF);
+        mc.fontRenderer.drawSplitString(this.textData, (int) this.getX() + 2, (int) this.getY() + 2, 200, 0xFF9900EE);
     }
 
     public void onClose() {
