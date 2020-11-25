@@ -1,5 +1,6 @@
 package me.rigamortis.seppuku.impl.management;
 
+import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.macro.Macro;
 
 import java.util.ArrayList;
@@ -14,7 +15,9 @@ public final class MacroManager {
     private List<Macro> macroList = new ArrayList<>();
 
     public MacroManager() {
-
+        if (Seppuku.INSTANCE.getConfigManager().isFirstLaunch()) {
+            this.addMacro("HudEditorToggle", "RSHIFT", ".toggle hudeditor");
+        }
     }
 
     public Macro find(String name) {
@@ -24,6 +27,10 @@ public final class MacroManager {
             }
         }
         return null;
+    }
+
+    public void addMacro(String name, String key, String macro) {
+        this.macroList.add(new Macro(name, key, macro));
     }
 
     public void unload() {

@@ -5,9 +5,11 @@ import me.rigamortis.seppuku.api.event.gui.hud.EventHubComponentClick;
 import me.rigamortis.seppuku.api.event.minecraft.EventDisplayGui;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.gui.hud.component.HudComponent;
+import me.rigamortis.seppuku.api.gui.hud.component.ToolTipComponent;
 import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
+import me.rigamortis.seppuku.impl.module.ui.HudEditorModule;
 import net.minecraft.client.Minecraft;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
@@ -18,6 +20,8 @@ public class TrayComponent extends DraggableHudComponent {
 
     private static final int TEXTURE_WIDTH = 16;
     private static final int TEXTURE_HEIGHT = 16;
+
+    private ToolTipComponent currentToolTip;
 
     private final List<TrayButtonComponent> buttons = new ArrayList<>();
 
@@ -68,6 +72,24 @@ public class TrayComponent extends DraggableHudComponent {
                 trayButton.setX(this.getX() + (i * TEXTURE_WIDTH)); // divide them up by (position in array * texture width)
                 trayButton.setY(this.getY()); // keep the same y pos
                 trayButton.render(mouseX, mouseY, partialTicks); // render the tray button
+            }
+        }
+
+        if (isMouseInside(mouseX, mouseY)) {
+            final HudEditorModule hudEditorModule = (HudEditorModule) Seppuku.INSTANCE.getModuleManager().find(HudEditorModule.class);
+            if (hudEditorModule != null) {
+                if (hudEditorModule.tooltips.getValue()) {
+                    if (this.currentToolTip != null) {
+                        this.currentToolTip.render(mouseX, mouseY, partialTicks);
+                    } else {
+                        final String tooltipText = "Tray (right click to open a panel)";
+                        this.currentToolTip = new ToolTipComponent(tooltipText);
+                    }
+                }
+            }
+        } else {
+            if (this.currentToolTip != null) {
+                this.currentToolTip = null;
             }
         }
 

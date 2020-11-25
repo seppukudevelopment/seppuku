@@ -42,6 +42,8 @@ public final class HudEditorModule extends Module {
             }
 
             this.open = true;
+
+            this.setEnabled(false);
         }
     }
 
