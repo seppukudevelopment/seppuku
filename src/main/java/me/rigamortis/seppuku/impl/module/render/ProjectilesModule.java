@@ -46,10 +46,10 @@ public final class ProjectilesModule extends Module {
     private final Queue<Vec3d> flightPoint = new ConcurrentLinkedQueue<>();
 
     public final Value<Float> width = new Value<Float>("Width", new String[]{"W", "Width"}, "Pixel width of the projectile path.", 1.0f, 0.0f, 5.0f, 0.1f);
-    public final Value<Float> red = new Value<Float>("Red", new String[]{"R"}, "Red value for the projectile path.", 255.0f, 0.0f, 255.0f, 1.0f);
-    public final Value<Float> green = new Value<Float>("Green", new String[]{"G"}, "Green value for the projectile path.", 255.0f, 0.0f, 255.0f, 1.0f);
-    public final Value<Float> blue = new Value<Float>("Blue", new String[]{"B"}, "Blue value for the projectile path.", 255.0f, 0.0f, 255.0f, 1.0f);
-    public final Value<Float> alpha = new Value<Float>("Alpha", new String[]{"A"}, "Alpha value for the projectile path.", 255.0f, 0.0f, 255.0f, 1.0f);
+    public final Value<Integer> red = new Value<Integer>("Red", new String[]{"R"}, "Red value for the projectile path.", 255, 0, 255, 1);
+    public final Value<Integer> green = new Value<Integer>("Green", new String[]{"G"}, "Green value for the projectile path.", 255, 0, 255, 1);
+    public final Value<Integer> blue = new Value<Integer>("Blue", new String[]{"B"}, "Blue value for the projectile path.", 255, 0, 255, 1);
+    public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"A"}, "Alpha value for the projectile path.", 255, 0, 255, 1);
 
     public ProjectilesModule() {
         super("Projectiles", new String[]{"Proj"}, "Projects the possible path of an entity that was fired.", "NONE", -1, ModuleType.RENDER);

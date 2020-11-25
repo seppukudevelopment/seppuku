@@ -22,9 +22,9 @@ public final class NoBiomeColorModule extends Module {
         DEFAULT, CUSTOM
     }
 
-    public final Value<Float> red = new Value<Float>("Red", new String[]{"R"}, "Red value for custom biome color.", 255.0f, 0.0f, 255.0f, 1.0f);
-    public final Value<Float> green = new Value<Float>("Green", new String[]{"G"}, "Green value for custom biome color.", 255.0f, 0.0f, 255.0f, 1.0f);
-    public final Value<Float> blue = new Value<Float>("Blue", new String[]{"B"}, "Blue value for custom biome color.", 255.0f, 0.0f, 255.0f, 1.0f);
+    public final Value<Integer> red = new Value<Integer>("Red", new String[]{"R"}, "Red value for custom biome color.", 255, 0, 255, 1);
+    public final Value<Integer> green = new Value<Integer>("Green", new String[]{"G"}, "Green value for custom biome color.", 255, 0, 255, 1);
+    public final Value<Integer> blue = new Value<Integer>("Blue", new String[]{"B"}, "Blue value for custom biome color.", 255, 0, 255, 1);
 
     private float prevRed;
     private float prevGreen;
