@@ -22,7 +22,7 @@ public final class NoRotateModule extends Module {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             if (event.getPacket() instanceof SPacketPlayerPosLook) {
                 final SPacketPlayerPosLook packet = (SPacketPlayerPosLook) event.getPacket();
-                if(Minecraft.getMinecraft().player != null) {
+                if (Minecraft.getMinecraft().player != null) {
                     packet.yaw = Minecraft.getMinecraft().player.rotationYaw;
                     packet.pitch = Minecraft.getMinecraft().player.rotationPitch;
                 }

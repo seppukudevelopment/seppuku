@@ -118,6 +118,9 @@ public class Value<T> {
     }
 
     public String getDesc() {
+        if (this.desc == null) {
+            return "No description to be found.";
+        }
         return desc;
     }
 

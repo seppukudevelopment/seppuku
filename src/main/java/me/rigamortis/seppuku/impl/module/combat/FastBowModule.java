@@ -17,7 +17,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class FastBowModule extends Module {
 
     public FastBowModule() {
-        super("FastBow", new String[] {"FBow"}, "Releases the bow as fast as possible", "NONE", -1, ModuleType.COMBAT);
+        super("FastBow", new String[]{"FBow"}, "Releases the bow as fast as possible", "NONE", -1, ModuleType.COMBAT);
     }
 
     @Listener
@@ -25,8 +25,8 @@ public final class FastBowModule extends Module {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             final Minecraft mc = Minecraft.getMinecraft();
 
-            if(mc.player.inventory.getCurrentItem().getItem() instanceof ItemBow) {
-                if(mc.player.isHandActive() && mc.player.getItemInUseMaxCount() >= 3) {
+            if (mc.player.inventory.getCurrentItem().getItem() instanceof ItemBow) {
+                if (mc.player.isHandActive() && mc.player.getItemInUseMaxCount() >= 3) {
                     mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, mc.player.getHorizontalFacing()));
                     mc.player.connection.sendPacket(new CPacketPlayerTryUseItem(mc.player.getActiveHand()));
                     mc.player.stopActiveHand();

@@ -27,7 +27,7 @@ public final class PeekCommand extends Command {
     private String entity;
 
     public PeekCommand() {
-        super("Peek", new String[] {"Pk"}, "Allows you to see inside shulker boxes without having to place them", "Peek <Username>\nPeek");
+        super("Peek", new String[]{"Pk"}, "Allows you to see inside shulker boxes without having to place them", "Peek <Username>\nPeek");
     }
 
     @Override
@@ -39,7 +39,7 @@ public final class PeekCommand extends Command {
 
         final String[] split = input.split(" ");
 
-        if(split.length > 1) {
+        if (split.length > 1) {
             if (!this.clamp(input, 2, 2)) {
                 this.printUsage();
                 return;
@@ -56,55 +56,55 @@ public final class PeekCommand extends Command {
 
     @Listener
     public void render(EventRender2D event) {
-        try{
+        try {
             final Minecraft mc = Minecraft.getMinecraft();
 
             ItemStack stack = null;
 
-            if(this.entity != null) {
+            if (this.entity != null) {
                 EntityPlayer target = null;
 
-                for(Entity e : mc.world.loadedEntityList) {
-                    if(e != null) {
-                        if(e instanceof EntityPlayer && e.getName().equalsIgnoreCase(this.entity)) {
+                for (Entity e : mc.world.loadedEntityList) {
+                    if (e != null) {
+                        if (e instanceof EntityPlayer && e.getName().equalsIgnoreCase(this.entity)) {
                             target = (EntityPlayer) e;
                         }
                     }
                 }
 
-                if(target != null) {
+                if (target != null) {
                     stack = getHeldShulker(target);
 
-                    if(stack == null) {
+                    if (stack == null) {
                         Seppuku.INSTANCE.errorChat("\"" + target.getName() + "\" is not holding a shulker box");
                         this.entity = null;
                         Seppuku.INSTANCE.getEventManager().removeEventListener(this);
                         return;
                     }
-                }else{
+                } else {
                     Seppuku.INSTANCE.errorChat("\"" + this.entity + "\" is not within range");
                 }
                 this.entity = null;
-            }else{
+            } else {
                 final RayTraceResult ray = mc.objectMouseOver;
 
-                if(ray != null) {
-                    if(ray.entityHit != null && ray.entityHit instanceof EntityItemFrame) {
+                if (ray != null) {
+                    if (ray.entityHit != null && ray.entityHit instanceof EntityItemFrame) {
                         final EntityItemFrame itemFrame = (EntityItemFrame) ray.entityHit;
-                        if(itemFrame.getDisplayedItem() != null && itemFrame.getDisplayedItem().getItem() instanceof ItemShulkerBox) {
+                        if (itemFrame.getDisplayedItem() != null && itemFrame.getDisplayedItem().getItem() instanceof ItemShulkerBox) {
                             stack = itemFrame.getDisplayedItem();
-                        }else{
+                        } else {
                             stack = getHeldShulker(mc.player);
                         }
-                    }else{
+                    } else {
                         stack = getHeldShulker(mc.player);
                     }
-                }else{
+                } else {
                     stack = getHeldShulker(mc.player);
                 }
             }
 
-            if(stack != null) {
+            if (stack != null) {
                 final Item item = stack.getItem();
 
                 if (item instanceof ItemShulkerBox) {
@@ -112,14 +112,14 @@ public final class PeekCommand extends Command {
                         final BlockShulkerBox shulkerBox = (BlockShulkerBox) Block.getBlockFromItem(item);
                         if (shulkerBox != null) {
                             final NBTTagCompound tag = stack.getTagCompound();
-                            if(tag != null && tag.hasKey("BlockEntityTag", 10)) {
+                            if (tag != null && tag.hasKey("BlockEntityTag", 10)) {
                                 final NBTTagCompound entityTag = tag.getCompoundTag("BlockEntityTag");
 
                                 final TileEntityShulkerBox te = new TileEntityShulkerBox();
                                 te.setWorld(mc.world);
                                 te.readFromNBT(entityTag);
                                 mc.displayGuiScreen(new GuiShulkerBox(mc.player.inventory, te));
-                            }else{
+                            } else {
                                 Seppuku.INSTANCE.errorChat("This shulker box is empty");
                             }
                         }
@@ -128,20 +128,20 @@ public final class PeekCommand extends Command {
                 } else {
                     Seppuku.INSTANCE.errorChat("Please hold a shulker box");
                 }
-            }else{
+            } else {
                 Seppuku.INSTANCE.errorChat("Please hold a shulker box");
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         Seppuku.INSTANCE.getEventManager().removeEventListener(this);
     }
 
     private ItemStack getHeldShulker(EntityPlayer entity) {
-        if(entity.getHeldItemMainhand() != null && entity.getHeldItemMainhand().getItem() instanceof ItemShulkerBox) {
+        if (entity.getHeldItemMainhand() != null && entity.getHeldItemMainhand().getItem() instanceof ItemShulkerBox) {
             return entity.getHeldItemMainhand();
         }
-        if(entity.getHeldItemOffhand() != null && entity.getHeldItemOffhand().getItem() instanceof ItemShulkerBox) {
+        if (entity.getHeldItemOffhand() != null && entity.getHeldItemOffhand().getItem() instanceof ItemShulkerBox) {
             return entity.getHeldItemOffhand();
         }
         return null;

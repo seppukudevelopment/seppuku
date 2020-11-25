@@ -63,9 +63,7 @@ public final class OverViewComponent extends ResizableHudComponent {
             }
         }
 
-        final boolean inside = mouseX >= this.getX() && mouseX <= this.getX() + this.getW() && mouseY >= this.getY() && mouseY <= this.getY() + this.getH();
-
-        if (inside)
+        if (this.isMouseInside(mouseX, mouseY))
             Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("Zoom: " + this.distance, this.getX() + 4, this.getY() + this.getH() - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - 2, 0xFFFFFFFF);
     }
 
@@ -94,9 +92,8 @@ public final class OverViewComponent extends ResizableHudComponent {
     }
 
     private void handleScrolling(int mouseX, int mouseY) {
-        final boolean inside = mouseX >= this.getX() && mouseX <= this.getX() + this.getW() && mouseY >= this.getY() && mouseY <= this.getY() + this.getH();
-        if (inside && Mouse.hasWheel()) {
-            this.scroll += -(Mouse.getDWheel() / 100);
+        if (this.isMouseInside(mouseX, mouseY) && Mouse.hasWheel()) {
+            this.scroll += -(Mouse.getDWheel() / 100.0f);
 
             if (this.scroll <= 0) {
                 this.scroll = 0;

@@ -1,5 +1,6 @@
 package me.rigamortis.seppuku.impl.fml.core;
 
+import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
 import me.rigamortis.seppuku.api.util.ASMUtil;
@@ -13,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.util.logging.Level;
 
 /**
  * Author Seth
@@ -44,12 +46,12 @@ public final class SeppukuClassTransformer implements IClassTransformer {
                 if (classNode != null) {
 
                     if (patch.isDebug()) {
-                        System.out.println("Methods for class " + classNode.name);
+                        Seppuku.INSTANCE.getLogger().log(Level.INFO, "Methods for class " + classNode.name);
                         for (FieldNode fieldNode : classNode.fields) {
-                            System.out.println("Field " + fieldNode.access + " " + fieldNode.name + " " + fieldNode.desc);
+                            Seppuku.INSTANCE.getLogger().log(Level.INFO, "Field " + fieldNode.access + " " + fieldNode.name + " " + fieldNode.desc);
                         }
                         for (MethodNode method : classNode.methods) {
-                            System.out.println("Method " + method.access + " " + method.name + " " + method.desc);
+                            Seppuku.INSTANCE.getLogger().log(Level.INFO, "Method " + method.access + " " + method.name + " " + method.desc);
                         }
                     }
 
@@ -58,7 +60,7 @@ public final class SeppukuClassTransformer implements IClassTransformer {
                         final InputStream stream = this.getClass().getResourceAsStream("/" + patch.getAccessPatch().getFile());
 
                         if (stream != null) {
-                            System.out.println("[Seppuku] Access transformer found " + patch.getAccessPatch().getFile());
+                            Seppuku.INSTANCE.getLogger().log(Level.INFO, "Access transformer found " + patch.getAccessPatch().getFile());
 
                             String line = "";
                             final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
@@ -71,7 +73,7 @@ public final class SeppukuClassTransformer implements IClassTransformer {
                                         field.access = 1;
 
                                         if (patch.isDebug()) {
-                                            System.out.println("Changed access modifier for field " + field.name);
+                                            Seppuku.INSTANCE.getLogger().log(Level.INFO, "Changed access modifier for field " + field.name);
                                         }
                                     }
                                 }
@@ -82,7 +84,7 @@ public final class SeppukuClassTransformer implements IClassTransformer {
                                             method.access = 1;
 
                                             if (patch.isDebug()) {
-                                                System.out.println("Changed access modifier for method " + method.name + " " + method.desc);
+                                                Seppuku.INSTANCE.getLogger().log(Level.INFO, "Changed access modifier for method " + method.name + " " + method.desc);
                                             }
                                         }
                                     }
@@ -129,7 +131,10 @@ public final class SeppukuClassTransformer implements IClassTransformer {
 
                                     //invoke our patch method
                                     method.invoke(patch, methodNode, PATCH_MANAGER.getEnv());
-                                    System.out.println("[Seppuku] Patched " + patch.getMcpName().replace(".", "/") + "." + methodPatch.mcpName());
+
+                                    if (PATCH_MANAGER.getEnv() == PatchManager.Environment.IDE) {
+                                        Seppuku.INSTANCE.getLogger().log(Level.INFO, "Patched " + patch.getMcpName().replace(".", "/") + "." + methodPatch.mcpName());
+                                    }
                                 }
                             }
                         }

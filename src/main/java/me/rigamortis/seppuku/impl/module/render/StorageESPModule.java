@@ -28,7 +28,7 @@ public final class StorageESPModule extends Module {
         TWO_D, THREE_D // TWO_DIMENSIONAL, THREE_DIMENSIONAL
     }
 
-    public final Value<Boolean> nametag = new Value<Boolean>("Nametag", new String[]{"Nametag", "Tag", "Tags", "Ntag"}, "Renders the name of the drawn storage object.", false);
+    public final Value<Boolean> nametag = new Value<Boolean>("Nametag", new String[]{"Nametag", "Tag", "Tags", "Ntag", "name", "names"}, "Renders the name of the drawn storage object.", false);
     public final Value<Integer> opacity = new Value<Integer>("Opacity", new String[]{"Opacity", "Transparency", "Alpha"}, "Opacity of the rendered esp.", 128, 0, 255, 1);
 
     private ICamera camera = new Frustum();

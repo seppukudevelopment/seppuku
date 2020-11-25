@@ -16,7 +16,7 @@ import net.minecraft.network.play.client.CPacketCreativeInventoryAction;
 public final class SignBookCommand extends Command {
 
     public SignBookCommand() {
-        super("SignBook", new String[] {"SBook", "SignB"}, "Allows you to change the author of a signed book while in creative", "SignBook <Username>");
+        super("SignBook", new String[]{"SBook", "SignB"}, "Allows you to change the author of a signed book while in creative", "SignBook <Username>");
     }
 
     @Override
@@ -37,12 +37,12 @@ public final class SignBookCommand extends Command {
 
         final String[] split = input.split(" ");
 
-        if(itemStack.getItem() instanceof ItemWrittenBook) {
+        if (itemStack.getItem() instanceof ItemWrittenBook) {
             final NBTTagCompound tagCompound = (itemStack.hasTagCompound()) ? itemStack.getTagCompound() : new NBTTagCompound();
             tagCompound.setTag("author", new NBTTagString(split[1]));
             mc.player.connection.sendPacket(new CPacketCreativeInventoryAction(36 + mc.player.inventory.currentItem, itemStack));
             Seppuku.INSTANCE.logChat("Signed book with username " + split[1]);
-        }else{
+        } else {
             Seppuku.INSTANCE.errorChat("Please hold a signed book");
         }
     }

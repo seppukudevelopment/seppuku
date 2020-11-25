@@ -16,7 +16,7 @@ import java.text.DecimalFormat;
 public final class CoordsCommand extends Command {
 
     public CoordsCommand() {
-        super("Coords", new String[] {"Coord", "Coordinates", "Coordinate"}, "Copies your coordinates to the clipboard", "Coords");
+        super("Coords", new String[]{"Coord", "Coordinates", "Coordinate"}, "Copies your coordinates to the clipboard", "Coords");
     }
 
     @Override

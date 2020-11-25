@@ -42,7 +42,7 @@ public final class JesusModule extends Module {
 
     @Listener
     public void getLiquidCollisionBB(EventLiquidCollisionBB event) {
-        if(Minecraft.getMinecraft().world != null && Minecraft.getMinecraft().player != null) {
+        if (Minecraft.getMinecraft().world != null && Minecraft.getMinecraft().player != null) {
             if (this.checkCollide() && !(Minecraft.getMinecraft().player.motionY >= 0.1f) && event.getBlockPos().getY() < Minecraft.getMinecraft().player.posY - this.offset.getValue()) {
                 if (Minecraft.getMinecraft().player.getRidingEntity() != null) {
                     event.setBoundingBox(new AxisAlignedBB(0, 0, 0, 1, 1 - this.offset.getValue(), 1));

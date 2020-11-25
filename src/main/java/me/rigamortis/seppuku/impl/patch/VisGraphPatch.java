@@ -22,6 +22,7 @@ public final class VisGraphPatch extends ClassPatch {
 
     /**
      * This is where minecraft handles culling
+     *
      * @param methodNode
      * @param env
      */
@@ -50,6 +51,7 @@ public final class VisGraphPatch extends ClassPatch {
     /**
      * Our setOpaqueCube hook
      * Cancel to prevent culling(this may cost a few frames)
+     *
      * @return
      */
     public static boolean setOpaqueCubeHook() {

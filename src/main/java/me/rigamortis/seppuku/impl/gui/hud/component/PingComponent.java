@@ -23,7 +23,7 @@ public final class PingComponent extends DraggableHudComponent {
         if (mc.world == null || mc.player == null || mc.player.getUniqueID() == null)
             return;
 
-        final NetworkPlayerInfo playerInfo = mc.getConnection().getPlayerInfo(mc.player.getUniqueID());
+        final NetworkPlayerInfo playerInfo = mc.player.connection.getPlayerInfo(mc.player.getUniqueID());
 
         if (playerInfo == null)
             return;

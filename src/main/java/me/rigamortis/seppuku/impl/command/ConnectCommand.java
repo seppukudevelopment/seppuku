@@ -32,12 +32,12 @@ public final class ConnectCommand extends Command {
         if (host.length > 1) {
             if (StringUtil.isInt(host[1])) {
                 port = Integer.parseInt(host[1]);
-            }else{
+            } else {
                 Seppuku.INSTANCE.errorChat("Invalid port \"" + host[1] + "\"");
             }
         }
 
-        if(Minecraft.getMinecraft().player.connection.getNetworkManager().channel().isOpen()) {
+        if (Minecraft.getMinecraft().player.connection.getNetworkManager().channel().isOpen()) {
             Minecraft.getMinecraft().player.connection.getNetworkManager().closeChannel(null);
         }
 

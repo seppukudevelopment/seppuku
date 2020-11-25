@@ -14,6 +14,8 @@ public class HudComponent {
     private float emptyH;
 
     private String name;
+    private String tooltipText = "No description to be found.";
+
     private boolean visible;
 
     public HudComponent() {
@@ -24,12 +26,34 @@ public class HudComponent {
         this.name = name;
     }
 
+    public HudComponent(String name, String tooltipText) {
+        this.name = name;
+        this.tooltipText = tooltipText;
+    }
+
     public HudComponent(float x, float y, float w, float h) {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
         this.emptyH = h;
+    }
+
+    public HudComponent(float x, float y, float w, float h, String name) {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+        this.name = name;
+    }
+
+    public HudComponent(float x, float y, float w, float h, String name, String tooltipText) {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+        this.name = name;
+        this.tooltipText = tooltipText;
     }
 
     public void render(int mouseX, int mouseY, float partialTicks) {
@@ -50,6 +74,10 @@ public class HudComponent {
 
     public void keyTyped(char typedChar, int keyCode) {
 
+    }
+
+    public boolean isMouseInside(int mouseX, int mouseY) {
+        return mouseX >= this.getX() && mouseX <= this.getX() + this.getW() && mouseY >= this.getY() && mouseY <= this.getY() + this.getH();
     }
 
     public boolean collidesWith(HudComponent other) {
@@ -109,6 +137,14 @@ public class HudComponent {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getTooltipText() {
+        return tooltipText;
+    }
+
+    public void setTooltipText(String tooltipText) {
+        this.tooltipText = tooltipText;
     }
 
     public boolean isVisible() {

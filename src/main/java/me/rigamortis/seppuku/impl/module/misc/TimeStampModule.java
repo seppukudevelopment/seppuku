@@ -16,16 +16,16 @@ import java.util.Date;
 public final class TimeStampModule extends Module {
 
     public TimeStampModule() {
-        super("TimeStamp", new String[] {"Stamp"}, "Automatically adds the date at the bottom of signs", "NONE", -1, ModuleType.MISC);
+        super("TimeStamp", new String[]{"Stamp"}, "Automatically adds the date at the bottom of signs", "NONE", -1, ModuleType.MISC);
     }
 
     @Listener
     public void sendPacket(EventSendPacket event) {
-        if(event.getStage() == EventStageable.EventStage.PRE) {
-            if(event.getPacket() instanceof CPacketUpdateSign) {
+        if (event.getStage() == EventStageable.EventStage.PRE) {
+            if (event.getPacket() instanceof CPacketUpdateSign) {
                 final CPacketUpdateSign packet = (CPacketUpdateSign) event.getPacket();
 
-                if(packet.lines[3].length() <= 0) {
+                if (packet.lines[3].length() <= 0) {
                     packet.lines[3] = new SimpleDateFormat("MMM dd, yyyy").format(new Date());
                 }
             }

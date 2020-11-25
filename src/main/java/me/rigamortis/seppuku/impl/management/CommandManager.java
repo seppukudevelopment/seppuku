@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Author Seth
@@ -57,7 +58,6 @@ public final class CommandManager {
         this.commandList.add(new AutoIgnoreCommand());
         this.commandList.add(new JavaScriptCommand());
         this.commandList.add(new FakeChatCommand());
-        this.commandList.add(new JoinDateCommand());
         this.commandList.add(new EnchantCommand());
         this.commandList.add(new RenameCommand());
         this.commandList.add(new RenameModuleCommand());
@@ -102,12 +102,10 @@ public final class CommandManager {
                         //create a new instance of the class
                         final Command command = (Command) clazz.newInstance();
 
-                        if (command != null) {
-                            //add the class to our list of modules
-                            this.commandList.add(command);
-                            Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventCommandLoad(command));
-                            System.out.println("[Seppuku] Found external command " + command.getDisplayName());
-                        }
+                        //add the class to our list of modules
+                        this.commandList.add(command);
+                        Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventCommandLoad(command));
+                        Seppuku.INSTANCE.getLogger().log(Level.INFO, "Found external command " + command.getDisplayName());
                     }
                 }
             }

@@ -29,16 +29,16 @@ public abstract class MainMenuButton {
     }
 
     public void render(int x, int y, float partialTicks) {
-        if(this.clicked) {
+        if (this.clicked) {
             RenderUtil.drawRect(this.x, this.y, this.x + this.w, this.y + this.h, 0x66111111);
             RenderUtil.drawGradientRect(this.x + 1, this.y + 1, this.x + this.w - 1, this.y + this.h - 1, 0xAA232323, 0xAA303030);
             Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(this.text, this.x + (this.w / 2) - (Minecraft.getMinecraft().fontRenderer.getStringWidth(this.text) / 2), this.y + (this.h / 2) - (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2), 0xFF9900EE);
-        }else{
-            if(this.inside(x, y)) {
+        } else {
+            if (this.inside(x, y)) {
                 RenderUtil.drawRect(this.x, this.y, this.x + this.w, this.y + this.h, 0x66111111);
                 RenderUtil.drawGradientRect(this.x + 1, this.y + 1, this.x + this.w - 1, this.y + this.h - 1, 0xAA303030, 0xAA232323);
                 Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(this.text, this.x + (this.w / 2) - (Minecraft.getMinecraft().fontRenderer.getStringWidth(this.text) / 2), this.y + (this.h / 2) - (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2), -1);
-            }else{
+            } else {
                 RenderUtil.drawRect(this.x, this.y, this.x + this.w, this.y + this.h, 0x66111111);
                 RenderUtil.drawGradientRect(this.x + 1, this.y + 1, this.x + this.w - 1, this.y + this.h - 1, 0xAA303030, 0xAA232323);
                 Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(this.text, this.x + (this.w / 2) - (Minecraft.getMinecraft().fontRenderer.getStringWidth(this.text) / 2), this.y + (this.h / 2) - (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2), 0xFFAAAAAA);
@@ -47,18 +47,18 @@ public abstract class MainMenuButton {
     }
 
     public void mouseRelease(int x, int y, int button) {
-        if(inside(x, y) && this.clicked && button == 0) {
+        if (inside(x, y) && this.clicked && button == 0) {
             this.action();
             Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0f));
         }
 
-        if(button == 0) {
+        if (button == 0) {
             this.clicked = false;
         }
     }
 
     public void mouseClicked(int x, int y, int button) {
-        if(inside(x, y) && button == 0) {
+        if (inside(x, y) && button == 0) {
             this.clicked = true;
         }
     }

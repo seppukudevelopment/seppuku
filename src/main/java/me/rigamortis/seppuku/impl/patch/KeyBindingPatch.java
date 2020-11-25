@@ -24,6 +24,7 @@ public final class KeyBindingPatch extends ClassPatch {
      * We need to patch it because forge adds a key conflicting
      * problem and doesn't allow us to keep keys pressed while
      * gui's are open
+     *
      * @param methodNode
      * @param env
      */
@@ -41,9 +42,9 @@ public final class KeyBindingPatch extends ClassPatch {
             }
         }
 
-        if(target != null) {
+        if (target != null) {
             AbstractInsnNode next = target.getNext().getNext(); //If
-            while(next.getOpcode() != IRETURN) {
+            while (next.getOpcode() != IRETURN) {
                 next = next.getNext();
                 methodNode.instructions.remove(next.getPrevious());
             }

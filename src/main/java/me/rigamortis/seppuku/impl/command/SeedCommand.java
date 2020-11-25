@@ -14,7 +14,7 @@ import net.minecraft.client.multiplayer.ServerData;
 public final class SeedCommand extends Command {
 
     public SeedCommand() {
-        super("Seed", new String[] {"RandomSeed"}, "Sets the client-side seed used by certain features", "Seed <Number>");
+        super("Seed", new String[]{"RandomSeed"}, "Sets the client-side seed used by certain features", "Seed <Number>");
     }
 
     @Override
@@ -26,24 +26,24 @@ public final class SeedCommand extends Command {
 
         final String[] split = input.split(" ");
 
-        if(StringUtil.isLong(split[1], 10)) {
+        if (StringUtil.isLong(split[1], 10)) {
             final ServerData serverData = Minecraft.getMinecraft().getCurrentServerData();
-            if(serverData != null) {
+            if (serverData != null) {
                 final WorldManager.WorldData worldData = Seppuku.INSTANCE.getWorldManager().find(serverData.serverIP);
-                if(worldData != null) {
+                if (worldData != null) {
                     final long seed = Long.parseLong(split[1]);
                     worldData.setSeed(seed);
                     Seppuku.INSTANCE.logChat("Set " + serverData.serverIP + "'s seed to " + seed);
-                }else{
+                } else {
                     final long seed = Long.parseLong(split[1]);
                     Seppuku.INSTANCE.getWorldManager().getWorldDataList().add(new WorldManager.WorldData(serverData.serverIP, seed));
                     Seppuku.INSTANCE.logChat("Set " + serverData.serverIP + "'s seed to " + seed);
                 }
                 Seppuku.INSTANCE.getConfigManager().saveAll();
-            }else{
+            } else {
                 Seppuku.INSTANCE.errorChat("Cannot set seed for localhost");
             }
-        }else{
+        } else {
             Seppuku.INSTANCE.errorChat("Unknown number " + "\247f\"" + split[1] + "\"");
         }
     }

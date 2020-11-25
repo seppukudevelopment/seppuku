@@ -104,7 +104,7 @@ public final class FriendCommand extends Command {
                 }
 
                 Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(msg);
-            }else{
+            } else {
                 Seppuku.INSTANCE.logChat("You don't have any friends :(");
             }
         } else if (equals(clearAlias, split[1])) {

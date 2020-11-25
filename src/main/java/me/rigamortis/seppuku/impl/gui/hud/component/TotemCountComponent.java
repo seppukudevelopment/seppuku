@@ -27,14 +27,14 @@ public final class TotemCountComponent extends DraggableHudComponent {
         mc.fontRenderer.drawStringWithShadow(totemCount, this.getX(), this.getY(), -1);
     }
 
-        private int getTotemCount() {
-            int totems = 0;
-            for(int i = 0; i < 45; i++) {
-                final ItemStack stack = Minecraft.getMinecraft().player.inventory.getStackInSlot(i);
-                if(stack.getItem() == Items.TOTEM_OF_UNDYING){
-                    totems += stack.getCount();
-                }
+    private int getTotemCount() {
+        int totems = 0;
+        for (int i = 0; i < 45; i++) {
+            final ItemStack stack = Minecraft.getMinecraft().player.inventory.getStackInSlot(i);
+            if (stack.getItem() == Items.TOTEM_OF_UNDYING) {
+                totems += stack.getCount();
             }
-            return totems;
         }
+        return totems;
     }
+}

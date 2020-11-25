@@ -26,9 +26,9 @@ public final class AutoFishModule extends Module {
     public void receivePacket(EventReceivePacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
 
-            if(event.getPacket() instanceof SPacketSoundEffect) {
+            if (event.getPacket() instanceof SPacketSoundEffect) {
                 final SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
-                if(packet.getCategory() == SoundCategory.NEUTRAL && packet.getSound() == SoundEvents.ENTITY_BOBBER_SPLASH) {
+                if (packet.getCategory() == SoundCategory.NEUTRAL && packet.getSound() == SoundEvents.ENTITY_BOBBER_SPLASH) {
                     final Minecraft mc = Minecraft.getMinecraft();
 
                     if (mc.player.getHeldItemMainhand().getItem() instanceof ItemFishingRod) {

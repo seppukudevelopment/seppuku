@@ -2,7 +2,6 @@ package me.rigamortis.seppuku.impl.gui.hud.component;
 
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.util.RenderUtil;
-import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import net.minecraft.client.Minecraft;
 
 /**

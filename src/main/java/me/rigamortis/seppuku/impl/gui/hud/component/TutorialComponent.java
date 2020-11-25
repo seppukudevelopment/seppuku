@@ -15,8 +15,8 @@ public final class TutorialComponent extends PopupComponent {
         final String tutorialData = "Hud Editor Tutorial\n\n" +
                 ChatFormatting.BOLD + "Anchor Points\n" + ChatFormatting.RESET +
                 "- Move hud components by clicking & dragging them.\n" +
-                "- Anchor points are located at each corner of the screen, and also one centered at the top of the screen.\n" +
-                "- Drag a component near an anchor point and release the mouse to lock it in place.\n\n" +
+                "- Anchor points are located at each corner of the screen (also at the center top & bottom).\n" +
+                "- Drag a component's corner near an anchor point and release the mouse to lock it in place.\n\n" +
                 ChatFormatting.BOLD + "Combine\n" + ChatFormatting.RESET +
                 "- Combine components together by dragging one into another one, releasing the mouse will combine them together.\n" +
                 "- Both top and bottom parts of a component are able to be glued to.";

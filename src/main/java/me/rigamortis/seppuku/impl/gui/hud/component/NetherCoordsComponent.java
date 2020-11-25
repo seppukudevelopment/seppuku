@@ -21,10 +21,10 @@ public final class NetherCoordsComponent extends DraggableHudComponent {
         super.render(mouseX, mouseY, partialTicks);
         final DecimalFormat df = new DecimalFormat("#.#");
 
-        final String coords = ChatFormatting.GRAY + "x " + ChatFormatting.RED +
-                df.format(Minecraft.getMinecraft().player.posX * 8) + ChatFormatting.RED + "," +
-                ChatFormatting.GRAY + " y " + ChatFormatting.RED + df.format(Minecraft.getMinecraft().player.posY) + ChatFormatting.RED + "," +
-                ChatFormatting.GRAY + " z " + ChatFormatting.RED + df.format(Minecraft.getMinecraft().player.posZ * 8) + ChatFormatting.RESET;
+        final String coords = ChatFormatting.GRAY + "x " + ChatFormatting.DARK_GREEN +
+                df.format(Minecraft.getMinecraft().player.posX * 8) + ChatFormatting.DARK_GREEN + "," +
+                ChatFormatting.GRAY + " y " + ChatFormatting.DARK_GREEN + df.format(Minecraft.getMinecraft().player.posY) + ChatFormatting.DARK_GREEN + "," +
+                ChatFormatting.GRAY + " z " + ChatFormatting.DARK_GREEN + df.format(Minecraft.getMinecraft().player.posZ * 8) + ChatFormatting.RESET;
 
         final String nether = ChatFormatting.GRAY + "x " + ChatFormatting.RED +
                 df.format(Minecraft.getMinecraft().player.posX / 8) + ChatFormatting.RED + "," +

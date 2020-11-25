@@ -19,7 +19,7 @@ import net.minecraft.util.ResourceLocation;
 public final class GiveCommand extends Command {
 
     public GiveCommand() {
-        super("Give", new String[] {"Giv"}, "Allows you to give yourself any item while in creative", "Give <Item> <Data>");
+        super("Give", new String[]{"Giv"}, "Allows you to give yourself any item while in creative", "Give <Item> <Data>");
     }
 
     @Override
@@ -40,29 +40,29 @@ public final class GiveCommand extends Command {
 
         final Item item = this.findItem(split[1]);
 
-        if(item != null) {
+        if (item != null) {
             int amount = 1;
             int meta = 0;
 
-            if(split.length >= 3) {
-                if(StringUtil.isInt(split[2])) {
+            if (split.length >= 3) {
+                if (StringUtil.isInt(split[2])) {
                     amount = Integer.parseInt(split[2]);
-                }else{
+                } else {
                     Seppuku.INSTANCE.errorChat("Unknown number " + "\247f\"" + split[2] + "\"");
                 }
             }
 
-            if(split.length >= 4) {
-                if(StringUtil.isInt(split[3])) {
+            if (split.length >= 4) {
+                if (StringUtil.isInt(split[3])) {
                     meta = Integer.parseInt(split[3]);
-                }else{
+                } else {
                     Seppuku.INSTANCE.errorChat("Unknown number " + "\247f\"" + split[3] + "\"");
                 }
             }
 
             final ItemStack itemStack = new ItemStack(item, amount, meta);
 
-            if(split.length >= 5) {
+            if (split.length >= 5) {
                 final String s = this.buildString(split, 4);
 
                 try {
@@ -75,10 +75,10 @@ public final class GiveCommand extends Command {
             final int slot = this.findEmptyhotbar();
             mc.player.connection.sendPacket(new CPacketCreativeInventoryAction(36 + (slot != -1 ? slot : mc.player.inventory.currentItem), itemStack));
             Seppuku.INSTANCE.logChat("Gave you " + amount + " " + itemStack.getDisplayName());
-        }else{
+        } else {
             final ResourceLocation similar = this.findSimilarItem(split[1]);
 
-            if(similar != null) {
+            if (similar != null) {
                 Seppuku.INSTANCE.errorChat("Unknown item " + "\247f\"" + split[1] + "\"");
                 Seppuku.INSTANCE.logChat("Did you mean " + "\247c" + similar.getPath() + "\247f?");
             }

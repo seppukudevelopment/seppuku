@@ -2,7 +2,6 @@ package me.rigamortis.seppuku.impl.gui.hud.component;
 
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
-import me.rigamortis.seppuku.api.gui.hud.component.ResizableHudComponent;
 import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;

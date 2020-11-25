@@ -28,7 +28,7 @@ public final class NoHandShakeModule extends Module {
             }
             if (event.getPacket() instanceof CPacketCustomPayload) {
                 final CPacketCustomPayload packet = (CPacketCustomPayload) event.getPacket();
-                if(packet.getChannelName().equals("MC|Brand")) {
+                if (packet.getChannelName().equals("MC|Brand")) {
                     packet.data = new PacketBuffer(Unpooled.buffer()).writeString("vanilla");
                 }
             }

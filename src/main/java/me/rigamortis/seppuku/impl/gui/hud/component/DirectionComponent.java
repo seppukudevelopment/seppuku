@@ -2,14 +2,18 @@ package me.rigamortis.seppuku.impl.gui.hud.component;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
+import me.rigamortis.seppuku.api.util.Timer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.MathHelper;
 
 /**
- * Author Seth
- * 8/7/2019 @ 12:54 PM.
+ * @author Seth
+ * @author noil
  */
 public final class DirectionComponent extends DraggableHudComponent {
+
+    private final Timer directionTimer = new Timer();
+    private String direction = "";
 
     public DirectionComponent() {
         super("Direction");
@@ -17,12 +21,15 @@ public final class DirectionComponent extends DraggableHudComponent {
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
-        super.render(mouseX, mouseY, partialTicks);
+        if (this.directionTimer.passed(250)) { // 250ms
+            direction = String.format("%s" + " " + ChatFormatting.GRAY + "%s", this.getFacing(), this.getTowards());
+            this.directionTimer.reset();
+        }
 
-        final Minecraft mc = Minecraft.getMinecraft();
-        final String direction = String.format("%s" + " " + ChatFormatting.GRAY + "%s", this.getFacing(), this.getTowards());
         this.setW(Minecraft.getMinecraft().fontRenderer.getStringWidth(direction));
         this.setH(Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT);
+
+        super.render(mouseX, mouseY, partialTicks);
 
         Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(direction, this.getX(), this.getY(), -1);
     }

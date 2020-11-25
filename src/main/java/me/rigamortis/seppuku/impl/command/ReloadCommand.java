@@ -10,7 +10,7 @@ import me.rigamortis.seppuku.api.command.Command;
 public final class ReloadCommand extends Command {
 
     public ReloadCommand() {
-        super("Reload", new String[] {"Rload"}, "Reloads the client", "Reload");
+        super("Reload", new String[]{"Rload"}, "Reloads the client", "Reload");
     }
 
     @Override

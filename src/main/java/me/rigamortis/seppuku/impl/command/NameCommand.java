@@ -12,7 +12,7 @@ import net.minecraft.util.Session;
 public final class NameCommand extends Command {
 
     public NameCommand() {
-        super("Name", new String[] {"Nam"}, "Allows you to change the case of your name", "Name <Username>");
+        super("Name", new String[]{"Nam"}, "Allows you to change the case of your name", "Name <Username>");
     }
 
     @Override
@@ -24,10 +24,10 @@ public final class NameCommand extends Command {
 
         final String[] split = input.split(" ");
 
-        if(split[1].equalsIgnoreCase(Minecraft.getMinecraft().session.getUsername())) {
+        if (split[1].equalsIgnoreCase(Minecraft.getMinecraft().session.getUsername())) {
             Minecraft.getMinecraft().session = new Session(split[1], Minecraft.getMinecraft().session.getPlayerID(), Minecraft.getMinecraft().session.getToken(), "mojang");
             Seppuku.INSTANCE.logChat("Set username to " + split[1]);
-        }else{
+        } else {
             Seppuku.INSTANCE.errorChat("Name must match");
         }
     }

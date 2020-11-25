@@ -18,12 +18,12 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  * @since 10/18/20
  */
 public final class QuickCraftModule extends Module {
-    public QuickCraftModule () {
+    public QuickCraftModule() {
         super("QuickCraft", new String[]{"FastCraft", "qcraft"}, "Automatically collects the result when crafting.", "NONE", -1, Module.ModuleType.MISC);
     }
 
     @Listener
-    public void onReceivePacket (EventReceivePacket event) {
+    public void onReceivePacket(EventReceivePacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             if (event.getPacket() instanceof SPacketSetSlot) {
                 // Check if this packet updates the recipe result and if the result is not empty

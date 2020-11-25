@@ -17,18 +17,18 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class ShearModule extends Module {
 
     public ShearModule() {
-        super("Shear", new String[] {"sher"}, "Automatically shears nearby sheep if holding shears", "NONE", -1, ModuleType.MISC);
+        super("Shear", new String[]{"sher"}, "Automatically shears nearby sheep if holding shears", "NONE", -1, ModuleType.MISC);
     }
 
     @Listener
     public void onUpdate(EventPlayerUpdate event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             final Minecraft mc = Minecraft.getMinecraft();
-            if(mc.player.inventory.getCurrentItem().getItem() instanceof ItemShears) {
-                for(Entity e : mc.world.loadedEntityList) {
-                    if(e != null && e instanceof EntitySheep) {
+            if (mc.player.inventory.getCurrentItem().getItem() instanceof ItemShears) {
+                for (Entity e : mc.world.loadedEntityList) {
+                    if (e != null && e instanceof EntitySheep) {
                         final EntitySheep sheep = (EntitySheep) e;
-                        if(sheep.getHealth() > 0) {
+                        if (sheep.getHealth() > 0) {
                             if (!sheep.isChild() && !sheep.getSheared() && mc.player.getDistance(sheep) <= 4.5f) {
                                 mc.playerController.interactWithEntity(mc.player, sheep, EnumHand.MAIN_HAND);
                             }

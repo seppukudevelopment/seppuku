@@ -31,13 +31,13 @@ public final class ItemSpoofModule extends Module {
     public float facingZ;
 
     public ItemSpoofModule() {
-        super("ItemSpoof", new String[] {"ItemS"}, "Allows you to display a different item server-side(Use the top left slot in your inventory)", "NONE", -1, ModuleType.PLAYER);
+        super("ItemSpoof", new String[]{"ItemS"}, "Allows you to display a different item server-side(Use the top left slot in your inventory)", "NONE", -1, ModuleType.PLAYER);
     }
 
     @Listener
     public void sendPacket(EventSendPacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
-            if(event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock) {
+            if (event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock) {
                 if (send) {
                     send = false;
                     return;
@@ -50,7 +50,7 @@ public final class ItemSpoofModule extends Module {
                 this.facingY = packet.getFacingY();
                 this.facingZ = packet.getFacingZ();
 
-                if(this.position != null) {
+                if (this.position != null) {
                     event.setCanceled(true);
                     final Minecraft mc = Minecraft.getMinecraft();
                     mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 9, mc.player.inventory.currentItem, ClickType.SWAP, mc.player);
@@ -59,7 +59,7 @@ public final class ItemSpoofModule extends Module {
                     mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 9, mc.player.inventory.currentItem, ClickType.SWAP, mc.player);
                 }
             }
-            if(event.getPacket() instanceof CPacketPlayerTryUseItem) {
+            if (event.getPacket() instanceof CPacketPlayerTryUseItem) {
                 if (send) {
                     send = false;
                     return;
@@ -67,7 +67,7 @@ public final class ItemSpoofModule extends Module {
                 final CPacketPlayerTryUseItem packet = (CPacketPlayerTryUseItem) event.getPacket();
                 this.hand = packet.getHand();
 
-                if(this.hand != null) {
+                if (this.hand != null) {
                     event.setCanceled(true);
                     final Minecraft mc = Minecraft.getMinecraft();
                     mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 9, mc.player.inventory.currentItem, ClickType.SWAP, mc.player);
@@ -87,7 +87,7 @@ public final class ItemSpoofModule extends Module {
 
                     this.entity = packet.getEntityFromWorld(mc.world);
 
-                    if(this.entity != null) {
+                    if (this.entity != null) {
                         event.setCanceled(true);
                         mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 9, mc.player.inventory.currentItem, ClickType.SWAP, mc.player);
                         this.send = true;

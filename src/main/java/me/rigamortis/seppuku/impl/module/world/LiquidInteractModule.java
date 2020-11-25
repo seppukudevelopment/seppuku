@@ -11,7 +11,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class LiquidInteractModule extends Module {
 
     public LiquidInteractModule() {
-        super("LiquidInteract", new String[] {"LiquidInt", "LiqInt"}, "Allows you to interact with liquids", "NONE", -1, ModuleType.WORLD);
+        super("LiquidInteract", new String[]{"LiquidInt", "LiqInt"}, "Allows you to interact with liquids", "NONE", -1, ModuleType.WORLD);
     }
 
     @Listener

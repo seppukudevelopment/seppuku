@@ -11,7 +11,7 @@ import net.minecraft.network.play.client.CPacketChatMessage;
 public final class SayCommand extends Command {
 
     public SayCommand() {
-        super("Say", new String[] {"S"}, "Allows you to send a direct chat message", "Say <Message>");
+        super("Say", new String[]{"S"}, "Allows you to send a direct chat message", "Say <Message>");
     }
 
     @Override

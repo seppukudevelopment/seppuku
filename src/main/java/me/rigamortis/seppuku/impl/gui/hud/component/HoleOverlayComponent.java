@@ -59,7 +59,7 @@ public final class HoleOverlayComponent extends DraggableHudComponent {
             final int damage = this.getBlockDamage(northPos);
             if (damage != 0) {
                 int damageColor = (int) MathUtil.map(damage, 0, 8, 0, 255);
-                RenderUtil.drawRect(this.getX() + 16, this.getY(), this.getX() + 32, this.getY() + 16,  new Color(damageColor, 255 - damageColor, 0).getRGB());
+                RenderUtil.drawRect(this.getX() + 16, this.getY(), this.getX() + 32, this.getY() + 16, new Color(damageColor, 255 - damageColor, 0).getRGB());
             }
             this.drawBlock(north, this.getX() + 16, this.getY());
             foundBlock = true;

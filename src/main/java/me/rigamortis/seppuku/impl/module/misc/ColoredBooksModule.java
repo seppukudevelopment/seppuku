@@ -12,7 +12,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class ColoredBooksModule extends Module {
 
     public ColoredBooksModule() {
-        super("ColoredBooks", new String[] {"BookColor", "BookColors", "cbooks", "cbook"}, "Allows you to use the & character to color book text and titles", "NONE", -1, ModuleType.MISC);
+        super("ColoredBooks", new String[]{"BookColor", "BookColors", "cbooks", "cbook"}, "Allows you to use the & character to color book text and titles", "NONE", -1, ModuleType.MISC);
     }
 
     @Listener

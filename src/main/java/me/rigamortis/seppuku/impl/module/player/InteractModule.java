@@ -48,9 +48,9 @@ public final class InteractModule extends Module {
                         mc.player.swingArm(packet.getHand());
                         mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(usable, packet.getDirection(), packet.getHand(), packet.getFacingX(), packet.getFacingY(), packet.getFacingZ()));
                         this.clicked = true;
-                    }else{
+                    } else {
                         final Entity usableEntity = findUsableEntity(packet.getHand());
-                        if(usableEntity != null) {
+                        if (usableEntity != null) {
                             mc.player.connection.sendPacket(new CPacketUseEntity(usableEntity, packet.getHand()));
                             this.clicked = true;
                         }

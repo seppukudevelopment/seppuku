@@ -99,7 +99,7 @@ public final class PotionEffectsComponent extends DraggableHudComponent {
                 maxWidth = mc.fontRenderer.getStringWidth(placeholder);
                 yOffset = mc.fontRenderer.FONT_HEIGHT;
                 mc.fontRenderer.drawStringWithShadow(placeholder, this.getX(), this.getY(), 0xFFAAAAAA);
-            }  else {
+            } else {
                 maxWidth = 0;
                 yOffset = 0;
                 this.setEmptyH(mc.fontRenderer.FONT_HEIGHT);

@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 public final class PitchCommand extends Command {
 
     public PitchCommand() {
-        super("Pitch", new String[] {"Pch"}, "Allows you to set your pitch", "Pitch <Number>");
+        super("Pitch", new String[]{"Pch"}, "Allows you to set your pitch", "Pitch <Number>");
     }
 
     @Override
@@ -28,7 +28,7 @@ public final class PitchCommand extends Command {
             final float num = Float.parseFloat(split[1]);
 
             Minecraft.getMinecraft().player.rotationPitch = num;
-            if(Minecraft.getMinecraft().player.getRidingEntity() != null) {
+            if (Minecraft.getMinecraft().player.getRidingEntity() != null) {
                 Minecraft.getMinecraft().player.getRidingEntity().rotationPitch = num;
             }
 

@@ -23,6 +23,7 @@ public final class RenderLivingBasePatch extends ClassPatch {
 
     /**
      * This is where minecraft renders name plates
+     *
      * @param methodNode
      * @param env
      */
@@ -54,6 +55,7 @@ public final class RenderLivingBasePatch extends ClassPatch {
      * This is our renderName hook
      * Used to disable rendering minecrafts default
      * name tags on certain entities
+     *
      * @param entity
      * @return
      */

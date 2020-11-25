@@ -49,7 +49,7 @@ public class PullDownModule extends Module {
     }
 
     private boolean hullCollidesWithBlock(final Entity entity,
-            final Vec3d nextPosition) {
+                                          final Vec3d nextPosition) {
         final AxisAlignedBB boundingBox = entity.getEntityBoundingBox();
         final Vec3d[] boundingBoxCorners = {
                 new Vec3d(boundingBox.minX, boundingBox.minY, boundingBox.minZ),

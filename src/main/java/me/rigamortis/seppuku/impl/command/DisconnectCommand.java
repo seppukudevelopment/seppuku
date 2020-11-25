@@ -13,7 +13,7 @@ import net.minecraft.realms.RealmsBridge;
 public final class DisconnectCommand extends Command {
 
     public DisconnectCommand() {
-        super("Disconnect", new String[] {"Discon"}, "Disconnects from the current server", "Disconnect");
+        super("Disconnect", new String[]{"Discon"}, "Disconnects from the current server", "Disconnect");
     }
 
     @Override
@@ -32,8 +32,7 @@ public final class DisconnectCommand extends Command {
 
         if (flag) {
             mc.displayGuiScreen(new GuiMainMenu());
-        }
-        else if (flag1) {
+        } else if (flag1) {
             RealmsBridge realmsbridge = new RealmsBridge();
             realmsbridge.switchToRealms(new GuiMainMenu());
         } else {

@@ -14,7 +14,7 @@ import java.text.DecimalFormat;
 public final class TeleportCommand extends Command {
 
     public TeleportCommand() {
-        super("Teleport", new String[] {"Tp"}, "Allows you to teleport to coordinates", "Teleport <X> <Y> <Z>");
+        super("Teleport", new String[]{"Tp"}, "Allows you to teleport to coordinates", "Teleport <X> <Y> <Z>");
     }
 
     @Override
@@ -39,13 +39,13 @@ public final class TeleportCommand extends Command {
                     }
                     final DecimalFormat format = new DecimalFormat("##.##");
                     Seppuku.INSTANCE.logChat("Teleported you to X: " + format.format(x) + " Y: " + format.format(y) + " Z: " + format.format(z));
-                }else{
+                } else {
                     Seppuku.INSTANCE.errorChat("Unknown number " + "\247f\"" + split[3] + "\"");
                 }
-            }else{
+            } else {
                 Seppuku.INSTANCE.errorChat("Unknown number " + "\247f\"" + split[2] + "\"");
             }
-        }else{
+        } else {
             Seppuku.INSTANCE.errorChat("Unknown number " + "\247f\"" + split[1] + "\"");
         }
     }

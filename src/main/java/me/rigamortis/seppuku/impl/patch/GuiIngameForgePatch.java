@@ -4,6 +4,7 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.gui.EventRenderHelmet;
 import me.rigamortis.seppuku.api.event.gui.EventRenderPortal;
 import me.rigamortis.seppuku.api.event.gui.EventRenderPotions;
+import me.rigamortis.seppuku.api.event.render.EventRenderCrosshairs;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
 import me.rigamortis.seppuku.impl.management.PatchManager;
@@ -141,6 +142,46 @@ public final class GuiIngameForgePatch extends ClassPatch {
     public static boolean renderHelmetHook() {
         //dispatch our event
         final EventRenderHelmet event = new EventRenderHelmet();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
+     * This is where minecraft renders the game's crosshair
+     *
+     * @param methodNode
+     * @param env
+     */
+    @MethodPatch(
+            mcpName = "renderCrosshairs",
+            mcpDesc = "(F)V",
+            notchDesc = "(F)V")
+    public void renderCrosshairs(MethodNode methodNode, PatchManager.Environment env) {
+        //create a list of instructions
+        final InsnList insnList = new InsnList();
+        //call our hook function
+        insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "renderCrosshairsHook", "()Z", false));
+        //create a label to jump to
+        final LabelNode jmp = new LabelNode();
+        //add "if equals"
+        insnList.add(new JumpInsnNode(IFEQ, jmp));
+        //return so the rest of the function doesnt get called
+        insnList.add(new InsnNode(RETURN));
+        //add our label
+        insnList.add(jmp);
+        //insert the list of instructs at the top of the function
+        methodNode.instructions.insert(insnList);
+    }
+
+    /**
+     * Our renderCrosshairs hook to remove the crosshair
+     *
+     * @return
+     */
+    public static boolean renderCrosshairsHook() {
+        //dispatch our event
+        final EventRenderCrosshairs event = new EventRenderCrosshairs();
         Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
 
         return event.isCanceled();

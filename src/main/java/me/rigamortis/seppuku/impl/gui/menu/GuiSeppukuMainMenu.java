@@ -70,7 +70,7 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
         this.donate = new MainMenuButton(res.getScaledWidth() / 2 - 70, height, "Donate") {
             @Override
             public void action() {
-                try{
+                try {
                     final Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
 
                     if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
@@ -80,7 +80,7 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
                             e.printStackTrace();
                         }
                     }
-                }catch (Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

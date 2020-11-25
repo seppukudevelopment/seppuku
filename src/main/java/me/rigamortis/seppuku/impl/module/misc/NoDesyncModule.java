@@ -32,10 +32,16 @@ public final class NoDesyncModule extends Module {
             if (event.getPacket() instanceof SPacketSoundEffect) {
                 final SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
                 if (packet.getCategory() == SoundCategory.BLOCKS && packet.getSound() == SoundEvents.ENTITY_GENERIC_EXPLODE) {
-                    for (Entity e : Minecraft.getMinecraft().world.loadedEntityList) {
-                        if (e != null && e instanceof EntityEnderCrystal) {
-                            if (e.getDistance(packet.getX(), packet.getY(), packet.getZ()) <= 6.0f) {
-                                e.setDead();
+                    final Minecraft mc = Minecraft.getMinecraft();
+                    if (mc.world != null) {
+                        for (int i = mc.world.loadedEntityList.size() - 1; i > 0; i--) {
+                            Entity entity = mc.world.loadedEntityList.get(i);
+                            if (entity != null) {
+                                if (entity.isEntityAlive() && entity instanceof EntityEnderCrystal) {
+                                    if (entity.getDistance(packet.getX(), packet.getY(), packet.getZ()) <= 6.0f) {
+                                        entity.setDead();
+                                    }
+                                }
                             }
                         }
                     }

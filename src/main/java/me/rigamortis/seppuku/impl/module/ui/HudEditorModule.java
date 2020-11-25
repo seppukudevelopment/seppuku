@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
  */
 public final class HudEditorModule extends Module {
 
-    public final Value<Boolean> blur = new Value("Blur", new String[]{"b"}, "Apply a blur effect to the Hud Editor's background.", true);
+    public final Value<Boolean> blur = new Value("Blur", new String[]{"b"}, "Apply a blur effect to the Hud Editor's background.", false);
     public final Value<Boolean> tooltips = new Value("ToolTips", new String[]{"TT", "Tool"}, "Displays tooltips for modules.", true);
 
     private boolean open;
@@ -26,16 +26,21 @@ public final class HudEditorModule extends Module {
     @Override
     public void onToggle() {
         super.onToggle();
+        this.displayHudEditor();
+    }
+
+    public void displayHudEditor() {
         final Minecraft mc = Minecraft.getMinecraft();
 
         if (mc.world != null) {
             mc.displayGuiScreen(new GuiHudEditor());
 
-            if(this.blur.getValue()) {
+            if (this.blur.getValue()) {
                 if (OpenGlHelper.shadersSupported) {
                     mc.entityRenderer.loadShader(new ResourceLocation("minecraft", "shaders/post/blur.json"));
                 }
             }
+
             this.open = true;
         }
     }

@@ -66,13 +66,43 @@ public final class GuiHudEditor extends GuiScreen {
                 if (component instanceof DraggableHudComponent) {
                     DraggableHudComponent draggable = (DraggableHudComponent) component;
                     if (draggable.isDragging()) {
-                        RenderUtil.drawRect(draggable.getX(), draggable.getY(), draggable.getX() + draggable.getW(), draggable.getY() + draggable.getH(), 0x35FFFFFF);
+                        int SIZE = 2;
+                        if (draggable.getW() < 12 || draggable.getH() < 12)
+                            SIZE = 1;
+                        else if (draggable.getW() <= 0 || draggable.getH() <= 0)
+                            SIZE = 0;
+
+                        boolean colliding = false;
+
                         for (HudComponent other : Seppuku.INSTANCE.getHudManager().getComponentList()) {
-                            if (other != draggable && draggable.collidesWith(other) && other.isVisible() && draggable.isSnappable()) {
-                                RenderUtil.drawRect(draggable.getX(), draggable.getY(), draggable.getX() + draggable.getW(), draggable.getY() + draggable.getH(), 0x3510FF10);
-                                RenderUtil.drawRect(other.getX(), other.getY(), other.getX() + other.getW(), other.getY() + other.getH(), 0x35FF1010);
+                            if (other instanceof DraggableHudComponent) {
+                                DraggableHudComponent otherDraggable = (DraggableHudComponent) other;
+                                if (other != draggable && draggable.collidesWith(otherDraggable) && otherDraggable.isVisible() && draggable.isSnappable() && otherDraggable.isSnappable()) {
+                                    colliding = true;
+                                    RenderUtil.drawBorderedRect(draggable.getX() - 1, draggable.getY() - 1, draggable.getX() + draggable.getW() + 1, draggable.getY() + draggable.getH() + 1, 1, 0x00000000, 0x3500FF00);
+                                    RenderUtil.drawRect(draggable.getX(), draggable.getY(), draggable.getX() + draggable.getW(), draggable.getY() + draggable.getH(), 0x3500FF00);
+                                    RenderUtil.drawBorderedRect(other.getX() - 1, other.getY() - 1, other.getX() + other.getW() + 1, other.getY() + other.getH() + 1, 1, 0x00000000, 0x3500FF00);
+                                    RenderUtil.drawRect(other.getX(), other.getY(), other.getX() + other.getW(), other.getY() + other.getH(), 0x3500FF00);
+                                }
                             }
                         }
+
+                        // render white borders if snapable and is not colliding with any components
+                        if (draggable.isSnappable() && !colliding) {
+                            int snappableBackgroundColor = 0x00000000;
+                            if (draggable.findClosest(mouseX, mouseY) != null) { // has an anchor point nearby
+                                snappableBackgroundColor = 0x35FFFFFF;
+                            }
+                            RenderUtil.drawBorderedRect(draggable.getX() - 1, draggable.getY() - 1, draggable.getX() + draggable.getW() + 1, draggable.getY() + draggable.getH() + 1, 1, snappableBackgroundColor, 0x90FFFFFF);
+                            RenderUtil.drawRect(draggable.getX(), draggable.getY(), draggable.getX() + SIZE, draggable.getY() + SIZE, 0x90FFFFFF);
+                            RenderUtil.drawRect(draggable.getX() + draggable.getW() - SIZE, draggable.getY(), draggable.getX() + draggable.getW(), draggable.getY() + SIZE, 0x90FFFFFF);
+                            RenderUtil.drawRect(draggable.getX(), (draggable.getY() + draggable.getH()) - SIZE, draggable.getX() + SIZE, draggable.getY() + draggable.getH(), 0x90FFFFFF);
+                            RenderUtil.drawRect(draggable.getX() + draggable.getW() - SIZE, (draggable.getY() + draggable.getH()) - SIZE, draggable.getX() + draggable.getW(), draggable.getY() + draggable.getH(), 0x90FFFFFF);
+                            continue;
+                        }
+
+                        // dragging highlight
+                        //RenderUtil.drawRect(draggable.getX(), draggable.getY(), draggable.getX() + draggable.getW(), draggable.getY() + draggable.getH(), 0x35FFFFFF);
                     }
                 }
             }
@@ -124,10 +154,9 @@ public final class GuiHudEditor extends GuiScreen {
     public void onGuiClosed() {
         Seppuku.INSTANCE.getConfigManager().saveAll();
 
-        final HudEditorModule mod = (HudEditorModule) Seppuku.INSTANCE.getModuleManager().find(HudEditorModule.class);
-
-        if (mod != null) {
-            if (mod.blur.getValue()) {
+        final HudEditorModule hudEditorModule = (HudEditorModule) Seppuku.INSTANCE.getModuleManager().find(HudEditorModule.class);
+        if (hudEditorModule != null) {
+            if (hudEditorModule.blur.getValue()) {
                 if (OpenGlHelper.shadersSupported) {
                     mc.entityRenderer.stopUseShader();
                 }

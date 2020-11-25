@@ -19,14 +19,14 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class BlockHighlightModule extends Module {
 
     public BlockHighlightModule() {
-        super("BlockHighlight", new String[] {"BHighlight", "BlockHigh"}, "Highlights the block at your crosshair", "NONE", -1, ModuleType.RENDER);
+        super("BlockHighlight", new String[]{"BHighlight", "BlockHigh"}, "Highlights the block at your crosshair", "NONE", -1, ModuleType.RENDER);
     }
 
     @Listener
     public void render3D(EventRender3D event) {
         final Minecraft mc = Minecraft.getMinecraft();
         final RayTraceResult ray = mc.objectMouseOver;
-        if(ray.typeOfHit == RayTraceResult.Type.BLOCK) {
+        if (ray.typeOfHit == RayTraceResult.Type.BLOCK) {
 
             final BlockPos blockpos = ray.getBlockPos();
             final IBlockState iblockstate = mc.world.getBlockState(blockpos);

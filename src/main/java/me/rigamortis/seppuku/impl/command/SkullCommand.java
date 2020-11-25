@@ -15,7 +15,7 @@ import net.minecraft.network.play.client.CPacketCreativeInventoryAction;
 public final class SkullCommand extends Command {
 
     public SkullCommand() {
-        super("Skull", new String[] {"Skll"}, "Allows you to give yourself any player head while in creative", "Skull <Username>");
+        super("Skull", new String[]{"Skll"}, "Allows you to give yourself any player head while in creative", "Skull <Username>");
     }
 
     @Override

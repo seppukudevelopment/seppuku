@@ -44,7 +44,7 @@ public final class RenderUtil {
         final BufferBuilder bufferbuilder = tessellator.getBuffer();
         GlStateManager.enableBlend();
         GlStateManager.disableTexture2D();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
         bufferbuilder.pos((double) x, (double) h, 0.0D).color(red, green, blue, alpha).endVertex();
         bufferbuilder.pos((double) w, (double) h, 0.0D).color(red, green, blue, alpha).endVertex();
@@ -96,7 +96,7 @@ public final class RenderUtil {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_LINE_SMOOTH);
-        GL11.glBlendFunc(770, 771);
+        GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         GL11.glLineWidth(1);
         GL11.glBegin(GL11.GL_TRIANGLE_FAN);
 
@@ -112,11 +112,37 @@ public final class RenderUtil {
         GL11.glTranslated(-x, -y, 0);
     }
 
-    public static void drawOutlineRect(float x, float y, float w, float h, float thickness, int c) {
-        drawRect(x, y, x - thickness, h, c);
-        drawRect(w + thickness, y, w, h, c);
-        drawRect(x, y, w, y - thickness, c);
-        drawRect(x, h + thickness, w, h, c);
+    public static void drawOutlineRect(float x, float y, float w, float h, float lineWidth, int c) {
+        drawRect(x, y, x - lineWidth, h, c);
+        drawRect(w + lineWidth, y, w, h, c);
+        drawRect(x, y, w, y - lineWidth, c);
+        drawRect(x, h + lineWidth, w, h, c);
+    }
+
+    public static void drawBorderedRect(float x, float y, float x1, float y1, float lineWidth, int insideColor, int borderColor) {
+        drawRect(x + lineWidth, y + lineWidth, x1 - lineWidth, y1 - lineWidth, insideColor);
+        drawRect(x + lineWidth, y, x1 - lineWidth, y + lineWidth, borderColor);
+        drawRect(x, y, x + lineWidth, y1, borderColor);
+        drawRect(x1 - lineWidth, y, x1, y1, borderColor);
+        drawRect(x + lineWidth, y1 - lineWidth, x1 - lineWidth, y1, borderColor);
+    }
+
+    public static void drawBorderedRectBlurred(float x, float y, float x1, float y1, float lineWidth, int insideColor, int borderColor) {
+        drawRect(x, y, x1, y1, insideColor);
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glLineWidth(lineWidth);
+        glColor(borderColor);
+        GL11.glBegin(3);
+        GL11.glVertex2f(x, y);
+        GL11.glVertex2f(x, y1);
+        GL11.glVertex2f(x1, y1);
+        GL11.glVertex2f(x1, y);
+        GL11.glVertex2f(x, y);
+        GL11.glEnd();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
     }
 
     public static void drawLine(float x, float y, float x1, float y1, float thickness, int hex) {
@@ -129,7 +155,7 @@ public final class RenderUtil {
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         GlStateManager.shadeModel(GL_SMOOTH);
         glLineWidth(thickness);
         glEnable(GL_LINE_SMOOTH);
@@ -148,6 +174,32 @@ public final class RenderUtil {
         GlStateManager.popMatrix();
     }
 
+    public static void drawThinLine(float x, float y, float x1, float y1, int hex) {
+        float red = (hex >> 16 & 0xFF) / 255.0F;
+        float green = (hex >> 8 & 0xFF) / 255.0F;
+        float blue = (hex & 0xFF) / 255.0F;
+        float alpha = (hex >> 24 & 0xFF) / 255.0F;
+
+        GlStateManager.pushMatrix();
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        GlStateManager.shadeModel(GL_SMOOTH);
+        glLineWidth(1);
+        final Tessellator tessellator = Tessellator.getInstance();
+        final BufferBuilder bufferbuilder = tessellator.getBuffer();
+        bufferbuilder.begin(GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+        bufferbuilder.pos((double) x, (double) y, (double) 0).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos((double) x1, (double) y1, (double) 0).color(red, green, blue, alpha).endVertex();
+        tessellator.draw();
+        GlStateManager.shadeModel(GL_FLAT);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
+        GlStateManager.popMatrix();
+    }
+
     public static void drawLine3D(float x, float y, float z, float x1, float y1, float z1, float thickness, int hex) {
         float red = (hex >> 16 & 0xFF) / 255.0F;
         float green = (hex >> 8 & 0xFF) / 255.0F;
@@ -158,7 +210,7 @@ public final class RenderUtil {
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         GlStateManager.shadeModel(GL_SMOOTH);
         glLineWidth(thickness);
         glEnable(GL_LINE_SMOOTH);
@@ -185,7 +237,7 @@ public final class RenderUtil {
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.disableDepth();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 0, 1);
+        GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 0, 1);
         GlStateManager.disableTexture2D();
         GlStateManager.depthMask(false);
         glEnable(GL_LINE_SMOOTH);
@@ -287,7 +339,7 @@ public final class RenderUtil {
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.disableDepth();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 0, 1);
+        GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 0, 1);
         GlStateManager.disableTexture2D();
         GlStateManager.depthMask(false);
 
@@ -383,5 +435,51 @@ public final class RenderUtil {
         bufferbuilder.pos(x + width, y + height, 0F).tex(t, s).endVertex();
         bufferbuilder.pos(x + width, y, 0F).tex(t, v).endVertex();
         tessellator.draw();
+    }
+
+    public static void glColor(int hex) {
+        float alpha = (hex >> 24 & 0xFF) / 255.0F;
+        float red = (hex >> 16 & 0xFF) / 255.0F;
+        float green = (hex >> 8 & 0xFF) / 255.0F;
+        float blue = (hex & 0xFF) / 255.0F;
+        GL11.glColor4f(red, green, blue, alpha);
+    }
+
+    public static void glColor(int redRGB, int greenRGB, int blueRGB, int alphaRGB) {
+        float red = 0.003921569F * redRGB;
+        float green = 0.003921569F * greenRGB;
+        float blue = 0.003921569F * blueRGB;
+        float alpha = 0.003921569F * alphaRGB;
+        GL11.glColor4f(red, green, blue, alpha);
+    }
+
+    public static void begin2D() {
+        GlStateManager.enableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+    }
+
+    public static void end2D() {
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableAlpha();
+        GlStateManager.disableBlend();
+    }
+
+    public static void begin3D() {
+        GlStateManager.disableAlpha();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableDepth();
+        GL11.glEnable(GL_LINE_SMOOTH);
+    }
+
+    public static void end3D() {
+        GL11.glDisable(GL_LINE_SMOOTH);
+        GlStateManager.enableDepth();
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.enableAlpha();
     }
 }

@@ -3,12 +3,6 @@ package me.rigamortis.seppuku.impl.command;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.command.Command;
 import me.rigamortis.seppuku.api.module.Module;
-import net.minecraft.client.Minecraft;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.play.client.CPacketCreativeInventoryAction;
 
 /**
  * Author Ice
@@ -32,7 +26,7 @@ public final class RenameModuleCommand extends Command {
         final String originalModuleName = split[1];
         final String newModuleName = split[2];
 
-        if(Seppuku.INSTANCE.getModuleManager().find(originalModuleName) != null) {
+        if (Seppuku.INSTANCE.getModuleManager().find(originalModuleName) != null) {
             Module mod = Seppuku.INSTANCE.getModuleManager().find(originalModuleName);
 
             mod.setDisplayName(newModuleName);
@@ -42,7 +36,6 @@ public final class RenameModuleCommand extends Command {
         } else {
             Seppuku.INSTANCE.logChat(originalModuleName + " does not exist!");
         }
-
 
 
     }

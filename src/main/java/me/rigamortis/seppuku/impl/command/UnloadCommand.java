@@ -10,7 +10,7 @@ import me.rigamortis.seppuku.api.command.Command;
 public final class UnloadCommand extends Command {
 
     public UnloadCommand() {
-        super("Unload", new String[] {"ULoad"}, "Unloads the client", "Unload");
+        super("Unload", new String[]{"ULoad"}, "Unloads the client", "Unload");
     }
 
     @Override

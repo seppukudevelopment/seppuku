@@ -11,7 +11,7 @@ import net.minecraft.util.text.TextComponentString;
 public final class FakeChatCommand extends Command {
 
     public FakeChatCommand() {
-        super("FakeChat", new String[] {"FChat", "TellRaw"}, "Allows you to add a fake chat message", "FakeChat <Message>");
+        super("FakeChat", new String[]{"FChat", "TellRaw"}, "Allows you to add a fake chat message", "FakeChat <Message>");
     }
 
     @Override

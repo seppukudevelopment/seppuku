@@ -1,6 +1,7 @@
 package me.rigamortis.seppuku.impl.gui.hud.component;
 
 import me.rigamortis.seppuku.Seppuku;
+import me.rigamortis.seppuku.api.event.gui.hud.EventHubComponentClick;
 import me.rigamortis.seppuku.api.event.minecraft.EventDisplayGui;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.gui.hud.component.HudComponent;
@@ -18,7 +19,7 @@ public class TrayComponent extends DraggableHudComponent {
     private static final int TEXTURE_WIDTH = 16;
     private static final int TEXTURE_HEIGHT = 16;
 
-    private List<TrayButtonComponent> buttons = new ArrayList<>();
+    private final List<TrayButtonComponent> buttons = new ArrayList<>();
 
     public TrayComponent() {
         super("Tray");
@@ -38,8 +39,7 @@ public class TrayComponent extends DraggableHudComponent {
     public void mouseRelease(int mouseX, int mouseY, int button) {
         super.mouseRelease(mouseX, mouseY, button);
 
-        final boolean inside = mouseX >= this.getX() && mouseX <= this.getX() + this.getW() && mouseY >= this.getY() && mouseY <= this.getY() + this.getH();
-        if (inside && button == 1) { // inside the tray, and is a right click
+        if (this.isMouseInside(mouseX, mouseY) && button == 1) { // inside the tray, and is a right click
             for (TrayButtonComponent trayButton : buttons) {
                 trayButton.mouseRelease(mouseX, mouseY, button); // handle mouse logic inside of tray button
             }
@@ -103,6 +103,13 @@ public class TrayComponent extends DraggableHudComponent {
             }
         }
 
+        @Listener
+        public void onHubComponentClick(EventHubComponentClick event) {
+            if (this.getName().equalsIgnoreCase(event.hubComponentName)) {
+                this.setPressed(event.hubComponentVisible);
+            }
+        }
+
         @Override
         public void render(int mouseX, int mouseY, float partialTicks) {
             super.render(mouseX, mouseY, partialTicks);
@@ -124,9 +131,7 @@ public class TrayComponent extends DraggableHudComponent {
         public void mouseRelease(int mouseX, int mouseY, int button) {
             super.mouseRelease(mouseX, mouseY, button);
 
-            // should make this code below a hud component function as it's used in multiple components -noil //TODO
-            final boolean inside = mouseX >= this.getX() && mouseX <= this.getX() + this.getW() && mouseY >= this.getY() && mouseY <= this.getY() + this.getH();
-            if (inside) {
+            if (this.isMouseInside(mouseX, mouseY)) {
                 HudComponent component = Seppuku.INSTANCE.getHudManager().findComponent(this.getName()); // find our clicked component
                 if (component != null) {
                     component.setVisible(!component.isVisible());

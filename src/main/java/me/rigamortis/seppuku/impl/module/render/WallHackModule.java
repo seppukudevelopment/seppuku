@@ -39,7 +39,10 @@ import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -65,7 +68,7 @@ public final class WallHackModule extends Module {
     public final Value<Boolean> armorStand = new Value<Boolean>("ArmorStands", new String[]{"ArmorStand", "ArmourStand", "ArmourStands", "ArmStand"}, "Choose to enable on armor-stands.", true);
     public final Value<Boolean> footsteps = new Value<Boolean>("FootSteps", new String[]{"FootStep", "Steps"}, "Choose to draw entity footsteps.", false);
 
-    public final Value<Boolean> nametag = new Value<Boolean>("Nametag", new String[]{"Tag", "Tags"}, "Draw the entity's name tag.", true);
+    public final Value<Boolean> nametag = new Value<Boolean>("Nametag", new String[]{"tag", "tags", "names", "name"}, "Draw the entity's name tag.", true);
     public final Value<Boolean> ping = new Value<Boolean>("Ping", new String[]{"Ms"}, "Draw the entity's ping (only works on players).", true);
     public final Value<Boolean> armor = new Value<Boolean>("Armor", new String[]{"Arm"}, "Draw the entity's equipped armor.", true);
     public final Value<Boolean> hearts = new Value<Boolean>("Hearts", new String[]{"Hrts"}, "Draw the entity's hearts in decimal format.", true);
@@ -148,7 +151,7 @@ public final class WallHackModule extends Module {
                             if (this.ping.getValue()) {
                                 int responseTime = -1;
                                 try {
-                                    responseTime = (int) MathUtil.clamp(mc.getConnection().getPlayerInfo(player.getUniqueID()).getResponseTime(), 0, 300);
+                                    responseTime = (int) MathUtil.clamp(mc.player.connection.getPlayerInfo(player.getUniqueID()).getResponseTime(), 0, 300);
                                 } catch (NullPointerException np) {
                                 }
                                 pingFormatted = responseTime + "ms";

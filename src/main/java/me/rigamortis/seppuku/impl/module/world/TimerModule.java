@@ -16,7 +16,7 @@ public final class TimerModule extends Module {
     public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd"}, "Tick-rate multiplier. [(20tps/second) * (this value)]", 4.0f, 0.0f, 10.0f, 0.1f);
 
     public TimerModule() {
-        super("Timer", new String[] {"Time", "Tmr"}, "Speeds up the client tick rate", "NONE", -1, ModuleType.WORLD);
+        super("Timer", new String[]{"Time", "Tmr"}, "Speeds up the client tick rate", "NONE", -1, ModuleType.WORLD);
     }
 
     @Override
@@ -32,7 +32,7 @@ public final class TimerModule extends Module {
 
     @Listener
     public void onUpdate(EventPlayerUpdate event) {
-        if(event.getStage() == EventStageable.EventStage.PRE) {
+        if (event.getStage() == EventStageable.EventStage.PRE) {
             Minecraft.getMinecraft().timer.tickLength = 50.0f / speed.getValue();
         }
     }

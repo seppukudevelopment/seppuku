@@ -26,7 +26,7 @@ public final class NewChunksModule extends Module {
     private List<ChunkData> chunkDataList = new ArrayList<>();
 
     public NewChunksModule() {
-        super("NewChunks", new String[] {"ChunkGen"}, "Highlights newly generated chunks", "NONE", -1, ModuleType.WORLD);
+        super("NewChunks", new String[]{"ChunkGen"}, "Highlights newly generated chunks", "NONE", -1, ModuleType.WORLD);
     }
 
     @Listener
@@ -37,13 +37,13 @@ public final class NewChunksModule extends Module {
 
     @Listener
     public void receivePacket(EventReceivePacket event) {
-        if(event.getStage() == EventStageable.EventStage.PRE) {
-            if(event.getPacket() instanceof SPacketChunkData) {
+        if (event.getStage() == EventStageable.EventStage.PRE) {
+            if (event.getPacket() instanceof SPacketChunkData) {
                 final SPacketChunkData packet = (SPacketChunkData) event.getPacket();
-                if(!packet.isFullChunk()) {
+                if (!packet.isFullChunk()) {
                     final ChunkData chunk = new ChunkData(packet.getChunkX() * 16, packet.getChunkZ() * 16);
 
-                    if(!this.chunkDataList.contains(chunk)) {
+                    if (!this.chunkDataList.contains(chunk)) {
                         this.chunkDataList.add(chunk);
                     }
                 }
@@ -53,8 +53,8 @@ public final class NewChunksModule extends Module {
 
     @Listener
     public void render3D(EventRender3D event) {
-        for(ChunkData chunkData : this.chunkDataList) {
-            if(chunkData != null) {
+        for (ChunkData chunkData : this.chunkDataList) {
+            if (chunkData != null) {
                 this.frustum.setPosition(Minecraft.getMinecraft().getRenderViewEntity().posX, Minecraft.getMinecraft().getRenderViewEntity().posY, Minecraft.getMinecraft().getRenderViewEntity().posZ);
 
                 final AxisAlignedBB bb = new AxisAlignedBB(chunkData.x, 0, chunkData.z, chunkData.x + 16, 1, chunkData.z + 16);

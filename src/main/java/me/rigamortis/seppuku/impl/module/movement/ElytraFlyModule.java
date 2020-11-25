@@ -5,10 +5,10 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.impl.module.player.NoHungerModule;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
+import me.rigamortis.seppuku.impl.module.player.NoHungerModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -74,7 +74,7 @@ public final class ElytraFlyModule extends Module {
                 // liquid check
                 if (this.disableInLiquid.getValue() && (mc.player.isInWater() || mc.player.isInLava())) {
                     if (mc.player.isElytraFlying()) {
-                        mc.getConnection().sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
+                        mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
                     }
                     return;
                 }
@@ -84,7 +84,7 @@ public final class ElytraFlyModule extends Module {
                     if (mc.gameSettings.keyBindJump.isKeyDown() && !mc.player.isElytraFlying()) { // jump is held, player is not elytra flying
                         if (mc.player.motionY < 0) { // player motion is falling
                             if (this.timer.passed(250)) { // 250 ms
-                                mc.getConnection().sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
+                                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
                                 this.timer.reset();
                             }
                         }
@@ -132,8 +132,8 @@ public final class ElytraFlyModule extends Module {
                                 mc.player.motionZ = directionSpeedPacket[1];
                             }
 
-                            mc.getConnection().sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
-                            mc.getConnection().sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
+                            mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
+                            mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
                             break;
                         case BYPASS: // Bypass / 9b9t
                             if (mc.gameSettings.keyBindJump.isKeyDown()) {

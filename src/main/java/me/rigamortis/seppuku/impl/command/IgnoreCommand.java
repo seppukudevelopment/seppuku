@@ -88,7 +88,7 @@ public final class IgnoreCommand extends Command {
                 }
 
                 Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(msg);
-            }else{
+            } else {
                 Seppuku.INSTANCE.logChat("You don't have anyone ignored");
             }
         } else if (equals(clearAlias, split[1])) {

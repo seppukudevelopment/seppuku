@@ -39,7 +39,7 @@ public final class SpectateCommand extends Command {
         if (target != null) {
             Seppuku.INSTANCE.logChat("Now spectating " + target.getName());
             Minecraft.getMinecraft().setRenderViewEntity(target);
-        }else{
+        } else {
             Seppuku.INSTANCE.errorChat("\"" + split[1] + "\" is not within range");
         }
     }

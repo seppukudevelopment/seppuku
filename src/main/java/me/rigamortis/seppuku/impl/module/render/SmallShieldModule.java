@@ -20,7 +20,7 @@ public final class SmallShieldModule extends Module {
     }
 
     @Listener
-    public void changeOffhandProgress(EventPlayerUpdate event){
+    public void changeOffhandProgress(EventPlayerUpdate event) {
         itemRenderer.equippedProgressOffHand = 0.5F;
     }
 }

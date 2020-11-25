@@ -11,6 +11,7 @@ import net.minecraft.util.StringUtils;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.lang.reflect.Field;
+import java.util.logging.Level;
 
 /**
  * created by noil on 8/3/2019 at 6:32 PM
@@ -42,7 +43,7 @@ public final class PacketLoggerModule extends Module {
         if (this.incoming.getValue()) {
             if (event.getStage() == EventStageable.EventStage.PRE) {
                 if (this.console.getValue()) {
-                    System.out.println("\2477IN: \247r" + event.getPacket().getClass().getSimpleName() + " {");
+                    Seppuku.INSTANCE.getLogger().log(Level.INFO, "\2477IN: \247r" + event.getPacket().getClass().getSimpleName() + " {");
 
                     if (this.data.getValue()) {
                         try {
@@ -56,7 +57,7 @@ public final class PacketLoggerModule extends Module {
                                         if (!field.isAccessible()) {
                                             field.setAccessible(true);
                                         }
-                                        System.out.println(StringUtils.stripControlCodes("      " + field.getType().getSimpleName() + " " + field.getName() + " = " + field.get(event.getPacket())));
+                                        Seppuku.INSTANCE.getLogger().log(Level.INFO, StringUtils.stripControlCodes("      " + field.getType().getSimpleName() + " " + field.getName() + " = " + field.get(event.getPacket())));
                                     }
                                 }
 
@@ -67,7 +68,7 @@ public final class PacketLoggerModule extends Module {
                         }
                     }
 
-                    System.out.println("}");
+                    Seppuku.INSTANCE.getLogger().log(Level.INFO, "}");
                 }
 
                 if (this.chat.getValue()) {
@@ -107,7 +108,7 @@ public final class PacketLoggerModule extends Module {
         if (this.outgoing.getValue()) {
             if (event.getStage() == EventStageable.EventStage.PRE) {
                 if (this.console.getValue()) {
-                    System.out.println("\2477OUT: \247r" + event.getPacket().getClass().getSimpleName() + " {");
+                    Seppuku.INSTANCE.getLogger().log(Level.INFO, "\2477OUT: \247r" + event.getPacket().getClass().getSimpleName() + " {");
 
                     if (this.data.getValue()) {
                         try {
@@ -121,7 +122,7 @@ public final class PacketLoggerModule extends Module {
                                         if (!field.isAccessible()) {
                                             field.setAccessible(true);
                                         }
-                                        System.out.println(StringUtils.stripControlCodes("      " + field.getType().getSimpleName() + " " + field.getName() + " = " + field.get(event.getPacket())));
+                                        Seppuku.INSTANCE.getLogger().log(Level.INFO, StringUtils.stripControlCodes("      " + field.getType().getSimpleName() + " " + field.getName() + " = " + field.get(event.getPacket())));
                                     }
                                 }
 
@@ -132,7 +133,7 @@ public final class PacketLoggerModule extends Module {
                         }
                     }
 
-                    System.out.println("}");
+                    Seppuku.INSTANCE.getLogger().log(Level.INFO, "}");
                 }
 
                 if (this.chat.getValue()) {

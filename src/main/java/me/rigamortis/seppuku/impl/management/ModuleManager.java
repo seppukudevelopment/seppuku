@@ -13,7 +13,7 @@ import me.rigamortis.seppuku.impl.module.misc.*;
 import me.rigamortis.seppuku.impl.module.movement.*;
 import me.rigamortis.seppuku.impl.module.player.*;
 import me.rigamortis.seppuku.impl.module.render.*;
-import me.rigamortis.seppuku.impl.module.ui.HudEditorModule;	
+import me.rigamortis.seppuku.impl.module.ui.HudEditorModule;
 import me.rigamortis.seppuku.impl.module.world.*;
 
 import java.io.File;
@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Author Seth
@@ -148,6 +149,9 @@ public final class ModuleManager {
         add(new QuickCraftModule());
         add(new TotemNotifierModule());
         add(new MiddleClickPearlModule());
+        add(new NameAlertModule());
+        add(new CrosshairModule());
+        add(new AutoMountModule());
 
         // p2w experience
         if (Seppuku.INSTANCE.getCapeManager().hasCape())
@@ -190,7 +194,7 @@ public final class ModuleManager {
                             add(module);
 
                             Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventModuleLoad(module));
-                            System.out.println("[Seppuku] Found external module " + module.getDisplayName());
+                            Seppuku.INSTANCE.getLogger().log(Level.INFO, "Found external module " + module.getDisplayName());
                         }
                     }
                 }

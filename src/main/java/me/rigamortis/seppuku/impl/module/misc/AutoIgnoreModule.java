@@ -14,12 +14,16 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Author Seth
  * 7/1/2019 @ 10:22 PM.
  */
 public final class AutoIgnoreModule extends Module {
+
+    private final String REGEX_NAME = "<(\\S+)\\s*(\\S+?)?>\\s(.*)";
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The auto ignore mode to use.", Mode.CLIENT);
 
@@ -50,15 +54,13 @@ public final class AutoIgnoreModule extends Module {
                 final SPacketChat packet = (SPacketChat) event.getPacket();
                 if (packet.getChatComponent() instanceof TextComponentString) {
                     final TextComponentString component = (TextComponentString) packet.getChatComponent();
-                    final String message = StringUtils.stripControlCodes(component.getUnformattedText());
-
-                    final boolean serverMessage = message.startsWith("\247c") || message.startsWith("\2475");
-
+                    final String message = StringUtils.stripControlCodes(component.getFormattedText());
+                    final boolean serverMessage = component.getFormattedText().startsWith("\247c") || component.getFormattedText().startsWith("\247e") || component.getFormattedText().startsWith("\2475");
                     if (!serverMessage && this.blacklistContains(message)) {
-                        final String[] split = message.split(" ");
-
-                        if (split != null) {
-                            final String username = split[0].replace("<", "").replace(">", "");
+                        Pattern chatUsernamePattern = Pattern.compile(REGEX_NAME);
+                        Matcher chatUsernameMatcher = chatUsernamePattern.matcher(message);
+                        if (chatUsernameMatcher.find()) {
+                            String username = chatUsernameMatcher.group(1).replaceAll(">", "").toLowerCase();
                             final Ignored ignored = Seppuku.INSTANCE.getIgnoredManager().find(username);
                             if (ignored == null && !username.equalsIgnoreCase(Minecraft.getMinecraft().session.getUsername())) {
                                 switch (this.mode.getValue()) {

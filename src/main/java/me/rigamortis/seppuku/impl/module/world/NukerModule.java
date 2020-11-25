@@ -109,14 +109,14 @@ public final class NukerModule extends Module {
             for (float x = 0; x <= maxHDist; x++) {
                 for (float y = 0; y <= maxVDist; y++) {
                     for (float z = 0; z <= maxHDist; z++) {
-                        for (int revX = 0; revX <= 1; revX++, x =- x) {
-                            for (int revZ = 0; revZ <= 1; revZ++, z =- z) {
+                        for (int revX = 0; revX <= 1; revX++, x = -x) {
+                            for (int revZ = 0; revZ <= 1; revZ++, z = -z) {
                                 final BlockPos pos = new BlockPos(mc.player.posX + x, mc.player.posY + y, mc.player.posZ + z);
                                 if (
-                                    (mc.world.getBlockState(pos).getBlock() != Blocks.AIR &&
-                                    !(mc.world.getBlockState(pos).getBlock() instanceof BlockLiquid)) &&
-                                    canBreak(pos) &&
-                                    ((selection && mc.world.getBlockState(pos).getBlock() == this.selected) || true)
+                                        (mc.world.getBlockState(pos).getBlock() != Blocks.AIR &&
+                                                !(mc.world.getBlockState(pos).getBlock() instanceof BlockLiquid)) &&
+                                                canBreak(pos) &&
+                                                ((selection && mc.world.getBlockState(pos).getBlock() == this.selected) || true)
                                 ) {
                                     ret = pos;
                                 }

@@ -13,12 +13,12 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class RespawnModule extends Module {
 
     public RespawnModule() {
-        super("Respawn", new String[] {"AutoRespawn", "Resp"}, "Automatically respawn after death", "NONE", -1, ModuleType.COMBAT);
+        super("Respawn", new String[]{"AutoRespawn", "Resp"}, "Automatically respawn after death", "NONE", -1, ModuleType.COMBAT);
     }
 
     @Listener
     public void displayGuiScreen(EventDisplayGui event) {
-        if(event.getScreen() != null && event.getScreen() instanceof GuiGameOver) {
+        if (event.getScreen() != null && event.getScreen() instanceof GuiGameOver) {
             Minecraft.getMinecraft().player.respawnPlayer();
         }
     }

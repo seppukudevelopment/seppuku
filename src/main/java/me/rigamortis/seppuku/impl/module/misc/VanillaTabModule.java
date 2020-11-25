@@ -19,7 +19,7 @@ public final class VanillaTabModule extends Module {
     @Listener
     public void recievePacket(EventReceivePacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
-            if(event.getPacket() instanceof SPacketPlayerListHeaderFooter) {
+            if (event.getPacket() instanceof SPacketPlayerListHeaderFooter) {
                 event.setCanceled(true);
             }
         }

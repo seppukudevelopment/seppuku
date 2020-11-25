@@ -27,9 +27,9 @@ public final class CommandsModule extends Module {
 
     @Listener
     public void keyPress(EventKeyPress event) {
-        if(this.prefix.getValue().length() == 1) {
+        if (this.prefix.getValue().length() == 1) {
             final char key = Keyboard.getEventCharacter();
-            if(this.prefix.getValue().charAt(0) == key) {
+            if (this.prefix.getValue().charAt(0) == key) {
                 Minecraft.getMinecraft().displayGuiScreen(new GuiChat());
             }
         }

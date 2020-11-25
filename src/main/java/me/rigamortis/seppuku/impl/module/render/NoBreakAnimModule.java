@@ -13,7 +13,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class NoBreakAnimModule extends Module {
 
     public NoBreakAnimModule() {
-        super("NoBreakAnim", new String[] {"AntiBreakAnim", "NoBreakAnimation"}, "Prevents the break animation server-side", "NONE", -1, ModuleType.RENDER);
+        super("NoBreakAnim", new String[]{"AntiBreakAnim", "NoBreakAnimation"}, "Prevents the break animation server-side", "NONE", -1, ModuleType.RENDER);
     }
 
     @Listener

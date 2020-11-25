@@ -128,6 +128,7 @@ public final class BlockPatch extends ClassPatch {
 
     /**
      * This is where minecraft adds aabb's for block collision
+     *
      * @param methodNode
      * @param env
      */
@@ -159,6 +160,7 @@ public final class BlockPatch extends ClassPatch {
 
     /**
      * Our addCollisionBoxToList hook used to disable block collision
+     *
      * @param entity
      * @return
      */

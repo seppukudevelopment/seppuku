@@ -68,7 +68,7 @@ public final class RegenModule extends Module {
                             if (mc.player.getAbsorptionAmount() > 0) {
                                 mc.gameSettings.keyBindUseItem.pressed = false;
                                 gappleSlot = -1;
-                                if(this.once.getValue()) this.toggle();
+                                if (this.once.getValue()) this.toggle();
                             }
                         }
                     } else {

@@ -12,14 +12,13 @@ import me.rigamortis.seppuku.impl.gui.hud.component.module.ModuleListComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
-import scala.tools.nsc.transform.patmat.Logic;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
@@ -166,7 +165,7 @@ public final class HudManager {
 
                         if (component != null) {
                             this.componentList.add(component);
-                            System.out.println("[Seppuku] Found external hud component " + component.getName());
+                            Seppuku.INSTANCE.getLogger().log(Level.INFO, "Found external hud component " + component.getName());
                         }
                     }
                 }

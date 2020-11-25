@@ -86,7 +86,7 @@ public final class EnchantCommand extends Command {
             }
 
             // cr3at1v3 m0d3 0n1y
-            mc.getConnection().sendPacket(new CPacketCreativeInventoryAction(mc.player.inventory.currentItem, itemStack));
+            mc.player.connection.sendPacket(new CPacketCreativeInventoryAction(mc.player.inventory.currentItem, itemStack));
 
             Seppuku.INSTANCE.logChat("Enchants have been added to your item.");
         }

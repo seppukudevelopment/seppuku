@@ -53,7 +53,7 @@ public final class XrayModule extends Module {
 
     @Listener
     public void shouldSideBeRendered(EventRenderBlockSide event) {
-        if(this.contains(Block.getIdFromBlock(event.getBlock()))) {
+        if (this.contains(Block.getIdFromBlock(event.getBlock()))) {
             event.setRenderable(true);
         }
         event.setCanceled(true);
@@ -62,7 +62,7 @@ public final class XrayModule extends Module {
     @Listener
     public void renderBlockModel(EventRenderBlockModel event) {
         final Block block = event.getBlockState().getBlock();
-        if(this.contains(Block.getIdFromBlock(block))) {
+        if (this.contains(Block.getIdFromBlock(block))) {
             if (Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelFlat(event.getBlockAccess(), event.getBakedModel(), event.getBlockState(), event.getBlockPos(), event.getBufferBuilder(), event.isCheckSides(), event.getRand())) {
                 event.setRenderable(true);
             }
@@ -79,12 +79,12 @@ public final class XrayModule extends Module {
         //Minecraft.getMinecraft().renderGlobal.loadRenderers();
         final Minecraft mc = Minecraft.getMinecraft();
         mc.renderGlobal.markBlockRangeForRenderUpdate(
-                (int)mc.player.posX - 256,
-                (int)mc.player.posY - 256,
-                (int)mc.player.posZ - 256,
-                (int)mc.player.posX + 256,
-                (int)mc.player.posY + 256,
-                (int)mc.player.posZ + 256);
+                (int) mc.player.posX - 256,
+                (int) mc.player.posY - 256,
+                (int) mc.player.posZ - 256,
+                (int) mc.player.posX + 256,
+                (int) mc.player.posY + 256,
+                (int) mc.player.posZ + 256);
     }
 
     public boolean contains(int id) {
@@ -92,21 +92,21 @@ public final class XrayModule extends Module {
     }
 
     public void add(int id) {
-        if(!contains(id)) {
+        if (!contains(id)) {
             this.ids.add(id);
         }
     }
 
     public void add(String name) {
         final int id = Block.getIdFromBlock(Block.getBlockFromName(name));
-        if(!contains(id)) {
+        if (!contains(id)) {
             this.ids.add(id);
         }
     }
 
     public void remove(int id) {
-        for(Integer i : this.ids) {
-            if(id == i.intValue()) {
+        for (Integer i : this.ids) {
+            if (id == i.intValue()) {
                 this.ids.remove(i);
                 break;
             }
@@ -115,7 +115,7 @@ public final class XrayModule extends Module {
 
     public void remove(String name) {
         final int id = Block.getIdFromBlock(Block.getBlockFromName(name));
-        if(contains(id)) {
+        if (contains(id)) {
             this.ids.remove(id);
         }
     }

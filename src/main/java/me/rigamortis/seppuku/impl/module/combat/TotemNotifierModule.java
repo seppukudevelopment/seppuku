@@ -13,6 +13,7 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,18 +34,18 @@ public class TotemNotifierModule extends Module {
     @Listener
     public void runTick(EventRunTick event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
-            if(mc.world == null) return;
-            for(Entity entity : mc.world.loadedEntityList) {
+            if (mc.world == null) return;
+            for (Entity entity : mc.world.loadedEntityList) {
                 if (entity instanceof EntityLivingBase) {
                     final Iterable<ItemStack> stacks = entity.getEquipmentAndArmor();
-                    for(ItemStack stack : stacks) {
+                    for (ItemStack stack : stacks) {
                         final Item offhandItem = ((EntityLivingBase) entity).getItemStackFromSlot(EntityEquipmentSlot.OFFHAND).getItem();
-                        if(offhandItem == Items.TOTEM_OF_UNDYING) {
-                            if(!entitiesWithTotems.contains(entity.getEntityId())) {
+                        if (offhandItem == Items.TOTEM_OF_UNDYING) {
+                            if (!entitiesWithTotems.contains(entity.getEntityId())) {
                                 entitiesWithTotems.add(entity.getEntityId());
                             }
-                        } else if(offhandItem == Items.AIR) {
-                            if(entitiesWithTotems.contains(entity.getEntityId())) {
+                        } else if (offhandItem == Items.AIR) {
+                            if (entitiesWithTotems.contains(entity.getEntityId())) {
                                 Seppuku.INSTANCE.getNotificationManager().addNotification("", entity.getName() + " just popped a totem.");
                                 entitiesWithTotems.removeIf(i -> i.equals(entity.getEntityId()));
                             }
@@ -54,9 +55,10 @@ public class TotemNotifierModule extends Module {
             }
         }
     }
+
     @Listener
     public void onEntityRemove(EventRemoveEntity event) {
-        if(entitiesWithTotems.contains(event.getEntity().getEntityId())) {
+        if (entitiesWithTotems.contains(event.getEntity().getEntityId())) {
             entitiesWithTotems.removeIf(i -> i.equals(event.getEntity().getEntityId()));
         }
     }

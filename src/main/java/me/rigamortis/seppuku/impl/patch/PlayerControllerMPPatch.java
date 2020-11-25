@@ -25,6 +25,7 @@ public final class PlayerControllerMPPatch extends ClassPatch {
 
     /**
      * This is called when we finish mining a block
+     *
      * @param methodNode
      * @param env
      */
@@ -57,6 +58,7 @@ public final class PlayerControllerMPPatch extends ClassPatch {
     /**
      * Our onPlayerDestroyBlock hook used to get block coordinates
      * of what we just broke
+     *
      * @param pos
      * @return
      */
@@ -70,6 +72,7 @@ public final class PlayerControllerMPPatch extends ClassPatch {
 
     /**
      * This is where minecraft starts mining
+     *
      * @param methodNode
      * @param env
      */
@@ -104,6 +107,7 @@ public final class PlayerControllerMPPatch extends ClassPatch {
     /**
      * Our clickBlock hook used to detect when we first
      * click on a block
+     *
      * @param pos
      * @param face
      * @return
@@ -119,6 +123,7 @@ public final class PlayerControllerMPPatch extends ClassPatch {
     /**
      * This is where minecraft handles abort destroying blocks
      * and resetting break progress
+     *
      * @param methodNode
      * @param env
      */
@@ -145,6 +150,7 @@ public final class PlayerControllerMPPatch extends ClassPatch {
     /**
      * Our resetBlockRemoving used to detect when we stop mining
      * It is cancellable so we can save break progress
+     *
      * @return
      */
     public static boolean resetBlockRemovingHook() {
@@ -158,6 +164,7 @@ public final class PlayerControllerMPPatch extends ClassPatch {
     /**
      * This is where minecraft handles breaking blocks and calculates
      * block hit delay/current damage
+     *
      * @param methodNode
      * @param env
      */
@@ -192,6 +199,7 @@ public final class PlayerControllerMPPatch extends ClassPatch {
     /**
      * Our onPlayerDamageBlock hook used to detect if we are
      * currently mining a block
+     *
      * @param pos
      * @param face
      * @return
@@ -207,6 +215,7 @@ public final class PlayerControllerMPPatch extends ClassPatch {
     /**
      * This is where minecraft handles right clicking
      * on blocks
+     *
      * @param methodNode
      * @param env
      */

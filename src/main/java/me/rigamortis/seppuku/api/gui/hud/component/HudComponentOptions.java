@@ -18,8 +18,7 @@ public class HudComponentOptions extends HudComponent {
 
     @Override
     public void mouseClick(int mouseX, int mouseY, int button) {
-        final boolean inside = mouseX >= this.getX() && mouseX <= this.getX() + this.getW() && mouseY >= this.getY() && mouseY <= this.getY() + this.getH();
-        if (inside && button == 0) {
+        if (this.isMouseInside(mouseX, mouseY) && button == 0) {
             Seppuku.INSTANCE.getHudManager().moveToTop(this);
         }
     }

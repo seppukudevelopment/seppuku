@@ -23,6 +23,7 @@ public final class BlockSlimePatch extends ClassPatch {
 
     /**
      * This is where minecraft slows us down while walking on slime blocks
+     *
      * @param methodNode
      * @param env
      */
@@ -52,6 +53,7 @@ public final class BlockSlimePatch extends ClassPatch {
      * Our onEntityWalk hook
      * Used to stop minecraft from slowing us down while
      * walking on slime blocks
+     *
      * @return
      */
     public static boolean onEntityWalkHook() {
@@ -63,6 +65,7 @@ public final class BlockSlimePatch extends ClassPatch {
 
     /**
      * This is where minecraft makes us bounce when we land on a slime
+     *
      * @param methodNode
      * @param env
      */
@@ -90,6 +93,7 @@ public final class BlockSlimePatch extends ClassPatch {
 
     /**
      * Our onLanded hook used to remove slime bouncing
+     *
      * @return
      */
     public static boolean onLanded() {

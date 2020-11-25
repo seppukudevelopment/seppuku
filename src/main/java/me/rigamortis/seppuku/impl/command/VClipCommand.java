@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 public final class VClipCommand extends Command {
 
     public VClipCommand() {
-        super("VClip", new String[] {"VC", "VerticalClip", "Up", "Down"}, "Allows you to teleport vertically", "VClip <Amount>");
+        super("VClip", new String[]{"VC", "VerticalClip", "Up", "Down"}, "Allows you to teleport vertically", "VClip <Amount>");
     }
 
     @Override
@@ -27,9 +27,9 @@ public final class VClipCommand extends Command {
         if (StringUtil.isDouble(split[1])) {
             final double num = Double.parseDouble(split[1]);
 
-            if(Minecraft.getMinecraft().player.getRidingEntity() != null) {
+            if (Minecraft.getMinecraft().player.getRidingEntity() != null) {
                 Minecraft.getMinecraft().player.getRidingEntity().setPosition(Minecraft.getMinecraft().player.getRidingEntity().posX, Minecraft.getMinecraft().player.getRidingEntity().posY + num, Minecraft.getMinecraft().player.getRidingEntity().posZ);
-            }else{
+            } else {
                 Minecraft.getMinecraft().player.setPosition(Minecraft.getMinecraft().player.posX, Minecraft.getMinecraft().player.posY + num, Minecraft.getMinecraft().player.posZ);
             }
             Seppuku.INSTANCE.logChat("Teleported you " + ((num > 0) ? "up" : "down") + " " + num);

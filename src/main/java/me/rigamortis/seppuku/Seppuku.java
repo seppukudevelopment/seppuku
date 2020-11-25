@@ -11,7 +11,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-import org.lwjgl.opengl.Display;
 import team.stiff.pomelo.EventManager;
 import team.stiff.pomelo.impl.annotated.AnnotatedEventManager;
 
@@ -28,7 +27,7 @@ public final class Seppuku {
 
     private Logger logger;
 
-    private String prevTitle;
+    //private String prevTitle;
 
     private EventManager eventManager;
 
@@ -77,7 +76,6 @@ public final class Seppuku {
      * this is called post launch
      */
     public void init() {
-        this.initLogger();
         this.eventManager = new AnnotatedEventManager();
         this.apiManager = new APIManager();
         this.configManager = new ConfigManager();
@@ -102,8 +100,8 @@ public final class Seppuku {
 
         this.configManager.init(); // Keep last, so we load configs after everything else inits
 
-        this.prevTitle = Display.getTitle();
-        Display.setTitle("Seppuku 1.12.2");
+        //this.prevTitle = Display.getTitle();
+        //Display.setTitle("Seppuku 1.12.2");
 
         this.getEventManager().dispatchEvent(new EventLoad());
 
@@ -114,8 +112,6 @@ public final class Seppuku {
                 getConfigManager().saveAll();
             }
         });
-
-        this.logger.info("Seppuku Loaded Successfully");
     }
 
     public void errorChat(String message) {
@@ -170,7 +166,7 @@ public final class Seppuku {
             Loader.instance().getActiveModList().remove(seppukuModContainer);
         }
 
-        Display.setTitle(this.prevTitle);
+        //Display.setTitle(this.prevTitle);
         Minecraft.getMinecraft().ingameGUI.getChatGUI().clearChatMessages(true);
         System.gc();
     }
@@ -202,6 +198,14 @@ public final class Seppuku {
         final ConsoleHandler handler = new ConsoleHandler();
         handler.setFormatter(new SeppukuFormatter());
         logger.addHandler(handler);
+    }
+
+    public Logger getLogger() {
+        if (this.logger == null) {
+            this.initLogger();
+        }
+
+        return this.logger;
     }
 
     public EventManager getEventManager() {

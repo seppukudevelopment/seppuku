@@ -25,8 +25,8 @@ public final class PacketTimeComponent extends DraggableHudComponent {
 
     @Listener
     public void recievePacket(EventReceivePacket event) {
-        if(event.getStage() == EventStageable.EventStage.PRE) {
-            if(event.getPacket() != null) {
+        if (event.getStage() == EventStageable.EventStage.PRE) {
+            if (event.getPacket() != null) {
                 this.timer.reset();
             }
         }

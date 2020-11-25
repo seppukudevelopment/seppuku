@@ -1,6 +1,5 @@
 package me.rigamortis.seppuku.impl.module.misc;
 
-import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
@@ -32,11 +31,11 @@ public class HotBarRefillModule extends Module {
     }
 
     @Listener
-    public void onWalkingUpdate (EventUpdateWalkingPlayer event) {
+    public void onWalkingUpdate(EventUpdateWalkingPlayer event) {
         if (this.timer.passed(this.delay.getValue())) {
             if (event.getStage() == EventStageable.EventStage.PRE) {
                 Minecraft mc = Minecraft.getMinecraft();
-                
+
                 if (mc.currentScreen instanceof GuiInventory) {
                     return;
                 }
@@ -61,8 +60,8 @@ public class HotBarRefillModule extends Module {
     private int getRefillable(EntityPlayerSP player) {
         if (offHand.getValue()) {
             if (player.getHeldItemOffhand().getItem() != Items.AIR
-                && player.getHeldItemOffhand().getCount() < player.getHeldItemOffhand().getMaxStackSize()
-                && (double) player.getHeldItemOffhand().getCount() / player.getHeldItemOffhand().getMaxStackSize() <= (percentage.getValue() / 100.0)) {
+                    && player.getHeldItemOffhand().getCount() < player.getHeldItemOffhand().getMaxStackSize()
+                    && (double) player.getHeldItemOffhand().getCount() / player.getHeldItemOffhand().getMaxStackSize() <= (percentage.getValue() / 100.0)) {
                 return 45;
             }
         }
@@ -70,7 +69,7 @@ public class HotBarRefillModule extends Module {
         for (int i = 0; i < 9; i++) {
             ItemStack stack = player.inventory.mainInventory.get(i);
             if (stack.getItem() != Items.AIR && stack.getCount() < stack.getMaxStackSize()
-                && (double) stack.getCount() / stack.getMaxStackSize() <= (percentage.getValue() / 100.0)) {
+                    && (double) stack.getCount() / stack.getMaxStackSize() <= (percentage.getValue() / 100.0)) {
                 return i;
             }
         }
@@ -83,7 +82,7 @@ public class HotBarRefillModule extends Module {
      * Gets the smallest stack so that there are not a a bunch
      * of partially full stacks left in the player's inventory.
      *
-     * @param player The player
+     * @param player    The player
      * @param itemStack The item type that should be found
      * @return The index of the smallest stack of the given item, -1 if the given item does not exist
      */
@@ -100,8 +99,8 @@ public class HotBarRefillModule extends Module {
             ItemStack stack = player.inventory.mainInventory.get(i);
 
             if (stack.getItem() != Items.AIR
-                && stack.getItem() == itemStack.getItem()
-                && stack.getCount() < minCount) {
+                    && stack.getItem() == itemStack.getItem()
+                    && stack.getCount() < minCount) {
 
                 minCount = stack.getCount();
                 minIndex = i;
@@ -115,7 +114,7 @@ public class HotBarRefillModule extends Module {
      * Refills a given slot in the hotbar from an item in the player's inventory.
      * Uses the slot's current ItemStack to decide what it should be refilled with.
      *
-     * @param mc The Mincraft instance
+     * @param mc   The Mincraft instance
      * @param slot The slot that should be refilled
      */
     public void refillHotbarSlot(Minecraft mc, int slot) {

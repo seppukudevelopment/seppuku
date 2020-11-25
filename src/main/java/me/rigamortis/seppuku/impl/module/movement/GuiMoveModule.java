@@ -17,7 +17,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class GuiMoveModule extends Module {
 
     public GuiMoveModule() {
-        super("GUIMove", new String[] {"InvMove", "InventoryMove", "GUIM"}, "Allows you to move while guis are open", "NONE", -1, ModuleType.MOVEMENT);
+        super("GUIMove", new String[]{"InvMove", "InventoryMove", "GUIM"}, "Allows you to move while guis are open", "NONE", -1, ModuleType.MOVEMENT);
     }
 
     @Listener

@@ -1,11 +1,14 @@
 package me.rigamortis.seppuku.impl.command;
 
+import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.command.Command;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
+
+import java.util.logging.Level;
 
 /**
  * Author Seth
@@ -29,6 +32,6 @@ public final class FindEntityCommand extends Command {
         final Chunk chunk = mc.world.getChunk(pos);
         final Biome biome = chunk.getBiome(pos, mc.world.getBiomeProvider());
 
-        System.out.println(biome.getSpawnableList(EnumCreatureType.CREATURE));
+        Seppuku.INSTANCE.getLogger().log(Level.INFO, biome.getSpawnableList(EnumCreatureType.CREATURE).toString());
     }
 }

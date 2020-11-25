@@ -23,6 +23,7 @@ public final class AbstractHorsePatch extends ClassPatch {
 
     /**
      * This is where minecraft checks if you can steer horses
+     *
      * @param methodNode
      * @param env
      */
@@ -52,6 +53,7 @@ public final class AbstractHorsePatch extends ClassPatch {
     /**
      * Our canBeSteered hook
      * Used to allow us to steer and control horses without a saddle
+     *
      * @return
      */
     public static boolean canBeSteeredHook() {
@@ -64,6 +66,7 @@ public final class AbstractHorsePatch extends ClassPatch {
 
     /**
      * This is where minecraft handles steering horses if they have a saddle on
+     *
      * @param methodNode
      * @param env
      */
@@ -94,6 +97,7 @@ public final class AbstractHorsePatch extends ClassPatch {
      * Our isHorseSaddled hook
      * Allows us to control and ride horses without actually
      * having a saddle
+     *
      * @return
      */
     public static boolean isHorseSaddledHook() {

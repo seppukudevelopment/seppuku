@@ -12,7 +12,7 @@ import net.minecraft.network.play.client.CPacketUseEntity;
 public final class DupeCommand extends Command {
 
     public DupeCommand() {
-        super("Dupe", new String[] {"Dup", "Doop"}, "Allows you to dupe your inventory", "Dupe");
+        super("Dupe", new String[]{"Dup", "Doop"}, "Allows you to dupe your inventory", "Dupe");
     }
 
     @Override
@@ -24,7 +24,7 @@ public final class DupeCommand extends Command {
 
         final Minecraft mc = Minecraft.getMinecraft();
 
-        if(mc.player != null) {
+        if (mc.player != null) {
             for (int i = 0; i <= 45; i++) {
                 mc.playerController.windowClick(mc.player.inventoryContainer.windowId, i, -1, ClickType.THROW, mc.player);
             }

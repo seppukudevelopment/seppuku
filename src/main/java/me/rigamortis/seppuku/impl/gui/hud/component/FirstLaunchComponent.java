@@ -4,12 +4,8 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.RenderUtil;
-import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import me.rigamortis.seppuku.impl.module.render.HudModule;
 import net.minecraft.client.Minecraft;
-import org.lwjgl.input.Keyboard;
-
-import java.security.Key;
 
 /**
  * created by noil on 5/7/2020
@@ -52,9 +48,9 @@ public final class FirstLaunchComponent extends DraggableHudComponent {
 
     public void onClose() {
         if (this.hudModule != null) {
-            if(this.hudModule.isEnabled()) {
+            if (this.hudModule.isEnabled()) {
                 this.hudModule.onEnable();
-            }else {
+            } else {
                 this.hudModule.toggle();
             }
             this.hudModule.setEnabled(true);

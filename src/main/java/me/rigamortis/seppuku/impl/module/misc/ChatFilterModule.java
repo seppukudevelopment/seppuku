@@ -5,6 +5,7 @@ import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.StringUtil;
 import me.rigamortis.seppuku.api.value.Value;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.server.SPacketChat;
 import net.minecraft.util.text.TextComponentString;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -19,8 +20,9 @@ import java.util.List;
 public final class ChatFilterModule extends Module {
 
     public final Value<Boolean> unicode = new Value("Unicode", new String[]{"uc"}, "Reverts \"Fancy Chat\" characters back into normal ones. ", true);
-    public final Value<Boolean> broadcasts = new Value("Broadcasts", new String[]{"broad", "bc"}, "Prevents displaying chat messages that begin with [SERVER].", true);
+    public final Value<Boolean> broadcasts = new Value("Broadcasts", new String[]{"broadcast", "broad", "bc"}, "Prevents displaying chat messages that begin with [SERVER].", false);
     public final Value<Boolean> spam = new Value("Spam", new String[]{"sp", "s"}, "Attempts to prevent spam by checking recent chat messages for duplicates.", true);
+    public final Value<Boolean> death = new Value("Death", new String[]{"dead", "d"}, "Attempts to prevent death messages.", false);
 
     private List<String> cache = new ArrayList<>();
 
@@ -39,10 +41,30 @@ public final class ChatFilterModule extends Module {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             if (event.getPacket() instanceof SPacketChat) {
                 final SPacketChat packet = (SPacketChat) event.getPacket();
+                boolean is9b9tOr2b2t = false;
+
+                if (!Minecraft.getMinecraft().isSingleplayer()) {
+                    if (Minecraft.getMinecraft().getCurrentServerData() != null) {
+                        final String currentServerIP = Minecraft.getMinecraft().getCurrentServerData().serverIP;
+                        is9b9tOr2b2t = currentServerIP.equalsIgnoreCase("2b2t.org") || currentServerIP.equalsIgnoreCase("9b9t.com") || currentServerIP.equalsIgnoreCase("9b9t.org");
+                    }
+                }
+
+                if (this.death.getValue()) {
+                    if (packet.getChatComponent().getFormattedText().contains("\2474") || packet.getChatComponent().getFormattedText().contains("\247c")) {
+                        event.setCanceled(true);
+                    }
+                }
 
                 if (this.broadcasts.getValue()) {
                     if (packet.getChatComponent().getFormattedText().startsWith("\2475[SERVER]")) {
                         event.setCanceled(true);
+                    }
+
+                    if (is9b9tOr2b2t) {
+                        if (packet.getChatComponent().getFormattedText().contains("\2472")) {
+                            event.setCanceled(true);
+                        }
                     }
                 }
 

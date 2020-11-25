@@ -22,6 +22,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
+
 /**
  * @author Seth
  * @since 5/15/2019 @ 9:20 AM.
@@ -33,7 +34,7 @@ public final class NoCrystalModule extends Module {
     public final Value<Boolean> visible = new Value("Visible", new String[]{"Visible", "v"}, "When disabled, you will not see swing animations or sounds.", true);
     public final Value<Boolean> rotate = new Value("Rotate", new String[]{"rotation", "r", "rotate"}, "Rotate to place blocks", true);
     public final Value<Boolean> disable = new Value<Boolean>("Disable", new String[]{"dis"}, "Automatically disable after obsidian is placed.", false);
-    public final Value<Boolean> sneak = new Value<Boolean> ("PlaceOnSneak", new String[]{"sneak", "s", "pos", "sneakPlace"}, "When true, NoCrystal will only place while the player is sneaking.", false);
+    public final Value<Boolean> sneak = new Value<Boolean>("PlaceOnSneak", new String[]{"sneak", "s", "pos", "sneakPlace"}, "When true, NoCrystal will only place while the player is sneaking.", false);
     public final Value<Float> placeDelay = new Value("Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay between obsidian blocks being placed.", 100.0f, 0.0f, 1000.0f, 1.0f);
 
 
@@ -91,7 +92,7 @@ public final class NoCrystalModule extends Module {
         }
     }
 
-    private boolean slotEqualsBlock (int slot, Block type) {
+    private boolean slotEqualsBlock(int slot, Block type) {
         if (mc.player.inventory.getStackInSlot(slot).getItem() instanceof ItemBlock) {
             final ItemBlock block = (ItemBlock) mc.player.inventory.getStackInSlot(slot).getItem();
             return block.getBlock() == type;
@@ -106,7 +107,7 @@ public final class NoCrystalModule extends Module {
         return -1;
     }
 
-    private boolean valid (BlockPos pos) {
+    private boolean valid(BlockPos pos) {
         // There are no entities to block placement,
         if (!mc.world.checkNoEntityCollision(new AxisAlignedBB(pos))) return false;
         // Check if the block is replaceable

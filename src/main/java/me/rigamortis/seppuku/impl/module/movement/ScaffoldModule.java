@@ -165,17 +165,17 @@ public final class ScaffoldModule extends Module {
 
     private void placeBlock(BlockPos pos) {
         final Minecraft mc = Minecraft.getMinecraft();
-        
-        BlockPos[][] posit = {{pos.add(0, 0, 1), pos.add(0, 0, -1)}, {pos.add(0, 1, 0), pos.add(0, -1, 0)}, {pos.add(1, 0, 0),pos.add(-1, 0, 0)}};
+
+        BlockPos[][] posit = {{pos.add(0, 0, 1), pos.add(0, 0, -1)}, {pos.add(0, 1, 0), pos.add(0, -1, 0)}, {pos.add(1, 0, 0), pos.add(-1, 0, 0)}};
         EnumFacing[][] facing = {{EnumFacing.NORTH, EnumFacing.SOUTH}, {EnumFacing.DOWN, EnumFacing.UP}, {EnumFacing.WEST, EnumFacing.EAST}}; // Facing reversed as blocks are placed while facing in the opposite direction
 
-        for (int i=0; i<6; i++) {
-            final Block block = mc.world.getBlockState(posit[i/2][i%2]).getBlock();
+        for (int i = 0; i < 6; i++) {
+            final Block block = mc.world.getBlockState(posit[i / 2][i % 2]).getBlock();
             final boolean activated = block.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, EnumHand.MAIN_HAND, EnumFacing.UP, 0, 0, 0);
             if (block != null && block != Blocks.AIR && !(block instanceof BlockLiquid)) {
                 if (activated)
                     mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
-                if (mc.playerController.processRightClickBlock(mc.player, mc.world, posit[i/2][i%2], facing[i/2][i%2], new Vec3d(0d, 0d, 0d), EnumHand.MAIN_HAND) != EnumActionResult.FAIL)
+                if (mc.playerController.processRightClickBlock(mc.player, mc.world, posit[i / 2][i % 2], facing[i / 2][i % 2], new Vec3d(0d, 0d, 0d), EnumHand.MAIN_HAND) != EnumActionResult.FAIL)
                     mc.player.swingArm(EnumHand.MAIN_HAND);
                 if (activated)
                     mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));

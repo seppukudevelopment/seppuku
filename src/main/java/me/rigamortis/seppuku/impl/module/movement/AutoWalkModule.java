@@ -13,7 +13,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class AutoWalkModule extends Module {
 
     public AutoWalkModule() {
-        super("AutoWalk", new String[] {"AutomaticWalk"}, "Automatically presses the forward key", "NONE", -1, ModuleType.MOVEMENT);
+        super("AutoWalk", new String[]{"AutomaticWalk"}, "Automatically presses the forward key", "NONE", -1, ModuleType.MOVEMENT);
     }
 
     @Override

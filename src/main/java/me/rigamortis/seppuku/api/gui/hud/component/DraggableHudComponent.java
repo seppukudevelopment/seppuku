@@ -17,6 +17,7 @@ public class DraggableHudComponent extends HudComponent {
 
     private boolean snappable;
     private boolean dragging;
+    private boolean locked;
     private float deltaX;
     private float deltaY;
 
@@ -32,15 +33,14 @@ public class DraggableHudComponent extends HudComponent {
         this.setName(name);
         this.setVisible(false);
         this.setSnappable(true);
+        this.setLocked(false);
         this.setX(Minecraft.getMinecraft().displayWidth / 2.0f);
         this.setY(Minecraft.getMinecraft().displayHeight / 2.0f);
     }
 
     @Override
     public void mouseClick(int mouseX, int mouseY, int button) {
-        final boolean inside = mouseX >= this.getX() && mouseX <= this.getX() + this.getW() && mouseY >= this.getY() && mouseY <= this.getY() + this.getH();
-
-        if (inside) {
+        if (this.isMouseInside(mouseX, mouseY)) {
             if (button == 0) {
                 this.setDragging(true);
                 this.setDeltaX(mouseX - this.getX());
@@ -65,13 +65,16 @@ public class DraggableHudComponent extends HudComponent {
             this.clamp();
         }
 
-        final boolean inside = mouseX >= this.getX() && mouseX <= this.getX() + this.getW() && mouseY >= this.getY() && mouseY <= this.getY() + this.getH();
-        if (inside) {
+        if (this.isMouseInside(mouseX, mouseY)) {
             RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x45FFFFFF);
         }
 
         if (isHudEditor) {
             RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x75101010);
+            if (this.isLocked()) {
+                RenderUtil.drawBorderedRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0.5f, 0x00000000, 0x75FF0000);
+                //RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x75FF1010);
+            }
         }
 
         if (this.glued != null) {
@@ -123,10 +126,10 @@ public class DraggableHudComponent extends HudComponent {
                         this.setX(this.anchorPoint.getX() - this.getW());
                         break;
                     case TOP_CENTER:
-                        this.setX(this.anchorPoint.getX() - (this.getW() / 2));
+                        this.setX(this.anchorPoint.getX() - (this.getW() / 2.0f));
                         break;
                     case BOTTOM_CENTER:
-                        this.setX(this.anchorPoint.getX() - (this.getW() / 2));
+                        this.setX(this.anchorPoint.getX() - (this.getW() / 2.0f));
                         break;
                 }
                 if (this.glueSide != null) {
@@ -158,11 +161,11 @@ public class DraggableHudComponent extends HudComponent {
                         this.setY(this.anchorPoint.getY() - this.getH());
                         break;
                     case TOP_CENTER:
-                        this.setX(this.anchorPoint.getX() - (this.getW() / 2));
+                        this.setX(this.anchorPoint.getX() - (this.getW() / 2.0f));
                         this.setY(this.anchorPoint.getY());
                         break;
                     case BOTTOM_CENTER:
-                        this.setX(this.anchorPoint.getX() - (this.getW() / 2));
+                        this.setX(this.anchorPoint.getX() - (this.getW() / 2.0f));
                         this.setY(this.anchorPoint.getY() - this.getH());
                         break;
                 }
@@ -190,7 +193,7 @@ public class DraggableHudComponent extends HudComponent {
                         DraggableHudComponent draggable = (DraggableHudComponent) component;
                         if (draggable != this && draggable.isVisible() && draggable.isSnappable()) {
                             if (this.collidesWith(draggable)) {
-                                if ((this.getY() + (this.getH() / 2)) < (draggable.getY() + (draggable.getH() / 2))) { // top
+                                if ((this.getY() + (this.getH() / 2.0f)) < (draggable.getY() + (draggable.getH() / 2.0f))) { // top
                                     this.setY(draggable.getY() - this.getH());
                                     this.glueSide = GlueSide.TOP;
                                     this.glued = draggable;
@@ -198,7 +201,7 @@ public class DraggableHudComponent extends HudComponent {
                                     if (draggable.getAnchorPoint() != null) {
                                         this.anchorPoint = draggable.getAnchorPoint();
                                     }
-                                } else if ((this.getY() + (this.getH() / 2)) > (draggable.getY() + (draggable.getH() / 2))) { // bottom
+                                } else if ((this.getY() + (this.getH() / 2.0f)) > (draggable.getY() + (draggable.getH() / 2.0f))) { // bottom
                                     this.setY(draggable.getY() + draggable.getH());
                                     this.glueSide = GlueSide.BOTTOM;
                                     this.glued = draggable;
@@ -223,6 +226,10 @@ public class DraggableHudComponent extends HudComponent {
             }
 
             this.setDragging(false);
+        } else if (button == 2) {
+            if (isMouseInside(mouseX, mouseY)) {
+                this.setLocked(!this.isLocked());
+            }
         }
     }
 
@@ -248,6 +255,16 @@ public class DraggableHudComponent extends HudComponent {
     }
 
     public void clamp() {
+        final ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+
+        /* off screen clamp bypass check */
+        if (this.isLocked()/*this.isVisible() && this.getAnchorPoint() == null*/) {
+            return;
+            /*if (this.getX() > sr.getScaledWidth() || this.getY() > sr.getScaledHeight()) { // off the screen
+                return;
+            }*/
+        }
+
         if (this.getX() <= 0) {
             this.setX(2);
         }
@@ -256,14 +273,12 @@ public class DraggableHudComponent extends HudComponent {
             this.setY(2);
         }
 
-        final ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
-
-        if (this.getX() + this.getW() >= res.getScaledWidth() - 2) {
-            this.setX(res.getScaledWidth() - 2 - this.getW());
+        if (this.getX() + this.getW() >= sr.getScaledWidth() - 2) {
+            this.setX(sr.getScaledWidth() - 2 - this.getW());
         }
 
-        if (this.getY() + this.getH() >= res.getScaledHeight() - 2) {
-            this.setY(res.getScaledHeight() - 2 - this.getH());
+        if (this.getY() + this.getH() >= sr.getScaledHeight() - 2) {
+            this.setY(sr.getScaledHeight() - 2 - this.getH());
         }
     }
 
@@ -281,6 +296,14 @@ public class DraggableHudComponent extends HudComponent {
 
     public void setDragging(boolean dragging) {
         this.dragging = dragging;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
     public float getDeltaX() {

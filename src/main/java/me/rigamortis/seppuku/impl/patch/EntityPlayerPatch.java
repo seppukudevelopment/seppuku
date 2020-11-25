@@ -26,6 +26,7 @@ public final class EntityPlayerPatch extends ClassPatch {
      * water pushing
      * Normally in creative mode you dont
      * get pushed by water
+     *
      * @param methodNode
      * @param env
      */
@@ -54,6 +55,7 @@ public final class EntityPlayerPatch extends ClassPatch {
 
     /**
      * Our isPushedByWater hook
+     *
      * @return
      */
     public static boolean isPushedByWaterHook() {
@@ -67,6 +69,7 @@ public final class EntityPlayerPatch extends ClassPatch {
     /**
      * This is where minecraft handles entities
      * colliding with each other
+     *
      * @param methodNode
      * @param env
      */
@@ -95,6 +98,7 @@ public final class EntityPlayerPatch extends ClassPatch {
     /**
      * Our applyEntityCollision hook
      * Used to cancel entity collision
+     *
      * @return
      */
     public static boolean applyEntityCollisionHook() {

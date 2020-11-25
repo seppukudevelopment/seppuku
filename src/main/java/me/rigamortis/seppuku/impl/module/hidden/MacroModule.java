@@ -15,18 +15,18 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class MacroModule extends Module {
 
     public MacroModule() {
-        super("Macros", new String[] {"mac"}, "Allows you to bind macros to keys", "NONE", -1, ModuleType.HIDDEN);
+        super("Macros", new String[]{"mac"}, "Allows you to bind macros to keys", "NONE", -1, ModuleType.HIDDEN);
         this.setHidden(true);
         this.toggle();
     }
 
     @Listener
     public void keyPress(EventKeyPress event) {
-        for(Macro macro : Seppuku.INSTANCE.getMacroManager().getMacroList()) {
-            if(event.getKey() == Keyboard.getKeyIndex(macro.getKey()) && Keyboard.getKeyIndex(macro.getKey()) != Keyboard.KEY_NONE) {
+        for (Macro macro : Seppuku.INSTANCE.getMacroManager().getMacroList()) {
+            if (event.getKey() == Keyboard.getKeyIndex(macro.getKey()) && Keyboard.getKeyIndex(macro.getKey()) != Keyboard.KEY_NONE) {
                 final String[] split = macro.getMacro().split(";");
 
-                for(String s : split) {
+                for (String s : split) {
                     Minecraft.getMinecraft().player.sendChatMessage(s);
                 }
             }

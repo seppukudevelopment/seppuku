@@ -43,23 +43,23 @@ public final class StorageAlertModule extends Module {
 
                 int count = 0;
 
-                for(NBTTagCompound tag : packet.getTileEntityTags()) {
+                for (NBTTagCompound tag : packet.getTileEntityTags()) {
                     final String id = tag.getString("id");
 
-                    if(
+                    if (
                             (this.chests.getValue() && (id.equals("minecraft:chest") || id.equals("minecraft:trapped_chest"))) ||
-                            (this.echests.getValue() && id.equals("minecraft:ender_chest")) ||
-                            (this.shulkers.getValue() && id.equals("minecraft:shulker_box")) ||
-                            (this.hoppers.getValue() && id.equals("minecraft:hopper")) ||
-                            (this.droppers.getValue() && id.equals("minecraft:dropper")) ||
-                            (this.dispensers.getValue() && id.equals("minecraft:dispenser")) ||
-                            (this.stands.getValue() && id.equals("minecraft:brewing_stand"))
+                                    (this.echests.getValue() && id.equals("minecraft:ender_chest")) ||
+                                    (this.shulkers.getValue() && id.equals("minecraft:shulker_box")) ||
+                                    (this.hoppers.getValue() && id.equals("minecraft:hopper")) ||
+                                    (this.droppers.getValue() && id.equals("minecraft:dropper")) ||
+                                    (this.dispensers.getValue() && id.equals("minecraft:dispenser")) ||
+                                    (this.stands.getValue() && id.equals("minecraft:brewing_stand"))
                     ) {
                         count++;
                     }
                 }
 
-                if(count > 0) {
+                if (count > 0) {
                     final String message = count + " storage blocks located at X: " + packet.getChunkX() * 16 + " Z: " + packet.getChunkZ() * 16;
                     if (this.mode.getValue() == Mode.CHAT || this.mode.getValue() == Mode.BOTH) {
                         Seppuku.INSTANCE.logChat(message);

@@ -16,7 +16,7 @@ import net.minecraft.network.play.client.CPacketCreativeInventoryAction;
 public final class CrashSlimeCommand extends Command {
 
     public CrashSlimeCommand() {
-        super("CrashSlime", new String[] {"CSlime", "CrashS"}, "Gives you a slime spawn egg that crashes the server and nearby players while in creative mode", "CrashSlime");
+        super("CrashSlime", new String[]{"CSlime", "CrashS"}, "Gives you a slime spawn egg that crashes the server and nearby players while in creative mode", "CrashSlime");
     }
 
     @Override

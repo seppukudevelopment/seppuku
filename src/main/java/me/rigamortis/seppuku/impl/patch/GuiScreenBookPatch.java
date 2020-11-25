@@ -24,6 +24,7 @@ public final class GuiScreenBookPatch extends ClassPatch {
     /**
      * This is where minecraft appends your text
      * to a page in books
+     *
      * @param methodNode
      * @param env
      */
@@ -47,6 +48,7 @@ public final class GuiScreenBookPatch extends ClassPatch {
     /**
      * This is our pageInsertIntoCurrent hook
      * We can use it to modify book pages
+     *
      * @param page
      * @return
      */
@@ -61,6 +63,7 @@ public final class GuiScreenBookPatch extends ClassPatch {
     /**
      * This is where minecraft handles
      * typing in the title of a book
+     *
      * @param methodNode
      * @param env
      */
@@ -88,6 +91,7 @@ public final class GuiScreenBookPatch extends ClassPatch {
     /**
      * This is our keyTypedInTitle
      * We can use it to modify the title text of a book
+     *
      * @param title
      * @return
      */

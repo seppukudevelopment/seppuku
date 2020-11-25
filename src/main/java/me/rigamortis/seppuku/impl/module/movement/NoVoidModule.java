@@ -25,7 +25,7 @@ public final class NoVoidModule extends Module {
     public void onUpdate(EventPlayerUpdate event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             final Minecraft mc = Minecraft.getMinecraft();
-            if(!mc.player.noClip) {
+            if (!mc.player.noClip) {
                 if (mc.player.posY <= this.height.getValue()) {
 
                     final RayTraceResult trace = mc.world.rayTraceBlocks(mc.player.getPositionVector(), new Vec3d(mc.player.posX, 0, mc.player.posZ), false, false, false);

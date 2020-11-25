@@ -23,6 +23,7 @@ public final class ActiveRenderInfoPatch extends ClassPatch {
 
     /**
      * This is where minecraft updates the ModelViewProjection matrix
+     *
      * @param methodNode
      * @param env
      */

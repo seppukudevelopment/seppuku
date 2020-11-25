@@ -2,13 +2,19 @@ package me.rigamortis.seppuku.impl.gui.hud.component;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
+import me.rigamortis.seppuku.api.event.client.EventSaveConfig;
+import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
 import me.rigamortis.seppuku.impl.module.hidden.ArrayListModule;
+import me.rigamortis.seppuku.impl.module.render.HudModule;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
+import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -21,10 +27,18 @@ import static me.rigamortis.seppuku.impl.module.hidden.ArrayListModule.Mode.*;
  */
 public final class EnabledModsComponent extends DraggableHudComponent {
 
+    private boolean RAINBOW = false;
+    private float RAINBOW_HUE_DIFFERENCE = 2.5f;
+    private float RAINBOW_HUE_SPEED = 50.f;
+    private float RAINBOW_SATURATION = 50.f;
+    private float RAINBOW_BRIGHTNESS = 50.f;
+
     public EnabledModsComponent(AnchorPoint anchorPoint) {
         super("EnabledMods");
         this.setAnchorPoint(anchorPoint); // by default anchors in the top right corner of the hud
         this.setVisible(true);
+
+        Seppuku.INSTANCE.getEventManager().addEventListener(this); // subscribe to the event manager
     }
 
     @Override
@@ -33,6 +47,7 @@ public final class EnabledModsComponent extends DraggableHudComponent {
 
         final List<Module> mods = new ArrayList<>();
         final Minecraft mc = Minecraft.getMinecraft();
+        final ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
         boolean isInHudEditor = mc.currentScreen instanceof GuiHudEditor;
 
         for (Module mod : Seppuku.INSTANCE.getModuleManager().getModuleList()) {
@@ -65,12 +80,22 @@ public final class EnabledModsComponent extends DraggableHudComponent {
         float yOffset = 0;
         float maxWidth = 0;
 
+        int hueDifference = 0;
+
         for (Module mod : mods) {
             if (mod != null && mod.getType() != Module.ModuleType.HIDDEN && mod.isEnabled() && !mod.isHidden()) {
-
                 final String name = mod.getDisplayName() + (mod.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + mod.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");
 
                 final float width = mc.fontRenderer.getStringWidth(name);
+
+                int color = 0;
+
+                if (RAINBOW) {
+                    Color rainbow = new Color(Color.HSBtoRGB((float) (mc.player.ticksExisted / (100.0D - RAINBOW_HUE_SPEED) + Math.sin(hueDifference / (100.0D - RAINBOW_HUE_SPEED * Math.PI / 2.0D))) % 1.0F, RAINBOW_SATURATION, RAINBOW_BRIGHTNESS));
+                    color = (new Color(rainbow.getRed(), rainbow.getGreen(), rainbow.getBlue(), 255)).getRGB();
+                } else {
+                    color = mod.getColor();
+                }
 
                 if (width >= maxWidth) {
                     maxWidth = width;
@@ -98,20 +123,22 @@ public final class EnabledModsComponent extends DraggableHudComponent {
                         case TOP_CENTER:
                         case TOP_LEFT:
                         case TOP_RIGHT:
-                            mc.fontRenderer.drawStringWithShadow(name, this.getX() + xOffset, this.getY() + yOffset, mod.getColor());
+                            mc.fontRenderer.drawStringWithShadow(name, this.getX() + xOffset, this.getY() + yOffset, color);
                             yOffset += (mc.fontRenderer.FONT_HEIGHT + 1);
                             break;
                         case BOTTOM_CENTER:
                         case BOTTOM_LEFT:
                         case BOTTOM_RIGHT:
-                            mc.fontRenderer.drawStringWithShadow(name, this.getX() + xOffset, this.getY() + (this.getH() - mc.fontRenderer.FONT_HEIGHT) + yOffset, mod.getColor());
+                            mc.fontRenderer.drawStringWithShadow(name, this.getX() + xOffset, this.getY() + (this.getH() - mc.fontRenderer.FONT_HEIGHT) + yOffset, color);
                             yOffset -= (mc.fontRenderer.FONT_HEIGHT + 1);
                             break;
                     }
                 } else {
-                    mc.fontRenderer.drawStringWithShadow(name, this.getX() + xOffset, this.getY() + yOffset, mod.getColor());
+                    mc.fontRenderer.drawStringWithShadow(name, this.getX() + xOffset, this.getY() + yOffset, color);
                     yOffset += (mc.fontRenderer.FONT_HEIGHT + 1);
                 }
+
+                hueDifference = (int) (hueDifference + RAINBOW_HUE_DIFFERENCE);
             }
         }
 
@@ -126,6 +153,30 @@ public final class EnabledModsComponent extends DraggableHudComponent {
 
         this.setW(maxWidth);
         this.setH(Math.abs(yOffset));
+
+        if (this.getH() > res.getScaledHeight()) {
+            this.setH(res.getScaledHeight() - 4);
+        }
     }
 
+    @Listener
+    public void onLoadWorld(EventLoadWorld eventLoadWorld) {
+        this.updateValues();
+    }
+
+    @Listener
+    public void onConfigSave(EventSaveConfig eventSaveConfig) {
+        this.updateValues();
+    }
+
+    private void updateValues() {
+        final HudModule hudModule = (HudModule) Seppuku.INSTANCE.getModuleManager().find(HudModule.class);
+        if (hudModule != null && hudModule.isEnabled()) {
+            this.RAINBOW = hudModule.rainbow.getValue();
+            this.RAINBOW_HUE_DIFFERENCE = hudModule.rainbowHueDifference.getValue();
+            this.RAINBOW_HUE_SPEED = hudModule.rainbowHueSpeed.getValue();
+            this.RAINBOW_SATURATION = hudModule.rainbowSaturation.getValue();
+            this.RAINBOW_BRIGHTNESS = hudModule.rainbowBrightness.getValue();
+        }
+    }
 }

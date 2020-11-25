@@ -15,7 +15,7 @@ import java.awt.datatransfer.StringSelection;
 public final class IPCommand extends Command {
 
     public IPCommand() {
-        super("IP", new String[] {"IPAddress"}, "Copies the current server ip to your clipboard", "IP");
+        super("IP", new String[]{"IPAddress"}, "Copies the current server ip to your clipboard", "IP");
     }
 
     @Override
@@ -27,12 +27,12 @@ public final class IPCommand extends Command {
 
         final Minecraft mc = Minecraft.getMinecraft();
 
-        if(mc.getCurrentServerData() != null) {
+        if (mc.getCurrentServerData() != null) {
             final StringSelection contents = new StringSelection(mc.getCurrentServerData().serverIP);
             final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(contents, null);
             Seppuku.INSTANCE.logChat("Copied IP to clipboard");
-        }else{
+        } else {
             Seppuku.INSTANCE.errorChat("Error, Join a server");
         }
     }

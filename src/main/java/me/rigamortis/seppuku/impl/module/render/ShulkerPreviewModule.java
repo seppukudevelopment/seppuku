@@ -89,7 +89,7 @@ public final class ShulkerPreviewModule extends Module {
                 }
             }
 
-            if(this.middleClick.getValue()) {
+            if (this.middleClick.getValue()) {
                 if (Mouse.isButtonDown(2)) {
                     if (!this.clicked) {
                         final BlockShulkerBox shulkerBox = (BlockShulkerBox) Block.getBlockFromItem(shulker.getItem());

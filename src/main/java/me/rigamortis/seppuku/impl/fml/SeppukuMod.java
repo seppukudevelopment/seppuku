@@ -15,6 +15,7 @@ public final class SeppukuMod {
 
     /**
      * Our mods entry point
+     *
      * @param event
      */
     @Mod.EventHandler

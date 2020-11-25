@@ -18,7 +18,7 @@ public final class XrayCommand extends Command {
     private String[] clearAlias = new String[]{"Clear", "C"};
 
     public XrayCommand() {
-        super("Xray", new String[] {"JadeVision", "Jade"}, "Allows you to change what blocks are visible on xray",
+        super("Xray", new String[]{"JadeVision", "Jade"}, "Allows you to change what blocks are visible on xray",
                 "Xray Add <Block_Name>\n" +
                         "Xray Add <ID>\n" +
                         "Xray Remove <Block_Name>\n" +
@@ -37,125 +37,125 @@ public final class XrayCommand extends Command {
 
         final XrayModule xray = (XrayModule) Seppuku.INSTANCE.getModuleManager().find(XrayModule.class);
 
-        if(xray != null) {
+        if (xray != null) {
             if (equals(addAlias, split[1])) {
                 if (!this.clamp(input, 3, 3)) {
                     this.printUsage();
                     return;
                 }
 
-                if(StringUtil.isInt(split[2])) {
+                if (StringUtil.isInt(split[2])) {
                     final int id = Integer.parseInt(split[2]);
 
-                    if(id > 0) {
+                    if (id > 0) {
                         final Block block = Block.getBlockById(id);
 
-                        if(block != null) {
-                            if(xray.contains(Block.getIdFromBlock(block))) {
+                        if (block != null) {
+                            if (xray.contains(Block.getIdFromBlock(block))) {
                                 Seppuku.INSTANCE.logChat("Xray already contains " + block.getLocalizedName());
-                            }else{
+                            } else {
                                 xray.add(Block.getIdFromBlock(block));
-                                if(xray.isEnabled()) {
+                                if (xray.isEnabled()) {
                                     xray.updateRenders();
                                 }
                                 Seppuku.INSTANCE.getConfigManager().saveAll();
                                 Seppuku.INSTANCE.logChat("Added " + block.getLocalizedName() + " to xray");
                             }
-                        }else{
+                        } else {
                             Seppuku.INSTANCE.logChat("\247c" + split[2] + "\247f is not a valid block");
                         }
-                    }else{
+                    } else {
                         Seppuku.INSTANCE.errorChat("Cannot add Air to xray");
                     }
-                }else{
+                } else {
                     final Block block = Block.getBlockFromName(split[2].toLowerCase());
 
-                    if(block != null) {
-                        if(block == Blocks.AIR) {
+                    if (block != null) {
+                        if (block == Blocks.AIR) {
                             Seppuku.INSTANCE.errorChat("Cannot add Air to xray");
-                        }else{
-                            if(xray.contains(Block.getIdFromBlock(block))) {
+                        } else {
+                            if (xray.contains(Block.getIdFromBlock(block))) {
                                 Seppuku.INSTANCE.logChat("Xray already contains " + block.getLocalizedName());
-                            }else{
+                            } else {
                                 xray.add(Block.getIdFromBlock(block));
-                                if(xray.isEnabled()) {
+                                if (xray.isEnabled()) {
                                     xray.updateRenders();
                                 }
                                 Seppuku.INSTANCE.getConfigManager().saveAll();
                                 Seppuku.INSTANCE.logChat("Added " + block.getLocalizedName() + " to xray");
                             }
                         }
-                    }else{
+                    } else {
                         Seppuku.INSTANCE.logChat("\247c" + split[2] + "\247f is not a valid block");
                     }
                 }
-            }else if (equals(removeAlias, split[1])) {
+            } else if (equals(removeAlias, split[1])) {
                 if (!this.clamp(input, 3, 3)) {
                     this.printUsage();
                     return;
                 }
 
-                if(StringUtil.isInt(split[2])) {
+                if (StringUtil.isInt(split[2])) {
                     final int id = Integer.parseInt(split[2]);
 
-                    if(id > 0) {
+                    if (id > 0) {
                         final Block block = Block.getBlockById(id);
 
-                        if(block != null) {
-                            if(xray.contains(Block.getIdFromBlock(block))) {
+                        if (block != null) {
+                            if (xray.contains(Block.getIdFromBlock(block))) {
                                 xray.remove(Block.getIdFromBlock(block));
-                                if(xray.isEnabled()) {
+                                if (xray.isEnabled()) {
                                     xray.updateRenders();
                                 }
                                 Seppuku.INSTANCE.getConfigManager().saveAll();
                                 Seppuku.INSTANCE.logChat("Removed " + block.getLocalizedName() + " from xray");
-                            }else{
+                            } else {
                                 Seppuku.INSTANCE.logChat("Xray doesn't contain " + block.getLocalizedName());
                             }
-                        }else{
+                        } else {
                             Seppuku.INSTANCE.logChat("\247c" + split[2] + "\247f is not a valid block");
                         }
-                    }else{
+                    } else {
                         Seppuku.INSTANCE.errorChat("Cannot remove Air from xray");
                     }
-                }else{
+                } else {
                     final Block block = Block.getBlockFromName(split[2].toLowerCase());
 
-                    if(block != null) {
-                        if(block == Blocks.AIR) {
+                    if (block != null) {
+                        if (block == Blocks.AIR) {
                             Seppuku.INSTANCE.errorChat("Cannot remove Air from xray");
-                        }else{
-                            if(xray.contains(Block.getIdFromBlock(block))) {
+                        } else {
+                            if (xray.contains(Block.getIdFromBlock(block))) {
                                 xray.remove(Block.getIdFromBlock(block));
-                                if(xray.isEnabled()) {
+                                if (xray.isEnabled()) {
                                     xray.updateRenders();
                                 }
                                 Seppuku.INSTANCE.getConfigManager().saveAll();
                                 Seppuku.INSTANCE.logChat("Removed " + block.getLocalizedName() + " from xray");
-                            }else{
+                            } else {
                                 Seppuku.INSTANCE.logChat("Xray doesn't contain " + block.getLocalizedName());
                             }
                         }
-                    }else{
+                    } else {
                         Seppuku.INSTANCE.logChat("\247c" + split[2] + "\247f is not a valid block");
                     }
                 }
-            }else if (equals(clearAlias, split[1])) {
+            } else if (equals(clearAlias, split[1])) {
                 if (!this.clamp(input, 2, 2)) {
                     this.printUsage();
                     return;
                 }
                 xray.clear();
-                if(xray.isEnabled()) {
+                if (xray.isEnabled()) {
                     xray.updateRenders();
                 }
                 Seppuku.INSTANCE.getConfigManager().saveAll();
                 Seppuku.INSTANCE.logChat("Cleared all blocks from xray");
-            }else{
+            } else {
                 Seppuku.INSTANCE.errorChat("Unknown input " + "\247f\"" + input + "\"");
                 this.printUsage();
             }
-        }else{
+        } else {
             Seppuku.INSTANCE.errorChat("Xray not present");
         }
     }

@@ -22,6 +22,7 @@ public final class EntityLlamaPatch extends ClassPatch {
 
     /**
      * This is where minecraft checks if you can steer llamas
+     *
      * @param methodNode
      * @param env
      */
@@ -51,6 +52,7 @@ public final class EntityLlamaPatch extends ClassPatch {
     /**
      * Our canBeSteered hook
      * Used to allow us to steer and control llamas
+     *
      * @return
      */
     public static boolean canBeSteeredHook() {

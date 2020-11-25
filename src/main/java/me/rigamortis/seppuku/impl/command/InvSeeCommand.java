@@ -18,7 +18,7 @@ public final class InvSeeCommand extends Command {
     private String entity;
 
     public InvSeeCommand() {
-        super("InvSee", new String[] {"InventorySee"}, "Allows you to see another players inventory", "InvSee <Player>");
+        super("InvSee", new String[]{"InventorySee"}, "Allows you to see another players inventory", "InvSee <Player>");
     }
 
     @Override
@@ -40,26 +40,26 @@ public final class InvSeeCommand extends Command {
 
     @Listener
     public void render(EventRender2D event) {
-        try{
+        try {
             final Minecraft mc = Minecraft.getMinecraft();
 
             EntityPlayer player = null;
 
-            for(Entity e : mc.world.loadedEntityList) {
-                if(e != null && e instanceof EntityPlayer) {
-                    if(e.getName().equalsIgnoreCase(this.entity)) {
-                        player = (EntityPlayer)e;
+            for (Entity e : mc.world.loadedEntityList) {
+                if (e != null && e instanceof EntityPlayer) {
+                    if (e.getName().equalsIgnoreCase(this.entity)) {
+                        player = (EntityPlayer) e;
                         break;
                     }
                 }
             }
 
-            if(player != null) {
+            if (player != null) {
                 mc.displayGuiScreen(new GuiInventory(player));
-            }else{
+            } else {
                 Seppuku.INSTANCE.errorChat("\"" + this.entity + "\" is not within range");
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

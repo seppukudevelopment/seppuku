@@ -1,5 +1,6 @@
 package me.rigamortis.seppuku.impl.management;
 
+import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.util.ReflectionUtil;
 import me.rigamortis.seppuku.impl.patch.*;
@@ -7,6 +8,7 @@ import me.rigamortis.seppuku.impl.patch.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Author Seth
@@ -91,7 +93,7 @@ public final class PatchManager {
                         if (patch != null) {
                             //add the class to our list of patches
                             this.patchList.add(patch);
-                            System.out.println("[Seppuku] Found external patch " + patch.getMcpName().replace(".", "/"));
+                            Seppuku.INSTANCE.getLogger().log(Level.INFO, "Found external patch " + patch.getMcpName().replace(".", "/"));
                         }
                     }
                 }

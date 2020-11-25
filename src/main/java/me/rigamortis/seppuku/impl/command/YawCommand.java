@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 public final class YawCommand extends Command {
 
     public YawCommand() {
-        super("Yaw", new String[] {"Yw"}, "Allows you to set your yaw", "Yaw <Number>");
+        super("Yaw", new String[]{"Yw"}, "Allows you to set your yaw", "Yaw <Number>");
     }
 
     @Override
@@ -29,7 +29,7 @@ public final class YawCommand extends Command {
 
             Minecraft.getMinecraft().player.rotationYaw = num;
 
-            if(Minecraft.getMinecraft().player.getRidingEntity() != null) {
+            if (Minecraft.getMinecraft().player.getRidingEntity() != null) {
                 Minecraft.getMinecraft().player.getRidingEntity().rotationYaw = num;
             }
 

@@ -26,6 +26,7 @@ public final class NetworkManagerPatch extends ClassPatch {
 
     /**
      * This is where minecraft sends packets before they are compressed and encrypted
+     *
      * @param methodNode
      * @param env
      */
@@ -71,6 +72,7 @@ public final class NetworkManagerPatch extends ClassPatch {
      * This is our sendPacket hook
      * It allows us to intercept outgoing unencrypted packets and modify the data
      * It also allows us to cancel sending certain packets
+     *
      * @param packet
      * @param stage
      * @return
@@ -84,6 +86,7 @@ public final class NetworkManagerPatch extends ClassPatch {
 
     /**
      * This is where minecraft handles received packets
+     *
      * @param methodNode
      * @param env
      */
@@ -128,12 +131,13 @@ public final class NetworkManagerPatch extends ClassPatch {
     /**
      * This is our channelRead0 hook
      * It allows us to cancel processing incoming packets or modify the unencrypted data
+     *
      * @param packet
      * @param stage
      * @return
      */
     public static boolean channelRead0Hook(Packet packet, EventStageable.EventStage stage) {
-        if(packet != null) {
+        if (packet != null) {
             final EventReceivePacket event = new EventReceivePacket(stage, packet);
             Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
 

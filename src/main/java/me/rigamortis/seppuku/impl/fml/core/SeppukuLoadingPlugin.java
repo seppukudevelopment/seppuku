@@ -16,7 +16,7 @@ public final class SeppukuLoadingPlugin implements IFMLLoadingPlugin {
 
     @Override
     public String[] getASMTransformerClass() {
-        return new String[] {
+        return new String[]{
                 SeppukuClassTransformer.class.getName()
         };
     }

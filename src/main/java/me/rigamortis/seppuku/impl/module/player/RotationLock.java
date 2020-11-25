@@ -26,7 +26,7 @@ public final class RotationLock extends Module {
     @Override
     public void onEnable() {
         super.onEnable();
-        if(Minecraft.getMinecraft().player != null) {
+        if (Minecraft.getMinecraft().player != null) {
             this.yaw = Minecraft.getMinecraft().player.rotationYaw;
             this.pitch = Minecraft.getMinecraft().player.rotationPitch;
         }

@@ -21,7 +21,7 @@ public final class AutoTotemModule extends Module {
     public final Value<Float> health = new Value("Health", new String[]{"Hp"}, "The amount of health needed to acquire a totem.", 16.0f, 0.0f, 20.0f, 0.5f);
 
     public AutoTotemModule() {
-        super("AutoTotem", new String[] {"Totem"}, "Automatically places a totem of undying in your offhand", "NONE", -1, ModuleType.COMBAT);
+        super("AutoTotem", new String[]{"Totem"}, "Automatically places a totem of undying in your offhand", "NONE", -1, ModuleType.COMBAT);
     }
 
     @Override
@@ -34,8 +34,8 @@ public final class AutoTotemModule extends Module {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             final Minecraft mc = Minecraft.getMinecraft();
 
-            if(mc.currentScreen == null || mc.currentScreen instanceof GuiInventory) {
-                if(mc.player.getHealth() <= this.health.getValue()) {
+            if (mc.currentScreen == null || mc.currentScreen instanceof GuiInventory) {
+                if (mc.player.getHealth() <= this.health.getValue()) {
                     final ItemStack offHand = mc.player.getHeldItemOffhand();
 
                     if (offHand.getItem() == Items.TOTEM_OF_UNDYING) {
@@ -44,7 +44,7 @@ public final class AutoTotemModule extends Module {
 
                     final int slot = this.getItemSlot(Items.TOTEM_OF_UNDYING);
 
-                    if(slot != -1) {
+                    if (slot != -1) {
                         mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 0, ClickType.PICKUP, mc.player);
                         mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 45, 0, ClickType.PICKUP, mc.player);
                         mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 0, ClickType.PICKUP, mc.player);
@@ -56,9 +56,9 @@ public final class AutoTotemModule extends Module {
     }
 
     private int getItemSlot(Item input) {
-        for(int i = 0; i < 36; i++) {
+        for (int i = 0; i < 36; i++) {
             final Item item = Minecraft.getMinecraft().player.inventory.getStackInSlot(i).getItem();
-            if(item == input) {
+            if (item == input) {
                 if (i < 9) {
                     i += 36;
                 }
@@ -71,9 +71,9 @@ public final class AutoTotemModule extends Module {
     private int getItemCount(Item input) {
         int items = 0;
 
-        for(int i = 0; i < 45; i++) {
+        for (int i = 0; i < 45; i++) {
             final ItemStack stack = Minecraft.getMinecraft().player.inventory.getStackInSlot(i);
-            if(stack.getItem() == input) {
+            if (stack.getItem() == input) {
                 items += stack.getCount();
             }
         }
