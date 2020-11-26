@@ -43,7 +43,7 @@ public final class IgnoreModule extends Module {
                         if (chatUsernameMatcher.find()) {
                             String username = chatUsernameMatcher.group(1).replaceAll(">", "").toLowerCase();
                             final Ignored ignored = Seppuku.INSTANCE.getIgnoredManager().find(username);
-                            if (ignored == null && !username.equalsIgnoreCase(Minecraft.getMinecraft().session.getUsername())) {
+                            if (ignored != null && !username.equalsIgnoreCase(Minecraft.getMinecraft().session.getUsername())) {
                                 event.setCanceled(true);
                             }
                         }
