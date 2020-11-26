@@ -152,6 +152,7 @@ public final class ModuleManager {
         add(new NameAlertModule());
         add(new CrosshairModule());
         add(new AutoMountModule());
+        add(new EntityDesyncModule());
 
         // p2w experience
         if (Seppuku.INSTANCE.getCapeManager().hasCape())
