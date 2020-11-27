@@ -38,7 +38,7 @@ public final class NameAlertModule extends Module {
                     return;
                 }
 
-                if (text.contains(localUsername)) {
+                if (text.toLowerCase().contains(localUsername.toLowerCase())) {
                     text = StringUtils.stripControlCodes(text);
                     // code below is for public chat
                     Pattern chatUsernamePattern = Pattern.compile(REGEX_NAME);
