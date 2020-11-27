@@ -57,10 +57,11 @@ public final class ModuleListComponent extends ResizableHudComponent {
         this.texture = new Texture("module-" + type.name().toLowerCase() + ".png");
 
         this.setSnappable(false);
+        this.setLocked(true);
         this.setW(100);
         this.setH(100);
-        this.setX((Minecraft.getMinecraft().displayWidth / 2.0f) - (this.getW() / 2));
-        this.setY((Minecraft.getMinecraft().displayHeight / 2.0f) - (this.getH() / 2));
+        this.setX(20);
+        this.setY(20);
     }
 
     @Override
@@ -439,7 +440,6 @@ public final class ModuleListComponent extends ResizableHudComponent {
                     components.add(valueButton);
                 } else if (value.getValue() instanceof Number) {
                     TextComponent valueNumberText = new TextComponent(value.getName(), value.getValue().toString(), true);
-                    //valueNumberText.displayValue = value.getValue().toString();
                     valueNumberText.setTooltipText(value.getDesc() + " " + ChatFormatting.GRAY + "(" + value.getMin() + " - " + value.getMax() + ")");
                     valueNumberText.returnListener = new ComponentListener() {
                         @Override
@@ -463,6 +463,11 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         }
                     };
                     components.add(valueNumberText);
+
+                    //TODO: after v3.1
+                    //SliderComponent sliderComponent = new SliderComponent(value.getName(), value);
+                    //sliderComponent.setTooltipText(value.getDesc() + " " + ChatFormatting.GRAY + "(" + value.getMin() + " - " + value.getMax() + ")");
+                    //components.add(sliderComponent);
                 } else if (value.getValue() instanceof Enum) {
                     final Enum val = (Enum) value.getValue();
                     final StringBuilder options = new StringBuilder();

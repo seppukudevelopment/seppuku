@@ -72,7 +72,7 @@ public class DraggableHudComponent extends HudComponent {
         if (isHudEditor) {
             RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x75101010);
             if (this.isLocked()) {
-                RenderUtil.drawBorderedRect(this.getX() - 1, this.getY() - 1, this.getX() + this.getW() + 1, this.getY() + this.getH() + 1, 0.5f, 0x00000000, 0x75FF0000);
+                RenderUtil.drawBorderedRect(this.getX() - 1, this.getY() - 1, this.getX() + this.getW() + 1, this.getY() + this.getH() + 1, 0.5f, 0x00000000, 0x75FFFFFF);
             }
         }
 

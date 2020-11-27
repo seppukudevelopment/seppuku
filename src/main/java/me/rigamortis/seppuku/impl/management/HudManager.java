@@ -48,12 +48,26 @@ public final class HudManager {
         this.anchorPoints.add(TOP_CENTER);
         this.anchorPoints.add(BOTTOM_CENTER);
 
+        int moduleListXOffset = 0;
+        int moduleListYOffset = 0;
         for (Module.ModuleType type : Module.ModuleType.values()) {
             if (type.equals(Module.ModuleType.HIDDEN) || type.equals(Module.ModuleType.UI))
                 continue;
 
             final ModuleListComponent moduleList = new ModuleListComponent(type);
+            if ((moduleList.getX() + moduleListXOffset) > res.getScaledWidth()) {
+                moduleListXOffset = 0;
+                moduleListYOffset += moduleList.getH() + 4 /* gap above and below each column */;
+            }
+
+            moduleList.setX(moduleList.getX() + moduleListXOffset);
+            if (moduleListYOffset != 0) {
+                moduleList.setY(moduleList.getY() + moduleListYOffset);
+            }
+
             this.componentList.add(moduleList);
+
+            moduleListXOffset += moduleList.getW() + 4 /* gap between each list */;
         }
 
         this.componentList.add(new WatermarkComponent());

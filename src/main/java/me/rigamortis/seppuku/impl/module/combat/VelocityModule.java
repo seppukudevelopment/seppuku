@@ -19,8 +19,8 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class VelocityModule extends Module {
 
-    public final Value<Integer> horizontal_vel = new Value<>("Horizontal_Velocity", new String[]{"HorizontalVelocity", "HVel", "HV", "HorizontalVel", "Horizontal", "H"}, "The horizontal velocity you will take.", 0, 0, 100, 1);
-    public final Value<Integer> vertical_vel = new Value<>("Vertical_Velocity", new String[]{"VerticalVelocity", "VVel", "VV", "VerticalVel", "Vertical", "Vert", "V"}, "The vertical velocity you will take.", 0, 0, 100, 1);
+    public final Value<Integer> horizontalVelocity = new Value<>("Horizontal", new String[]{"HorizontalVelocity", "Horizontal_Velocity", "HVel", "HV", "HorizontalVel", "Horizontal", "H"}, "The horizontal velocity you will take.", 0, 0, 100, 1);
+    public final Value<Integer> verticalVelocity = new Value<>("Vertical", new String[]{"VerticalVelocity", "Vertical_Velocity", "VVel", "VV", "VerticalVel", "Vertical", "Vert", "V"}, "The vertical velocity you will take.", 0, 0, 100, 1);
     public final Value<Boolean> explosions = new Value<>("Explosions", new String[]{"Explosions", "Explosion", "EXP", "EX", "Expl"}, "Apply velocity modifier on explosion velocity.", true);
     public final Value<Boolean> bobbers = new Value<>("Bobbers", new String[]{"Bobb", "Bob", "FishHook", "FishHooks"}, "Apply velocity modifier on fishing bobber velocity.", true);
 
@@ -32,7 +32,7 @@ public final class VelocityModule extends Module {
 
     @Override
     public String getMetaData() {
-        return String.format(ChatFormatting.WHITE + "H:%s%%" + ChatFormatting.GRAY + "|" + ChatFormatting.WHITE + "V:%s%%", this.horizontal_vel.getValue(), this.vertical_vel.getValue());
+        return String.format(ChatFormatting.WHITE + "H:%s%%" + ChatFormatting.GRAY + "|" + ChatFormatting.WHITE + "V:%s%%", this.horizontalVelocity.getValue(), this.verticalVelocity.getValue());
     }
 
     @Listener
@@ -53,36 +53,36 @@ public final class VelocityModule extends Module {
             if (event.getPacket() instanceof SPacketEntityVelocity) {
                 final SPacketEntityVelocity packet = (SPacketEntityVelocity) event.getPacket();
                 if (packet.getEntityID() == mc.player.getEntityId()) {
-                    if (this.horizontal_vel.getValue() == 0 && this.vertical_vel.getValue() == 0) {
+                    if (this.horizontalVelocity.getValue() == 0 && this.verticalVelocity.getValue() == 0) {
                         event.setCanceled(true);
                         return;
                     }
 
-                    if (this.horizontal_vel.getValue() != 100) {
-                        packet.motionX = packet.motionX / 100 * this.horizontal_vel.getValue();
-                        packet.motionZ = packet.motionZ / 100 * this.horizontal_vel.getValue();
+                    if (this.horizontalVelocity.getValue() != 100) {
+                        packet.motionX = packet.motionX / 100 * this.horizontalVelocity.getValue();
+                        packet.motionZ = packet.motionZ / 100 * this.horizontalVelocity.getValue();
                     }
 
-                    if (this.vertical_vel.getValue() != 100) {
-                        packet.motionY = packet.motionY / 100 * this.vertical_vel.getValue();
+                    if (this.verticalVelocity.getValue() != 100) {
+                        packet.motionY = packet.motionY / 100 * this.verticalVelocity.getValue();
                     }
                 }
             }
             if (event.getPacket() instanceof SPacketExplosion && this.explosions.getValue()) {
                 final SPacketExplosion packet = (SPacketExplosion) event.getPacket();
 
-                if (this.horizontal_vel.getValue() == 0 && this.vertical_vel.getValue() == 0) {
+                if (this.horizontalVelocity.getValue() == 0 && this.verticalVelocity.getValue() == 0) {
                     event.setCanceled(true);
                     return;
                 }
 
-                if (this.horizontal_vel.getValue() != 100) {
-                    packet.motionX = packet.motionX / 100 * this.horizontal_vel.getValue();
-                    packet.motionZ = packet.motionZ / 100 * this.horizontal_vel.getValue();
+                if (this.horizontalVelocity.getValue() != 100) {
+                    packet.motionX = packet.motionX / 100 * this.horizontalVelocity.getValue();
+                    packet.motionZ = packet.motionZ / 100 * this.horizontalVelocity.getValue();
                 }
 
-                if (this.vertical_vel.getValue() != 100) {
-                    packet.motionY = packet.motionY / 100 * this.vertical_vel.getValue();
+                if (this.verticalVelocity.getValue() != 100) {
+                    packet.motionY = packet.motionY / 100 * this.verticalVelocity.getValue();
                 }
             }
         }

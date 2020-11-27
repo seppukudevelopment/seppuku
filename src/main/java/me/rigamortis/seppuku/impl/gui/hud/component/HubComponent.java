@@ -33,13 +33,13 @@ public final class HubComponent extends ResizableHudComponent {
     private final Texture texture;
 
     public HubComponent() {
-        super("Hub", 100, 100);
+        super("Hub", 100, 150);
         this.texture = new Texture("module-hub.png");
 
         this.setVisible(true);
         this.setSnappable(false);
         this.setW(100);
-        this.setH(100);
+        this.setH(150);
         this.setX((Minecraft.getMinecraft().displayWidth / 2.0f) - (this.getW() / 2));
         this.setY((Minecraft.getMinecraft().displayHeight / 2.0f) - (this.getH() / 2));
     }
