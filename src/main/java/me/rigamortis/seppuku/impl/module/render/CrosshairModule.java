@@ -30,6 +30,7 @@ public final class CrosshairModule extends Module {
 
     public CrosshairModule() {
         super("Crosshair", new String[]{"Cross", "Xhair", "Chair"}, "NONE", -1, ModuleType.RENDER);
+        this.setDesc("Replaces the game's cross-hair with your own.");
     }
 
     @Listener

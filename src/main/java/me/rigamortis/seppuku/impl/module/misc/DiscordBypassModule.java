@@ -18,7 +18,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public class DiscordBypassModule extends Module {
 
     public DiscordBypassModule() {
-        super("DiscordBypass", new String[]{"DiscBypass", "NoDiscord", "NoBan"}, "Bypasses jj's stupid plugin that tempbans you when you say \"dicord\" nearby spawn.", "NONE", -1, ModuleType.MISC);
+        super("DiscordBypass", new String[]{"DiscBypass", "NoDiscord", "NoBan"}, "Bypasses jj's stupid plugin that temp-bans you when you say \"discord\" nearby spawn.", "NONE", -1, ModuleType.MISC);
     }
 
     @Listener
@@ -45,7 +45,7 @@ public class DiscordBypassModule extends Module {
                                     if (packet.message.toLowerCase().toLowerCase().charAt(i + 1) == 'i' &&
                                             packet.message.toLowerCase().toLowerCase().charAt(i + 2) == 's' &&
                                             packet.message.toLowerCase().toLowerCase().charAt(i + 3) == 'c' &&
-                                            packet.message.toLowerCase().toLowerCase().charAt(i + 4) == 'o' &&
+                                            packet.message.toLowerCase().toLowerCase().charAt(i + 4) == '0' &&
                                             packet.message.toLowerCase().toLowerCase().charAt(i + 5) == 'r' &&
                                             packet.message.toLowerCase().toLowerCase().charAt(i + 6) == 'd')
                                         packet.message = new StringBuilder(packet.message).insert(i + 3, "#").toString();

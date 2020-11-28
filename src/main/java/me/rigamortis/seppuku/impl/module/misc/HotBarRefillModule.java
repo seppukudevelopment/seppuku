@@ -28,6 +28,7 @@ public class HotBarRefillModule extends Module {
 
     public HotBarRefillModule() {
         super("HotBarRefill", new String[]{"Replenish", "Refill", "AutoHotBar", "hbr", "Restock", "HBRestock", "HBRefill", "Hotbar"}, "NONE", -1, ModuleType.MISC);
+        this.setDesc("Automatically refills the players hotbar.");
     }
 
     @Listener
