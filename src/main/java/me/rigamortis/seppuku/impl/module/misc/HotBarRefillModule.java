@@ -14,21 +14,21 @@ import net.minecraft.item.ItemStack;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
- * Automatically refills the players hotbar.
+ * Automatically refills the players hot-bar.
  *
  * @author Old Chum
  * @since 12/7/19
  */
 public class HotBarRefillModule extends Module {
-    public final Value<Float> delay = new Value<>("Delay", new String[]{"Del"}, "The amount of delay in milliseconds.", 50.0f);
+    public final Value<Float> delay = new Value<>("Delay", new String[]{"Del"}, "The delay(ms) per item transfer to hot-bar.", 500.0f, 0.0f, 2000.0f, 1.0f);
     public final Value<Integer> percentage = new Value<>("RefillPercentage", new String[]{"percent", "p", "percent"}, "The percentage a slot should be filled to get refilled.", 50, 0, 100, 1);
     public final Value<Boolean> offHand = new Value<>("OffHand", new String[]{"oh", "off", "hand"}, "If the off hand should be refilled.", true);
 
-    private Timer timer = new Timer();
+    private final Timer timer = new Timer();
 
     public HotBarRefillModule() {
-        super("HotBarRefill", new String[]{"Replenish", "Refill", "AutoHotBar", "hbr", "Restock", "HBRestock", "HBRefill", "Hotbar"}, "NONE", -1, ModuleType.MISC);
-        this.setDesc("Automatically refills the players hotbar.");
+        super("HotBarRefill", new String[]{"Replenish", "Refill", "AutoHotBar", "hbr", "Restock", "HBRestock", "HBRefill", "Hotbar", "Hot-bar"}, "NONE", -1, ModuleType.MISC);
+        this.setDesc("Automatically refills the players hot-bar.");
     }
 
     @Listener

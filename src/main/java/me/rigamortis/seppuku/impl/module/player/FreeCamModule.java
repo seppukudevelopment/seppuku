@@ -54,6 +54,8 @@ public final class FreeCamModule extends Module {
                 this.riding = mc.player.getRidingEntity();
                 mc.player.dismountRidingEntity();
                 this.entity.startRiding(this.riding);
+            } else {
+                this.riding = null;
             }
             this.entity.rotationYaw = mc.player.rotationYaw;
             this.entity.rotationYawHead = mc.player.rotationYawHead;

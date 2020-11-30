@@ -255,8 +255,12 @@ public final class ModuleListComponent extends ResizableHudComponent {
     }
 
     @Override
-    public void mouseClickMove(int mouseX, int mouseY, int button) {
-        super.mouseClickMove(mouseX, mouseY, button);
+    public void mouseClick(int mouseX, int mouseY, int button) {
+        super.mouseClick(mouseX, mouseY, button);
+
+        if (this.currentSettings != null) {
+            this.currentSettings.mouseClick(mouseX, mouseY, button);
+        }
     }
 
     @Override
@@ -510,6 +514,15 @@ public final class ModuleListComponent extends ResizableHudComponent {
                 offsetY += Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1;
             }
         }
+
+        @Override
+        public void mouseClick(int mouseX, int mouseY, int button) {
+            super.mouseClick(mouseX, mouseY, button);
+            for (HudComponent component : this.components) {
+                component.mouseClick(mouseX, mouseY, button);
+            }
+        }
+
 
         @Override
         public void mouseRelease(int mouseX, int mouseY, int button) {
