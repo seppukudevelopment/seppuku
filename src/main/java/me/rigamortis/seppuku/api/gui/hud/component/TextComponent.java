@@ -73,11 +73,32 @@ public class TextComponent extends HudComponent {
                 case Keyboard.KEY_RETURN:
                     this.enterPressed();
                     return;
+                //case Keyboard.KEY_SPACE:
+                //    if (!this.digitOnly) {
+                //        this.displayValue += ' ';
+                //    }
+                //    break;
                 case Keyboard.KEY_BACK:
                     if (this.displayValue.length() > 0) {
                         this.displayValue = this.displayValue.substring(0, this.displayValue.length() - 1);
                     }
-                    break;
+                    return;
+                case Keyboard.KEY_CLEAR:
+                    if (this.displayValue.length() > 0) {
+                        this.displayValue = "";
+                    }
+                    return;
+                case Keyboard.KEY_LSHIFT:
+                case Keyboard.KEY_RSHIFT:
+                case Keyboard.KEY_LCONTROL:
+                case Keyboard.KEY_RCONTROL:
+                case Keyboard.KEY_TAB:
+                case Keyboard.KEY_CAPITAL:
+                case Keyboard.KEY_FUNCTION:
+                case Keyboard.KEY_LMENU:
+                case Keyboard.KEY_RMENU:
+                case Keyboard.KEY_LMETA:
+                    return;
                 case Keyboard.KEY_PERIOD:
                     if (this.digitOnly) {
                         this.displayValue += typedChar;
@@ -96,8 +117,8 @@ public class TextComponent extends HudComponent {
             if (digitOnly && !Character.isDigit(typedChar))
                 return;
 
-            if (!digitOnly && !Character.isLetterOrDigit(typedChar))
-                return;
+            //if (!digitOnly && !Character.isLetterOrDigit(typedChar))
+            //    return;
 
             this.displayValue += typedChar;
         }

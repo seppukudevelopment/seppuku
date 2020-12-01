@@ -25,7 +25,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class AutoToolModule extends Module {
 
-    public final Value<Boolean> silent = new Value<Boolean>("Silent", new String[]{"Sil"}, "Hold any item and spoof your mining tool.", true);
+    public final Value<Boolean> silent = new Value<Boolean>("Silent", new String[]{"Sil"}, "Hold any item and spoof your mining tool. (works on NCP)", false);
 
     private boolean send;
 
@@ -33,7 +33,7 @@ public final class AutoToolModule extends Module {
     public EnumFacing facing;
 
     public AutoToolModule() {
-        super("AutoTool", new String[]{"Tool"}, "Automatically switches to the best tool", "NONE", -1, ModuleType.WORLD);
+        super("AutoTool", new String[]{"Tool"}, "Automatically switches to the best tool.", "NONE", -1, ModuleType.WORLD);
     }
 
     private float blockStrength(BlockPos pos, ItemStack stack) {
@@ -168,7 +168,7 @@ public final class AutoToolModule extends Module {
                     this.position = packet.getPosition();
                     this.facing = packet.getFacing();
 
-                    if (this.position != null && this.facing != null) {
+                    if (this.position != null) {
                         final int slot = getToolInventory(packet.getPosition());
                         if (slot != -1) {
                             event.setCanceled(true);

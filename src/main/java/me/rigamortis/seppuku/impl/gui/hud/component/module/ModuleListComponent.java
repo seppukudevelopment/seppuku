@@ -33,7 +33,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
     private int oldScroll = 0;
     private int totalHeight;
 
-    private final int MAX_WIDTH = 125;
+    private final int MAX_WIDTH = 150;
     private final int SCROLL_WIDTH = 4;
     private final int BORDER = 2;
     private final int TEXT_GAP = 1;
@@ -492,6 +492,21 @@ public final class ModuleListComponent extends ResizableHudComponent {
                                 Seppuku.INSTANCE.getConfigManager().saveAll(); // save configs
                             } else {
                                 Seppuku.INSTANCE.logfChat("%s - %s: Invalid entry.", module.getDisplayName(), value.getName());
+                            }
+                        }
+                    };
+                    components.add(valueText);
+                }  else if (value.getValue() instanceof String) {
+                    TextComponent valueText = new TextComponent(value.getName(), value.getValue().toString().toLowerCase(), false);
+                    valueText.setTooltipText(value.getDesc());
+                    valueText.returnListener = new ComponentListener() {
+                        @Override
+                        public void onComponentEvent() {
+                            if (valueText.displayValue.length() > 0) {
+                                value.setValue(valueText.displayValue);
+                                Seppuku.INSTANCE.getConfigManager().saveAll(); // save configs
+                            } else {
+                                Seppuku.INSTANCE.logfChat("%s - %s: Not enough input.", module.getDisplayName(), value.getName());
                             }
                         }
                     };
