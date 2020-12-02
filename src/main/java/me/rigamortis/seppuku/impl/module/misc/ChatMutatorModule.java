@@ -43,21 +43,29 @@ public final class ChatMutatorModule extends Module {
 
                     switch (this.mode.getValue()) {
                         case LEET:
-                            packet.message = leetSpeak(packet.message);
+                            packet.message = this.leetSpeak(packet.message);
                             break;
                         case FANCY:
-                            packet.message = fancy(packet.message);
+                            packet.message = this.fancy(packet.message);
                             break;
                         case RETARD:
-                            packet.message = retard(packet.message);
+                            packet.message = this.retard(packet.message);
+                            break;
+                        case PIGLATIN:
+                            packet.message = this.pigLatin(packet.message);
                             break;
                         case CONSOLE:
-                            packet.message = console(packet.message);
+                            packet.message = this.console(packet.message);
                             break;
                     }
                 }
             }
         }
+    }
+
+    public boolean isVowel(char c) {
+        return (c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U' ||
+                c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u');
     }
 
     public String leetSpeak(String input) {
@@ -94,6 +102,31 @@ public final class ChatMutatorModule extends Module {
         }
 
         return sb.toString();
+    }
+
+    // This code is contributed by Anant Agarwal.
+    public String pigLatin(String s) {
+        // the index of the first vowel is stored.
+        int len = s.length();
+        int index = -1;
+        for (int i = 0; i < len; i++)
+        {
+            if (isVowel(s.charAt(i))) {
+                index = i;
+                break;
+            }
+        }
+
+        // Pig Latin is possible only if vowels
+        // is present
+        if (index == -1)
+            return "-1";
+
+        // Take all characters after index (including
+        // index). Append all characters which are before
+        // index. Finally append "ay"
+        return s.substring(index) +
+                s.substring(0, index) + "ay";
     }
 
     public String console(String input) {
@@ -134,7 +167,7 @@ public final class ChatMutatorModule extends Module {
     }
 
     private enum Mode {
-        LEET, FANCY, RETARD, CONSOLE
+        LEET, FANCY, RETARD, PIGLATIN, CONSOLE
     }
 
 }

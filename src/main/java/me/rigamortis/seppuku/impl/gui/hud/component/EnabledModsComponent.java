@@ -27,6 +27,10 @@ import static me.rigamortis.seppuku.impl.module.hidden.ArrayListModule.Mode.*;
  */
 public final class EnabledModsComponent extends DraggableHudComponent {
 
+    private ArrayListModule.Mode SORTING_MODE = LENGTH;
+    private boolean SHOW_METADATA = true;
+    private boolean LOWERCASE = false;
+
     private boolean RAINBOW = false;
     private float RAINBOW_HUE_DIFFERENCE = 2.5f;
     private float RAINBOW_HUE_SPEED = 50.f;
@@ -56,23 +60,30 @@ public final class EnabledModsComponent extends DraggableHudComponent {
             }
         }
 
-        Object sorting_mode = Seppuku.INSTANCE.getModuleManager().find(ArrayListModule.class).find("Sorting").getValue();
-        if (sorting_mode.equals(LENGTH)) {
+        if (SORTING_MODE.equals(LENGTH)) {
             final Comparator<Module> lengthComparator = (first, second) -> {
-                final String firstName = first.getDisplayName() + (first.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + first.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");
-                final String secondName = second.getDisplayName() + (second.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + second.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");
+                String firstName = first.getDisplayName() + (SHOW_METADATA ? (first.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + first.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "") : "");
+                String secondName = second.getDisplayName() + (SHOW_METADATA ? (second.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + second.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "") : "");
+                if (LOWERCASE) {
+                    firstName = firstName.toLowerCase();
+                    secondName = secondName.toLowerCase();
+                }
                 final float dif = mc.fontRenderer.getStringWidth(secondName) - mc.fontRenderer.getStringWidth(firstName);
                 return dif != 0 ? (int) dif : secondName.compareTo(firstName);
             };
             mods.sort(lengthComparator);
-        } else if (sorting_mode.equals(ALPHABET)) {
+        } else if (SORTING_MODE.equals(ALPHABET)) {
             final Comparator<Module> alphabeticalComparator = (first, second) -> {
-                final String firstName = first.getDisplayName() + (first.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + first.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");
-                final String secondName = second.getDisplayName() + (second.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + second.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");
+                String firstName = first.getDisplayName() + (SHOW_METADATA ? (first.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + first.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "") : "");
+                String secondName = second.getDisplayName() + (SHOW_METADATA ? (second.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + second.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "") : "");
+                if (LOWERCASE) {
+                    firstName = firstName.toLowerCase();
+                    secondName = secondName.toLowerCase();
+                }
                 return firstName.compareToIgnoreCase(secondName);
             };
             mods.sort(alphabeticalComparator);
-        } else if (sorting_mode.equals(UNSORTED)) {
+        } else if (SORTING_MODE.equals(UNSORTED)) {
 
         }
 
@@ -84,7 +95,9 @@ public final class EnabledModsComponent extends DraggableHudComponent {
 
         for (Module mod : mods) {
             if (mod != null && mod.getType() != Module.ModuleType.HIDDEN && mod.isEnabled() && !mod.isHidden()) {
-                final String name = mod.getDisplayName() + (mod.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + mod.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "");
+                String name = mod.getDisplayName() + (SHOW_METADATA ? (mod.getMetaData() != null ? " " + ChatFormatting.GRAY + "[" + ChatFormatting.WHITE + mod.getMetaData().toLowerCase() + ChatFormatting.GRAY + "]" : "") : "");
+                if (LOWERCASE)
+                    name = name.toLowerCase();
 
                 final float width = mc.fontRenderer.getStringWidth(name);
 
@@ -177,6 +190,13 @@ public final class EnabledModsComponent extends DraggableHudComponent {
             this.RAINBOW_HUE_SPEED = hudModule.rainbowHueSpeed.getValue();
             this.RAINBOW_SATURATION = hudModule.rainbowSaturation.getValue();
             this.RAINBOW_BRIGHTNESS = hudModule.rainbowBrightness.getValue();
+        }
+
+        final ArrayListModule arrayListModule = (ArrayListModule) Seppuku.INSTANCE.getModuleManager().find(ArrayListModule.class);
+        if (arrayListModule != null) {
+            this.SORTING_MODE = arrayListModule.mode.getValue();
+            this.LOWERCASE = arrayListModule.lowercase.getValue();
+            this.SHOW_METADATA = arrayListModule.showMetadata.getValue();
         }
     }
 }

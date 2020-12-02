@@ -101,10 +101,8 @@ public final class SpeedModule extends Module {
             this.movementSpeed = Math.max(this.movementSpeed, this.getDefaultSpeed());
             final double[] direction = MathUtil.directionSpeed(this.movementSpeed);
 
-            if (direction != null) {
-                mc.player.motionX = direction[0];
-                mc.player.motionZ = direction[1];
-            }
+            mc.player.motionX = direction[0];
+            mc.player.motionZ = direction[1];
 
             this.tick += 1;
         }
