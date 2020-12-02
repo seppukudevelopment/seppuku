@@ -73,13 +73,15 @@ public final class NoDesyncModule extends Module {
 
     @Listener
     public void onDestroyBlock(EventDestroyBlock event) {
-        this.pos = event.getPos();
-        if (this.destroy) {
-            event.setCanceled(false);
-            this.destroy = false;
-            this.pos = null;
-        } else {
-            event.setCanceled(true);
+        if (this.destroyedBlocks.getValue()) {
+            this.pos = event.getPos();
+            if (this.destroy) {
+                event.setCanceled(false);
+                this.destroy = false;
+                this.pos = null;
+            } else {
+                event.setCanceled(true);
+            }
         }
     }
 }
