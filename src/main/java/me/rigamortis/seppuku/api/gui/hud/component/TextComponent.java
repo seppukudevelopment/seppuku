@@ -88,6 +88,10 @@ public class TextComponent extends HudComponent {
                         this.displayValue = "";
                     }
                     return;
+                case Keyboard.KEY_LEFT:
+                case Keyboard.KEY_RIGHT:
+                case Keyboard.KEY_UP:
+                case Keyboard.KEY_DOWN:
                 case Keyboard.KEY_LSHIFT:
                 case Keyboard.KEY_RSHIFT:
                 case Keyboard.KEY_LCONTROL:

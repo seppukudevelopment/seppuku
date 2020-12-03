@@ -428,7 +428,15 @@ public final class ModuleListComponent extends ResizableHudComponent {
             };
             components.add(keybindText);
 
-            //components.add(new ColorComponent("Color", module.getColor()));
+            ColorComponent colorComponent = new ColorComponent("Color", module.getColor());
+            keybindText.setTooltipText("The current hex color for this module.");
+            colorComponent.returnListener = new ComponentListener() {
+                @Override
+                public void onComponentEvent() {
+                    module.setColor(colorComponent.getCurrentColor().getRGB());
+                }
+            };
+            components.add(colorComponent);
 
             for (Value value : module.getValueList()) {
                 if (value.getValue() instanceof Boolean) {

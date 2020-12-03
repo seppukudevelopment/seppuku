@@ -24,8 +24,6 @@ public final class BrightnessModule extends Module {
         GAMMA, POTION, TABLE
     }
 
-    public final Value<Boolean> effects = new Value<Boolean>("Effects", new String[]{"Eff"}, "Blocks blindness & nausea effects if enabled.", true);
-
     private float lastGamma;
 
     private World world;
@@ -94,21 +92,4 @@ public final class BrightnessModule extends Module {
             }
         }
     }
-
-    @Listener
-    public void receivePacket(EventReceivePacket event) {
-        if (event.getStage() == EventStageable.EventStage.PRE) {
-            if (event.getPacket() instanceof SPacketEntityEffect) {
-                if (this.effects.getValue()) {
-                    final SPacketEntityEffect packet = (SPacketEntityEffect) event.getPacket();
-                    if (Minecraft.getMinecraft().player != null && packet.getEntityId() == Minecraft.getMinecraft().player.getEntityId()) {
-                        if (packet.getEffectId() == 9 || packet.getEffectId() == 15) {
-                            event.setCanceled(true);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
 }

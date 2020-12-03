@@ -20,7 +20,7 @@ public final class NoOverlayModule extends Module {
     public final Value<Boolean> fire = new Value<Boolean>("Fire", new String[]{}, "Disables the fire screen overlay when on fire.", true);
 
     public NoOverlayModule() {
-        super("NoOverlay", new String[]{"AntiOverlay"}, "Removes screen overlay effects", "NONE", -1, ModuleType.RENDER);
+        super("NoOverlay", new String[]{"AntiOverlay"}, "Removes screen overlay effects.", "NONE", -1, ModuleType.RENDER);
     }
 
     @Listener
@@ -49,5 +49,4 @@ public final class NoOverlayModule extends Module {
             event.setCanceled(true);
         }
     }
-
 }

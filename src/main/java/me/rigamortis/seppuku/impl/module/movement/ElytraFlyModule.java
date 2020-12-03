@@ -12,9 +12,12 @@ import me.rigamortis.seppuku.impl.module.player.NoHungerModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.network.play.server.SPacketChat;
+import net.minecraft.network.play.server.SPacketSoundEffect;
+import net.minecraft.util.SoundCategory;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
@@ -30,13 +33,13 @@ public final class ElytraFlyModule extends Module {
         VANILLA, PACKET, BYPASS, CONTROL
     }
 
-    public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd"}, "Speed multiplier for elytra flight, higher values equals more speed.", 1.0f, 0.0f, 5.0f, 0.01f);
+    public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd", "amount", "s"}, "Speed multiplier for elytra flight, higher values equals more speed.", 1.0f, 0.0f, 5.0f, 0.01f);
 
-    public final Value<Boolean> autoStart = new Value<Boolean>("AutoStart", new String[]{"AutoStart", "start", "autojump"}, "Hold down the jump key to have an easy automated lift off.", true);
+    public final Value<Boolean> autoStart = new Value<Boolean>("AutoStart", new String[]{"AutoStart", "start", "autojump", "as"}, "Hold down the jump key to have an easy automated lift off.", true);
     public final Value<Float> autoStartDelay = new Value<Float>("StartDelay", new String[]{"AutoStartDelay", "Delay", "startdelay", "autojumpdelay", "asd"}, "Delay(ms) between auto-start attempts.", 50.0f, 0.0f, 1000.0f, 10.0f);
-    public final Value<Boolean> disableInLiquid = new Value<Boolean>("DisableInLiquid", new String[]{"DisableInWater", "DisableInLava", "disableliquid", "liquidoff", "noliquid"}, "Disables all elytra flight when the player is in contact with liquid.", true);
+    public final Value<Boolean> disableInLiquid = new Value<Boolean>("DisableInLiquid", new String[]{"DisableInWater", "DisableInLava", "disableliquid", "liquidoff", "noliquid", "dil"}, "Disables all elytra flight when the player is in contact with liquid.", true);
     public final Value<Boolean> infiniteDurability = new Value<Boolean>("InfiniteDurability", new String[]{"InfiniteDura", "dura", "inf", "infdura"}, "Enables an old exploit that sends the start elytra-flying packet each tick.", false);
-    public final Value<Boolean> noKick = new Value<Boolean>("NoKick", new String[]{"AntiKick", "Kick"}, "Bypass the server kicking you for flying while in elytra flight (Only works for Packet mode!).", true);
+    public final Value<Boolean> noKick = new Value<Boolean>("NoKick", new String[]{"AntiKick", "Kick", "nk"}, "Bypass the server kicking you for flying while in elytra flight (Only works for Packet mode!).", true);
 
     private final Timer timer = new Timer();
 

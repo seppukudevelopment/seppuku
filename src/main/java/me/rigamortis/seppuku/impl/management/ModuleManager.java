@@ -153,6 +153,10 @@ public final class ModuleManager {
         add(new CrosshairModule());
         add(new AutoMountModule());
         add(new EntityDesyncModule());
+        add(new NoPacketModule());
+        add(new BridgeModule());
+        add(new AutoFarmModule());
+        add(new NoEffectsModule());
 
         // p2w experience
         if (Seppuku.INSTANCE.getCapeManager().hasCape())
