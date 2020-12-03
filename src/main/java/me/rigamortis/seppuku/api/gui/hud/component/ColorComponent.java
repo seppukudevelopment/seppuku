@@ -19,7 +19,6 @@ public class ColorComponent extends TextComponent {
         super(name, String.valueOf(defaultColor), false);
         this.currentColor = new Color(defaultColor);
         this.displayValue = "#" + Integer.toHexString(this.currentColor.getRGB()).toLowerCase().substring(2);
-        ;
     }
 
     @Override
