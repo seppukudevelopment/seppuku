@@ -7,64 +7,64 @@ package me.rigamortis.seppuku.api.util;
 public final class StringUtil {
 
     public static boolean isInt(String s) {
-        try{
+        try {
             Integer.parseInt(s);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
 
     public static boolean isFloat(String s) {
-        try{
+        try {
             Float.parseFloat(s);
             return true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
 
     public static boolean isDouble(String s) {
-        try{
+        try {
             Double.parseDouble(s);
             return true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
 
     public static boolean isBoolean(String s) {
-        try{
+        try {
             Boolean.parseBoolean(s);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
 
     public static boolean isLong(String s, int radix) {
-        try{
+        try {
             Long.parseLong(s, radix);
             return true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
 
     public static boolean isNumber(String s) {
-        if(isInt(s) || isFloat(s) || isDouble(s) || isLong(s, 16)) {
+        if (isInt(s) || isFloat(s) || isDouble(s) || isLong(s, 16)) {
             return true;
         }
         return false;
     }
 
     public static float similarityLength(String first, String second) {
-        return (float)Math.abs(first.length() - second.length()) / 100;
+        return (float) Math.abs(first.length() - second.length()) / 100;
     }
 
     public static boolean findMatching(String first, String second) {
@@ -73,6 +73,7 @@ public final class StringUtil {
 
     /**
      * Credits https://stackoverflow.com/questions/955110/similarity-string-comparison-in-java
+     *
      * @param s1
      * @param s2
      * @return
@@ -80,7 +81,8 @@ public final class StringUtil {
     public static double levenshteinDistance(String s1, String s2) {
         String longer = s1, shorter = s2;
         if (s1.length() < s2.length()) {
-            longer = s2; shorter = s1;
+            longer = s2;
+            shorter = s1;
         }
         int longerLength = longer.length();
         if (longerLength == 0) {

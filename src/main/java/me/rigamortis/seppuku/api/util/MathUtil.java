@@ -68,7 +68,7 @@ public final class MathUtil {
         final double cos = Math.cos(Math.toRadians(yaw + 90));
         final double posX = (forward * speed * cos + side * speed * sin);
         final double posZ = (forward * speed * sin - side * speed * cos);
-        return new double[] { posX, posZ };
+        return new double[]{posX, posZ};
     }
 
     public static Vec3d mult(Vec3d factor, Vec3d multiplier) {

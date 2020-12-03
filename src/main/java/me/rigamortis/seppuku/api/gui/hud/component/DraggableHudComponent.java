@@ -94,7 +94,7 @@ public class DraggableHudComponent extends HudComponent {
                         // math... am i right?
                         if (!isHudEditor && this.glued.getH() <= 0 && this.getH() <= 0) {
                             this.setY((this.glued.getY() - this.getEmptyH()) + this.glued.getEmptyH());
-                        }else if (!isHudEditor && this.glued.getH() <= 0 && this.getH() > 0) {
+                        } else if (!isHudEditor && this.glued.getH() <= 0 && this.getH() > 0) {
                             this.setY((this.glued.getY() + this.glued.getEmptyH()) - this.getH());
                         } else if (!isHudEditor && this.glued.getH() > 0 && this.getH() <= 0) {
                             this.setY(this.glued.getY() - this.getEmptyH());

@@ -1,8 +1,6 @@
 package me.rigamortis.seppuku.api.gui.hud.component;
 
-import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.util.RenderUtil;
-import me.rigamortis.seppuku.impl.gui.hud.component.module.ModuleListComponent;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Keyboard;
 

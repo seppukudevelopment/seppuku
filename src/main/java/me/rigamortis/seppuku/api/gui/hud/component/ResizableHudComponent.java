@@ -4,7 +4,6 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 
 /**
  * Author Seth

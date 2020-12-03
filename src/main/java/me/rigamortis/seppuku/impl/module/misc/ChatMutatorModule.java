@@ -109,8 +109,7 @@ public final class ChatMutatorModule extends Module {
         // the index of the first vowel is stored.
         int len = s.length();
         int index = -1;
-        for (int i = 0; i < len; i++)
-        {
+        for (int i = 0; i < len; i++) {
             if (isVowel(s.charAt(i))) {
                 index = i;
                 break;

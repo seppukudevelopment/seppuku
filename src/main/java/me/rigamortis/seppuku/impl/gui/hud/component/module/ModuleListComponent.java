@@ -504,7 +504,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         }
                     };
                     components.add(valueText);
-                }  else if (value.getValue() instanceof String) {
+                } else if (value.getValue() instanceof String) {
                     TextComponent valueText = new TextComponent(value.getName(), value.getValue().toString().toLowerCase(), false);
                     valueText.setTooltipText(value.getDesc());
                     valueText.returnListener = new ComponentListener() {

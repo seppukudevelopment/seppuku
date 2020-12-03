@@ -1,13 +1,11 @@
 package me.rigamortis.seppuku.impl.module.render;
 
 import me.rigamortis.seppuku.api.event.EventStageable;
-import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.MobEffects;
-import net.minecraft.network.play.server.SPacketEntityEffect;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;

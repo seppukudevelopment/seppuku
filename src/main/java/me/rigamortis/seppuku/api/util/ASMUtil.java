@@ -23,10 +23,10 @@ public final class ASMUtil {
     }
 
     public static AbstractInsnNode findMethodInsn(MethodNode mn, int opcode, String owner, String name, String desc) {
-        for(AbstractInsnNode insn : mn.instructions.toArray()) {
-            if(insn instanceof MethodInsnNode) {
-                final MethodInsnNode method = (MethodInsnNode)insn;
-                if(method.getOpcode() == opcode && method.owner.equals(owner) && method.name.equals(name) && method.desc.equals(desc)) {
+        for (AbstractInsnNode insn : mn.instructions.toArray()) {
+            if (insn instanceof MethodInsnNode) {
+                final MethodInsnNode method = (MethodInsnNode) insn;
+                if (method.getOpcode() == opcode && method.owner.equals(owner) && method.name.equals(name) && method.desc.equals(desc)) {
                     return insn;
                 }
             }
@@ -35,7 +35,7 @@ public final class ASMUtil {
     }
 
     public static AbstractInsnNode findPatternInsn(MethodNode mn, int[] pattern) {
-        for(AbstractInsnNode insn : mn.instructions.toArray()) {
+        for (AbstractInsnNode insn : mn.instructions.toArray()) {
             for (final int opcode : pattern) {
                 if (opcode == insn.getOpcode()) {
                     return insn;
@@ -46,12 +46,12 @@ public final class ASMUtil {
     }
 
     public static AbstractInsnNode findInsnLdc(MethodNode mn, String s) {
-        for(AbstractInsnNode insn : mn.instructions.toArray()) {
-            if(insn instanceof LdcInsnNode) {
-                final LdcInsnNode ldc = (LdcInsnNode)insn;
-                if(ldc.cst instanceof String) {
-                    String var = (String)ldc.cst;
-                    if(var.equals(s)) {
+        for (AbstractInsnNode insn : mn.instructions.toArray()) {
+            if (insn instanceof LdcInsnNode) {
+                final LdcInsnNode ldc = (LdcInsnNode) insn;
+                if (ldc.cst instanceof String) {
+                    String var = (String) ldc.cst;
+                    if (var.equals(s)) {
                         return insn;
                     }
                 }

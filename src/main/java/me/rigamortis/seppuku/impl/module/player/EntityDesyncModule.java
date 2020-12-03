@@ -64,8 +64,8 @@ public final class EntityDesyncModule extends Module {
     /**
      * NoDismount for 9b9t, and possibly others.
      *
-     * @author Seth
      * @param event
+     * @author Seth
      */
     @Listener
     public void onSendPacket(EventSendPacket event) {
