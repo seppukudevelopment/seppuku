@@ -429,7 +429,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
             components.add(keybindText);
 
             ColorComponent colorComponent = new ColorComponent("Color", module.getColor());
-            keybindText.setTooltipText("The current hex color for this module.");
+            colorComponent.setTooltipText("The current hex color for this module.");
             colorComponent.returnListener = new ComponentListener() {
                 @Override
                 public void onComponentEvent() {
