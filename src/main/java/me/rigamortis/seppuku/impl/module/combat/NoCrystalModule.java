@@ -97,7 +97,7 @@ public final class NoCrystalModule extends Module {
                     north, south, east, west};
         }
 
-        final List<BlockPos> blocksToPlace = Lists.newArrayListWithCapacity(8);
+        final List<BlockPos> blocksToPlace = Lists.newArrayListWithCapacity(16);
 
         // find missing blocks (starting from under the player first and going upwards)
         for (int i = 0; i < surroundBlocks.length; i++) {

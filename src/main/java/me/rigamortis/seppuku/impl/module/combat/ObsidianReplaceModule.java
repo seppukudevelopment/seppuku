@@ -52,9 +52,6 @@ public final class ObsidianReplaceModule extends Module {
                         "ObbyRep", "ObbyReplace", "ObbRep", "ObsidianRep"
                 }, "Automatically replaces broken obsidian near you",
                 "NONE", -1, ModuleType.COMBAT);
-
-        if (!Seppuku.INSTANCE.getEventManager().addEventListener(this))
-            throw new RuntimeException();
     }
 
     @Listener
