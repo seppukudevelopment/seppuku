@@ -28,6 +28,14 @@ compileJava {
     sourceCompatibility = targetCompatibility = '1.8'
 }
 
+idea {
+    module {
+        inheritOutputDirs = false
+        outputDir = compileJava.destinationDir
+        testOutputDir = compileTestJava.destinationDir
+    }
+}
+
 minecraft {
     version = "1.12.2-14.23.5.2768"
     runDir = "run"

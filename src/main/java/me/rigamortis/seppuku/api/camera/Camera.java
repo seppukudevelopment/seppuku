@@ -36,8 +36,6 @@ public class Camera {
     private final int WIDTH_RESOLUTION = 800;
     private final int HEIGHT_RESOLUTION = 600;
 
-    private final Minecraft mc = Minecraft.getMinecraft();
-
     public Camera() {
         this.pos = new Vec3d(0, 0, 0);
         this.yaw = 0;
@@ -74,6 +72,8 @@ public class Camera {
     }
 
     public void updateFbo() {
+        final Minecraft mc = Minecraft.getMinecraft();
+
         if (!this.firstUpdate) {
             mc.renderGlobal.loadRenderers();
             this.firstUpdate = true;

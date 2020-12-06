@@ -14,7 +14,6 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 public class MiddleClickPearlModule extends Module {
     private boolean clicked;
-    private final Minecraft mc = Minecraft.getMinecraft();
 
     public MiddleClickPearlModule() {
         super("MiddleClickPearl", new String[]{"mcp", "autopearl"}, "Throws a pearl if you middle-click pointing in mid-air", "NONE", -1, ModuleType.MISC);
@@ -23,12 +22,16 @@ public class MiddleClickPearlModule extends Module {
     @Listener
     public void onUpdate(EventPlayerUpdate event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
+            final Minecraft mc = Minecraft.getMinecraft();
+            if (mc.player == null || mc.world == null)
+                return;
+
             if (mc.currentScreen == null) {
                 if (Mouse.isButtonDown(2)) {
                     if (!this.clicked) {
                         final RayTraceResult result = mc.objectMouseOver;
                         if (result != null && result.typeOfHit == RayTraceResult.Type.MISS) {
-                            final int pearlSlot = findPearlInHotbar();
+                            final int pearlSlot = findPearlInHotbar(mc);
                             if (pearlSlot != -1) {
                                 final int oldSlot = mc.player.inventory.currentItem;
                                 mc.player.inventory.currentItem = pearlSlot;
@@ -49,7 +52,7 @@ public class MiddleClickPearlModule extends Module {
         return itemStack.getItem() instanceof ItemEnderPearl;
     }
 
-    private int findPearlInHotbar() {
+    private int findPearlInHotbar(final Minecraft mc) {
         for (int index = 0; InventoryPlayer.isHotbar(index); index++) {
             if (isItemStackPearl(mc.player.inventory.getStackInSlot(index))) return index;
         }

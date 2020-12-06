@@ -43,7 +43,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public final class CrystalAuraModule extends Module {
 
     public final Value<Float> range = new Value("Range", new String[]{"Dist"}, "The minimum range to attack crystals.", 4.5f, 0.0f, 5.0f, 0.1f);
-    public final Value<Float> delay = new Value("Attack_Delay", new String[]{"AttackDelay", "AttackDel", "Del"}, "The delay to attack in milliseconds.", 50.0f, 0.0f, 1000.0f, 1.0f);
+    public final Value<Float> attackDelay = new Value("Attack_Delay", new String[]{"AttackDelay", "AttackDel", "Del"}, "The delay to attack in milliseconds.", 50.0f, 0.0f, 1000.0f, 1.0f);
     public final Value<Boolean> place = new Value("Place", new String[]{"AutoPlace"}, "Automatically place crystals.", true);
     public final Value<Float> placeDelay = new Value("Place_Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay to place crystals.", 50.0f, 0.0f, 1000.0f, 1.0f);
     public final Value<Float> minDamage = new Value("Min_Damage", new String[]{"MinDamage", "Min", "MinDmg"}, "The minimum explosion damage calculated to place down a crystal.", 1.0f, 0.0f, 20.0f, 0.5f);
@@ -51,10 +51,10 @@ public final class CrystalAuraModule extends Module {
     public final Value<Boolean> render = new Value("Render", new String[]{"R"}, "Draws information about recently placed crystals from your player.", true);
     public final Value<Boolean> renderDamage = new Value("Render_Damage", new String[]{"RD", "RenderDamage", "ShowDamage"}, "Draws calculated explosion damage on recently placed crystals from your player.", true);
 
-    private Timer attackTimer = new Timer();
-    private Timer placeTimer = new Timer();
+    private final Timer attackTimer = new Timer();
+    private final Timer placeTimer = new Timer();
 
-    private List<PlaceLocation> placeLocations = new CopyOnWriteArrayList<>();
+    private final List<PlaceLocation> placeLocations = new CopyOnWriteArrayList<>();
 
     public CrystalAuraModule() {
         super("CrystalAura", new String[]{"AutoCrystal", "Crystal"}, "Automatically places crystals near enemies and detonates them", "NONE", -1, ModuleType.COMBAT);
@@ -85,7 +85,7 @@ public final class CrystalAuraModule extends Module {
 
                                 if (canPlaceCrystal(blockPos)) {
                                     for (Entity entity : mc.world.loadedEntityList) {
-                                        if (entity != null && entity instanceof EntityPlayer) {
+                                        if (entity instanceof EntityPlayer) {
                                             final EntityPlayer player = (EntityPlayer) entity;
                                             if (player != mc.player && !player.getName().equals(mc.player.getName()) && player.getHealth() > 0 && Seppuku.INSTANCE.getFriendManager().isFriend(player) == null) {
                                                 final double distToBlock = entity.getDistance(blockPos.getX() + 0.5f, blockPos.getY() + 1, blockPos.getZ() + 0.5f);
@@ -103,7 +103,7 @@ public final class CrystalAuraModule extends Module {
 
                                         float localDamage = calculateExplosionDamage(mc.player, 6.0f, blockPos.getX() + 0.5f, blockPos.getY() + 1.0f, blockPos.getZ() + 0.5f) / 2.0f;
 
-                                        if (!canTakeDamage()) {
+                                        if (this.isLocalImmune()) {
                                             localDamage = -1;
                                         }
 
@@ -129,7 +129,7 @@ public final class CrystalAuraModule extends Module {
             }
 
             for (Entity entity : mc.world.loadedEntityList) {
-                if (entity != null && entity instanceof EntityEnderCrystal) {
+                if (entity instanceof EntityEnderCrystal) {
                     if (mc.player.getDistance(entity) <= this.range.getValue()) {
                         for (Entity ent : mc.world.loadedEntityList) {
                             if (ent != null && ent != mc.player && (ent.getDistance(entity) <= 14.0f) && ent != entity && ent instanceof EntityPlayer) {
@@ -137,14 +137,14 @@ public final class CrystalAuraModule extends Module {
                                 float currentDamage = calculateExplosionDamage(player, 6.0f, (float) entity.posX, (float) entity.posY, (float) entity.posZ) / 2.0f;
                                 float localDamage = calculateExplosionDamage(mc.player, 6.0f, (float) entity.posX, (float) entity.posY, (float) entity.posZ) / 2.0f;
 
-                                if (!canTakeDamage()) {
+                                if (this.isLocalImmune()) {
                                     localDamage = -1;
                                 }
 
                                 if (localDamage <= currentDamage && currentDamage >= this.minDamage.getValue()) {
                                     final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), entity.getPositionVector());
                                     Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
-                                    if (this.attackTimer.passed(this.delay.getValue())) {
+                                    if (this.attackTimer.passed(this.attackDelay.getValue())) {
                                         mc.player.swingArm(EnumHand.MAIN_HAND);
                                         mc.playerController.attackEntity(mc.player, entity);
                                         this.attackTimer.reset();
@@ -215,24 +215,20 @@ public final class CrystalAuraModule extends Module {
         }
     }
 
-    private boolean canTakeDamage() {
+    private boolean isLocalImmune() {
         final Minecraft mc = Minecraft.getMinecraft();
 
-        if (mc.player.capabilities.isCreativeMode) {
-            return false;
-        }
+        if (mc.player.capabilities.isCreativeMode)
+            return true;
 
         final GodModeModule mod = (GodModeModule) Seppuku.INSTANCE.getModuleManager().find(GodModeModule.class);
+        if (mod != null && mod.isEnabled())
+            return true;
 
-        if (mod != null && mod.isEnabled()) {
-            return false;
-        }
+        if (this.ignore.getValue())
+            return true;
 
-        if (this.ignore.getValue()) {
-            return false;
-        }
-
-        return true;
+        return false;
     }
 
     private boolean canPlaceCrystal(BlockPos pos) {
@@ -246,9 +242,7 @@ public final class CrystalAuraModule extends Module {
 
             if (floor == Blocks.AIR && ceil == Blocks.AIR) {
                 if (mc.world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos.add(0, 1, 0))).isEmpty()) {
-                    if (mc.player.getDistance(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f) <= this.range.getValue()) {
-                        return true;
-                    }
+                    return mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ()) <= this.range.getValue();
                 }
             }
         }
@@ -282,11 +276,11 @@ public final class CrystalAuraModule extends Module {
         return damage;
     }
 
-    private final class PlaceLocation extends Vec3i {
+    private static final class PlaceLocation extends Vec3i {
 
         private int alpha = 0xAA;
         private boolean placed = false;
-        private float damage;
+        private final float damage;
 
         private PlaceLocation(int xIn, int yIn, int zIn, float damage) {
             super(xIn, yIn, zIn);

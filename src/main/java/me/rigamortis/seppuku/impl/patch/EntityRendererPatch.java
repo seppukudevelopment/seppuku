@@ -1,6 +1,7 @@
 package me.rigamortis.seppuku.impl.patch;
 
 import me.rigamortis.seppuku.Seppuku;
+import me.rigamortis.seppuku.api.event.entity.EventGetMouseOver;
 import me.rigamortis.seppuku.api.event.player.EventFovModifier;
 import me.rigamortis.seppuku.api.event.render.EventHurtCamEffect;
 import me.rigamortis.seppuku.api.event.render.EventOrientCamera;
@@ -12,9 +13,13 @@ import me.rigamortis.seppuku.api.util.ASMUtil;
 import me.rigamortis.seppuku.impl.management.PatchManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.entity.Entity;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 import team.stiff.pomelo.EventManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -204,4 +209,30 @@ public final class EntityRendererPatch extends ClassPatch {
         methodNode.instructions.insert(insnList);
     }
 
+    @MethodPatch(
+            mcpName = "getMouseOver",
+            notchName = "a",
+            mcpDesc = "(F)V")
+    public void getMouseOver(MethodNode methodNode, PatchManager.Environment env) {
+        final AbstractInsnNode target = ASMUtil.findMethodInsn(methodNode, INVOKEVIRTUAL, env == PatchManager.Environment.IDE ? "net/minecraft/client/multiplayer/WorldClient" : "bsb", env == PatchManager.Environment.IDE ? "getEntitiesInAABBexcluding" : "a", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/AxisAlignedBB;Lcom/google/common/base/Predicate;)Ljava/util/List;" : "(Lvg;Lbhb;Lcom/google/common/base/Predicate;)Ljava/util/List;");
+
+        if (target != null) {
+            final InsnList insnList = new InsnList();
+            insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "getMouseOverHook", "()Z", false));
+            final LabelNode jmp = new LabelNode();
+            insnList.add(new JumpInsnNode(IFEQ, jmp));
+            insnList.add(new TypeInsnNode(NEW, Type.getInternalName(ArrayList.class)));
+            insnList.add(new InsnNode(DUP));
+            insnList.add(new MethodInsnNode(INVOKESPECIAL, Type.getInternalName(ArrayList.class), "<init>", "()V", false));
+            insnList.add(new VarInsnNode(ASTORE, 14));
+            insnList.add(jmp);
+            methodNode.instructions.insert(target.getNext(), insnList);
+        }
+    }
+
+    public static boolean getMouseOverHook() {
+        final EventGetMouseOver event = new EventGetMouseOver();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }
 }

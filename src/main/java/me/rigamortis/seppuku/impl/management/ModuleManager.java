@@ -2,7 +2,6 @@ package me.rigamortis.seppuku.impl.management;
 
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.module.EventModuleLoad;
-import me.rigamortis.seppuku.api.event.module.EventModulePostLoaded;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.ReflectionUtil;
 import me.rigamortis.seppuku.api.util.StringUtil;
@@ -157,15 +156,13 @@ public final class ModuleManager {
         add(new BridgeModule());
         add(new AutoFarmModule());
         add(new NoEffectsModule());
+        add(new NoEntityTraceModule());
 
         // p2w experience
         if (Seppuku.INSTANCE.getCapeManager().hasCape())
             add(new CapeModule());
 
         this.loadExternalModules();
-
-        for (final Module module : moduleList)
-            Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventModulePostLoaded(module));
 
         Collections.sort(moduleList, Comparator.comparing(Module::getDisplayName));
     }
