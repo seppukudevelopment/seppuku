@@ -267,10 +267,6 @@ public final class ModuleListComponent extends ResizableHudComponent {
     public void keyTyped(char typedChar, int keyCode) {
         super.keyTyped(typedChar, keyCode);
 
-        if (keyCode == Keyboard.KEY_Q) {
-            this.currentSettings = null;
-        }
-
         if (this.currentSettings != null) {
             this.currentSettings.keyTyped(typedChar, keyCode);
         }
