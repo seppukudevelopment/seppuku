@@ -1,6 +1,6 @@
 package me.rigamortis.seppuku.impl.module.combat;
 
-import me.rigamortis.seppuku.api.event.entity.EventGetMouseOver;
+import me.rigamortis.seppuku.api.event.player.EventGetMouseOver;
 import me.rigamortis.seppuku.api.module.Module;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 

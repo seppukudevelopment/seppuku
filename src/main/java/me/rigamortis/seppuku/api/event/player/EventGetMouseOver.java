@@ -1,4 +1,4 @@
-package me.rigamortis.seppuku.api.event.entity;
+package me.rigamortis.seppuku.api.event.player;
 
 import me.rigamortis.seppuku.api.event.EventCancellable;
 

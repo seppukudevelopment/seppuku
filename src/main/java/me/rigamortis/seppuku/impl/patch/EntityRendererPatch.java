@@ -1,7 +1,7 @@
 package me.rigamortis.seppuku.impl.patch;
 
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.event.entity.EventGetMouseOver;
+import me.rigamortis.seppuku.api.event.player.EventGetMouseOver;
 import me.rigamortis.seppuku.api.event.player.EventFovModifier;
 import me.rigamortis.seppuku.api.event.render.EventHurtCamEffect;
 import me.rigamortis.seppuku.api.event.render.EventOrientCamera;
@@ -13,13 +13,11 @@ import me.rigamortis.seppuku.api.util.ASMUtil;
 import me.rigamortis.seppuku.impl.management.PatchManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.entity.Entity;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 import team.stiff.pomelo.EventManager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.objectweb.asm.Opcodes.*;
 

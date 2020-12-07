@@ -7,6 +7,7 @@ import me.rigamortis.seppuku.Seppuku;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * @author noil
@@ -22,7 +23,7 @@ public class FileUtil {
             try {
                 return new FileReader(file);
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                Seppuku.INSTANCE.getLogger().log(Level.WARNING, "Error creating reader: File not found exception");
             }
         }
         return null;
@@ -35,7 +36,7 @@ public class FileUtil {
         try {
             reader.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Seppuku.INSTANCE.getLogger().log(Level.WARNING, "Error closing reader: IO exception");
         }
     }
 
@@ -98,7 +99,6 @@ public class FileUtil {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
             file.delete();
         }
     }
@@ -130,6 +130,7 @@ public class FileUtil {
                     fileReader.close();
                 }
             } catch (IOException e) {
+                System.err.println("IOException thrown, can't close the file reader.");
             }
         }
 
@@ -163,7 +164,7 @@ public class FileUtil {
                     fileWriter.close();
                 }
             } catch (IOException e) {
-                message = "IOException thrown while attemping to close the writer.";
+                message = "IOException thrown while attempting to close the file writer.";
             }
         }
 

@@ -382,5 +382,39 @@ public final class EntityPlayerSPPatch extends ClassPatch {
         methodNode.instructions.insert(insnList);
     }
 
+    @MethodPatch(
+            mcpName = "isHandActive",
+            notchName = "cG",
+            mcpDesc = "()Z")
+    public void isHandActive(MethodNode methodNode, PatchManager.Environment env) {
+        //create a list of instructions
+        final InsnList insnList = new InsnList();
+        //call our hook function
+        insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "isHandActiveHook", "()Z", false));
+        //create a label to jump to
+        final LabelNode jmp = new LabelNode();
+        //add "if equals"
+        insnList.add(new JumpInsnNode(IFEQ, jmp));
+        //add 0 or false
+        insnList.add(new InsnNode(ICONST_0));
+        //return so the rest of the function doesnt get called
+        insnList.add(new InsnNode(IRETURN));
+        //add our label
+        insnList.add(jmp);
+        //insert the list of instructs at the top of the function
+        methodNode.instructions.insert(insnList);
+    }
+
+    /**
+     * Our isHandActive hook used to override hand activity
+     *
+     * @return
+     */
+    public static boolean isHandActiveHook() {
+        //dispatch our event
+        final EventHandActive event = new EventHandActive();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }
 }
 

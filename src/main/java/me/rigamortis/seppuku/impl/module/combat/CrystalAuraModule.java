@@ -42,14 +42,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public final class CrystalAuraModule extends Module {
 
-    public final Value<Float> range = new Value("Range", new String[]{"Dist"}, "The minimum range to attack crystals.", 4.5f, 0.0f, 5.0f, 0.1f);
-    public final Value<Float> attackDelay = new Value("Attack_Delay", new String[]{"AttackDelay", "AttackDel", "Del"}, "The delay to attack in milliseconds.", 50.0f, 0.0f, 1000.0f, 1.0f);
-    public final Value<Boolean> place = new Value("Place", new String[]{"AutoPlace"}, "Automatically place crystals.", true);
-    public final Value<Float> placeDelay = new Value("Place_Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay to place crystals.", 50.0f, 0.0f, 1000.0f, 1.0f);
-    public final Value<Float> minDamage = new Value("Min_Damage", new String[]{"MinDamage", "Min", "MinDmg"}, "The minimum explosion damage calculated to place down a crystal.", 1.0f, 0.0f, 20.0f, 0.5f);
-    public final Value<Boolean> ignore = new Value("Ignore", new String[]{"Ig"}, "Ignore self damage checks.", false);
-    public final Value<Boolean> render = new Value("Render", new String[]{"R"}, "Draws information about recently placed crystals from your player.", true);
-    public final Value<Boolean> renderDamage = new Value("Render_Damage", new String[]{"RD", "RenderDamage", "ShowDamage"}, "Draws calculated explosion damage on recently placed crystals from your player.", true);
+    public final Value<Float> range = new Value<Float>("Range", new String[]{"Dist"}, "The minimum range to attack crystals.", 4.0f, 0.0f, 7.0f, 0.1f);
+    public final Value<Float> attackDelay = new Value<Float>("Attack_Delay", new String[]{"AttackDelay", "AttackDel", "Del"}, "The delay to attack in milliseconds.", 50.0f, 0.0f, 1000.0f, 1.0f);
+    public final Value<Boolean> place = new Value<Boolean>("Place", new String[]{"AutoPlace"}, "Automatically place crystals.", true);
+    public final Value<Float> placeDelay = new Value<Float>("Place_Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay to place crystals.", 50.0f, 0.0f, 1000.0f, 1.0f);
+    public final Value<Float> minDamage = new Value<Float>("Min_Damage", new String[]{"MinDamage", "Min", "MinDmg"}, "The minimum explosion damage calculated to place down a crystal.", 1.5f, 0.0f, 20.0f, 0.5f);
+    public final Value<Boolean> ignore = new Value<Boolean>("Ignore", new String[]{"Ig"}, "Ignore self damage checks.", false);
+    public final Value<Boolean> render = new Value<Boolean>("Render", new String[]{"R"}, "Draws information about recently placed crystals from your player.", true);
+    public final Value<Boolean> renderDamage = new Value<Boolean>("Render_Damage", new String[]{"RD", "RenderDamage", "ShowDamage"}, "Draws calculated explosion damage on recently placed crystals from your player.", true);
+    public final Value<Boolean> offHand = new Value<Boolean>("Offhand", new String[]{"Hand", "otherhand", "off"}, "Use crystals in the off-hand instead of holding them with the main-hand.", false);
 
     private final Timer attackTimer = new Timer();
     private final Timer placeTimer = new Timer();
@@ -64,10 +65,11 @@ public final class CrystalAuraModule extends Module {
     public void onWalkingUpdate(EventUpdateWalkingPlayer event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             final Minecraft mc = Minecraft.getMinecraft();
-
-            if (mc.player.inventory.getCurrentItem().getItem() != Items.END_CRYSTAL) {
+            if (mc.player == null || mc.world == null)
                 return;
-            }
+
+            if (mc.player.getHeldItem(this.offHand.getValue() ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND).getItem() != Items.END_CRYSTAL)
+                return;
 
             if (this.place.getValue()) {
                 if (this.placeTimer.passed(this.placeDelay.getValue())) {
@@ -120,7 +122,7 @@ public final class CrystalAuraModule extends Module {
                     if (pos != null && damage > 0) {
                         final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f));
                         Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
-                        mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, EnumHand.MAIN_HAND, 0, 0, 0));
+                        mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, this.offHand.getValue() ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0, 0, 0));
                         this.placeLocations.add(new PlaceLocation(pos.getX(), pos.getY(), pos.getZ(), damage));
                     }
 
@@ -145,7 +147,7 @@ public final class CrystalAuraModule extends Module {
                                     final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), entity.getPositionVector());
                                     Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
                                     if (this.attackTimer.passed(this.attackDelay.getValue())) {
-                                        mc.player.swingArm(EnumHand.MAIN_HAND);
+                                        mc.player.swingArm(this.offHand.getValue() ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND);
                                         mc.playerController.attackEntity(mc.player, entity);
                                         this.attackTimer.reset();
                                     }
@@ -181,6 +183,7 @@ public final class CrystalAuraModule extends Module {
 
         final Minecraft mc = Minecraft.getMinecraft();
 
+        RenderUtil.begin3D();
         for (PlaceLocation placeLocation : this.placeLocations) {
             if (placeLocation.alpha <= 0) {
                 this.placeLocations.remove(placeLocation);
@@ -213,6 +216,7 @@ public final class CrystalAuraModule extends Module {
                 }
             }
         }
+        RenderUtil.end3D();
     }
 
     private boolean isLocalImmune() {

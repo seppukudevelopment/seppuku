@@ -157,6 +157,7 @@ public final class ModuleManager {
         add(new AutoFarmModule());
         add(new NoEffectsModule());
         add(new NoEntityTraceModule());
+        add(new MultitaskModule());
 
         // p2w experience
         if (Seppuku.INSTANCE.getCapeManager().hasCape())
