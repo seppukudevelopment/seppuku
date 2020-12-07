@@ -15,7 +15,7 @@ import java.io.File;
  */
 public final class XrayConfig extends Configurable {
 
-    private XrayModule xrayModule;
+    private final XrayModule xrayModule;
 
     public XrayConfig(File dir) {
         super(FileUtil.createJsonFile(dir, "Xray"));

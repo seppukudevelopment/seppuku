@@ -1,5 +1,9 @@
 package me.rigamortis.seppuku.api.util;
 
+import me.rigamortis.seppuku.Seppuku;
+
+import java.util.logging.Level;
+
 /**
  * Author Seth
  * 4/16/2019 @ 8:32 AM.
@@ -10,8 +14,8 @@ public final class StringUtil {
         try {
             Integer.parseInt(s);
             return true;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            Seppuku.INSTANCE.getLogger().log(Level.WARNING, "Number format exception thrown when parsing int.");
         }
         return false;
     }
@@ -21,7 +25,7 @@ public final class StringUtil {
             Float.parseFloat(s);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            Seppuku.INSTANCE.getLogger().log(Level.WARNING, "Number format exception thrown when parsing float.");
         }
         return false;
     }
@@ -31,17 +35,16 @@ public final class StringUtil {
             Double.parseDouble(s);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            Seppuku.INSTANCE.getLogger().log(Level.WARNING, "Number format exception thrown when parsing double.");
         }
         return false;
     }
 
     public static boolean isBoolean(String s) {
         try {
-            Boolean.parseBoolean(s);
-            return true;
+            return Boolean.parseBoolean(s);
         } catch (Exception e) {
-            e.printStackTrace();
+            Seppuku.INSTANCE.getLogger().log(Level.WARNING, "Number format exception thrown when parsing boolean.");
         }
         return false;
     }
@@ -51,16 +54,13 @@ public final class StringUtil {
             Long.parseLong(s, radix);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            Seppuku.INSTANCE.getLogger().log(Level.WARNING, "Number format exception thrown when parsing long.");
         }
         return false;
     }
 
     public static boolean isNumber(String s) {
-        if (isInt(s) || isFloat(s) || isDouble(s) || isLong(s, 16)) {
-            return true;
-        }
-        return false;
+        return isInt(s) || isFloat(s) || isDouble(s) || isLong(s, 16);
     }
 
     public static float similarityLength(String first, String second) {
@@ -74,9 +74,9 @@ public final class StringUtil {
     /**
      * Credits https://stackoverflow.com/questions/955110/similarity-string-comparison-in-java
      *
-     * @param s1
-     * @param s2
-     * @return
+     * @param s1 the first string to compare with
+     * @param s2 the second string to compare to
+     * @returns the levenshtein distance between string s1 and string s2
      */
     public static double levenshteinDistance(String s1, String s2) {
         String longer = s1, shorter = s2;
@@ -117,5 +117,4 @@ public final class StringUtil {
         }
         return costs[s2.length()];
     }
-
 }

@@ -1,5 +1,6 @@
 package me.rigamortis.seppuku.impl.module.render;
 
+import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.render.EventRenderBlockModel;
 import me.rigamortis.seppuku.api.event.render.EventRenderBlockSide;
 import me.rigamortis.seppuku.api.event.world.EventSetOpaqueCube;
@@ -25,6 +26,9 @@ public final class XrayModule extends Module {
     public XrayModule() {
         super("Xray", new String[]{"JadeVision", "Jade"}, "Allows you to filter what the world renders", "NONE", -1, ModuleType.RENDER);
         this.setHidden(true);
+
+        if (Seppuku.INSTANCE.getConfigManager().isFirstLaunch())
+            this.add("diamond_ore");
     }
 
     @Override
@@ -98,15 +102,18 @@ public final class XrayModule extends Module {
     }
 
     public void add(String name) {
-        final int id = Block.getIdFromBlock(Block.getBlockFromName(name));
-        if (!contains(id)) {
-            this.ids.add(id);
+        final Block blockFromName = Block.getBlockFromName(name);
+        if (blockFromName != null) {
+            final int id = Block.getIdFromBlock(blockFromName);
+            if (!contains(id)) {
+                this.ids.add(id);
+            }
         }
     }
 
     public void remove(int id) {
         for (Integer i : this.ids) {
-            if (id == i.intValue()) {
+            if (id == i) {
                 this.ids.remove(i);
                 break;
             }
@@ -114,9 +121,12 @@ public final class XrayModule extends Module {
     }
 
     public void remove(String name) {
-        final int id = Block.getIdFromBlock(Block.getBlockFromName(name));
-        if (contains(id)) {
-            this.ids.remove(id);
+        final Block blockFromName = Block.getBlockFromName(name);
+        if (blockFromName != null) {
+            final int id = Block.getIdFromBlock(blockFromName);
+            if (contains(id)) {
+                this.ids.remove(id);
+            }
         }
     }
 

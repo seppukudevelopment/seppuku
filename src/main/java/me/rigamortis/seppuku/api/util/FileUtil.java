@@ -64,13 +64,14 @@ public class FileUtil {
     public static File recreateFile(File file) {
         if (file.exists()) {
             file.delete();
-        } else {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
+
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            System.err.println("IOException thrown, could not recreate file.");
+        }
+
         return file;
     }
 
