@@ -242,7 +242,10 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
         final ScaledResolution res = new ScaledResolution(mc);
 
         final String spash = "Welcome, " + mc.getSession().getUsername();
-        this.drawString(this.fontRenderer, spash, 2, res.getScaledHeight() - mc.fontRenderer.FONT_HEIGHT, -1);
+        this.drawString(this.fontRenderer, spash, 1, res.getScaledHeight() - mc.fontRenderer.FONT_HEIGHT, -1);
+
+        final String version = ChatFormatting.GRAY + "Version " + SeppukuMod.VERSION + " for MC " + Minecraft.getMinecraft().getVersion();
+        this.drawString(this.fontRenderer, version, res.getScaledWidth() - mc.fontRenderer.getStringWidth(version) - 1, res.getScaledHeight() - mc.fontRenderer.FONT_HEIGHT, -1);
     }
 
     public void unload() {
