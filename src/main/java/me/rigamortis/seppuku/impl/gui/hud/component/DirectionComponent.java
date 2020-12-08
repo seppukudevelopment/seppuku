@@ -3,7 +3,6 @@ package me.rigamortis.seppuku.impl.gui.hud.component;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.util.Timer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.MathHelper;
 
 /**
@@ -17,25 +16,29 @@ public final class DirectionComponent extends DraggableHudComponent {
 
     public DirectionComponent() {
         super("Direction");
+        this.setH(mc.fontRenderer.FONT_HEIGHT);
     }
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
-        if (this.directionTimer.passed(250)) { // 250ms
-            direction = String.format("%s" + " " + ChatFormatting.GRAY + "%s", this.getFacing(), this.getTowards());
-            this.directionTimer.reset();
-        }
-
-        this.setW(Minecraft.getMinecraft().fontRenderer.getStringWidth(direction));
-        this.setH(Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT);
-
         super.render(mouseX, mouseY, partialTicks);
 
-        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(direction, this.getX(), this.getY(), -1);
+        if (mc.world != null) {
+            if (this.directionTimer.passed(250)) { // 250ms
+                direction = String.format("%s" + " " + ChatFormatting.GRAY + "%s", this.getFacing(), this.getTowards());
+                this.directionTimer.reset();
+            }
+
+            this.setW(mc.fontRenderer.getStringWidth(direction));
+            mc.fontRenderer.drawStringWithShadow(direction, this.getX(), this.getY(), -1);
+        } else {
+            this.setW(mc.fontRenderer.getStringWidth("(direction)"));
+            mc.fontRenderer.drawStringWithShadow("(direction)", this.getX(), this.getY(), 0xFFAAAAAA);
+        }
     }
 
     private String getFacing() {
-        switch (MathHelper.floor((double) (Minecraft.getMinecraft().player.rotationYaw * 8.0F / 360.0F) + 0.5D) & 7) {
+        switch (MathHelper.floor((double) (mc.player.rotationYaw * 8.0F / 360.0F) + 0.5D) & 7) {
             case 0:
                 return "South";
             case 1:
@@ -57,7 +60,7 @@ public final class DirectionComponent extends DraggableHudComponent {
     }
 
     private String getTowards() {
-        switch (MathHelper.floor((double) (Minecraft.getMinecraft().player.rotationYaw * 8.0F / 360.0F) + 0.5D) & 7) {
+        switch (MathHelper.floor((double) (mc.player.rotationYaw * 8.0F / 360.0F) + 0.5D) & 7) {
             case 0:
                 return "+Z";
             case 1:

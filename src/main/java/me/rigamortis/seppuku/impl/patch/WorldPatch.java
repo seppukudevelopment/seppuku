@@ -1,10 +1,7 @@
 package me.rigamortis.seppuku.impl.patch;
 
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.event.world.EventAddEntity;
-import me.rigamortis.seppuku.api.event.world.EventLightUpdate;
-import me.rigamortis.seppuku.api.event.world.EventRainStrength;
-import me.rigamortis.seppuku.api.event.world.EventRemoveEntity;
+import me.rigamortis.seppuku.api.event.world.*;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
 import me.rigamortis.seppuku.impl.management.PatchManager;
@@ -87,7 +84,6 @@ public final class WorldPatch extends ClassPatch {
     public static boolean getRainStrengthHook() {
         final EventRainStrength event = new EventRainStrength();
         Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
         return event.isCanceled();
     }
 
@@ -123,4 +119,24 @@ public final class WorldPatch extends ClassPatch {
         Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventRemoveEntity(entity));
     }
 
+    @MethodPatch(
+            mcpName = "spawnParticle",
+            notchName = "a",
+            mcpDesc = "(IZDDDDDD[I)V",
+            notchDesc = "(IZDDDDDD[I)V")
+    public void spawnParticle(MethodNode methodNode, PatchManager.Environment env) {
+        final InsnList list = new InsnList();
+        list.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "spawnParticleHook", "()Z", false));
+        final LabelNode jmp = new LabelNode();
+        list.add(new JumpInsnNode(IFEQ, jmp));
+        list.add(new InsnNode(RETURN));
+        list.add(jmp);
+        methodNode.instructions.insert(list);
+    }
+
+    public static boolean spawnParticleHook() {
+        final EventSpawnParticle event = new EventSpawnParticle();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }
 }

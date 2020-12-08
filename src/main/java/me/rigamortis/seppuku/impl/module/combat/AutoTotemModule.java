@@ -26,7 +26,7 @@ public final class AutoTotemModule extends Module {
 
     @Override
     public String getMetaData() {
-        return "" + this.getItemCount(Items.TOTEM_OF_UNDYING);
+        return "" + this.getTotemCount();
     }
 
     @Listener
@@ -42,7 +42,7 @@ public final class AutoTotemModule extends Module {
                         return;
                     }
 
-                    final int slot = this.getItemSlot(Items.TOTEM_OF_UNDYING);
+                    final int slot = this.getTotemSlot();
 
                     if (slot != -1) {
                         mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 0, ClickType.PICKUP, mc.player);
@@ -55,10 +55,10 @@ public final class AutoTotemModule extends Module {
         }
     }
 
-    private int getItemSlot(Item input) {
+    private int getTotemSlot() {
         for (int i = 0; i < 36; i++) {
             final Item item = Minecraft.getMinecraft().player.inventory.getStackInSlot(i).getItem();
-            if (item == input) {
+            if (item == Items.TOTEM_OF_UNDYING) {
                 if (i < 9) {
                     i += 36;
                 }
@@ -68,17 +68,20 @@ public final class AutoTotemModule extends Module {
         return -1;
     }
 
-    private int getItemCount(Item input) {
-        int items = 0;
+    private int getTotemCount() {
+        int totems = 0;
+
+        if (Minecraft.getMinecraft().player == null)
+            return totems;
 
         for (int i = 0; i < 45; i++) {
             final ItemStack stack = Minecraft.getMinecraft().player.inventory.getStackInSlot(i);
-            if (stack.getItem() == input) {
-                items += stack.getCount();
+            if (stack.getItem() == Items.TOTEM_OF_UNDYING) {
+                totems += stack.getCount();
             }
         }
 
-        return items;
+        return totems;
     }
 
 }

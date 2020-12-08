@@ -2,7 +2,7 @@ package me.rigamortis.seppuku.impl.gui.hud.component;
 
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.util.RenderUtil;
-import net.minecraft.client.Minecraft;
+import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
@@ -20,13 +20,15 @@ public final class InventoryComponent extends DraggableHudComponent {
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
 
-        final Minecraft mc = Minecraft.getMinecraft();// store the minecraft instance in a local variable
-
-        if (mc.player == null)
-            return;
-
         this.setW(16 * 9);
         this.setH(16 * 3);
+
+        if (mc.player == null) {
+            if (mc.currentScreen instanceof GuiHudEditor) {
+                mc.fontRenderer.drawStringWithShadow("(inventory)", this.getX(), this.getY(), 0xFFAAAAAA);
+            }
+            return;
+        }
 
         GlStateManager.pushMatrix();
         RenderHelper.enableGUIStandardItemLighting();

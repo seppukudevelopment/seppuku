@@ -38,7 +38,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
     private final int BORDER = 2;
     private final int TEXT_GAP = 1;
     private final int TEXTURE_SIZE = 8;
-    private final int TITLE_BAR_HEIGHT = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1;
+    private final int TITLE_BAR_HEIGHT = mc.fontRenderer.FONT_HEIGHT + 1;
 
     private String originalName = "";
     private String title = "";
@@ -67,8 +67,6 @@ public final class ModuleListComponent extends ResizableHudComponent {
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
-
-        final Minecraft mc = Minecraft.getMinecraft();
 
         if (!(mc.currentScreen instanceof GuiHudEditor))
             return;
@@ -152,7 +150,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
             this.title = this.originalName;
             for (Module module : Seppuku.INSTANCE.getModuleManager().getModuleList(this.type)) {
                 RenderUtil.drawRect(this.getX() + BORDER + TEXT_GAP, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 2, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll, module.isEnabled() ? 0x451b002a : 0x451F1C22);
-                final boolean insideModule = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1 + offsetY - this.scroll - mc.fontRenderer.FONT_HEIGHT + 1) && mouseY <= (this.getY() + BORDER + (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT) + 1 + offsetY - this.scroll);
+                final boolean insideModule = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + mc.fontRenderer.FONT_HEIGHT + 1 + offsetY - this.scroll - mc.fontRenderer.FONT_HEIGHT + 1) && mouseY <= (this.getY() + BORDER + (mc.fontRenderer.FONT_HEIGHT) + 1 + offsetY - this.scroll);
                 if (insideModule) {
                     RenderUtil.drawGradientRect(this.getX() + BORDER + TEXT_GAP, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 2, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll, 0x30909090, 0x00101010);
                 }
@@ -177,15 +175,15 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         if (valueComponent.isMouseInside(mouseX, mouseY)) {
                             tooltipText = valueComponent.getTooltipText();
                         }
-                        height += Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + TEXT_GAP;
+                        height += mc.fontRenderer.FONT_HEIGHT + TEXT_GAP;
                     }
                 } else {
                     for (Module module : Seppuku.INSTANCE.getModuleManager().getModuleList(this.type)) {
-                        final boolean insideComponent = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1 + height - this.scroll) && mouseY <= (this.getY() + BORDER + (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT * 2) + 1 + height - this.scroll);
+                        final boolean insideComponent = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + mc.fontRenderer.FONT_HEIGHT + 1 + height - this.scroll) && mouseY <= (this.getY() + BORDER + (mc.fontRenderer.FONT_HEIGHT * 2) + 1 + height - this.scroll);
                         if (insideComponent) {
                             tooltipText = module.getDesc();
                         }
-                        height += Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + TEXT_GAP;
+                        height += mc.fontRenderer.FONT_HEIGHT + TEXT_GAP;
                     }
                 }
 
@@ -212,7 +210,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
         super.mouseRelease(mouseX, mouseY, button);
 
         final boolean inside = this.isMouseInside(mouseX, mouseY);
-        final int titleBarHeight = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1;
+        final int titleBarHeight = mc.fontRenderer.FONT_HEIGHT + 1;
         final boolean insideTitlebar = mouseY <= this.getY() + BORDER + titleBarHeight;
 
         if (inside && !insideTitlebar && !isResizeDragging()) {
@@ -221,7 +219,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
             } else {
                 int offsetY = BORDER;
                 for (Module module : Seppuku.INSTANCE.getModuleManager().getModuleList(this.type)) {
-                    final boolean insideComponent = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1 + offsetY - this.scroll) && mouseY <= (this.getY() + BORDER + (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT * 2) + 1 + offsetY - this.scroll);
+                    final boolean insideComponent = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + mc.fontRenderer.FONT_HEIGHT + 1 + offsetY - this.scroll) && mouseY <= (this.getY() + BORDER + (mc.fontRenderer.FONT_HEIGHT * 2) + 1 + offsetY - this.scroll);
                     if (insideComponent) {
                         switch (button) {
                             case 0:
@@ -235,7 +233,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                                 break;
                         }
                     }
-                    offsetY += Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + TEXT_GAP;
+                    offsetY += mc.fontRenderer.FONT_HEIGHT + TEXT_GAP;
                 }
             }
 

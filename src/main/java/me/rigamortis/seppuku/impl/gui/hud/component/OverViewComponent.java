@@ -4,7 +4,6 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.camera.Camera;
 import me.rigamortis.seppuku.api.gui.hud.component.ResizableHudComponent;
 import me.rigamortis.seppuku.api.util.RenderUtil;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.input.Mouse;
@@ -34,41 +33,42 @@ public final class OverViewComponent extends ResizableHudComponent {
 
         RenderUtil.drawRect(this.getX() - 1, this.getY() - 1, this.getX() + this.getW() + 1, this.getY() + this.getH() + 1, 0x99101010);
         RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0xFF202020);
-        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(this.getName(), this.getX() + 2, this.getY() + 2, 0xFFFFFFFF);
+        mc.fontRenderer.drawStringWithShadow(this.getName(), this.getX() + 2, this.getY() + 2, 0xFFFFFFFF);
 
-        this.handleScrolling(mouseX, mouseY);
+        if (mc.player != null && mc.world != null) {
+            this.overviewCamera.setRendering(true);
 
-        this.overviewCamera.setRendering(true);
+            if (this.overviewCamera.isValid()) {
 
-        if (this.overviewCamera.isValid()) {
+                final Vec3d ground = this.getGround(partialTicks);
 
-            final Vec3d ground = this.getGround(partialTicks);
-
-            if (ground != null) {
+                if (ground != null) {
 
                 /*
                 "isometric" view
-                final Vec3d forward = MathUtil.direction(Minecraft.getMinecraft().player.rotationYaw);
+                final Vec3d forward = MathUtil.direction(mc.player.rotationYaw);
                 final float factor = 30.0f;
                 this.overviewCamera.setPos(ground.add(0, this.getDist(partialTicks), 0).subtract(forward.x * factor, forward.y * factor, forward.z * factor));
-                this.overviewCamera.setYaw(Minecraft.getMinecraft().player.rotationYaw);
+                this.overviewCamera.setYaw(mc.player.rotationYaw);
                 this.overviewCamera.setPitch(65.0f);
                 this.overviewCamera.render(this.getX() + 2, this.getY() + 12, this.getX() + this.getW() - 2, this.getY() + this.getH() - 2);
                 */
 
-                this.overviewCamera.setPos(ground.add(0, this.getDist(partialTicks), 0));
-                this.overviewCamera.setYaw(Minecraft.getMinecraft().player.rotationYaw);
-                this.overviewCamera.setPitch(90.0f);
-                this.overviewCamera.render(this.getX() + 2, this.getY() + 12, this.getX() + this.getW() - 2, this.getY() + this.getH() - 2);
+                    this.overviewCamera.setPos(ground.add(0, this.getDist(partialTicks), 0));
+                    this.overviewCamera.setYaw(mc.player.rotationYaw);
+                    this.overviewCamera.setPitch(90.0f);
+                    this.overviewCamera.render(this.getX() + 2, this.getY() + 12, this.getX() + this.getW() - 2, this.getY() + this.getH() - 2);
+                }
             }
         }
 
-        if (this.isMouseInside(mouseX, mouseY))
-            Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("Zoom: " + this.distance, this.getX() + 4, this.getY() + this.getH() - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - 2, 0xFFFFFFFF);
+        if (this.isMouseInside(mouseX, mouseY)) {
+            this.handleScrolling(mouseX, mouseY);
+            mc.fontRenderer.drawStringWithShadow("Zoom: " + this.distance, this.getX() + 4, this.getY() + this.getH() - mc.fontRenderer.FONT_HEIGHT - 2, 0xFFFFFFFF);
+        }
     }
 
     private Vec3d getGround(float partialTicks) {
-        final Minecraft mc = Minecraft.getMinecraft();
         final Vec3d eyes = mc.player.getPositionEyes(partialTicks);
         final RayTraceResult ray = mc.world.rayTraceBlocks(eyes, eyes.subtract(0, 3, 0), false);
 
@@ -80,7 +80,6 @@ public final class OverViewComponent extends ResizableHudComponent {
     }
 
     private double getDist(float partialTicks) {
-        final Minecraft mc = Minecraft.getMinecraft();
         final Vec3d eyes = mc.player.getPositionEyes(partialTicks);
         final RayTraceResult ray = mc.world.rayTraceBlocks(eyes, eyes.add(0, this.distance, 0), false);
 

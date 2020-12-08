@@ -1,7 +1,6 @@
 package me.rigamortis.seppuku.impl.gui.hud.component;
 
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
-import net.minecraft.client.Minecraft;
 
 /**
  * Author Seth
@@ -11,17 +10,21 @@ public final class PlayerCountComponent extends DraggableHudComponent {
 
     public PlayerCountComponent() {
         super("PlayerCount");
+        this.setH(mc.fontRenderer.FONT_HEIGHT);
     }
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
-        final String playerCount = "ONLINE: " + Minecraft.getMinecraft().player.connection.getPlayerInfoMap().size();
+        if (mc.player != null) {
+            final String playerCount = "Online: " + mc.player.connection.getPlayerInfoMap().size();
 
-        this.setW(Minecraft.getMinecraft().fontRenderer.getStringWidth(playerCount));
-        this.setH(Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT);
-
-        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(playerCount, this.getX(), this.getY(), -1);
+            this.setW(mc.fontRenderer.getStringWidth(playerCount));
+            mc.fontRenderer.drawStringWithShadow(playerCount, this.getX(), this.getY(), -1);
+        } else {
+            this.setW(mc.fontRenderer.getStringWidth("(player count)"));
+            mc.fontRenderer.drawStringWithShadow("(player count)", this.getX(), this.getY(), 0xFFAAAAAA);
+        }
     }
 
 }

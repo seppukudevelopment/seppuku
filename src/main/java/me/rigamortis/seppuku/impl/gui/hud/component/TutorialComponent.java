@@ -2,7 +2,6 @@ package me.rigamortis.seppuku.impl.gui.hud.component;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
-import net.minecraft.client.Minecraft;
 
 /**
  * created by noil on 10/22/2019 at 10:06 AM
@@ -27,14 +26,12 @@ public final class TutorialComponent extends PopupComponent {
         this.setSnappable(false);
         this.setW(200);
         this.setH(173);
-        this.setX((Minecraft.getMinecraft().displayWidth / 2) - (this.getW() / 2));
-        this.setY((Minecraft.getMinecraft().displayHeight / 2) - (this.getH() / 2));
+        this.setX((mc.displayWidth / 2.0f) - (this.getW() / 2.0f));
+        this.setY((mc.displayHeight / 2.0f) - (this.getH() / 2.0f));
     }
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
-        final Minecraft mc = Minecraft.getMinecraft();
-
         if (!(mc.currentScreen instanceof GuiHudEditor)) // ensure we are in the hud editor screen only
             return;
 

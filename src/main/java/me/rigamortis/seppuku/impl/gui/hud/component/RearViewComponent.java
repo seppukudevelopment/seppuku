@@ -4,7 +4,6 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.camera.Camera;
 import me.rigamortis.seppuku.api.gui.hud.component.ResizableHudComponent;
 import me.rigamortis.seppuku.api.util.RenderUtil;
-import net.minecraft.client.Minecraft;
 
 /**
  * Author Seth
@@ -27,15 +26,17 @@ public final class RearViewComponent extends ResizableHudComponent {
 
         RenderUtil.drawRect(this.getX() - 1, this.getY() - 1, this.getX() + this.getW() + 1, this.getY() + this.getH() + 1, 0x99101010);
         RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0xFF202020);
-        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(this.getName(), this.getX() + 2, this.getY() + 2, 0xFFFFFFFF);
+        mc.fontRenderer.drawStringWithShadow(this.getName(), this.getX() + 2, this.getY() + 2, 0xFFFFFFFF);
 
-        this.rearviewCamera.setRendering(true);
+        if (mc.player != null && mc.world != null) {
+            this.rearviewCamera.setRendering(true);
 
-        if (this.rearviewCamera.isValid()) {
-            this.rearviewCamera.setPos(Minecraft.getMinecraft().player.getPositionEyes(partialTicks).subtract(0, 1, 0));
-            this.rearviewCamera.setYaw(Minecraft.getMinecraft().player.rotationYaw - 180.0f);
-            this.rearviewCamera.setPitch(0.0f);
-            this.rearviewCamera.render(this.getX() + 2, this.getY() + 12, this.getX() + this.getW() - 2, this.getY() + this.getH() - 2);
+            if (this.rearviewCamera.isValid()) {
+                this.rearviewCamera.setPos(mc.player.getPositionEyes(partialTicks).subtract(0, 1, 0));
+                this.rearviewCamera.setYaw(mc.player.rotationYaw - 180.0f);
+                this.rearviewCamera.setPitch(0.0f);
+                this.rearviewCamera.render(this.getX() + 2, this.getY() + 12, this.getX() + this.getW() - 2, this.getY() + this.getH() - 2);
+            }
         }
     }
 

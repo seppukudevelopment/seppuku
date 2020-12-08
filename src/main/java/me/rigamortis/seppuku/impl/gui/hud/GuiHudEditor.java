@@ -44,6 +44,16 @@ public final class GuiHudEditor extends GuiScreen {
     }
 
     @Override
+    public void onResize(Minecraft mcIn, int w, int h) {
+        super.onResize(mcIn, w, h);
+
+        final ScaledResolution sr = new ScaledResolution(mcIn);
+        for (AnchorPoint anchorPoint : Seppuku.INSTANCE.getHudManager().getAnchorPoints()) {
+            anchorPoint.updatePosition(sr);
+        }
+    }
+
+    @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.drawDefaultBackground();
@@ -98,7 +108,6 @@ public final class GuiHudEditor extends GuiScreen {
                             RenderUtil.drawRect(draggable.getX() + draggable.getW() - SIZE, draggable.getY(), draggable.getX() + draggable.getW(), draggable.getY() + SIZE, 0x90FFFFFF);
                             RenderUtil.drawRect(draggable.getX(), (draggable.getY() + draggable.getH()) - SIZE, draggable.getX() + SIZE, draggable.getY() + draggable.getH(), 0x90FFFFFF);
                             RenderUtil.drawRect(draggable.getX() + draggable.getW() - SIZE, (draggable.getY() + draggable.getH()) - SIZE, draggable.getX() + draggable.getW(), draggable.getY() + draggable.getH(), 0x90FFFFFF);
-                            continue;
                         }
 
                         // dragging highlight
@@ -172,5 +181,8 @@ public final class GuiHudEditor extends GuiScreen {
                 }
             }
         }
+
+        // go back to previous screen
+        super.onGuiClosed();
     }
 }

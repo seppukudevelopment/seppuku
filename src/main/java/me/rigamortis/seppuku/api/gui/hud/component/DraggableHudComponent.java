@@ -29,6 +29,8 @@ public class DraggableHudComponent extends HudComponent {
 
     private static final double ANCHOR_THRESHOLD = 80;
 
+    protected final Minecraft mc = Minecraft.getMinecraft();
+
     public DraggableHudComponent(String name) {
         this.setName(name);
         this.setVisible(false);

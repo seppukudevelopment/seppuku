@@ -96,7 +96,7 @@ public final class Seppuku {
         this.commandManager = new CommandManager();
         this.cameraManager = new CameraManager();
         this.hudManager = new HudManager();
-        //this.seppukuMainMenu = new GuiSeppukuMainMenu();
+        this.seppukuMainMenu = new GuiSeppukuMainMenu();
 
         this.configManager.init(); // Keep last, so we load configs after everything else inits
 

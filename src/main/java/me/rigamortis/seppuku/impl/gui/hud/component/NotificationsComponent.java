@@ -6,7 +6,6 @@ import me.rigamortis.seppuku.api.notification.Notification;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
-import net.minecraft.client.Minecraft;
 
 /**
  * created by noil on 8/17/2019 at 4:39 PM
@@ -39,7 +38,7 @@ public final class NotificationsComponent extends DraggableHudComponent {
                 switch (this.getAnchorPoint().getPoint()) {
                     case TOP_CENTER:
                     case BOTTOM_CENTER:
-                        offsetX = (this.getW() - Minecraft.getMinecraft().fontRenderer.getStringWidth(notification.getText())) / 2;
+                        offsetX = (this.getW() - mc.fontRenderer.getStringWidth(notification.getText())) / 2;
                         break;
                     case TOP_LEFT:
                     case BOTTOM_LEFT:
@@ -47,19 +46,19 @@ public final class NotificationsComponent extends DraggableHudComponent {
                         break;
                     case TOP_RIGHT:
                     case BOTTOM_RIGHT:
-                        offsetX = this.getW() - Minecraft.getMinecraft().fontRenderer.getStringWidth(notification.getText());
+                        offsetX = this.getW() - mc.fontRenderer.getStringWidth(notification.getText());
                         break;
                 }
             }
 
             notification.setX(this.getX() + offsetX);
             notification.setY(this.getY() + offsetY);
-            notification.setWidth(Minecraft.getMinecraft().fontRenderer.getStringWidth(notification.getText()) + 4);
-            notification.setHeight(Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 5);
+            notification.setWidth(mc.fontRenderer.getStringWidth(notification.getText()) + 4);
+            notification.setHeight(mc.fontRenderer.FONT_HEIGHT + 5);
 
             RenderUtil.drawRect(notification.getTransitionX(), notification.getTransitionY(), notification.getTransitionX() + notification.getWidth(), notification.getTransitionY() + notification.getHeight(), 0x75101010);
             RenderUtil.drawRect(notification.getTransitionX(), notification.getTransitionY(), notification.getTransitionX() + notification.getWidth(), (notification.getTransitionY() + 1), notification.getType().getColor());
-            Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(notification.getText(), notification.getTransitionX() + 2.0F, notification.getTransitionY() + 4.0F, 0xFFFFFFFF);
+            mc.fontRenderer.drawStringWithShadow(notification.getText(), notification.getTransitionX() + 2.0F, notification.getTransitionY() + 4.0F, 0xFFFFFFFF);
 
             final float width = notification.getWidth();
             if (width >= maxWidth) {
@@ -70,15 +69,15 @@ public final class NotificationsComponent extends DraggableHudComponent {
         }
 
         if (Seppuku.INSTANCE.getNotificationManager().getNotifications().isEmpty()) {
-            if (Minecraft.getMinecraft().currentScreen instanceof GuiHudEditor) {
+            if (mc.currentScreen instanceof GuiHudEditor) {
                 final String placeholder = "(notifications)";
-                maxWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(placeholder);
-                offsetY = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
-                Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(placeholder, this.getX(), this.getY(), 0xFFAAAAAA);
+                maxWidth = mc.fontRenderer.getStringWidth(placeholder);
+                offsetY = mc.fontRenderer.FONT_HEIGHT;
+                mc.fontRenderer.drawStringWithShadow(placeholder, this.getX(), this.getY(), 0xFFAAAAAA);
             } else {
                 maxWidth = 0;
                 offsetY = 0;
-                this.setEmptyH(Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT);
+                this.setEmptyH(mc.fontRenderer.FONT_HEIGHT);
             }
         }
 

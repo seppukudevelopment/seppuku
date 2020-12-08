@@ -1,7 +1,6 @@
 package me.rigamortis.seppuku.impl.gui.hud.component;
 
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.MathHelper;
 
 import java.text.DecimalFormat;
@@ -15,24 +14,28 @@ public final class SpeedComponent extends DraggableHudComponent {
 
     public SpeedComponent() {
         super("Speed");
+        this.setH(mc.fontRenderer.FONT_HEIGHT);
     }
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
-        final DecimalFormat df = new DecimalFormat("#.#");
 
-        final double deltaX = Minecraft.getMinecraft().player.posX - Minecraft.getMinecraft().player.prevPosX;
-        final double deltaZ = Minecraft.getMinecraft().player.posZ - Minecraft.getMinecraft().player.prevPosZ;
-        final float tickRate = (Minecraft.getMinecraft().timer.tickLength / 1000.0f);
+        if (mc.player != null) {
+            final DecimalFormat df = new DecimalFormat("#.#");
 
-        final String bps = "BPS: " + df.format((MathHelper.sqrt(deltaX * deltaX + deltaZ * deltaZ) / tickRate));
+            final double deltaX = mc.player.posX - mc.player.prevPosX;
+            final double deltaZ = mc.player.posZ - mc.player.prevPosZ;
+            final float tickRate = (mc.timer.tickLength / 1000.0f);
 
-        this.setW(Minecraft.getMinecraft().fontRenderer.getStringWidth(bps));
-        this.setH(Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT);
+            final String bps = "BPS: " + df.format((MathHelper.sqrt(deltaX * deltaX + deltaZ * deltaZ) / tickRate));
 
-        //RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x90222222);
-        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(bps, this.getX(), this.getY(), -1);
+            this.setW(mc.fontRenderer.getStringWidth(bps));
+            mc.fontRenderer.drawStringWithShadow(bps, this.getX(), this.getY(), -1);
+        } else {
+            this.setW(mc.fontRenderer.getStringWidth("(bps)"));
+            mc.fontRenderer.drawStringWithShadow("(bps)", this.getX(), this.getY(), 0xFFAAAAAA);
+        }
     }
 
 }

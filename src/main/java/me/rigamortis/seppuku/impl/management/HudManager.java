@@ -33,20 +33,23 @@ public final class HudManager {
     private final FirstLaunchComponent firstLaunchComponent;
 
     public HudManager() {
-        final ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
+        final ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
 
-        final AnchorPoint TOP_LEFT = new AnchorPoint(2, 2, AnchorPoint.Point.TOP_LEFT);
-        final AnchorPoint TOP_RIGHT = new AnchorPoint(res.getScaledWidth() - 2, 2, AnchorPoint.Point.TOP_RIGHT);
-        final AnchorPoint BOTTOM_LEFT = new AnchorPoint(2, res.getScaledHeight() - 2, AnchorPoint.Point.BOTTOM_LEFT);
-        final AnchorPoint BOTTOM_RIGHT = new AnchorPoint(res.getScaledWidth() - 2, res.getScaledHeight() - 2, AnchorPoint.Point.BOTTOM_RIGHT);
-        final AnchorPoint TOP_CENTER = new AnchorPoint(res.getScaledWidth() / 2.0f, 2, AnchorPoint.Point.TOP_CENTER);
-        final AnchorPoint BOTTOM_CENTER = new AnchorPoint(res.getScaledWidth() / 2.0f, res.getScaledHeight() - 2, AnchorPoint.Point.BOTTOM_CENTER);
+        final AnchorPoint TOP_LEFT = new AnchorPoint(AnchorPoint.Point.TOP_LEFT);
+        final AnchorPoint TOP_RIGHT = new AnchorPoint(AnchorPoint.Point.TOP_RIGHT);
+        final AnchorPoint BOTTOM_LEFT = new AnchorPoint(AnchorPoint.Point.BOTTOM_LEFT);
+        final AnchorPoint BOTTOM_RIGHT = new AnchorPoint(AnchorPoint.Point.BOTTOM_RIGHT);
+        final AnchorPoint TOP_CENTER = new AnchorPoint(AnchorPoint.Point.TOP_CENTER);
+        final AnchorPoint BOTTOM_CENTER = new AnchorPoint(AnchorPoint.Point.BOTTOM_CENTER);
         this.anchorPoints.add(TOP_LEFT);
         this.anchorPoints.add(TOP_RIGHT);
         this.anchorPoints.add(BOTTOM_LEFT);
         this.anchorPoints.add(BOTTOM_RIGHT);
         this.anchorPoints.add(TOP_CENTER);
         this.anchorPoints.add(BOTTOM_CENTER);
+
+        for (AnchorPoint anchorPoint : this.anchorPoints)
+            anchorPoint.updatePosition(sr);
 
         int moduleListXOffset = 0;
         int moduleListYOffset = 0;
@@ -55,7 +58,7 @@ public final class HudManager {
                 continue;
 
             final ModuleListComponent moduleList = new ModuleListComponent(type);
-            if ((moduleList.getX() + moduleListXOffset) > res.getScaledWidth()) {
+            if ((moduleList.getX() + moduleListXOffset) > sr.getScaledWidth()) {
                 moduleListXOffset = 0;
                 moduleListYOffset += moduleList.getH() + 4 /* gap above and below each column */;
             }
@@ -176,11 +179,8 @@ public final class HudManager {
                 if (clazz != null) {
                     if (HudComponent.class.isAssignableFrom(clazz)) {
                         final HudComponent component = (HudComponent) clazz.newInstance();
-
-                        if (component != null) {
-                            this.componentList.add(component);
-                            Seppuku.INSTANCE.getLogger().log(Level.INFO, "Found external hud component " + component.getName());
-                        }
+                        this.componentList.add(component);
+                        Seppuku.INSTANCE.getLogger().log(Level.INFO, "Found external hud component " + component.getName());
                     }
                 }
             }

@@ -8,7 +8,6 @@ import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.input.Mouse;
@@ -28,7 +27,7 @@ public final class HubComponent extends ResizableHudComponent {
     private final int BORDER = 2;
     private final int TEXT_GAP = 1;
     private final int TEXTURE_SIZE = 8;
-    private final int TITLE_BAR_HEIGHT = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1;
+    private final int TITLE_BAR_HEIGHT = mc.fontRenderer.FONT_HEIGHT + 1;
 
     private final Texture texture;
 
@@ -40,15 +39,13 @@ public final class HubComponent extends ResizableHudComponent {
         this.setSnappable(false);
         this.setW(100);
         this.setH(120);
-        this.setX((Minecraft.getMinecraft().displayWidth / 2.0f) - (this.getW() / 2));
-        this.setY((Minecraft.getMinecraft().displayHeight / 2.0f) - (this.getH() / 2));
+        this.setX((mc.displayWidth / 2.0f) - (this.getW() / 2));
+        this.setY((mc.displayHeight / 2.0f) - (this.getH() / 2));
     }
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
-
-        final Minecraft mc = Minecraft.getMinecraft();
 
         if (!(mc.currentScreen instanceof GuiHudEditor))
             return;
@@ -117,7 +114,7 @@ public final class HubComponent extends ResizableHudComponent {
         for (HudComponent component : Seppuku.INSTANCE.getHudManager().getComponentList()) {
             if (component != this) {
                 RenderUtil.drawRect(this.getX() + BORDER + TEXT_GAP, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 2, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll, component.isVisible() ? 0x45002e00 : 0x452e0000);
-                final boolean insideComponent = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1 + offsetY - this.scroll - mc.fontRenderer.FONT_HEIGHT + 1) && mouseY <= (this.getY() + BORDER + (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT) + 1 + offsetY - this.scroll);
+                final boolean insideComponent = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + mc.fontRenderer.FONT_HEIGHT + 1 + offsetY - this.scroll - mc.fontRenderer.FONT_HEIGHT + 1) && mouseY <= (this.getY() + BORDER + (mc.fontRenderer.FONT_HEIGHT) + 1 + offsetY - this.scroll);
                 if (insideComponent) {
                     RenderUtil.drawGradientRect(this.getX() + BORDER + TEXT_GAP, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 2, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll, 0x30909090, 0x00101010);
                 }
@@ -146,12 +143,12 @@ public final class HubComponent extends ResizableHudComponent {
 
             for (HudComponent component : Seppuku.INSTANCE.getHudManager().getComponentList()) {
                 if (component != this) {
-                    final boolean insideComponent = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1 + offsetY - this.scroll) && mouseY <= (this.getY() + BORDER + (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT * 2) + 1 + offsetY - this.scroll);
+                    final boolean insideComponent = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + mc.fontRenderer.FONT_HEIGHT + 1 + offsetY - this.scroll) && mouseY <= (this.getY() + BORDER + (mc.fontRenderer.FONT_HEIGHT * 2) + 1 + offsetY - this.scroll);
                     if (insideComponent) {
                         component.setVisible(!component.isVisible());
                         Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventHubComponentClick(component.getName(), component.isVisible()));
                     }
-                    offsetY += Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + TEXT_GAP;
+                    offsetY += mc.fontRenderer.FONT_HEIGHT + TEXT_GAP;
                 }
             }
 

@@ -1,7 +1,6 @@
 package me.rigamortis.seppuku.impl.gui.hud.component;
 
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
 
 /**
@@ -12,27 +11,26 @@ public final class PingComponent extends DraggableHudComponent {
 
     public PingComponent() {
         super("Ping");
+        this.setH(mc.fontRenderer.FONT_HEIGHT);
     }
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
 
-        final Minecraft mc = Minecraft.getMinecraft();
+        if (mc.world == null || mc.player == null) {
+            this.setW(mc.fontRenderer.getStringWidth("(ping)"));
+            mc.fontRenderer.drawStringWithShadow("(ping)", this.getX(), this.getY(), 0xFFAAAAAA);
+            return;
+        }
 
-        if (mc.world == null || mc.player == null || mc.player.getUniqueID() == null)
+        if (mc.player.connection == null || mc.getCurrentServerData() == null)
             return;
 
         final NetworkPlayerInfo playerInfo = mc.player.connection.getPlayerInfo(mc.player.getUniqueID());
+        final String ping = "Ping: " + playerInfo.getResponseTime() + "ms";
 
-        if (playerInfo == null)
-            return;
-
-        final String ping = "MS: " + playerInfo.getResponseTime();
-
-        this.setW(Minecraft.getMinecraft().fontRenderer.getStringWidth(ping));
-        this.setH(Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT);
-
-        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(ping, this.getX(), this.getY(), -1);
+        this.setW(mc.fontRenderer.getStringWidth(ping));
+        mc.fontRenderer.drawStringWithShadow(ping, this.getX(), this.getY(), -1);
     }
 }

@@ -10,7 +10,6 @@ import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
 import me.rigamortis.seppuku.impl.module.hidden.ArrayListModule;
 import me.rigamortis.seppuku.impl.module.render.HudModule;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
@@ -50,8 +49,7 @@ public final class EnabledModsComponent extends DraggableHudComponent {
         super.render(mouseX, mouseY, partialTicks);
 
         final List<Module> mods = new ArrayList<>();
-        final Minecraft mc = Minecraft.getMinecraft();
-        final ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
+        final ScaledResolution res = new ScaledResolution(mc);
         boolean isInHudEditor = mc.currentScreen instanceof GuiHudEditor;
 
         for (Module mod : Seppuku.INSTANCE.getModuleManager().getModuleList()) {
@@ -103,7 +101,7 @@ public final class EnabledModsComponent extends DraggableHudComponent {
 
                 int color = 0;
 
-                if (RAINBOW) {
+                if (RAINBOW && mc.player != null) {
                     Color rainbow = new Color(Color.HSBtoRGB((float) (mc.player.ticksExisted / (100.0D - RAINBOW_HUE_SPEED) + Math.sin(hueDifference / (100.0D - RAINBOW_HUE_SPEED * Math.PI / 2.0D))) % 1.0F, RAINBOW_SATURATION, RAINBOW_BRIGHTNESS));
                     color = (new Color(rainbow.getRed(), rainbow.getGreen(), rainbow.getBlue(), 255)).getRGB();
                 } else {

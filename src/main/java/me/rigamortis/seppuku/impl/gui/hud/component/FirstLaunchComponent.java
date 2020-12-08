@@ -5,7 +5,6 @@ import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.impl.module.render.HudModule;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextFormatting;
 
 /**
@@ -13,7 +12,7 @@ import net.minecraft.util.text.TextFormatting;
  */
 public final class FirstLaunchComponent extends DraggableHudComponent {
 
-    private Module hudModule;
+    private final Module hudModule;
 
     private String textData;
 
@@ -37,8 +36,6 @@ public final class FirstLaunchComponent extends DraggableHudComponent {
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
-
-        final Minecraft mc = Minecraft.getMinecraft();
 
         // Background
         RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x99202020);

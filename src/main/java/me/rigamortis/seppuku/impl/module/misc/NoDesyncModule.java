@@ -21,8 +21,8 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class NoDesyncModule extends Module {
 
-    public final Value<Boolean> crystals = new Value<Boolean>("Crystals", new String[]{"Crystal", "c"}, "Attempts to fix crystal de-sync.", true);
-    public final Value<Boolean> destroyedBlocks = new Value<Boolean>("Blocks", new String[]{"DestroyedBlocks", "b"}, "Attempts to fix server->client block de-sync.", false);
+    public final Value<Boolean> crystals = new Value<Boolean>("Crystals", new String[]{"Crystal", "c"}, "Attempts to fix crystal de-sync (could be buggy).", false);
+    public final Value<Boolean> destroyedBlocks = new Value<Boolean>("Blocks", new String[]{"DestroyedBlocks", "b"}, "Attempts to fix server->client block de-sync.", true);
 
     private boolean destroy;
     private BlockPos pos;

@@ -30,7 +30,7 @@ public final class StorageAlertModule extends Module {
     }
 
     public StorageAlertModule() {
-        super("StorageAlert", new String[]{"StorageAlerts"}, "Alerts you how many storage blocks are in a chunk when it's loaded", "NONE", -1, ModuleType.MISC);
+        super("StorageAlert", new String[]{"StorageAlerts", "ChestAlert"}, "Alerts you how many storage blocks are in a chunk when it's loaded", "NONE", -1, ModuleType.MISC);
     }
 
     @Listener

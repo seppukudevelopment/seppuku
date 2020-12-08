@@ -4,6 +4,7 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.render.*;
 import me.rigamortis.seppuku.api.event.world.EventLightUpdate;
+import me.rigamortis.seppuku.api.event.world.EventSpawnParticle;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
@@ -16,6 +17,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.network.play.server.SPacketParticles;
 import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.network.play.server.SPacketSpawnMob;
 import net.minecraft.tileentity.TileEntity;
@@ -37,6 +39,7 @@ public final class NoLagModule extends Module {
     public final Value<Boolean> pistons = new Value<Boolean>("Pistons", new String[]{"Piston", "p"}, "Choose to enable the piston lag fix. Disables pistons from rendering.", false);
     public final Value<Boolean> slimes = new Value<Boolean>("Slimes", new String[]{"Slime", "sl"}, "Choose to enable the slime lag fix. Disables slimes from spawning.", false);
     public final Value<Boolean> items = new Value<Boolean>("Items", new String[]{"Item", "i"}, "Disables the rendering of items.", false);
+    public final Value<Boolean> particles = new Value<Boolean>("Particles", new String[]{"Part", "par"}, "Disables the spawning of all particles.", false);
     public final Value<Boolean> sky = new Value<Boolean>("Sky", new String[]{"Skies", "ski"}, "Disables the rendering of the sky.", false);
     public final Value<Boolean> names = new Value<Boolean>("Names", new String[]{"Name", "n"}, "Disables the rendering of vanilla name-tags.", false);
     public final Value<Boolean> withers = new Value<Boolean>("Withers", new String[]{"Wither", "w"}, "Disables the rendering of withers.", false);
@@ -80,7 +83,6 @@ public final class NoLagModule extends Module {
         }
     }
 
-
     @Listener
     public void renderWorld(EventRender3D event) {
         final Minecraft mc = Minecraft.getMinecraft();
@@ -91,6 +93,13 @@ public final class NoLagModule extends Module {
                     sign.signText = new ITextComponent[]{new TextComponentString(""), new TextComponentString(""), new TextComponentString(""), new TextComponentString("")};
                 }
             }
+        }
+    }
+
+    @Listener
+    public void onSpawnParticle(EventSpawnParticle event) {
+        if (this.particles.getValue()) {
+            event.setCanceled(true);
         }
     }
 

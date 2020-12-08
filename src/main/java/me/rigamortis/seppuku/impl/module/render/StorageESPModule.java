@@ -39,11 +39,10 @@ public final class StorageESPModule extends Module {
 
     @Listener
     public void render2D(EventRender2D event) {
-        final Minecraft mc = Minecraft.getMinecraft();
-
         if (this.mode.getValue() == Mode.THREE_D && !this.nametag.getValue()) // if 3D and names are off, return
             return;
 
+        final Minecraft mc = Minecraft.getMinecraft();
         for (TileEntity te : mc.world.loadedTileEntityList) {
             if (te != null) {
                 if (this.isTileStorage(te)) {
@@ -78,7 +77,9 @@ public final class StorageESPModule extends Module {
                     if (this.isTileStorage(te)) {
                         final AxisAlignedBB bb = this.boundingBoxForEnt(te);
                         if (bb != null) {
-                            camera.setPosition(mc.getRenderViewEntity().posX, mc.getRenderViewEntity().posY, mc.getRenderViewEntity().posZ);
+                            RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
+                            RenderUtil.drawBoundingBox(bb, 1.5f, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
+                            /*camera.setPosition(mc.getRenderViewEntity().posX, mc.getRenderViewEntity().posY, mc.getRenderViewEntity().posZ);
 
                             if (camera.isBoundingBoxInFrustum(new AxisAlignedBB(bb.minX + mc.getRenderManager().viewerPosX,
                                     bb.minY + mc.getRenderManager().viewerPosY,
@@ -88,7 +89,7 @@ public final class StorageESPModule extends Module {
                                     bb.maxZ + mc.getRenderManager().viewerPosZ))) {
                                 RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
                                 RenderUtil.drawBoundingBox(bb, 1.5f, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
-                            }
+                            }*/
                         }
                     }
                 }
@@ -100,10 +101,10 @@ public final class StorageESPModule extends Module {
         if (te instanceof TileEntityChest) {
             return true;
         }
-        if (te instanceof TileEntityDispenser) {
+        if (te instanceof TileEntityDropper) {
             return true;
         }
-        if (te instanceof TileEntityDropper) {
+        if (te instanceof TileEntityDispenser) {
             return true;
         }
         if (te instanceof TileEntityFurnace) {
@@ -148,7 +149,7 @@ public final class StorageESPModule extends Module {
                             te.getPos().getX() + 0.9375d - mc.getRenderManager().viewerPosX,
                             te.getPos().getY() + 0.875d - mc.getRenderManager().viewerPosY,
                             te.getPos().getZ() + 0.9375d + 1 - mc.getRenderManager().viewerPosZ);
-                } else if (chest.adjacentChestXPos == null && chest.adjacentChestZPos == null && chest.adjacentChestZNeg == null && chest.adjacentChestXNeg == null) {
+                } else if (chest.adjacentChestXPos == null && chest.adjacentChestZNeg == null) {
                     return new AxisAlignedBB(
                             te.getPos().getX() + 0.0625d - mc.getRenderManager().viewerPosX,
                             te.getPos().getY() - mc.getRenderManager().viewerPosY,
@@ -187,10 +188,10 @@ public final class StorageESPModule extends Module {
         if (te instanceof TileEntityChest) {
             return 0xFFFFC417;
         }
-        if (te instanceof TileEntityDispenser) {
+        if (te instanceof TileEntityDropper) {
             return 0xFF4E4E4E;
         }
-        if (te instanceof TileEntityDropper) {
+        if (te instanceof TileEntityDispenser) {
             return 0xFF4E4E4E;
         }
         if (te instanceof TileEntityHopper) {
@@ -207,7 +208,7 @@ public final class StorageESPModule extends Module {
         }
         if (te instanceof TileEntityShulkerBox) {
             final TileEntityShulkerBox shulkerBox = (TileEntityShulkerBox) te;
-            return (255 << 24) | shulkerBox.getColor().getColorValue() & 0xFFFFFFFF;
+            return (255 << 24) | shulkerBox.getColor().getColorValue();
         }
         return 0xFFFFFFFF;
     }
@@ -242,10 +243,6 @@ public final class StorageESPModule extends Module {
 
         for (Vec3d vec : corners) {
             final GLUProjection.Projection projection = GLUProjection.getInstance().project(vec.x, vec.y, vec.z, GLUProjection.ClampMode.NONE, true);
-
-            if (projection == null) {
-                return null;
-            }
 
             x = Math.max(x, (float) projection.getX());
             y = Math.max(y, (float) projection.getY());

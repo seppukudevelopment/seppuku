@@ -123,6 +123,9 @@ public final class ScaffoldModule extends Module {
     private int getBlockCount() {
         int count = 0;
 
+        if (Minecraft.getMinecraft().player == null)
+            return count;
+
         for (int i = 0; i < 36; i++) {
             final ItemStack stack = Minecraft.getMinecraft().player.inventory.getStackInSlot(i);
             if (canPlace(stack) && stack.getItem() instanceof ItemBlock) {

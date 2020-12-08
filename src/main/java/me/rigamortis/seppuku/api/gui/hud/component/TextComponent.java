@@ -106,12 +106,6 @@ public class TextComponent extends HudComponent {
                         this.displayValue += typedChar;
                     }
                     break;
-                case Keyboard.KEY_UNDERLINE:
-                case Keyboard.KEY_MINUS:
-                    if (!this.digitOnly) {
-                        this.displayValue += typedChar;
-                    }
-                    break;
                 default:
                     break;
             }

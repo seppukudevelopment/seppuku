@@ -28,20 +28,28 @@ public abstract class MainMenuButton {
         this.h = 18;
     }
 
+    public MainMenuButton(float x, float y, float w, float h, String text) {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+        this.text = text;
+    }
+
     public void render(int x, int y, float partialTicks) {
         if (this.clicked) {
             RenderUtil.drawRect(this.x, this.y, this.x + this.w, this.y + this.h, 0x66111111);
             RenderUtil.drawGradientRect(this.x + 1, this.y + 1, this.x + this.w - 1, this.y + this.h - 1, 0xAA232323, 0xAA303030);
-            Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(this.text, this.x + (this.w / 2) - (Minecraft.getMinecraft().fontRenderer.getStringWidth(this.text) / 2), this.y + (this.h / 2) - (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2), 0xFF9900EE);
+            Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(this.text, this.x + (this.w / 2) - (Minecraft.getMinecraft().fontRenderer.getStringWidth(this.text) / 2.0f), this.y + (this.h / 2) - (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2.0f), 0xFF9900EE);
         } else {
             if (this.inside(x, y)) {
                 RenderUtil.drawRect(this.x, this.y, this.x + this.w, this.y + this.h, 0x66111111);
                 RenderUtil.drawGradientRect(this.x + 1, this.y + 1, this.x + this.w - 1, this.y + this.h - 1, 0xAA303030, 0xAA232323);
-                Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(this.text, this.x + (this.w / 2) - (Minecraft.getMinecraft().fontRenderer.getStringWidth(this.text) / 2), this.y + (this.h / 2) - (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2), -1);
+                Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(this.text, this.x + (this.w / 2) - (Minecraft.getMinecraft().fontRenderer.getStringWidth(this.text) / 2.0f), this.y + (this.h / 2) - (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2.0f), -1);
             } else {
                 RenderUtil.drawRect(this.x, this.y, this.x + this.w, this.y + this.h, 0x66111111);
                 RenderUtil.drawGradientRect(this.x + 1, this.y + 1, this.x + this.w - 1, this.y + this.h - 1, 0xAA303030, 0xAA232323);
-                Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(this.text, this.x + (this.w / 2) - (Minecraft.getMinecraft().fontRenderer.getStringWidth(this.text) / 2), this.y + (this.h / 2) - (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2), 0xFFAAAAAA);
+                Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(this.text, this.x + (this.w / 2) - (Minecraft.getMinecraft().fontRenderer.getStringWidth(this.text) / 2.0f), this.y + (this.h / 2) - (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2.0f), 0xFFAAAAAA);
             }
         }
     }

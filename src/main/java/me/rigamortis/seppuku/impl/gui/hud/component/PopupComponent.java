@@ -2,7 +2,6 @@ package me.rigamortis.seppuku.impl.gui.hud.component;
 
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.util.RenderUtil;
-import net.minecraft.client.Minecraft;
 
 /**
  * created by noil on 11/4/19 at 7:54 AM
@@ -19,19 +18,18 @@ public class PopupComponent extends DraggableHudComponent {
         this.textData = textData;
         this.setW(100);
         this.setH(50);
-        this.setX((Minecraft.getMinecraft().displayWidth / 2) - (this.getW() / 2));
-        this.setY((Minecraft.getMinecraft().displayHeight / 2) - (this.getH() / 2));
+        this.setX((mc.displayWidth / 2.0f) - (this.getW() / 2));
+        this.setY((mc.displayHeight / 2.0f) - (this.getH() / 2));
     }
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
 
-        final Minecraft mc = Minecraft.getMinecraft();
-
         // background
         RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0xFF202020);
 
+        // text data
         mc.fontRenderer.drawSplitString(this.textData, (int) this.getX() + 2, (int) this.getY() + 2, 200, 0xFFFFFFFF);
 
         // close button

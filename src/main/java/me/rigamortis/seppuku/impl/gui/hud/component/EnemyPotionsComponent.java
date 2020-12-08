@@ -23,8 +23,6 @@ public final class EnemyPotionsComponent extends DraggableHudComponent {
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
 
-        final Minecraft mc = Minecraft.getMinecraft();
-
         int effectCount = 0;
         float xOffset = 0;
         float yOffset = 0;

@@ -10,7 +10,6 @@ import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import me.rigamortis.seppuku.impl.module.ui.HudEditorModule;
-import net.minecraft.client.Minecraft;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.util.ArrayList;
@@ -53,9 +52,6 @@ public class TrayComponent extends DraggableHudComponent {
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
-
-        // store the minecraft instance in a local variable
-        final Minecraft mc = Minecraft.getMinecraft();
 
         // ensure we are in the hud editor
         boolean isInHudEditor = mc.currentScreen instanceof GuiHudEditor;
