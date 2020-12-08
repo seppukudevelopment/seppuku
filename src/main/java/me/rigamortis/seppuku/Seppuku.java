@@ -4,6 +4,7 @@ import me.rigamortis.seppuku.api.event.client.EventLoad;
 import me.rigamortis.seppuku.api.event.client.EventReload;
 import me.rigamortis.seppuku.api.event.client.EventUnload;
 import me.rigamortis.seppuku.api.logging.SeppukuFormatter;
+import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import me.rigamortis.seppuku.impl.gui.menu.GuiSeppukuMainMenu;
 import me.rigamortis.seppuku.impl.management.*;
 import net.minecraft.client.Minecraft;
@@ -67,6 +68,8 @@ public final class Seppuku {
 
     private NotificationManager notificationManager;
 
+    private GuiHudEditor hudEditor;
+
     private GuiSeppukuMainMenu seppukuMainMenu;
 
     private CameraManager cameraManager;
@@ -96,6 +99,7 @@ public final class Seppuku {
         this.commandManager = new CommandManager();
         this.cameraManager = new CameraManager();
         this.hudManager = new HudManager();
+        this.hudEditor = new GuiHudEditor();
         this.seppukuMainMenu = new GuiSeppukuMainMenu();
 
         this.configManager.init(); // Keep last, so we load configs after everything else inits
@@ -149,6 +153,7 @@ public final class Seppuku {
         this.hudManager.unload();
         this.animationManager.unload();
         this.notificationManager.unload();
+        this.hudEditor.unload();
         this.seppukuMainMenu.unload();
         this.cameraManager.unload();
 
@@ -340,6 +345,13 @@ public final class Seppuku {
             this.notificationManager = new NotificationManager();
         }
         return this.notificationManager;
+    }
+
+    public GuiHudEditor getHudEditor() {
+        if (this.hudEditor == null) {
+            this.hudEditor = new GuiHudEditor();
+        }
+        return this.hudEditor;
     }
 
     public GuiSeppukuMainMenu getSeppukuMainMenu() {

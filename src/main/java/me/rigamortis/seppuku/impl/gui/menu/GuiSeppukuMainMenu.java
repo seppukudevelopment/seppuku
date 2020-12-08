@@ -49,7 +49,11 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
 
         final GuiSeppukuMainMenu menu = this;
 
-        final ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
+        final Minecraft mc = Minecraft.getMinecraft();
+        final ScaledResolution res = new ScaledResolution(mc);
+
+        // resize the seppuku hud editor with the size of the main menu
+        Seppuku.INSTANCE.getHudEditor().onResize(mc, res.getScaledWidth(), res.getScaledHeight());
 
         float height = (res.getScaledHeight() / 4.0f) + mc.fontRenderer.FONT_HEIGHT / 2.0f + 18;
 
@@ -111,7 +115,7 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
         this.hudEditor = new MainMenuButton(res.getScaledWidth() / 2.0f + 1, height, 69, 18, ChatFormatting.GRAY + "Hud Editor") {
             @Override
             public void action() {
-                mc.displayGuiScreen(new GuiHudEditor());
+                mc.displayGuiScreen(Seppuku.INSTANCE.getHudEditor());
             }
         };
 
@@ -132,7 +136,6 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
                 mc.shutdown();
             }
         };
-
     }
 
     @Listener
@@ -152,10 +155,6 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
                 Minecraft.getMinecraft().displayGuiScreen(this);
             }
         }
-    }
-
-    public void unload() {
-        Seppuku.INSTANCE.getEventManager().removeEventListener(this);
     }
 
     @Override
@@ -230,6 +229,14 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
         this.quit.mouseRelease(mouseX, mouseY, state);
     }
 
+    @Override
+    public void onResize(Minecraft mcIn, int w, int h) {
+        super.onResize(mcIn, w, h);
+
+        // resize the seppuku hud editor with the size of the main menu
+        Seppuku.INSTANCE.getHudEditor().onResize(mcIn, w, h);
+    }
+
     private void drawSplashText() {
         final Minecraft mc = Minecraft.getMinecraft();
         final ScaledResolution res = new ScaledResolution(mc);
@@ -238,4 +245,7 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
         this.drawString(this.fontRenderer, spash, 2, res.getScaledHeight() - mc.fontRenderer.FONT_HEIGHT, -1);
     }
 
+    public void unload() {
+        Seppuku.INSTANCE.getEventManager().removeEventListener(this);
+    }
 }

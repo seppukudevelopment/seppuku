@@ -185,4 +185,8 @@ public final class GuiHudEditor extends GuiScreen {
         // go back to previous screen
         super.onGuiClosed();
     }
+
+    public void unload() {
+        // empty
+    }
 }
