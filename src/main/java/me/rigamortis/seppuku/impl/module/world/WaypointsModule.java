@@ -24,7 +24,7 @@ import java.text.SimpleDateFormat;
 public final class WaypointsModule extends Module {
 
     public final Value<Boolean> tracers = new Value<Boolean>("Tracers", new String[]{"Tracer", "Trace"}, "Draws a line from the center of the screen to each waypoint.", false);
-    public final Value<Boolean> death = new Value<Boolean>("Death", new String[]{"deathpoint", "d"}, "Creates a waypoint on death.", false);
+    public final Value<Boolean> death = new Value<Boolean>("Death", new String[]{"deathpoint", "d"}, "Creates a waypoint on death.", true);
 
     public final Value<Float> width = new Value<Float>("Width", new String[]{"Wid"}, "Pixel width of each tracer line.", 0.5f, 0.0f, 5.0f, 0.1f);
 
@@ -65,7 +65,13 @@ public final class WaypointsModule extends Module {
 
     @Listener
     public void onSendPacket(EventSendPacket event) {
-        if (event.getStage() == EventStageable.EventStage.PRE && event.getPacket() instanceof CPacketClientStatus) {
+        if (event.getStage() != EventStageable.EventStage.PRE)
+            return;
+
+        if (event.getPacket() instanceof CPacketClientStatus) {
+            if (!this.death.getValue())
+                return;
+
             if (((CPacketClientStatus) event.getPacket()).getStatus().equals(CPacketClientStatus.State.PERFORM_RESPAWN)) {
                 final String host = Minecraft.getMinecraft().getCurrentServerData() != null ? Minecraft.getMinecraft().getCurrentServerData().serverIP : "localhost";
                 Seppuku.INSTANCE.getWaypointManager().getWaypointDataList().add(new WaypointData(host, "death-" + new SimpleDateFormat("yyyy-MM-dd@HH:mm:ss").format(new Timestamp(System.currentTimeMillis())), Minecraft.getMinecraft().player.dimension, Minecraft.getMinecraft().player.posX, Minecraft.getMinecraft().player.posY + Minecraft.getMinecraft().player.getEyeHeight(), Minecraft.getMinecraft().player.posZ));
