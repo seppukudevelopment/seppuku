@@ -158,6 +158,7 @@ public final class ModuleManager {
         add(new NoEffectsModule());
         add(new NoEntityTraceModule());
         add(new MultitaskModule());
+        add(new InfEnderChestModule());
 
         // p2w experience
         if (Seppuku.INSTANCE.getCapeManager().hasCape())

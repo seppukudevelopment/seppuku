@@ -68,6 +68,7 @@ public final class CommandManager {
         this.commandList.add(new SkullCommand());
         this.commandList.add(new GiveCommand());
         this.commandList.add(new CalcStrongholdCommand());
+        this.commandList.add(new LastInvCommand());
 
         //create commands for every value within every module
         loadValueCommands();
