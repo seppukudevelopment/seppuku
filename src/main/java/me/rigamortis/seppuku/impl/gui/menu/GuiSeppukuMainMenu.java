@@ -93,7 +93,7 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
 
         height += 20;
 
-        this.donate = new MainMenuButton(res.getScaledWidth() / 2.0f - 70, height, 69, 18, ChatFormatting.GRAY + "Donate!") {
+        this.donate = new MainMenuButton(res.getScaledWidth() / 2.0f - 70, height, 69, 18, ChatFormatting.YELLOW + "Donate") {
             @Override
             public void action() {
                 try {
