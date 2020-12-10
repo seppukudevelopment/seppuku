@@ -186,4 +186,4 @@ hs_err_pid*
 # End of https://www.gitignore.io/api/java,eclipse,forgegradle,intellij+all
 /build/
 /.gradle/
-src/main/java/me/rigamortis/seppuku/impl/module/player/PacketCancellerModule.java
+

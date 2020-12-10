@@ -1,4 +1,4 @@
-package me.rigamortis.seppuku.impl.module.player;
+package me.rigamortis.seppuku.impl.module.misc;
 
 import me.rigamortis.seppuku.api.module.Module;
 import net.minecraft.client.Minecraft;
@@ -12,11 +12,19 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
+/*
+Author sn01
+11/12/2020
+Atlas module adapted for Seppuku
+ */
+
+
+
 public final class MapSpammer extends Module {
 
 
     public MapSpammer() {
-    super("MapSpam", new String[]{"bypassspam"}, "Spam maps on 9b9t.com", "NONE", -1, ModuleType.MISC);
+    super("MapSpam", new String[]{"MapBypass"}, "Spam maps on 9b9t.com", "NONE", -1, ModuleType.MISC);
     }
 
 
