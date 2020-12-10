@@ -5,7 +5,11 @@ import me.rigamortis.seppuku.api.command.Command;
 import me.rigamortis.seppuku.api.util.StringUtil;
 import me.rigamortis.seppuku.impl.module.render.XrayModule;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.event.HoverEvent;
 
 /**
  * Author Seth
@@ -13,9 +17,10 @@ import net.minecraft.init.Blocks;
  */
 public final class XrayCommand extends Command {
 
-    private String[] addAlias = new String[]{"Add", "A"};
-    private String[] removeAlias = new String[]{"Remove", "Rem", "R", "Delete", "Del", "D"};
-    private String[] clearAlias = new String[]{"Clear", "C"};
+    private final String[] addAlias = new String[]{"Add", "A"};
+    private final String[] removeAlias = new String[]{"Remove", "Rem", "R", "Delete", "Del", "D"};
+    private final String[] listAlias = new String[]{"List", "Lst"};
+    private final String[] clearAlias = new String[]{"Clear", "C"};
 
     public XrayCommand() {
         super("Xray", new String[]{"JadeVision", "Jade"}, "Allows you to change what blocks are visible on xray",
@@ -23,6 +28,7 @@ public final class XrayCommand extends Command {
                         "Xray Add <ID>\n" +
                         "Xray Remove <Block_Name>\n" +
                         "Xray Remove <ID>\n" +
+                        "Xray List\n" +
                         "Xray Clear");
     }
 
@@ -139,6 +145,25 @@ public final class XrayCommand extends Command {
                     } else {
                         Seppuku.INSTANCE.logChat("\247c" + split[2] + "\247f is not a valid block");
                     }
+                }
+            } else if (equals(listAlias, split[1])) {
+                if (!this.clamp(input, 2, 2)) {
+                    this.printUsage();
+                    return;
+                }
+
+                if (xray.getIds().size() > 0) {
+                    final TextComponentString msg = new TextComponentString("\247Xray IDs: ");
+
+                    for (int i : xray.getIds()) {
+                        msg.appendSibling(new TextComponentString("\2477[\247a" + i + "\2477] ")
+                                .setStyle(new Style()
+                                        .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(Block.getBlockById(i).getLocalizedName())))));
+                    }
+
+                    Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(msg);
+                } else {
+                    Seppuku.INSTANCE.logChat("You don't have any search ids");
                 }
             } else if (equals(clearAlias, split[1])) {
                 if (!this.clamp(input, 2, 2)) {

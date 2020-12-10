@@ -1,8 +1,8 @@
 package me.rigamortis.seppuku.impl.patch;
 
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.event.player.EventGetMouseOver;
 import me.rigamortis.seppuku.api.event.player.EventFovModifier;
+import me.rigamortis.seppuku.api.event.player.EventGetMouseOver;
 import me.rigamortis.seppuku.api.event.render.EventHurtCamEffect;
 import me.rigamortis.seppuku.api.event.render.EventOrientCamera;
 import me.rigamortis.seppuku.api.event.render.EventRender2D;

@@ -10,7 +10,6 @@ import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
 import me.rigamortis.seppuku.impl.gui.hud.component.*;
 import me.rigamortis.seppuku.impl.gui.hud.component.module.ModuleListComponent;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;

@@ -1,6 +1,5 @@
 package me.rigamortis.seppuku.impl.management;
 
-import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.friend.Friend;
 import me.rigamortis.seppuku.api.util.StringUtil;
 import net.minecraft.entity.Entity;
@@ -33,7 +32,7 @@ public final class FriendManager {
         final Friend friend = new Friend(name, alias);
         this.friendList.add(friend);
 
-        Seppuku.INSTANCE.getConfigManager().saveAll();
+        //Seppuku.INSTANCE.getConfigManager().saveAll();
 
         if (grabUUID) {
             try {
@@ -48,7 +47,7 @@ public final class FriendManager {
                         final JSONObject obj = (JSONObject) JSONValue.parseWithException(json);
                         final String uuid = obj.get("id").toString();
                         friend.setUuid(uuid);
-                        Seppuku.INSTANCE.getConfigManager().saveAll();
+                        //Seppuku.INSTANCE.getConfigManager().saveAll();
                     } catch (ParseException e) {
                         e.printStackTrace();
                     } catch (MalformedURLException e) {

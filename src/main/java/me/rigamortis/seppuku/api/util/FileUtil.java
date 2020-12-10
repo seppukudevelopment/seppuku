@@ -54,8 +54,7 @@ public class FileUtil {
      * Creates a json file in a directory
      */
     public static File createJsonFile(File dir, String name) {
-        File file = new File(dir, name + ".json");
-        return file;
+        return new File(dir, name + ".json");
     }
 
     /**
@@ -80,7 +79,7 @@ public class FileUtil {
      */
     public static void saveJsonFile(File file, JsonObject jsonObject) {
         try {
-            file.createNewFile();
+            //file.createNewFile();
             FileWriter writer = new FileWriter(file);
             Throwable throwable = null;
             try {

@@ -31,7 +31,7 @@ public final class StorageESPModule extends Module {
     public final Value<Boolean> nametag = new Value<Boolean>("Nametag", new String[]{"Nametag", "Tag", "Tags", "Ntag", "name", "names"}, "Renders the name of the drawn storage object.", false);
     public final Value<Integer> opacity = new Value<Integer>("Opacity", new String[]{"Opacity", "Transparency", "Alpha"}, "Opacity of the rendered esp.", 128, 0, 255, 1);
 
-    private ICamera camera = new Frustum();
+    private final ICamera camera = new Frustum();
 
     public StorageESPModule() {
         super("Storage", new String[]{"StorageESP", "ChestFinder", "ChestESP"}, "Highlights different types of storage entities.", "NONE", -1, ModuleType.RENDER);
@@ -77,19 +77,21 @@ public final class StorageESPModule extends Module {
                     if (this.isTileStorage(te)) {
                         final AxisAlignedBB bb = this.boundingBoxForEnt(te);
                         if (bb != null) {
-                            RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
-                            RenderUtil.drawBoundingBox(bb, 1.5f, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
-                            /*camera.setPosition(mc.getRenderViewEntity().posX, mc.getRenderViewEntity().posY, mc.getRenderViewEntity().posZ);
+                            //RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
+                            //RenderUtil.drawBoundingBox(bb, 1.5f, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
+                            if (mc.getRenderViewEntity() != null) {
+                                camera.setPosition(mc.getRenderViewEntity().posX, mc.getRenderViewEntity().posY, mc.getRenderViewEntity().posZ);
 
-                            if (camera.isBoundingBoxInFrustum(new AxisAlignedBB(bb.minX + mc.getRenderManager().viewerPosX,
-                                    bb.minY + mc.getRenderManager().viewerPosY,
-                                    bb.minZ + mc.getRenderManager().viewerPosZ,
-                                    bb.maxX + mc.getRenderManager().viewerPosX,
-                                    bb.maxY + mc.getRenderManager().viewerPosY,
-                                    bb.maxZ + mc.getRenderManager().viewerPosZ))) {
-                                RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
-                                RenderUtil.drawBoundingBox(bb, 1.5f, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
-                            }*/
+                                if (camera.isBoundingBoxInFrustum(new AxisAlignedBB(bb.minX + mc.getRenderManager().viewerPosX,
+                                        bb.minY + mc.getRenderManager().viewerPosY,
+                                        bb.minZ + mc.getRenderManager().viewerPosZ,
+                                        bb.maxX + mc.getRenderManager().viewerPosX,
+                                        bb.maxY + mc.getRenderManager().viewerPosY,
+                                        bb.maxZ + mc.getRenderManager().viewerPosZ))) {
+                                    RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
+                                    RenderUtil.drawBoundingBox(bb, 1.5f, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
+                                }
+                            }
                         }
                     }
                 }

@@ -23,7 +23,7 @@ public final class HandSwapContext {
     }
 
     public void handleHandSwap(final boolean restore,
-                                final Minecraft minecraft) {
+                               final Minecraft minecraft) {
         minecraft.player.inventory.currentItem =
                 restore ? this.getOldSlot() : this.getNewSlot();
         minecraft.playerController.updateController();

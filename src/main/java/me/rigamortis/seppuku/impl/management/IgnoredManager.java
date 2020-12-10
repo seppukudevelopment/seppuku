@@ -1,6 +1,5 @@
 package me.rigamortis.seppuku.impl.management;
 
-import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.ignore.Ignored;
 
 import java.util.List;
@@ -16,8 +15,7 @@ public final class IgnoredManager {
 
     public void add(String name) {
         this.ignoredList.add(new Ignored(name));
-
-        Seppuku.INSTANCE.getConfigManager().saveAll();
+        //Seppuku.INSTANCE.getConfigManager().saveAll();
     }
 
     public Ignored find(String name) {

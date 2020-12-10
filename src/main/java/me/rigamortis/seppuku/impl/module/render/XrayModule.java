@@ -25,7 +25,6 @@ public final class XrayModule extends Module {
 
     public XrayModule() {
         super("Xray", new String[]{"JadeVision", "Jade"}, "Allows you to filter what the world renders", "NONE", -1, ModuleType.RENDER);
-        this.setHidden(true);
 
         if (Seppuku.INSTANCE.getConfigManager().isFirstLaunch())
             this.add("diamond_ore");
@@ -34,6 +33,7 @@ public final class XrayModule extends Module {
     @Override
     public void onEnable() {
         super.onEnable();
+
         final Minecraft mc = Minecraft.getMinecraft();
         lastGamma = mc.gameSettings.gammaSetting;
         lastAO = mc.gameSettings.ambientOcclusion;
@@ -45,6 +45,7 @@ public final class XrayModule extends Module {
     @Override
     public void onDisable() {
         super.onDisable();
+
         Minecraft.getMinecraft().gameSettings.gammaSetting = lastGamma;
         Minecraft.getMinecraft().gameSettings.ambientOcclusion = lastAO;
     }
@@ -52,6 +53,7 @@ public final class XrayModule extends Module {
     @Override
     public void onToggle() {
         super.onToggle();
+
         Minecraft.getMinecraft().renderGlobal.loadRenderers();
     }
 

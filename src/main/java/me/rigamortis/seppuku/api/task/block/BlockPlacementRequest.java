@@ -17,7 +17,7 @@ public final class BlockPlacementRequest {
     private final EnumFacing placeDirection;
 
     public BlockPlacementRequest(final BlockPos structurePosition,
-                     final EnumFacing placeDirection) {
+                                 final EnumFacing placeDirection) {
         this.structurePosition = structurePosition;
         this.placeDirection = placeDirection;
     }

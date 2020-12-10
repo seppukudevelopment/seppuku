@@ -246,7 +246,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         scroll -= 10;
                     }
                 } else { // not inside scroll bar zone
-                    Seppuku.INSTANCE.getConfigManager().saveAll();
+                    //Seppuku.INSTANCE.getConfigManager().saveAll();
                 }
             }
         }

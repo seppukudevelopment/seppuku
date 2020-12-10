@@ -34,8 +34,7 @@ public abstract class Configurable {
     }
 
     protected void saveJsonObjectToFile(JsonObject object) {
-        File newFile = FileUtil.recreateFile(this.getFile());
-        FileUtil.saveJsonFile(newFile, object);
+        FileUtil.saveJsonFile(FileUtil.recreateFile(this.getFile()), object);
     }
 
     protected JsonObject convertJsonObjectFromFile() {

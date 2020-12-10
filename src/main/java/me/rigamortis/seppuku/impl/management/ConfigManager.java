@@ -58,6 +58,7 @@ public final class ConfigManager {
 
         this.configurableList.add(new FriendConfig(configDir));
         this.configurableList.add(new XrayConfig(configDir));
+        this.configurableList.add(new SearchConfig(configDir));
         this.configurableList.add(new MacroConfig(configDir));
         this.configurableList.add(new WaypointsConfig(configDir));
         this.configurableList.add(new WorldConfig(configDir));
@@ -72,20 +73,16 @@ public final class ConfigManager {
     }
 
     public void saveAll() {
-        new Thread(() -> {
-            for (Configurable cfg : configurableList) {
-                cfg.onSave();
-            }
-        }).start();
+        for (Configurable cfg : configurableList) {
+            cfg.onSave();
+        }
         Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventSaveConfig());
     }
 
     public void loadAll() {
-        new Thread(() -> {
-            for (Configurable cfg : configurableList) {
-                cfg.onLoad();
-            }
-        }).start();
+        for (Configurable cfg : configurableList) {
+            cfg.onLoad();
+        }
         Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventLoadConfig());
     }
 

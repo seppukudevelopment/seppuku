@@ -3,7 +3,6 @@ package me.rigamortis.seppuku.impl.module.ui;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.Value;
-import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;

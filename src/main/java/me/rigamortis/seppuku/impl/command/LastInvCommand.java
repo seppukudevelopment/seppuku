@@ -29,8 +29,8 @@ public final class LastInvCommand extends Command {
     @Listener
     public void render(EventRender2D event) {
         final InfEnderChestModule mod = (InfEnderChestModule) Seppuku.INSTANCE.getModuleManager().find(InfEnderChestModule.class);
-        if(mod != null) {
-            if(mod.getScreen() != null) {
+        if (mod != null) {
+            if (mod.getScreen() != null) {
                 Minecraft.getMinecraft().displayGuiScreen(mod.getScreen());
                 Seppuku.INSTANCE.logChat("Opening the last inventory.");
             } else {

@@ -9,6 +9,7 @@ import me.rigamortis.seppuku.api.util.FileUtil;
 import me.rigamortis.seppuku.impl.module.render.XrayModule;
 
 import java.io.File;
+import java.util.Objects;
 
 /**
  * @author noil
@@ -18,7 +19,7 @@ public final class XrayConfig extends Configurable {
     private final XrayModule xrayModule;
 
     public XrayConfig(File dir) {
-        super(FileUtil.createJsonFile(dir, "Xray"));
+        super(FileUtil.createJsonFile(dir, "XrayIds"));
         this.xrayModule = (XrayModule) Seppuku.INSTANCE.getModuleManager().find("Xray");
     }
 
@@ -29,10 +30,16 @@ public final class XrayConfig extends Configurable {
         if (this.xrayModule == null)
             return;
 
-        final JsonArray xrayIdsJsonArray = this.getJsonObject().get("BlockIds").getAsJsonArray();
+        JsonArray xrayIdsJsonArray = null;
 
-        for (JsonElement jsonElement : xrayIdsJsonArray) {
-            this.xrayModule.add(jsonElement.getAsInt());
+        final JsonElement blockIds = this.getJsonObject().get("XrayBlockIds");
+        if (blockIds != null)
+            xrayIdsJsonArray = blockIds.getAsJsonArray();
+
+        if (xrayIdsJsonArray != null) {
+            for (JsonElement jsonElement : xrayIdsJsonArray) {
+                ((XrayModule) Objects.requireNonNull(Seppuku.INSTANCE.getModuleManager().find("Xray"))).add(jsonElement.getAsInt());
+            }
         }
     }
 
@@ -47,7 +54,7 @@ public final class XrayConfig extends Configurable {
         for (Integer i : this.xrayModule.getIds())
             xrayIdsJsonArray.add(i);
 
-        save.add("BlockIds", xrayIdsJsonArray);
+        save.add("XrayBlockIds", xrayIdsJsonArray);
 
         this.saveJsonObjectToFile(save);
     }

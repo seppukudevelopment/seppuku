@@ -17,7 +17,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.network.play.server.SPacketParticles;
 import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.network.play.server.SPacketSpawnMob;
 import net.minecraft.tileentity.TileEntity;

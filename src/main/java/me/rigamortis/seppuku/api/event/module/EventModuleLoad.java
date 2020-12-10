@@ -1,6 +1,7 @@
 package me.rigamortis.seppuku.api.event.module;
 
 import me.rigamortis.seppuku.api.module.Module;
+
 /**
  * Author Seth
  * 6/10/2019 @ 2:36 PM.
