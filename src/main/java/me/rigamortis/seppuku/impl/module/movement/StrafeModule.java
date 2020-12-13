@@ -10,10 +10,12 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
  * created by noil on 9/22/2019 at 11:01 AM
+ * updated on 12/12/2020 - sn01
  */
 public final class StrafeModule extends Module {
 
     public Value<Boolean> ground = new Value<Boolean>("Ground", new String[]{"Ground", "OnGround"}, "When enabled, enables strafe movement while on ground.", false);
+    public Value<Boolean> elytraCheck = new Value<Boolean>("ElytraCheck", new String[]{"Flycheck", "Elytra"}, "Lets you use ElytraFly and Strafe at the same time without bugging out.", true);
 
     public StrafeModule() {
         super("Strafe", new String[]{"Strafe"}, "Unlocks full movement control while airborne, and optionally on ground too.", "NONE", -1, ModuleType.MOVEMENT);
@@ -27,6 +29,9 @@ public final class StrafeModule extends Module {
             return;
 
         if (mc.player.isSneaking() || mc.player.isOnLadder() || mc.player.isInWeb || mc.player.isInLava() || mc.player.isInWater() || mc.player.capabilities.isFlying)
+            return;
+
+        if (this.elytraCheck.getValue() && mc.player.isElytraFlying())
             return;
 
         // check to bypass option on ground or not
