@@ -12,6 +12,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  * created by noil on 9/22/2019 at 11:01 AM
  * updated on 12/12/2020 - sn01
  */
+
 public final class StrafeModule extends Module {
 
     public Value<Boolean> ground = new Value<Boolean>("Ground", new String[]{"Ground", "OnGround"}, "When enabled, enables strafe movement while on ground.", false);
