@@ -13,7 +13,7 @@ import java.io.FileReader;
  */
 public abstract class Configurable {
 
-    private File file;
+    private final File file;
 
     private JsonObject jsonObject;
 

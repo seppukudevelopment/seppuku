@@ -3,6 +3,8 @@ package me.rigamortis.seppuku.impl.gui.hud.component;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import net.minecraft.client.network.NetworkPlayerInfo;
 
+import java.util.Objects;
+
 /**
  * Author Seth
  * 7/28/2019 @ 9:41 AM.
@@ -24,13 +26,16 @@ public final class PingComponent extends DraggableHudComponent {
             return;
         }
 
-        if (mc.player.connection == null || mc.getCurrentServerData() == null)
+        if (mc.player.connection == null)
             return;
 
         final NetworkPlayerInfo playerInfo = mc.player.connection.getPlayerInfo(mc.player.getUniqueID());
-        final String ping = "Ping: " + playerInfo.getResponseTime() + "ms";
+        if (Objects.nonNull(playerInfo)) {
+            final String ms = playerInfo.getResponseTime() != 0 ? playerInfo.getResponseTime() + "ms" : "?";
+            final String ping = "Ping: " + ms;
 
-        this.setW(mc.fontRenderer.getStringWidth(ping));
-        mc.fontRenderer.drawStringWithShadow(ping, this.getX(), this.getY(), -1);
+            this.setW(mc.fontRenderer.getStringWidth(ping));
+            mc.fontRenderer.drawStringWithShadow(ping, this.getX(), this.getY(), -1);
+        }
     }
 }
