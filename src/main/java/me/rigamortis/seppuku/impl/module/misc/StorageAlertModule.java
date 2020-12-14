@@ -87,7 +87,7 @@ public final class StorageAlertModule extends Module {
                 }
 
                 if (foundStorage.size() > 0) {
-                    final String message = foundStorage.size() + " storage blocks located at X: " + position.x + " Z: " + position.y * 16;
+                    final String message = foundStorage.size() + " storage blocks located at X: " + position.x + " Z: " + position.y;
                     if (this.mode.getValue() == Mode.CHAT || this.mode.getValue() == Mode.BOTH) {
                         Seppuku.INSTANCE.logChat(ChatFormatting.YELLOW + message);
                     }
