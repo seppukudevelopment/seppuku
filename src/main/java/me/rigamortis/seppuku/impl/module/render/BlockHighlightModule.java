@@ -1,22 +1,44 @@
 package me.rigamortis.seppuku.impl.module.render;
 
+import me.rigamortis.seppuku.api.event.client.EventSaveConfig;
+import me.rigamortis.seppuku.api.event.player.EventPlayerDamageBlock;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
+import me.rigamortis.seppuku.api.value.Value;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
+
+import java.awt.*;
 
 /**
  * Author Seth
  * 8/14/2019 @ 1:13 AM.
  */
 public final class BlockHighlightModule extends Module {
+
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"M", "type", "t"}, "Select which mode to draw the highlight visual.", Mode.BOX);
+    public final Value<Integer> red = new Value<Integer>("Red", new String[]{"Re", "r"}, "Red value for the highlight visual.", 255, 0, 255, 1);
+    public final Value<Integer> green = new Value<Integer>("Green", new String[]{"Gre", "g"}, "Green value for the highlight visual.", 255, 0, 255, 1);
+    public final Value<Integer> blue = new Value<Integer>("Blue", new String[]{"Blu", "b"}, "Blue value for the highlight visual.", 255, 0, 255, 1);
+    public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"Alp", "Opacity", "a", "o"}, "Alpha value for the highlight visual.", 127, 0, 255, 1);
+    public final Value<Float> width = new Value<Float>("Width", new String[]{"W", "size", "s"}, "Width value of the highlight visual.", 1.5f, 0.0f, 5.0f, 0.1f);
+
+    public enum Mode {
+        BOX, OUTLINE, CROSS
+    }
+
+    private Color currentColor = new Color(255, 255, 255, 255);
 
     public BlockHighlightModule() {
         super("BlockHighlight", new String[]{"BHighlight", "BlockHigh"}, "Highlights the block at your crosshair", "NONE", -1, ModuleType.RENDER);
@@ -27,15 +49,36 @@ public final class BlockHighlightModule extends Module {
         final Minecraft mc = Minecraft.getMinecraft();
         final RayTraceResult ray = mc.objectMouseOver;
         if (ray.typeOfHit == RayTraceResult.Type.BLOCK) {
-
             final BlockPos blockpos = ray.getBlockPos();
             final IBlockState iblockstate = mc.world.getBlockState(blockpos);
-
             if (iblockstate.getMaterial() != Material.AIR && mc.world.getWorldBorder().contains(blockpos)) {
+                float currentDamage = mc.playerController.curBlockDamageMP;
+
+                RenderUtil.begin3D();
                 final Vec3d interp = MathUtil.interpolateEntity(mc.player, mc.getRenderPartialTicks());
-                RenderUtil.drawBoundingBox(iblockstate.getSelectedBoundingBox(mc.world, blockpos).grow(0.0020000000949949026D).offset(-interp.x, -interp.y, -interp.z), 1.5f, 0xFF9900EE);
+                final AxisAlignedBB bb = iblockstate.getSelectedBoundingBox(mc.world, blockpos).shrink(currentDamage / 2.0f).offset(-interp.x, -interp.y, -interp.z);
+                final int color = ColorUtil.changeAlpha(currentColor.getRGB(), this.alpha.getValue());
+                switch (this.mode.getValue()) {
+                    case BOX:
+                        RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(color, this.alpha.getValue() / 2));
+                        RenderUtil.drawBoundingBox(bb, this.width.getValue(), color);
+                        break;
+                    case OUTLINE:
+                        RenderUtil.drawBoundingBox(bb, this.width.getValue(), color);
+                        break;
+                    case CROSS:
+                        RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(color, this.alpha.getValue() / 2));
+                        RenderUtil.drawCrosses(bb, color);
+                        RenderUtil.drawBoundingBox(bb, this.width.getValue(), color);
+                        break;
+                }
+                RenderUtil.end3D();
             }
         }
     }
 
+    @Listener
+    public void onConfigSave(EventSaveConfig event) {
+        this.currentColor = new Color(this.red.getValue(), this.green.getValue(), this.blue.getValue());
+    }
 }

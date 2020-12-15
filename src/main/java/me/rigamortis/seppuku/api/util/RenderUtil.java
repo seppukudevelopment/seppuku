@@ -151,7 +151,6 @@ public final class RenderUtil {
         float blue = (hex & 0xFF) / 255.0F;
         float alpha = (hex >> 24 & 0xFF) / 255.0F;
 
-        GlStateManager.pushMatrix();
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
@@ -171,7 +170,6 @@ public final class RenderUtil {
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
-        GlStateManager.popMatrix();
     }
 
     public static void drawThinLine(float x, float y, float x1, float y1, int hex) {
@@ -180,7 +178,6 @@ public final class RenderUtil {
         float blue = (hex & 0xFF) / 255.0F;
         float alpha = (hex >> 24 & 0xFF) / 255.0F;
 
-        GlStateManager.pushMatrix();
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
@@ -197,7 +194,6 @@ public final class RenderUtil {
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
-        GlStateManager.popMatrix();
     }
 
     public static void drawLine3D(float x, float y, float z, float x1, float y1, float z1, float thickness, int hex) {
@@ -206,7 +202,6 @@ public final class RenderUtil {
         float blue = (hex & 0xFF) / 255.0F;
         float alpha = (hex >> 24 & 0xFF) / 255.0F;
 
-        GlStateManager.pushMatrix();
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
@@ -230,11 +225,9 @@ public final class RenderUtil {
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
-        GlStateManager.popMatrix();
     }
 
     public static void drawBoundingBox(AxisAlignedBB bb, float width, float red, float green, float blue, float alpha) {
-        GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.disableDepth();
         GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 0, 1);
@@ -272,7 +265,6 @@ public final class RenderUtil {
         GlStateManager.enableDepth();
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
-        GlStateManager.popMatrix();
     }
 
     public static void drawBoundingBox(AxisAlignedBB bb, float width, int color) {
@@ -291,7 +283,6 @@ public final class RenderUtil {
     }
 
     public static void drawPlane(AxisAlignedBB axisalignedbb, float width, int color) {
-        GlStateManager.pushMatrix();
         GlStateManager.glLineWidth(width);
         GlStateManager.enableBlend();
         GlStateManager.disableDepth();
@@ -306,7 +297,6 @@ public final class RenderUtil {
         GlStateManager.enableDepth();
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
-        GlStateManager.popMatrix();
     }
 
     public static void drawPlane(AxisAlignedBB boundingBox, int color) {
@@ -336,7 +326,6 @@ public final class RenderUtil {
     }
 
     public static void drawFilledBox(AxisAlignedBB bb, int color) {
-        GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.disableDepth();
         GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 0, 1);
@@ -386,7 +375,33 @@ public final class RenderUtil {
         GlStateManager.enableDepth();
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
-        GlStateManager.popMatrix();
+    }
+
+    public static void drawCrosses(AxisAlignedBB bb, int color) {
+        GlStateManager.enableBlend();
+        GlStateManager.disableDepth();
+        GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 0, 1);
+        GlStateManager.disableTexture2D();
+        GlStateManager.depthMask(false);
+        glColor(color);
+        GL11.glBegin(GL_LINES);
+        GL11.glVertex3d(bb.maxX, bb.maxY, bb.maxZ);
+        GL11.glVertex3d(bb.maxX, bb.minY, bb.minZ);
+        GL11.glVertex3d(bb.maxX, bb.maxY, bb.minZ);
+        GL11.glVertex3d(bb.minX, bb.maxY, bb.maxZ);
+        GL11.glVertex3d(bb.minX, bb.maxY, bb.minZ);
+        GL11.glVertex3d(bb.maxX, bb.minY, bb.minZ);
+        GL11.glVertex3d(bb.minX, bb.minY, bb.maxZ);
+        GL11.glVertex3d(bb.maxX, bb.maxY, bb.maxZ);
+        GL11.glVertex3d(bb.minX, bb.minY, bb.maxZ);
+        GL11.glVertex3d(bb.minX, bb.maxY, bb.minZ);
+        GL11.glVertex3d(bb.minX, bb.minY, bb.minZ);
+        GL11.glVertex3d(bb.maxX, bb.minY, bb.maxZ);
+        GL11.glEnd();
+        GlStateManager.depthMask(true);
+        GlStateManager.enableDepth();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
     }
 
     public static void glScissor(float x, float y, float x1, float y1, final ScaledResolution sr) {

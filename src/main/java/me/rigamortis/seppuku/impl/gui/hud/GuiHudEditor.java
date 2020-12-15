@@ -161,7 +161,7 @@ public final class GuiHudEditor extends GuiScreen {
 
     @Override
     public void onGuiClosed() {
-        Seppuku.INSTANCE.getConfigManager().saveAll();
+        //Seppuku.INSTANCE.getConfigManager().saveAll();
 
         final HudEditorModule hudEditorModule = (HudEditorModule) Seppuku.INSTANCE.getModuleManager().find(HudEditorModule.class);
         if (hudEditorModule != null) {
