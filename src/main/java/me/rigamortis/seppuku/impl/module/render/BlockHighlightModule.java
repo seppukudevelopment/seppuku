@@ -33,6 +33,7 @@ public final class BlockHighlightModule extends Module {
     public final Value<Integer> blue = new Value<Integer>("Blue", new String[]{"Blu", "b"}, "Blue value for the highlight visual.", 255, 0, 255, 1);
     public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"Alp", "Opacity", "a", "o"}, "Alpha value for the highlight visual.", 127, 0, 255, 1);
     public final Value<Float> width = new Value<Float>("Width", new String[]{"W", "size", "s"}, "Width value of the highlight visual.", 1.5f, 0.0f, 5.0f, 0.1f);
+    public final Value<Boolean> breaking = new Value<Boolean>("Breaking", new String[]{"Break", "block", "brk"}, "Sizes the highlight visual based on the block breaking damage.", true);
 
     public enum Mode {
         BOX, OUTLINE, CROSS
@@ -52,7 +53,12 @@ public final class BlockHighlightModule extends Module {
             final BlockPos blockpos = ray.getBlockPos();
             final IBlockState iblockstate = mc.world.getBlockState(blockpos);
             if (iblockstate.getMaterial() != Material.AIR && mc.world.getWorldBorder().contains(blockpos)) {
-                float currentDamage = mc.playerController.curBlockDamageMP;
+                float currentDamage;
+                if (this.breaking.getValue()) {
+                    currentDamage = mc.playerController.curBlockDamageMP;
+                } else {
+                    currentDamage = 0.0f;
+                }
 
                 RenderUtil.begin3D();
                 final Vec3d interp = MathUtil.interpolateEntity(mc.player, mc.getRenderPartialTicks());
