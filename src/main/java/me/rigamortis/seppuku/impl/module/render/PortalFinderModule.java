@@ -114,7 +114,7 @@ public final class PortalFinderModule extends Module {
 
                 // Line
                 if (this.tracer.getValue()) {
-                    RenderUtil.drawLine3D((float) forward.x, (float) forward.y + mc.player.getEyeHeight(), (float) forward.z, (float) (portal.x - mc.getRenderManager().renderPosX), (float) (portal.y - mc.getRenderManager().renderPosY), (float) (portal.z - mc.getRenderManager().renderPosZ), this.width.getValue(), ColorUtil.changeAlpha(new Color(red.getValue() / 255.0f, green.getValue() / 255.0f, blue.getValue() / 255.0f).getRGB(), this.alpha.getValue()));
+                    RenderUtil.drawLine3D(forward.x, forward.y + mc.player.getEyeHeight(), forward.z, portal.x - mc.getRenderManager().renderPosX, portal.y - mc.getRenderManager().renderPosY, portal.z - mc.getRenderManager().renderPosZ, this.width.getValue(), ColorUtil.changeAlpha(new Color(red.getValue() / 255.0f, green.getValue() / 255.0f, blue.getValue() / 255.0f).getRGB(), this.alpha.getValue()));
                 }
 
                 // Info

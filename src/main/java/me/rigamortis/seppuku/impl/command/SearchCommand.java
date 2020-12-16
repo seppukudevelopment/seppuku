@@ -60,6 +60,7 @@ public final class SearchCommand extends Command {
                         } else {
                             searchModule.add(Block.getIdFromBlock(block));
                             if (searchModule.isEnabled()) {
+                                searchModule.clearBlocks();
                                 searchModule.updateRenders();
                             }
                             Seppuku.INSTANCE.getConfigManager().saveAll();
@@ -80,6 +81,7 @@ public final class SearchCommand extends Command {
                             } else {
                                 searchModule.add(Block.getIdFromBlock(block));
                                 if (searchModule.isEnabled()) {
+                                    searchModule.clearBlocks();
                                     searchModule.updateRenders();
                                 }
                                 Seppuku.INSTANCE.getConfigManager().saveAll();
@@ -105,6 +107,7 @@ public final class SearchCommand extends Command {
                         if (searchModule.contains(Block.getIdFromBlock(block))) {
                             searchModule.remove(Block.getIdFromBlock(block));
                             if (searchModule.isEnabled()) {
+                                searchModule.clearBlocks();
                                 searchModule.updateRenders();
                             }
                             Seppuku.INSTANCE.getConfigManager().saveAll();
@@ -125,6 +128,7 @@ public final class SearchCommand extends Command {
                             if (searchModule.contains(Block.getIdFromBlock(block))) {
                                 searchModule.remove(Block.getIdFromBlock(block));
                                 if (searchModule.isEnabled()) {
+                                    searchModule.clearBlocks();
                                     searchModule.updateRenders();
                                 }
                                 Seppuku.INSTANCE.getConfigManager().saveAll();
@@ -163,6 +167,7 @@ public final class SearchCommand extends Command {
                 }
                 searchModule.clear();
                 if (searchModule.isEnabled()) {
+                    searchModule.clearBlocks();
                     searchModule.updateRenders();
                 }
                 Seppuku.INSTANCE.getConfigManager().saveAll();

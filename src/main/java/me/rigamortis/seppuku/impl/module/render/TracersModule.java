@@ -62,7 +62,7 @@ public final class TracersModule extends Module {
                         if (pos != null) {
                             final GLUProjection.Projection projection = GLUProjection.getInstance().project(pos.x - mc.getRenderManager().viewerPosX, pos.y - mc.getRenderManager().viewerPosY, pos.z - mc.getRenderManager().viewerPosZ, GLUProjection.ClampMode.NONE, true);
                             if (projection != null) {
-                                RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), event.getScaledResolution().getScaledWidth() / 2, event.getScaledResolution().getScaledHeight() / 2, this.width.getValue(), this.getColor(e));
+                                RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), (float) event.getScaledResolution().getScaledWidth() / 2.0f, (float) event.getScaledResolution().getScaledHeight() / 2.0f, this.width.getValue(), this.getColor(e));
                             }
                         }
                     }
@@ -81,16 +81,13 @@ public final class TracersModule extends Module {
                 if (e != null) {
                     if (this.checkFilter(e)) {
                         final Vec3d pos = MathUtil.interpolateEntity(e, event.getPartialTicks()).subtract(mc.getRenderManager().renderPosX, mc.getRenderManager().renderPosY, mc.getRenderManager().renderPosZ);
-
-                        if (pos != null) {
-                            final boolean bobbing = mc.gameSettings.viewBobbing;
-                            mc.gameSettings.viewBobbing = false;
-                            mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
-                            final Vec3d forward = new Vec3d(0, 0, 1).rotatePitch(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationPitch)).rotateYaw(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationYaw));
-                            RenderUtil.drawLine3D((float) forward.x, (float) forward.y + mc.player.getEyeHeight(), (float) forward.z, (float) pos.x, (float) pos.y, (float) pos.z, this.width.getValue(), this.getColor(e));
-                            mc.gameSettings.viewBobbing = bobbing;
-                            mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
-                        }
+                        final boolean bobbing = mc.gameSettings.viewBobbing;
+                        mc.gameSettings.viewBobbing = false;
+                        mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
+                        final Vec3d forward = new Vec3d(0, 0, 1).rotatePitch(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationPitch)).rotateYaw(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationYaw));
+                        RenderUtil.drawLine3D(forward.x, forward.y + mc.player.getEyeHeight(), forward.z, pos.x, pos.y, pos.z, this.width.getValue(), this.getColor(e));
+                        mc.gameSettings.viewBobbing = bobbing;
+                        mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
                     }
                 }
             }

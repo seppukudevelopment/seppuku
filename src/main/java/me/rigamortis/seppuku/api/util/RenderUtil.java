@@ -46,10 +46,10 @@ public final class RenderUtil {
         GlStateManager.disableTexture2D();
         GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
-        bufferbuilder.pos((double) x, (double) h, 0.0D).color(red, green, blue, alpha).endVertex();
-        bufferbuilder.pos((double) w, (double) h, 0.0D).color(red, green, blue, alpha).endVertex();
-        bufferbuilder.pos((double) w, (double) y, 0.0D).color(red, green, blue, alpha).endVertex();
-        bufferbuilder.pos((double) x, (double) y, 0.0D).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(x, h, 0.0D).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(w, h, 0.0D).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(w, y, 0.0D).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(x, y, 0.0D).color(red, green, blue, alpha).endVertex();
         tessellator.draw();
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
@@ -72,10 +72,10 @@ public final class RenderUtil {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
-        bufferbuilder.pos((double) right, (double) top, (double) 0).color(f1, f2, f3, f).endVertex();
-        bufferbuilder.pos((double) left, (double) top, (double) 0).color(f1, f2, f3, f).endVertex();
-        bufferbuilder.pos((double) left, (double) bottom, (double) 0).color(f5, f6, f7, f4).endVertex();
-        bufferbuilder.pos((double) right, (double) bottom, (double) 0).color(f5, f6, f7, f4).endVertex();
+        bufferbuilder.pos(right, top, 0).color(f1, f2, f3, f).endVertex();
+        bufferbuilder.pos(left, top, 0).color(f1, f2, f3, f).endVertex();
+        bufferbuilder.pos(left, bottom, 0).color(f5, f6, f7, f4).endVertex();
+        bufferbuilder.pos(right, bottom, 0).color(f5, f6, f7, f4).endVertex();
         tessellator.draw();
         GlStateManager.shadeModel(7424);
         GlStateManager.disableBlend();
@@ -162,8 +162,8 @@ public final class RenderUtil {
         final Tessellator tessellator = Tessellator.getInstance();
         final BufferBuilder bufferbuilder = tessellator.getBuffer();
         bufferbuilder.begin(GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
-        bufferbuilder.pos((double) x, (double) y, (double) 0).color(red, green, blue, alpha).endVertex();
-        bufferbuilder.pos((double) x1, (double) y1, (double) 0).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(x, y, 0).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(x1, y1, 0).color(red, green, blue, alpha).endVertex();
         tessellator.draw();
         GlStateManager.shadeModel(GL_FLAT);
         glDisable(GL_LINE_SMOOTH);
@@ -187,8 +187,8 @@ public final class RenderUtil {
         final Tessellator tessellator = Tessellator.getInstance();
         final BufferBuilder bufferbuilder = tessellator.getBuffer();
         bufferbuilder.begin(GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
-        bufferbuilder.pos((double) x, (double) y, (double) 0).color(red, green, blue, alpha).endVertex();
-        bufferbuilder.pos((double) x1, (double) y1, (double) 0).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(x, y, 0).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(x1, y1, 0).color(red, green, blue, alpha).endVertex();
         tessellator.draw();
         GlStateManager.shadeModel(GL_FLAT);
         GlStateManager.disableBlend();
@@ -196,7 +196,7 @@ public final class RenderUtil {
         GlStateManager.enableTexture2D();
     }
 
-    public static void drawLine3D(float x, float y, float z, float x1, float y1, float z1, float thickness, int hex) {
+    public static void drawLine3D(double x, double y, double z, double x1, double y1, double z1, float thickness, int hex) {
         float red = (hex >> 16 & 0xFF) / 255.0F;
         float green = (hex >> 8 & 0xFF) / 255.0F;
         float blue = (hex & 0xFF) / 255.0F;
@@ -207,8 +207,8 @@ public final class RenderUtil {
         final Tessellator tessellator = Tessellator.getInstance();
         final BufferBuilder bufferbuilder = tessellator.getBuffer();
         bufferbuilder.begin(GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-        bufferbuilder.pos((double) x, (double) y, (double) z).color(red, green, blue, alpha).endVertex();
-        bufferbuilder.pos((double) x1, (double) y1, (double) z1).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(x, y, z).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(x1, y1, z1).color(red, green, blue, alpha).endVertex();
         tessellator.draw();
         glDisable(GL32.GL_DEPTH_CLAMP);
     }

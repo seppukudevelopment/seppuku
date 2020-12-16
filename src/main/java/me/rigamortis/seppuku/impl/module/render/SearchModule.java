@@ -1,12 +1,14 @@
 package me.rigamortis.seppuku.impl.module.render;
 
 import me.rigamortis.seppuku.Seppuku;
+import me.rigamortis.seppuku.api.event.client.EventSaveConfig;
 import me.rigamortis.seppuku.api.event.player.EventDestroyBlock;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.event.render.EventRenderBlockModel;
 import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.ColorUtil;
+import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
@@ -19,6 +21,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.util.ArrayList;
@@ -37,6 +40,7 @@ public final class SearchModule extends Module {
     public final Value<Integer> limit = new Value<Integer>("Limit", new String[]{"max"}, "The maximum amount of blocks that can be rendered.", 3000, 0, 9000, 1);
     public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"opacity"}, "Alpha value for the search bounding box.", 127, 0, 255, 1);
     public final Value<Float> width = new Value<Float>("Width", new String[]{"size"}, "Line width of the search bounding box.", 1.0f, 0.0f, 5.0f, 0.1f);
+    public final Value<Boolean> tracer = new Value<Boolean>("Tracer", new String[]{"trace", "line"}, "Draw a tracer line to each search result.", false);
 
     public enum Mode {
         BOX, OUTLINE, OUTLINE_BOX, PLANE
@@ -113,6 +117,17 @@ public final class SearchModule extends Module {
                                     color);
                             break;
                     }
+
+                    if (this.tracer.getValue()) {
+                        final Vec3d pos = new Vec3d(searchBlock.x, searchBlock.y, searchBlock.z).subtract(mc.getRenderManager().renderPosX, mc.getRenderManager().renderPosY, mc.getRenderManager().renderPosZ);
+                        final boolean bobbing = mc.gameSettings.viewBobbing;
+                        mc.gameSettings.viewBobbing = false;
+                        mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
+                        final Vec3d forward = new Vec3d(0, 0, 1).rotatePitch(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationPitch)).rotateYaw(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationYaw));
+                        RenderUtil.drawLine3D(forward.x, forward.y + mc.player.getEyeHeight(), forward.z, pos.x,pos.y, pos.z, this.width.getValue(), color);
+                        mc.gameSettings.viewBobbing = bobbing;
+                        mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
+                    }
                 }
             } else {
                 this.blocks.remove(searchBlock);
@@ -149,6 +164,10 @@ public final class SearchModule extends Module {
                 this.blocks.remove(i);
             }
         }
+    }
+
+    public void clearBlocks() {
+        this.blocks.clear();
     }
 
     private boolean isPosCached(int x, int y, int z) {
