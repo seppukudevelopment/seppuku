@@ -1,6 +1,7 @@
 package me.rigamortis.seppuku.impl.module.render;
 
 import me.rigamortis.seppuku.Seppuku;
+import me.rigamortis.seppuku.api.event.player.EventDestroyBlock;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.event.render.EventRenderBlockModel;
 import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
@@ -60,6 +61,15 @@ public final class SearchModule extends Module {
     }
 
     @Listener
+    public void onDestroyBlock(EventDestroyBlock event) {
+        if (event.getPos() != null) {
+            if (this.isPosCached(event.getPos())) {
+                this.removeBlock(event.getPos());
+            }
+        }
+    }
+
+    @Listener
     public void onDrawWorld(EventRender3D event) {
         final Minecraft mc = Minecraft.getMinecraft();
         if (mc.getRenderViewEntity() == null)
@@ -67,9 +77,9 @@ public final class SearchModule extends Module {
 
         RenderUtil.begin3D();
         for (int i = this.blocks.size() - 1; i >= 0; i--) {
-            Vec3d searchBlock = this.blocks.get(i);
-            BlockPos blockPos = new BlockPos(searchBlock.x, searchBlock.y, searchBlock.z);
-            Block block = mc.world.getBlockState(blockPos).getBlock();
+            final Vec3d searchBlock = this.blocks.get(i);
+            final BlockPos blockPos = new BlockPos(searchBlock.x, searchBlock.y, searchBlock.z);
+            final Block block = mc.world.getBlockState(blockPos).getBlock();
             if (mc.player.getDistance(searchBlock.x, searchBlock.y, searchBlock.z) < this.range.getValue()) {
                 final AxisAlignedBB bb = this.boundingBoxForBlock(blockPos);
 
@@ -132,6 +142,15 @@ public final class SearchModule extends Module {
         Minecraft.getMinecraft().renderGlobal.loadRenderers();
     }
 
+    private void removeBlock(BlockPos pos) {
+        for (int i = this.blocks.size() - 1; i >= 0; i--) {
+            final Vec3d searchBlock = this.blocks.get(i);
+            if (searchBlock.x == pos.getX() && searchBlock.y == pos.getY() && searchBlock.z == pos.getZ()) {
+                this.blocks.remove(i);
+            }
+        }
+    }
+
     private boolean isPosCached(int x, int y, int z) {
         boolean temp = false;
         for (int i = this.blocks.size() - 1; i >= 0; i--) {
@@ -140,6 +159,10 @@ public final class SearchModule extends Module {
                 temp = true;
         }
         return temp;
+    }
+
+    private boolean isPosCached(BlockPos pos) {
+        return this.isPosCached(pos.getX(), pos.getY(), pos.getZ());
     }
 
     private AxisAlignedBB boundingBoxForBlock(BlockPos blockPos) {
