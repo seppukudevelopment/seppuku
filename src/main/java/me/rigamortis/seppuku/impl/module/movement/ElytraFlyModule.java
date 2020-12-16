@@ -70,6 +70,14 @@ public final class ElytraFlyModule extends Module {
         }
     }
 
+    @Override
+    public String getMetaData() {
+        if (this.autoEquip.getValue())
+            return "" + this.getElytraCount();
+
+        return super.getMetaData();
+    }
+
     @Listener
     public void onWalkingUpdate(EventUpdateWalkingPlayer event) {
         final Minecraft mc = Minecraft.getMinecraft();
