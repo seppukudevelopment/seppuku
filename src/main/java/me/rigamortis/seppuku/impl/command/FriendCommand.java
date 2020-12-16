@@ -23,6 +23,7 @@ public final class FriendCommand extends Command {
         super("Friend", new String[]{"F"}, "Allows you to add or remove friends", "Friend Add <Username>\n" +
                 "Friend Add <Username> <Alias>\n" +
                 "Friend Remove <Username>\n" +
+                "Friend List\n" +
                 "Friend Clear");
     }
 

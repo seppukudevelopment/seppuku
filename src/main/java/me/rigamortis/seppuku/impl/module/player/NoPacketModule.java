@@ -1,9 +1,11 @@
 package me.rigamortis.seppuku.impl.module.player;
 
+import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.network.EventSendPacket;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.network.play.client.*;
+import net.minecraft.network.play.server.SPacketDestroyEntities;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
@@ -19,6 +21,7 @@ public final class NoPacketModule extends Module {
     public final Value<Boolean> vehicleMove = new Value<Boolean>("VehicleMove", new String[]{"vehicle", "vehicle-move", "vm", "move"}, "Cancel vehicle movement packets.", false);
     public final Value<Boolean> input = new Value<Boolean>("Input", new String[]{"in", "i"}, "Cancel player input packets.", false);
     public final Value<Boolean> abilities = new Value<Boolean>("Abilities", new String[]{"abilities", "player", "ability", "pa"}, "Cancel \"player-ability\" packets.", false);
+    public final Value<Boolean> removeEntity = new Value<Boolean>("RemoveEntity", new String[]{"DestroyEntities", "RemoveEntities", "remove", "destroy", "re", "de"}, "Cancel receiving all \"remove/destroy entity\" packets.", false);
 
     public NoPacketModule() {
         super("NoPacket", new String[]{"NoPacket", "NoPac", "AntiPacket", "PacketDisable", "PacketCancel"}, "Disables various packets from being sent to the server, or back to the client.", "NONE", -1, ModuleType.PLAYER);
@@ -56,6 +59,13 @@ public final class NoPacketModule extends Module {
 
         if (this.input.getValue())
             if (event.getPacket() instanceof CPacketInput)
+                event.setCanceled(true);
+    }
+
+    @Listener
+    public void onReceivePacket(EventReceivePacket event) {
+        if (this.removeEntity.getValue())
+            if (event.getPacket() instanceof SPacketDestroyEntities)
                 event.setCanceled(true);
     }
 }
