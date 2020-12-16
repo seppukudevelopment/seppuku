@@ -17,7 +17,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class AutoEatModule extends Module {
 
-    public final Value<Float> hunger = new Value<Float>("Hunger", new String[]{"food", "h"}, "The amount of hunger needed to acquire some food.", 7.0f, 0.0f, 20.0f, 0.5f);
+    public final Value<Float> hunger = new Value<Float>("Hunger", new String[]{"food", "h"}, "The amount of hunger needed to acquire some food.", 9.0f, 0.0f, 20.0f, 0.5f);
     public final Value<Integer> forcedSlot = new Value<Integer>("Slot", new String[]{"s"}, "The hot-bar slot to put the food into. (45 for offhand)", 43, 0, 43, 1);
 
     private int previousHeldItem = -1;
@@ -60,7 +60,7 @@ public final class AutoEatModule extends Module {
                     mc.player.inventory.currentItem = this.foodSlot - 36; // in the hot-bar, so remove the inventory offset
                 }
             } else { // we need this notch apple in the offhand
-                if (mc.player.getHeldItemOffhand().getItem() != Items.GOLDEN_APPLE) {
+                if (!(mc.player.getHeldItemOffhand().getItem() instanceof ItemFood)) {
                     mc.playerController.windowClick(0, 45, 0, ClickType.QUICK_MOVE, mc.player); // offhand slot
                     mc.playerController.windowClick(0, this.foodSlot, 0, ClickType.PICKUP, mc.player);
                     mc.playerController.windowClick(0, 45, 0, ClickType.PICKUP, mc.player);
