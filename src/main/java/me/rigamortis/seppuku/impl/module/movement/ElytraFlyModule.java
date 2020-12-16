@@ -5,6 +5,7 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.util.InventoryUtil;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
@@ -12,7 +13,10 @@ import me.rigamortis.seppuku.impl.module.player.NoHungerModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemElytra;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.network.play.server.SPacketChat;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -33,12 +37,16 @@ public final class ElytraFlyModule extends Module {
     public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd", "amount", "s"}, "Speed multiplier for elytra flight, higher values equals more speed.", 1.0f, 0.0f, 5.0f, 0.01f);
 
     public final Value<Boolean> autoStart = new Value<Boolean>("AutoStart", new String[]{"AutoStart", "start", "autojump", "as"}, "Hold down the jump key to have an easy automated lift off.", true);
-    public final Value<Float> autoStartDelay = new Value<Float>("StartDelay", new String[]{"AutoStartDelay", "Delay", "startdelay", "autojumpdelay", "asd"}, "Delay(ms) between auto-start attempts.", 50.0f, 0.0f, 1000.0f, 10.0f);
-    public final Value<Boolean> disableInLiquid = new Value<Boolean>("DisableInLiquid", new String[]{"DisableInWater", "DisableInLava", "disableliquid", "liquidoff", "noliquid", "dil"}, "Disables all elytra flight when the player is in contact with liquid.", true);
+    public final Value<Float> autoStartDelay = new Value<Float>("StartDelay", new String[]{"AutoStartDelay", "startdelay", "autojumpdelay", "asd"}, "Delay(ms) between auto-start attempts.", 50.0f, 0.0f, 1000.0f, 10.0f);
+    public final Value<Boolean> autoEquip = new Value<Boolean>("AutoEquip", new String[]{"AutoEquipt", "AutoElytra", "Equip", "Equipt", "ae"}, "Automatically equips a durable elytra before or during flight.", false);
+    public final Value<Float> autoEquipDelay = new Value<Float>("EquipDelay", new String[]{"AutoEquipDelay", "AutoEquiptDelay", "equipdelay", "aed"}, "Delay(ms) between elytra equip swap attempts.", 200.0f, 0.0f, 1000.0f, 10.0f);
+    public final Value<Boolean> stayAirborne = new Value<Boolean>("StayAirborne", new String[]{"Airborne", "StayInAir", "air", "sa"}, "Attempts to always keep the player airborne (only use when AutoEquip is enabled).", false);
+    public final Value<Boolean> disableInLiquid = new Value<Boolean>("DisableInLiquid", new String[]{"DisableInWater", "DisableInLava", "disableliquid", "liquidoff", "noliquid", "dil"}, "Disables all elytra flight when the player is in contact with liquid.", false);
     public final Value<Boolean> infiniteDurability = new Value<Boolean>("InfiniteDurability", new String[]{"InfiniteDura", "dura", "inf", "infdura"}, "Enables an old exploit that sends the start elytra-flying packet each tick.", false);
     public final Value<Boolean> noKick = new Value<Boolean>("NoKick", new String[]{"AntiKick", "Kick", "nk"}, "Bypass the server kicking you for flying while in elytra flight (Only works for Packet mode!).", true);
 
-    private final Timer timer = new Timer();
+    private final Timer startDelayTimer = new Timer();
+    private final Timer equipDelayTimer = new Timer();
 
     public ElytraFlyModule() {
         super("ElytraFly", new String[]{"Elytra"}, "Allows you to fly with elytras", "NONE", -1, ModuleType.MOVEMENT);
@@ -66,12 +74,46 @@ public final class ElytraFlyModule extends Module {
     public void onWalkingUpdate(EventUpdateWalkingPlayer event) {
         final Minecraft mc = Minecraft.getMinecraft();
 
-        // ensure player has an elytra on before running any code
-        if (mc.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() != Items.ELYTRA)
+        if (!this.autoEquip.getValue() && mc.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() != Items.ELYTRA)
             return;
 
         switch (event.getStage()) {
             case PRE:
+                final ItemStack stackOnChestSlot = mc.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+
+                if (this.autoEquip.getValue()) {
+                    // ensure player has an elytra on before running any code
+                    if (stackOnChestSlot.isEmpty() && stackOnChestSlot.getItem() != Items.ELYTRA) {
+                        if (InventoryUtil.hasItem(Items.ELYTRA)) {
+                            if (this.getElytraSlot() != -1 && this.equipDelayTimer.passed(this.autoEquipDelay.getValue())) {
+                                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, this.getElytraSlot(), 0, ClickType.QUICK_MOVE, mc.player);
+                                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
+                                this.equipDelayTimer.reset();
+                            }
+                        }
+                    }
+
+                    // check for broken elytra when auto equip is enabled
+                    if (!stackOnChestSlot.isEmpty() && stackOnChestSlot.getItem() == Items.ELYTRA) {
+                        if (!ItemElytra.isUsable(stackOnChestSlot)) {
+                            if (this.getElytraCount() > 0 && this.getElytraSlot() != -1 && this.equipDelayTimer.passed(this.autoEquipDelay.getValue())) {
+                                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 6, 0, ClickType.QUICK_MOVE, mc.player);
+                                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, this.getElytraSlot(), 0, ClickType.PICKUP, mc.player);
+                                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 6, 0, ClickType.PICKUP, mc.player);
+                                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
+                                this.equipDelayTimer.reset();
+                            }
+                        }
+
+                        if (this.stayAirborne.getValue() && !mc.player.isElytraFlying() && mc.player.motionY < 0) { // player motion is falling
+                            if (this.startDelayTimer.passed(this.autoStartDelay.getValue())) {
+                                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
+                                this.startDelayTimer.reset();
+                            }
+                        }
+                    }
+                }
+
                 // liquid check
                 if (this.disableInLiquid.getValue() && (mc.player.isInWater() || mc.player.isInLava())) {
                     if (mc.player.isElytraFlying()) {
@@ -84,9 +126,9 @@ public final class ElytraFlyModule extends Module {
                 if (this.autoStart.getValue()) {
                     if (mc.gameSettings.keyBindJump.isKeyDown() && !mc.player.isElytraFlying()) { // jump is held, player is not elytra flying
                         if (mc.player.motionY < 0) { // player motion is falling
-                            if (this.timer.passed(this.autoStartDelay.getValue())) {
+                            if (this.startDelayTimer.passed(this.autoStartDelay.getValue())) {
                                 mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
-                                this.timer.reset();
+                                this.startDelayTimer.reset();
                             }
                         }
                     }
@@ -229,5 +271,42 @@ public final class ElytraFlyModule extends Module {
                 player.motionY = -0.04f;
             }
         }
+    }
+
+    private int getElytraSlot() {
+        int bestElytraDurability = 1000000;
+        int bestElytraSlot = -1;
+        for (int slot = 44; slot > 8; slot--) {
+            final ItemStack stack = Minecraft.getMinecraft().player.inventory.getStackInSlot(slot);
+            if (!stack.isEmpty() && stack.getItem() == Items.ELYTRA) {
+                if (!ItemElytra.isUsable(stack))
+                    continue;
+
+                if (stack.getItemDamage() < bestElytraDurability) {
+                    bestElytraDurability = stack.getItemDamage();
+                    bestElytraSlot = slot;
+                }
+            }
+        }
+        return bestElytraSlot;
+    }
+
+    private int getElytraCount() {
+        int elytras = 0;
+
+        if (Minecraft.getMinecraft().player == null)
+            return elytras;
+
+        for (int slot = 44; slot > 8; slot--) {
+            final ItemStack stack = Minecraft.getMinecraft().player.inventory.getStackInSlot(slot);
+            if (!ItemElytra.isUsable(stack))
+                continue;
+
+            if (!stack.isEmpty() && stack.getItem() == Items.ELYTRA) {
+                elytras += stack.getCount();
+            }
+        }
+
+        return elytras;
     }
 }
