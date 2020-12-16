@@ -22,8 +22,8 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 import java.awt.*;
 
 /**
- * Author Seth
- * 8/14/2019 @ 1:13 AM.
+ * @author Seth
+ * @author noil
  */
 public final class BlockHighlightModule extends Module {
 
@@ -42,7 +42,7 @@ public final class BlockHighlightModule extends Module {
     private Color currentColor = new Color(255, 255, 255, 255);
 
     public BlockHighlightModule() {
-        super("BlockHighlight", new String[]{"BHighlight", "BlockHigh"}, "Highlights the block at your crosshair", "NONE", -1, ModuleType.RENDER);
+        super("BlockHighlight", new String[]{"BHighlight", "BlockHigh"}, "Highlights the block at your cross-hair", "NONE", -1, ModuleType.RENDER);
     }
 
     @Listener
@@ -74,7 +74,7 @@ public final class BlockHighlightModule extends Module {
                         break;
                     case CROSS:
                         RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(color, this.alpha.getValue() / 2));
-                        RenderUtil.drawCrosses(bb, color);
+                        RenderUtil.drawCrosses(bb, this.width.getValue(), color);
                         RenderUtil.drawBoundingBox(bb, this.width.getValue(), color);
                         break;
                 }
