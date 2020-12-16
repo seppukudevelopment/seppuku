@@ -1,6 +1,7 @@
 package me.rigamortis.seppuku.impl.module.render;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
+import com.sun.org.apache.regexp.internal.RE;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
@@ -102,6 +103,7 @@ public final class PortalFinderModule extends Module {
         if (this.mode.getValue() == Mode.THREE_D) {
             final Minecraft mc = Minecraft.getMinecraft();
 
+            RenderUtil.begin3D();
             for (Vec3d portal : this.portals) {
                 GlStateManager.pushMatrix();
                 final boolean bobbing = mc.gameSettings.viewBobbing;
@@ -127,6 +129,7 @@ public final class PortalFinderModule extends Module {
                 mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
                 GlStateManager.popMatrix();
             }
+            RenderUtil.end3D();
         }
     }
 

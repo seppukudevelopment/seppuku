@@ -70,8 +70,12 @@ public final class StorageESPModule extends Module {
 
     @Listener
     public void render3D(EventRender3D event) {
-        final Minecraft mc = Minecraft.getMinecraft();
         if (this.mode.getValue() == Mode.THREE_D) {
+            final Minecraft mc = Minecraft.getMinecraft();
+            if (mc.getRenderViewEntity() == null)
+                return;
+
+            RenderUtil.begin3D();
             for (TileEntity te : mc.world.loadedTileEntityList) {
                 if (te != null) {
                     if (this.isTileStorage(te)) {
@@ -79,23 +83,22 @@ public final class StorageESPModule extends Module {
                         if (bb != null) {
                             //RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
                             //RenderUtil.drawBoundingBox(bb, 1.5f, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
-                            if (mc.getRenderViewEntity() != null) {
-                                camera.setPosition(mc.getRenderViewEntity().posX, mc.getRenderViewEntity().posY, mc.getRenderViewEntity().posZ);
+                            camera.setPosition(mc.getRenderViewEntity().posX, mc.getRenderViewEntity().posY, mc.getRenderViewEntity().posZ);
 
-                                if (camera.isBoundingBoxInFrustum(new AxisAlignedBB(bb.minX + mc.getRenderManager().viewerPosX,
-                                        bb.minY + mc.getRenderManager().viewerPosY,
-                                        bb.minZ + mc.getRenderManager().viewerPosZ,
-                                        bb.maxX + mc.getRenderManager().viewerPosX,
-                                        bb.maxY + mc.getRenderManager().viewerPosY,
-                                        bb.maxZ + mc.getRenderManager().viewerPosZ))) {
-                                    RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
-                                    RenderUtil.drawBoundingBox(bb, 1.5f, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
-                                }
+                            if (camera.isBoundingBoxInFrustum(new AxisAlignedBB(bb.minX + mc.getRenderManager().viewerPosX,
+                                    bb.minY + mc.getRenderManager().viewerPosY,
+                                    bb.minZ + mc.getRenderManager().viewerPosZ,
+                                    bb.maxX + mc.getRenderManager().viewerPosX,
+                                    bb.maxY + mc.getRenderManager().viewerPosY,
+                                    bb.maxZ + mc.getRenderManager().viewerPosZ))) {
+                                RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
+                                RenderUtil.drawBoundingBox(bb, 1.5f, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
                             }
                         }
                     }
                 }
             }
+            RenderUtil.end3D();
         }
     }
 

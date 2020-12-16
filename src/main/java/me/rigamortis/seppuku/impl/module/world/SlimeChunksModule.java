@@ -41,6 +41,7 @@ public final class SlimeChunksModule extends Module {
 
     @Listener
     public void render3D(EventRender3D event) {
+        RenderUtil.begin3D();
         for (SlimeChunk slimeChunk : this.slimeChunkList) {
             if (slimeChunk != null) {
                 this.frustum.setPosition(Minecraft.getMinecraft().getRenderViewEntity().posX, Minecraft.getMinecraft().getRenderViewEntity().posY, Minecraft.getMinecraft().getRenderViewEntity().posZ);
@@ -52,6 +53,7 @@ public final class SlimeChunksModule extends Module {
                 }
             }
         }
+        RenderUtil.end3D();
     }
 
     @Listener

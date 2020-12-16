@@ -37,7 +37,6 @@ public final class NewChunksModule extends Module {
     }
 
     private Color currentColor;
-
     private final ICamera frustum = new Frustum();
 
     private final List<ChunkData> chunkDataList = new ArrayList<>();
@@ -71,22 +70,23 @@ public final class NewChunksModule extends Module {
 
     @Listener
     public void render3D(EventRender3D event) {
-        if (Minecraft.getMinecraft().getRenderViewEntity() == null)
+        final Minecraft mc = Minecraft.getMinecraft();
+        if (mc.getRenderViewEntity() == null)
             return;
 
         RenderUtil.begin3D();
         for (int i = this.chunkDataList.size() - 1; i >= 0; i--) {
             final ChunkData chunkData = this.chunkDataList.get(i);
             if (chunkData != null) {
-                this.frustum.setPosition(Minecraft.getMinecraft().getRenderViewEntity().posX, Minecraft.getMinecraft().getRenderViewEntity().posY, Minecraft.getMinecraft().getRenderViewEntity().posZ);
+                this.frustum.setPosition(mc.getRenderViewEntity().posX, mc.getRenderViewEntity().posY, mc.getRenderViewEntity().posZ);
 
                 final AxisAlignedBB bb = new AxisAlignedBB(chunkData.x, 0, chunkData.z, chunkData.x + 16, 1, chunkData.z + 16);
 
                 if (frustum.isBoundingBoxInFrustum(bb)) {
                     final int color = ColorUtil.changeAlpha(currentColor.getRGB(), this.alpha.getValue());
-                    double x = chunkData.x - Minecraft.getMinecraft().getRenderManager().viewerPosX;
-                    double y = -Minecraft.getMinecraft().getRenderManager().viewerPosY;
-                    double z = chunkData.z - Minecraft.getMinecraft().getRenderManager().viewerPosZ;
+                    double x = chunkData.x - mc.getRenderManager().viewerPosX;
+                    double y = -mc.getRenderManager().viewerPosY;
+                    double z = chunkData.z - mc.getRenderManager().viewerPosZ;
                     final AxisAlignedBB chunkBB = new AxisAlignedBB(0, 0, 0, 16, 2, 16);
 
                     switch (this.mode.getValue()) {

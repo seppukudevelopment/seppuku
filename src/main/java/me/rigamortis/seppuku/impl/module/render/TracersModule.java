@@ -76,6 +76,7 @@ public final class TracersModule extends Module {
         if (this.mode.getValue() == Mode.THREE_D) {
             final Minecraft mc = Minecraft.getMinecraft();
 
+            RenderUtil.begin3D();
             for (Entity e : mc.world.loadedEntityList) {
                 if (e != null) {
                     if (this.checkFilter(e)) {
@@ -93,6 +94,7 @@ public final class TracersModule extends Module {
                     }
                 }
             }
+            RenderUtil.end3D();
         }
     }
 
