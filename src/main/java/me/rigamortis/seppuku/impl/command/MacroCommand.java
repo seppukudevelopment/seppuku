@@ -15,10 +15,10 @@ import org.lwjgl.input.Keyboard;
  */
 public final class MacroCommand extends Command {
 
-    private String[] addAlias = new String[]{"Add", "A"};
-    private String[] removeAlias = new String[]{"Remove", "R", "Rem", "Delete", "Del"};
-    private String[] listAlias = new String[]{"List", "L"};
-    private String[] clearAlias = new String[]{"Clear", "C"};
+    private final String[] addAlias = new String[]{"Add", "A"};
+    private final String[] removeAlias = new String[]{"Remove", "R", "Rem", "Delete", "Del"};
+    private final String[] listAlias = new String[]{"List", "L"};
+    private final String[] clearAlias = new String[]{"Clear", "C"};
 
     public MacroCommand() {
         super("Macro", new String[]{"Mac"}, "Allows you to create chat macros", "Macro Add <Name> <Key> <Macro>\n" +
@@ -57,7 +57,7 @@ public final class MacroCommand extends Command {
 
                     for (int i = 4; i < size; i++) {
                         final String arg = split[i];
-                        sb.append(arg + ((i == size - 1) ? "" : " "));
+                        sb.append(arg).append((i == size - 1) ? "" : " ");
                     }
 
                     Seppuku.INSTANCE.logChat("Added macro \247c" + name + "\247f bound to " + key.toUpperCase());

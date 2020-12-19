@@ -11,6 +11,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockShulkerBox;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiShulkerBox;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
@@ -21,7 +22,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.item.ItemShulkerBox;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntityShulkerBox;
 
 import java.util.List;
@@ -293,6 +296,40 @@ public final class EntityListComponent extends DraggableHudComponent {
                                 mc.displayGuiScreen(new GuiShulkerBox(mc.player.inventory, tileEntityShulkerBox));
                             } else {
                                 Seppuku.INSTANCE.errorChat("This shulker box is empty");
+                            }
+                        } else if (itemStack.isItemEnchanted()) {
+                            final StringBuilder enchantStringBuilder = new StringBuilder("");
+
+                            final NBTTagCompound tagCompound = itemStack.getTagCompound();
+                            if (tagCompound != null && !tagCompound.isEmpty()) {
+                                final NBTTagList nbtEnchantTagList = tagCompound.getTagList("ench", 10);
+                                for (NBTBase enchantBaseCompound : nbtEnchantTagList) {
+                                    if (enchantBaseCompound instanceof NBTTagCompound) {
+                                        final NBTTagCompound enchantCompound = (NBTTagCompound) enchantBaseCompound;
+                                        final short enchantID = enchantCompound.getShort("id");
+                                        final short enchantLvl = enchantCompound.getShort("lvl");
+                                        final Enchantment enchantment = Enchantment.getEnchantmentByID(enchantID);
+                                        if (enchantment != null) {
+                                            final String enchantName = ChatFormatting.RESET + "[" + ChatFormatting.AQUA + enchantment.getTranslatedName(enchantLvl) + ChatFormatting.RESET + "] ";
+                                            enchantStringBuilder.append(enchantName);
+                                        }
+                                    }
+                                }
+                            }
+
+                            final String info = String.format("\n%s\n- Key: %s\n- Enchantments: %s\n- Durability: %s", ChatFormatting.AQUA + itemStack.getDisplayName() + ChatFormatting.RESET, itemStack.getTranslationKey(), enchantStringBuilder.toString(), itemStack.getMaxDamage() - itemStack.getItemDamage());
+                            Seppuku.INSTANCE.logChat(info);
+                        } else {
+                            final String info = String.format("\n%s\n- Key: %s\n- Count: %s\n- Metadata: %s\n- Damage: %s\n- Max Damage: %s\n- Durability: %s", itemStack.getDisplayName(), itemStack.getTranslationKey(), itemStack.getCount(), itemStack.getMetadata(), itemStack.getItemDamage(), itemStack.getMaxDamage(), itemStack.getMaxDamage() - itemStack.getItemDamage());
+                            Seppuku.INSTANCE.logChat(info);
+                            NBTTagCompound tagCompound = itemStack.getTagCompound();
+                            if (tagCompound != null && !tagCompound.isEmpty()) {
+                                StringBuilder compoundData = new StringBuilder("\n- Compound:");
+                                for (String s : tagCompound.getKeySet()) {
+                                    compoundData.append("\n-- ").append(s).append(": ");
+                                    compoundData.append(tagCompound.getTag(s));
+                                }
+                                Seppuku.INSTANCE.logChat(compoundData.toString());
                             }
                         }
                     }

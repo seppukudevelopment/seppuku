@@ -45,7 +45,7 @@ public class ColorComponent extends TextComponent {
             int newColor = (int) Long.parseLong(this.displayValue.replaceAll("#", ""), 16);
             this.currentColor = new Color(newColor);
         } catch (NumberFormatException e) {
-            Seppuku.INSTANCE.logChat(this.getName() + ": Invalid color format. Correct format example: \"FF0000\" for red.");
+            Seppuku.INSTANCE.logChat(this.getName() + ": Invalid color format. Correct format example: \"ff0000\" for red.");
         } catch (Exception e) {
             Seppuku.INSTANCE.logChat(this.getName() + ": Something went terribly wrong while setting the color. Please try again.");
         }
