@@ -287,11 +287,10 @@ public final class EntityListComponent extends DraggableHudComponent {
                             final NBTTagCompound tag = itemStack.getTagCompound();
                             if (tag != null && tag.hasKey("BlockEntityTag", 10)) {
                                 final NBTTagCompound entityTag = tag.getCompoundTag("BlockEntityTag");
-
-                                final TileEntityShulkerBox te = new TileEntityShulkerBox();
-                                te.setWorld(mc.world);
-                                te.readFromNBT(entityTag);
-                                mc.displayGuiScreen(new GuiShulkerBox(mc.player.inventory, te));
+                                final TileEntityShulkerBox tileEntityShulkerBox = new TileEntityShulkerBox();
+                                tileEntityShulkerBox.setWorld(mc.world);
+                                tileEntityShulkerBox.readFromNBT(entityTag);
+                                mc.displayGuiScreen(new GuiShulkerBox(mc.player.inventory, tileEntityShulkerBox));
                             } else {
                                 Seppuku.INSTANCE.errorChat("This shulker box is empty");
                             }
