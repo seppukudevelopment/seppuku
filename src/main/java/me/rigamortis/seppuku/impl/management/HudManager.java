@@ -98,6 +98,7 @@ public final class HudManager {
         this.componentList.add(new PlayerCountComponent());
         this.componentList.add(new OverViewComponent());
         this.componentList.add(new RearViewComponent());
+        this.componentList.add(new EntityListComponent());
 
         TrayComponent trayComponent = new TrayComponent();
         trayComponent.setAnchorPoint(BOTTOM_CENTER);
