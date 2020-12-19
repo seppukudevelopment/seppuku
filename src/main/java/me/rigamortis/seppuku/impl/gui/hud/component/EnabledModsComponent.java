@@ -6,6 +6,7 @@ import me.rigamortis.seppuku.api.event.client.EventSaveConfig;
 import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
 import me.rigamortis.seppuku.impl.module.hidden.ArrayListModule;
@@ -99,13 +100,12 @@ public final class EnabledModsComponent extends DraggableHudComponent {
 
                 final float width = mc.fontRenderer.getStringWidth(name);
 
-                int color = 0;
-
+                int color;
                 if (RAINBOW && mc.player != null) {
                     Color rainbow = new Color(Color.HSBtoRGB((float) (mc.player.ticksExisted / (100.0D - RAINBOW_HUE_SPEED) + Math.sin(hueDifference / (100.0D - RAINBOW_HUE_SPEED * Math.PI / 2.0D))) % 1.0F, RAINBOW_SATURATION, RAINBOW_BRIGHTNESS));
-                    color = (new Color(rainbow.getRed(), rainbow.getGreen(), rainbow.getBlue(), 255)).getRGB();
+                    color = ColorUtil.changeAlpha((new Color(rainbow.getRed(), rainbow.getGreen(), rainbow.getBlue())).getRGB(), 0xFF);
                 } else {
-                    color = mod.getColor();
+                    color = ColorUtil.changeAlpha(mod.getColor(), 0xFF);
                 }
 
                 if (width >= maxWidth) {
