@@ -7,7 +7,10 @@ import me.rigamortis.seppuku.api.friend.Friend;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.gui.hud.component.HudComponent;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockShulkerBox;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.gui.inventory.GuiShulkerBox;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
@@ -16,7 +19,10 @@ import net.minecraft.entity.item.EntityEnderPearl;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.item.ItemShulkerBox;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntityShulkerBox;
 
 import java.util.List;
 
@@ -272,6 +278,24 @@ public final class EntityListComponent extends DraggableHudComponent {
                         Seppuku.INSTANCE.getFriendManager().getFriendList().remove(friend);
                     } else {
                         Seppuku.INSTANCE.getFriendManager().add(entity.getName(), entity.getName(), false);
+                    }
+                } else if (entity instanceof EntityItem) {
+                    final EntityItem entityItem = (EntityItem) entity;
+                    if (!entityItem.getItem().isEmpty()) {
+                        final ItemStack itemStack = entityItem.getItem();
+                        if (Block.getBlockFromItem(itemStack.getItem()) instanceof BlockShulkerBox) {
+                            final NBTTagCompound tag = itemStack.getTagCompound();
+                            if (tag != null && tag.hasKey("BlockEntityTag", 10)) {
+                                final NBTTagCompound entityTag = tag.getCompoundTag("BlockEntityTag");
+
+                                final TileEntityShulkerBox te = new TileEntityShulkerBox();
+                                te.setWorld(mc.world);
+                                te.readFromNBT(entityTag);
+                                mc.displayGuiScreen(new GuiShulkerBox(mc.player.inventory, te));
+                            } else {
+                                Seppuku.INSTANCE.errorChat("This shulker box is empty");
+                            }
+                        }
                     }
                 }
             }

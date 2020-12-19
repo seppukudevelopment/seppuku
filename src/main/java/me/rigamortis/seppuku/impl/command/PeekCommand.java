@@ -89,12 +89,14 @@ public final class PeekCommand extends Command {
                 final RayTraceResult ray = mc.objectMouseOver;
 
                 if (ray != null) {
-                    if (ray.entityHit != null && ray.entityHit instanceof EntityItemFrame) {
-                        final EntityItemFrame itemFrame = (EntityItemFrame) ray.entityHit;
-                        if (itemFrame.getDisplayedItem() != null && itemFrame.getDisplayedItem().getItem() instanceof ItemShulkerBox) {
-                            stack = itemFrame.getDisplayedItem();
-                        } else {
-                            stack = getHeldShulker(mc.player);
+                    if (ray.entityHit != null) {
+                        if (ray.entityHit instanceof EntityItemFrame) {
+                            final EntityItemFrame itemFrame = (EntityItemFrame) ray.entityHit;
+                            if (!itemFrame.getDisplayedItem().isEmpty() && itemFrame.getDisplayedItem().getItem() instanceof ItemShulkerBox) {
+                                stack = itemFrame.getDisplayedItem();
+                            } else {
+                                stack = getHeldShulker(mc.player);
+                            }
                         }
                     } else {
                         stack = getHeldShulker(mc.player);
@@ -109,19 +111,16 @@ public final class PeekCommand extends Command {
 
                 if (item instanceof ItemShulkerBox) {
                     if (Block.getBlockFromItem(item) instanceof BlockShulkerBox) {
-                        final BlockShulkerBox shulkerBox = (BlockShulkerBox) Block.getBlockFromItem(item);
-                        if (shulkerBox != null) {
-                            final NBTTagCompound tag = stack.getTagCompound();
-                            if (tag != null && tag.hasKey("BlockEntityTag", 10)) {
-                                final NBTTagCompound entityTag = tag.getCompoundTag("BlockEntityTag");
+                        final NBTTagCompound tag = stack.getTagCompound();
+                        if (tag != null && tag.hasKey("BlockEntityTag", 10)) {
+                            final NBTTagCompound entityTag = tag.getCompoundTag("BlockEntityTag");
 
-                                final TileEntityShulkerBox te = new TileEntityShulkerBox();
-                                te.setWorld(mc.world);
-                                te.readFromNBT(entityTag);
-                                mc.displayGuiScreen(new GuiShulkerBox(mc.player.inventory, te));
-                            } else {
-                                Seppuku.INSTANCE.errorChat("This shulker box is empty");
-                            }
+                            final TileEntityShulkerBox te = new TileEntityShulkerBox();
+                            te.setWorld(mc.world);
+                            te.readFromNBT(entityTag);
+                            mc.displayGuiScreen(new GuiShulkerBox(mc.player.inventory, te));
+                        } else {
+                            Seppuku.INSTANCE.errorChat("This shulker box is empty");
                         }
                     }
 
@@ -138,10 +137,10 @@ public final class PeekCommand extends Command {
     }
 
     private ItemStack getHeldShulker(EntityPlayer entity) {
-        if (entity.getHeldItemMainhand() != null && entity.getHeldItemMainhand().getItem() instanceof ItemShulkerBox) {
+        if (!entity.getHeldItemMainhand().isEmpty() && entity.getHeldItemMainhand().getItem() instanceof ItemShulkerBox) {
             return entity.getHeldItemMainhand();
         }
-        if (entity.getHeldItemOffhand() != null && entity.getHeldItemOffhand().getItem() instanceof ItemShulkerBox) {
+        if (!entity.getHeldItemOffhand().isEmpty() && entity.getHeldItemOffhand().getItem() instanceof ItemShulkerBox) {
             return entity.getHeldItemOffhand();
         }
         return null;

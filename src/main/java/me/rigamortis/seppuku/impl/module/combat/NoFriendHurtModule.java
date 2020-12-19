@@ -26,6 +26,9 @@ public final class NoFriendHurtModule extends Module {
                 if (Minecraft.getMinecraft().player == null || Minecraft.getMinecraft().objectMouseOver == null)
                     return;
 
+                if (Minecraft.getMinecraft().objectMouseOver.entityHit == null)
+                    return;
+
                 final Friend friend = Seppuku.INSTANCE.getFriendManager().isFriend(Minecraft.getMinecraft().objectMouseOver.entityHit);
                 if (packetUseEntity.getAction() == CPacketUseEntity.Action.ATTACK && friend != null) {
                     event.setCanceled(true);
