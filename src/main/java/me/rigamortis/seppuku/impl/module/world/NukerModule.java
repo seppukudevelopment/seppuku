@@ -5,6 +5,8 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventRightClickBlock;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.util.BlockUtil;
+import me.rigamortis.seppuku.api.util.EntityUtil;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
@@ -12,6 +14,7 @@ import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -26,7 +29,7 @@ public final class NukerModule extends Module {
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The nuker mode to use.", Mode.SELECTION);
 
     private enum Mode {
-        SELECTION, ALL
+        SELECTION, ALL, CREATIVE
     }
 
     public final Value<Float> distance = new Value<Float>("Distance", new String[]{"Dist", "D"}, "Maximum distance in blocks the nuker will reach.", 4.5f, 0.0f, 5.0f, 0.1f);
@@ -54,6 +57,10 @@ public final class NukerModule extends Module {
     @Listener
     public void onWalkingUpdate(EventUpdateWalkingPlayer event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
+            final Minecraft mc = Minecraft.getMinecraft();
+            if (mc.player == null || mc.world == null)
+                return;
+
             BlockPos pos = null;
 
             switch (this.mode.getValue()) {
@@ -63,11 +70,49 @@ public final class NukerModule extends Module {
                 case ALL:
                     pos = this.getClosestBlock(false);
                     break;
+                case CREATIVE:
+                    /* the amazing creative nuker straight from the latch hacked client */
+                    for (double y = Math.round(mc.player.posY - 1) + this.vDistance.getValue(); y > Math.round(mc.player.posY - 1); y -= 1.0D) {
+                        for (double x = mc.player.posX - this.hDistance.getValue(); x < mc.player.posX + this.hDistance.getValue(); x += 1.0D) {
+                            for (double z = mc.player.posZ - this.hDistance.getValue(); z < mc.player.posZ + this.hDistance.getValue(); z += 1.0D) {
+                                final BlockPos blockPos = new BlockPos(x, y, z);
+                                final Block block = BlockUtil.getBlock(blockPos);
+                                if (block == Blocks.AIR || !mc.world.getBlockState(blockPos).isFullBlock())
+                                    continue;
+
+                                final Vec3d eyesPos = new Vec3d(mc.player.posX, mc.player.posY + mc.player.getEyeHeight(), mc.player.posZ);
+                                final Vec3d posVec = new Vec3d(blockPos).add(0.5f, 0.5f, 0.5f);
+                                double distanceSqPosVec = eyesPos.squareDistanceTo(posVec);
+
+                                for (EnumFacing side : EnumFacing.values()) {
+                                    final Vec3d hitVec = posVec.add(new Vec3d(side.getDirectionVec()).scale(0.5f));
+                                    double distanceSqHitVec = eyesPos.squareDistanceTo(hitVec);
+
+                                    // check if hitVec is within range (6 blocks)
+                                    if (distanceSqHitVec > 36)
+                                        continue;
+
+                                    // check if side is facing towards player
+                                    if (distanceSqHitVec >= distanceSqPosVec)
+                                        continue;
+
+                                    // face block
+                                    final float[] rotations = EntityUtil.getRotations(hitVec.x, hitVec.y, hitVec.z);
+                                    Seppuku.INSTANCE.getRotationManager().setPlayerRotations(rotations[0], rotations[1]);
+
+                                    // damage block
+                                    if (mc.playerController.onPlayerDamageBlock(blockPos, side)) {
+                                        mc.player.swingArm(EnumHand.MAIN_HAND);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
             }
 
+            /* do the other nuker modes */
             if (pos != null) {
-                final Minecraft mc = Minecraft.getMinecraft();
-
                 final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f));
                 Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
 

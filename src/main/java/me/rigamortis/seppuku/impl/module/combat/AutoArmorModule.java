@@ -84,7 +84,7 @@ public final class AutoArmorModule extends Module {
     }
 
     private boolean shouldEquip(final Minecraft mc) {
-        boolean inInventory = mc.currentScreen instanceof GuiContainer && !(mc.currentScreen instanceof InventoryEffectRenderer);
+        boolean inInventory = mc.currentScreen instanceof GuiContainer/* && !(mc.currentScreen instanceof InventoryEffectRenderer)*/;
         boolean hasDelayFinished = this.equipTimer.passed(this.delay.getValue());
         boolean isCreative = mc.player.isCreative();
         return !isCreative && hasDelayFinished && !inInventory;
