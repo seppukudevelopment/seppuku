@@ -1,7 +1,6 @@
 package me.rigamortis.seppuku.impl.module.render;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
-import com.sun.org.apache.regexp.internal.RE;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
