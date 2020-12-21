@@ -19,8 +19,9 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Logger;
 
 /**
- * Author Seth
- * 4/4/2019 @ 10:21 PM.
+ * @author Seth (riga)
+ * @author noil
+ * @author github contributors
  */
 public final class Seppuku {
 
