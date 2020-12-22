@@ -1,12 +1,14 @@
 package me.rigamortis.seppuku.impl.module.render;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.render.EventRender2D;
 import me.rigamortis.seppuku.api.event.render.EventRenderName;
+import me.rigamortis.seppuku.api.event.world.EventAddEntity;
 import me.rigamortis.seppuku.api.friend.Friend;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.*;
@@ -21,6 +23,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.*;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.AbstractHorse;
+import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -39,10 +44,7 @@ import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -67,6 +69,7 @@ public final class WallHackModule extends Module {
     public final Value<Boolean> pearls = new Value<Boolean>("Pearls", new String[]{"Pearl"}, "Choose to enable on ender pearls.", true);
     public final Value<Boolean> armorStand = new Value<Boolean>("ArmorStands", new String[]{"ArmorStand", "ArmourStand", "ArmourStands", "ArmStand"}, "Choose to enable on armor-stands.", true);
     public final Value<Boolean> footsteps = new Value<Boolean>("FootSteps", new String[]{"FootStep", "Steps"}, "Choose to draw entity footsteps.", false);
+    public final Value<Boolean> owner = new Value<Boolean>("Owner", new String[]{"Owners", "MobOwner"}, "Choose to draw entity (tame-able or horse) owner name.", false);
 
     public final Value<Boolean> nametag = new Value<Boolean>("Nametag", new String[]{"tag", "tags", "names", "name"}, "Draw the entity's name tag.", true);
     public final Value<Boolean> ping = new Value<Boolean>("Ping", new String[]{"Ms"}, "Draw the entity's ping (only works on players).", true);
@@ -87,11 +90,11 @@ public final class WallHackModule extends Module {
         NONE, BAR, BARTEXT
     }
 
-    private ICamera camera = new Frustum();
+    private final ICamera camera = new Frustum();
     private final ResourceLocation inventory = new ResourceLocation("textures/gui/container/inventory.png");
 
     //i cba
-    private List<FootstepData> footstepDataList = new CopyOnWriteArrayList<>();
+    private final List<FootstepData> footstepDataList = new CopyOnWriteArrayList<>();
 
     public WallHackModule() {
         super("WallHack", new String[]{"ESP"}, "Highlights entities", "NONE", -1, ModuleType.RENDER);
@@ -104,8 +107,8 @@ public final class WallHackModule extends Module {
         if (this.footsteps.getValue()) {
             for (FootstepData data : this.footstepDataList) {
                 final GLUProjection.Projection projection = GLUProjection.getInstance().project(data.x - mc.getRenderManager().viewerPosX, data.y - mc.getRenderManager().viewerPosY, data.z - mc.getRenderManager().viewerPosZ, GLUProjection.ClampMode.NONE, false);
-                if (projection != null && projection.getType() == GLUProjection.Projection.Type.INSIDE) {
-                    mc.fontRenderer.drawStringWithShadow("*step*", (float) projection.getX() - mc.fontRenderer.getStringWidth("*step*") / 2, (float) projection.getY(), -1);
+                if (projection.getType() == GLUProjection.Projection.Type.INSIDE) {
+                    mc.fontRenderer.drawStringWithShadow("*step*", (float) projection.getX() - mc.fontRenderer.getStringWidth("*step*") / 2.0f, (float) projection.getY(), -1);
                 }
 
                 if (Math.abs(System.currentTimeMillis() - data.getTime()) >= 3000) {
@@ -126,8 +129,8 @@ public final class WallHackModule extends Module {
                         }
 
                         String name = StringUtils.stripControlCodes(getNameForEntity(e));
-                        String heartsFormatted = null;
-                        String pingFormatted = null;
+                        String heartsFormatted = "";
+                        String pingFormatted = "";
 
                         if (this.nametag.getValue()) {
                             int color = -1;
@@ -140,10 +143,10 @@ public final class WallHackModule extends Module {
                             }
 
                             if (this.background.getValue()) {
-                                RenderUtil.drawRect(bounds[0] + (bounds[2] - bounds[0]) / 2 - mc.fontRenderer.getStringWidth(name) / 2 - 1, bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 2, bounds[0] + (bounds[2] - bounds[0]) / 2 + mc.fontRenderer.getStringWidth(name) / 2 + 1, bounds[1] + (bounds[3] - bounds[1]) - 1, 0x75101010);
+                                RenderUtil.drawRect(bounds[0] + (bounds[2] - bounds[0]) / 2 - mc.fontRenderer.getStringWidth(name) / 2.0f - 1, bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 2, bounds[0] + (bounds[2] - bounds[0]) / 2 + mc.fontRenderer.getStringWidth(name) / 2 + 1, bounds[1] + (bounds[3] - bounds[1]) - 1, 0x75101010);
                             }
 
-                            mc.fontRenderer.drawStringWithShadow(name, bounds[0] + (bounds[2] - bounds[0]) / 2 - mc.fontRenderer.getStringWidth(name) / 2, bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 1, color);
+                            mc.fontRenderer.drawStringWithShadow(name, bounds[0] + (bounds[2] - bounds[0]) / 2 - mc.fontRenderer.getStringWidth(name) / 2.0f, bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 1, color);
                         }
 
                         if (e instanceof EntityPlayer) {
@@ -152,7 +155,7 @@ public final class WallHackModule extends Module {
                                 int responseTime = -1;
                                 try {
                                     responseTime = (int) MathUtil.clamp(mc.player.connection.getPlayerInfo(player.getUniqueID()).getResponseTime(), 0, 300);
-                                } catch (NullPointerException np) {
+                                } catch (NullPointerException ignored) {
                                 }
                                 pingFormatted = responseTime + "ms";
 
@@ -205,6 +208,38 @@ public final class WallHackModule extends Module {
                                 mc.fontRenderer.drawStringWithShadow(heartsFormatted, bounds[0] + (bounds[2] - bounds[0]) / 2 + startX, bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 1, heartsColor);
                             }
 
+                            if (e instanceof EntityTameable || e instanceof AbstractHorse) {
+                                if (this.owner.getValue()) {
+                                    String ownerName = "";
+
+                                    if (e instanceof EntityTameable) {
+                                        final EntityTameable tameable = (EntityTameable) e;
+                                        if (tameable.isTamed() && tameable.getOwnerId() != null) {
+                                            ownerName = tameable.getOwnerId().toString();
+                                        }
+                                    }
+
+                                    if (e instanceof AbstractHorse) {
+                                        final AbstractHorse horse = (AbstractHorse) e;
+                                        if (horse.isTame() && horse.getOwnerUniqueId() != null) {
+                                            ownerName = horse.getOwnerUniqueId().toString();
+                                        }
+                                    }
+
+                                    float startX = -mc.fontRenderer.getStringWidth(ownerName) / 2.0f;
+                                    if (this.nametag.getValue())
+                                        startX = (mc.fontRenderer.getStringWidth(name) / 2.0f) + 2.0f;
+                                    else if (this.hearts.getValue())
+                                        startX = (mc.fontRenderer.getStringWidth(heartsFormatted) / 2.0f) + 2.0f;
+
+                                    if (this.background.getValue()) {
+                                        RenderUtil.drawRect(bounds[0] + (bounds[2] - bounds[0]) / 2 + startX, bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 2, bounds[0] + (bounds[2] - bounds[0]) / 2 + startX + mc.fontRenderer.getStringWidth(ownerName), bounds[1] + (bounds[3] - bounds[1]) - 1, 0x75101010);
+                                    }
+
+                                    mc.fontRenderer.drawStringWithShadow(ownerName, bounds[0] + (bounds[2] - bounds[0]) / 2 + startX, bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 1, 0xFFAAAAAA);
+                                }
+                            }
+
                             if (this.hpMode.getValue() != HealthMode.NONE) {
                                 RenderUtil.drawRect(bounds[2] - 0.5f, bounds[1], bounds[2] - 2, bounds[3], 0xAA000000);
                                 final float hpHeight = ((((EntityLivingBase) e).getHealth() * (bounds[3] - bounds[1])) / ((EntityLivingBase) e).getMaxHealth());
@@ -214,7 +249,7 @@ public final class WallHackModule extends Module {
                                 if (this.hpMode.getValue() == HealthMode.BARTEXT) {
                                     if (((EntityLivingBase) e).getHealth() < ((EntityLivingBase) e).getMaxHealth() && ((EntityLivingBase) e).getHealth() > 0) {
                                         final String hp = new DecimalFormat("#.#").format((int) ((EntityLivingBase) e).getHealth());
-                                        mc.fontRenderer.drawStringWithShadow(hp, (bounds[2] - 1 - mc.fontRenderer.getStringWidth(hp) / 2), ((bounds[1] - bounds[3]) + bounds[3] + hpHeight + 0.5f - mc.fontRenderer.FONT_HEIGHT / 2), -1);
+                                        mc.fontRenderer.drawStringWithShadow(hp, (bounds[2] - 1 - mc.fontRenderer.getStringWidth(hp) / 2.0f), ((bounds[1] - bounds[3]) + bounds[3] + hpHeight + 0.5f - mc.fontRenderer.FONT_HEIGHT / 2.0f), -1);
                                     }
                                 }
                             }
@@ -314,7 +349,7 @@ public final class WallHackModule extends Module {
                                         GlStateManager.enableBlend();
                                         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
                                         RenderHelper.enableGUIStandardItemLighting();
-                                        GlStateManager.translate(bounds[0] + (bounds[2] - bounds[0]) / 2 + x - (16 * stacks.size() / 2), bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 19, 0);
+                                        GlStateManager.translate(bounds[0] + (bounds[2] - bounds[0]) / 2 + x - (16 * stacks.size() / 2.0f), bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 19, 0);
                                         if (this.background.getValue()) {
                                             RenderUtil.drawRect(0, 0, 16, 16, 0x75101010);
                                         }
@@ -330,24 +365,23 @@ public final class WallHackModule extends Module {
                                             final List<String> stringsToDraw = Lists.newArrayList();
                                             int y = 0;
 
-                                            if (stack.getEnchantmentTagList() != null) {
-                                                final NBTTagList tags = stack.getEnchantmentTagList();
-                                                for (int i = 0; i < tags.tagCount(); i++) {
-                                                    final NBTTagCompound tagCompound = tags.getCompoundTagAt(i);
-                                                    if (tagCompound != null && Enchantment.getEnchantmentByID(tagCompound.getByte("id")) != null) {
-                                                        final Enchantment enchantment = Enchantment.getEnchantmentByID(tagCompound.getShort("id"));
-                                                        final short lvl = tagCompound.getShort("lvl");
-                                                        if (enchantment != null) {
-                                                            String ench = "";
-                                                            if (enchantment.isCurse()) {
-                                                                ench = ChatFormatting.RED + enchantment.getTranslatedName(lvl).substring(11).substring(0, 3) + ChatFormatting.GRAY + lvl;
-                                                            } else if (ItemUtil.isIllegalEnchant(enchantment, lvl)) {
-                                                                ench = ChatFormatting.AQUA + enchantment.getTranslatedName(lvl).substring(0, 3) + ChatFormatting.GRAY + lvl;
-                                                            } else {
-                                                                ench = enchantment.getTranslatedName(lvl).substring(0, 3) + ChatFormatting.GRAY + lvl;
-                                                            }
-                                                            stringsToDraw.add(ench);
+                                            stack.getEnchantmentTagList();
+                                            final NBTTagList tags = stack.getEnchantmentTagList();
+                                            for (int i = 0; i < tags.tagCount(); i++) {
+                                                final NBTTagCompound tagCompound = tags.getCompoundTagAt(i);
+                                                if (Enchantment.getEnchantmentByID(tagCompound.getByte("id")) != null) {
+                                                    final Enchantment enchantment = Enchantment.getEnchantmentByID(tagCompound.getShort("id"));
+                                                    final short lvl = tagCompound.getShort("lvl");
+                                                    if (enchantment != null) {
+                                                        String ench = "";
+                                                        if (enchantment.isCurse()) {
+                                                            ench = ChatFormatting.RED + enchantment.getTranslatedName(lvl).substring(11).substring(0, 3) + ChatFormatting.GRAY + lvl;
+                                                        } else if (ItemUtil.isIllegalEnchant(enchantment, lvl)) {
+                                                            ench = ChatFormatting.AQUA + enchantment.getTranslatedName(lvl).substring(0, 3) + ChatFormatting.GRAY + lvl;
+                                                        } else {
+                                                            ench = enchantment.getTranslatedName(lvl).substring(0, 3) + ChatFormatting.GRAY + lvl;
                                                         }
+                                                        stringsToDraw.add(ench);
                                                     }
                                                 }
                                             }
@@ -464,7 +498,7 @@ public final class WallHackModule extends Module {
         if (this.crystals.getValue() && entity instanceof EntityEnderCrystal) {
             ret = true;
         }
-        if (this.vehicles.getValue() && (entity instanceof EntityBoat || entity instanceof EntityMinecart || entity instanceof EntityMinecartContainer)) {
+        if (this.vehicles.getValue() && (entity instanceof EntityBoat || entity instanceof EntityMinecart)) {
             ret = true;
         }
         if (this.armorStand.getValue() && entity instanceof EntityArmorStand) {
@@ -491,7 +525,7 @@ public final class WallHackModule extends Module {
         if (entity instanceof IMob) {
             ret = 0xFFFFAA00;
         }
-        if (entity instanceof EntityBoat || entity instanceof EntityMinecart || entity instanceof EntityMinecartContainer) {
+        if (entity instanceof EntityBoat || entity instanceof EntityMinecart) {
             ret = 0xFF00FFAA;
         }
         if (entity instanceof EntityItem) {
@@ -529,10 +563,6 @@ public final class WallHackModule extends Module {
 
         final Vec3d pos = MathUtil.interpolateEntity(e, partialTicks);
 
-        if (pos == null) {
-            return null;
-        }
-
         AxisAlignedBB bb = e.getEntityBoundingBox();
 
         if (e instanceof EntityEnderCrystal) {
@@ -551,7 +581,7 @@ public final class WallHackModule extends Module {
             return null;
         }
 
-        final Vec3d corners[] = {
+        final Vec3d[] corners = {
                 new Vec3d(bb.minX - bb.maxX + e.width / 2, 0, bb.minZ - bb.maxZ + e.width / 2),
                 new Vec3d(bb.maxX - bb.minX - e.width / 2, 0, bb.minZ - bb.maxZ + e.width / 2),
                 new Vec3d(bb.minX - bb.maxX + e.width / 2, 0, bb.maxZ - bb.minZ - e.width / 2),
@@ -565,10 +595,6 @@ public final class WallHackModule extends Module {
 
         for (Vec3d vec : corners) {
             final GLUProjection.Projection projection = GLUProjection.getInstance().project(pos.x + vec.x - Minecraft.getMinecraft().getRenderManager().viewerPosX, pos.y + vec.y - Minecraft.getMinecraft().getRenderManager().viewerPosY, pos.z + vec.z - Minecraft.getMinecraft().getRenderManager().viewerPosZ, GLUProjection.ClampMode.NONE, false);
-
-            if (projection == null) {
-                return null;
-            }
 
             x = Math.max(x, (float) projection.getX());
             y = Math.max(y, (float) projection.getY());

@@ -113,36 +113,36 @@ public final class EnabledModsComponent extends DraggableHudComponent {
                     }
 
                     if (this.getAnchorPoint() != null) {
-                        switch (this.getAnchorPoint().getPoint()) {
-                            case TOP_CENTER:
-                            case BOTTOM_CENTER:
-                                xOffset = (this.getW() - mc.fontRenderer.getStringWidth(name)) / 2;
-                                break;
-                            case TOP_LEFT:
-                            case BOTTOM_LEFT:
-                                xOffset = 0;
-                                break;
-                            case TOP_RIGHT:
-                            case BOTTOM_RIGHT:
-                                xOffset = this.getW() - mc.fontRenderer.getStringWidth(name);
-                                break;
-                        }
-                    }
+                        if (this.getAnchorPoint().getPoint() != null) {
+                            switch (this.getAnchorPoint().getPoint()) {
+                                case TOP_CENTER:
+                                case BOTTOM_CENTER:
+                                    xOffset = (this.getW() - mc.fontRenderer.getStringWidth(name)) / 2;
+                                    break;
+                                case TOP_LEFT:
+                                case BOTTOM_LEFT:
+                                    xOffset = 0;
+                                    break;
+                                case TOP_RIGHT:
+                                case BOTTOM_RIGHT:
+                                    xOffset = this.getW() - mc.fontRenderer.getStringWidth(name);
+                                    break;
+                            }
 
-                    if (this.getAnchorPoint() != null) {
-                        switch (this.getAnchorPoint().getPoint()) {
-                            case TOP_CENTER:
-                            case TOP_LEFT:
-                            case TOP_RIGHT:
-                                mc.fontRenderer.drawStringWithShadow(name, this.getX() + xOffset, this.getY() + yOffset, color);
-                                yOffset += (mc.fontRenderer.FONT_HEIGHT + 1);
-                                break;
-                            case BOTTOM_CENTER:
-                            case BOTTOM_LEFT:
-                            case BOTTOM_RIGHT:
-                                mc.fontRenderer.drawStringWithShadow(name, this.getX() + xOffset, this.getY() + (this.getH() - mc.fontRenderer.FONT_HEIGHT) + yOffset, color);
-                                yOffset -= (mc.fontRenderer.FONT_HEIGHT + 1);
-                                break;
+                            switch (this.getAnchorPoint().getPoint()) {
+                                case TOP_CENTER:
+                                case TOP_LEFT:
+                                case TOP_RIGHT:
+                                    mc.fontRenderer.drawStringWithShadow(name, this.getX() + xOffset, this.getY() + yOffset, color);
+                                    yOffset += (mc.fontRenderer.FONT_HEIGHT + 1);
+                                    break;
+                                case BOTTOM_CENTER:
+                                case BOTTOM_LEFT:
+                                case BOTTOM_RIGHT:
+                                    mc.fontRenderer.drawStringWithShadow(name, this.getX() + xOffset, this.getY() + (this.getH() - mc.fontRenderer.FONT_HEIGHT) + yOffset, color);
+                                    yOffset -= (mc.fontRenderer.FONT_HEIGHT + 1);
+                                    break;
+                            }
                         }
                     } else {
                         mc.fontRenderer.drawStringWithShadow(name, this.getX() + xOffset, this.getY() + yOffset, color);

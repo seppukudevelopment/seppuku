@@ -75,11 +75,15 @@ public final class EntityListComponent extends DraggableHudComponent {
                 }
             }
 
+            if (this.getAnchorPoint() == null) {
+                this.components.add(new TextLineEntity(null, ChatFormatting.GRAY + "(text radar)"));
+            }
+
             if (entityGroups.size() > 0) {
                 for (EntityGroup entityGroup : entityGroups) {
                     String line = entityGroup.getEntityName();
                     if (entityGroup.getCount() > 1) {
-                        line = String.format("%s (%s)", entityGroup.getEntityName(), entityGroup.getCount());
+                        line = String.format("%s [%s]", entityGroup.getEntityName(), entityGroup.getCount());
                     }
                     this.components.add(new TextLineEntity(entityGroup.getEntity(), line));
                 }
@@ -202,26 +206,27 @@ public final class EntityListComponent extends DraggableHudComponent {
             }
             return ChatFormatting.RED + entity.getName() + ChatFormatting.RESET + " (" + (int) mc.player.getDistance(entity) + "m)";
         } else if (entity instanceof EntityLiving) {
-            return EntityList.getEntityString(entity);
+            final EntityLiving entityLiving = (EntityLiving) entity;
+            return EntityList.getEntityString(entity) + " (" + ChatFormatting.GREEN + (int) entityLiving.getHealth() + ChatFormatting.RESET + ")";
         } else if (entity instanceof EntityItem) {
             EntityItem item = (EntityItem) entity;
             ItemStack stack = item.getItem();
             int stackSize = stack.getCount();
             boolean moreThanZero = stackSize > 1;
             if (stack.isItemEnchanted()) {
-                name = ChatFormatting.AQUA + stack.getDisplayName() + ChatFormatting.RESET + (moreThanZero ? " (" + ChatFormatting.YELLOW + stackSize + ChatFormatting.RESET + ")" : "");
+                name = ChatFormatting.AQUA + stack.getDisplayName() + (moreThanZero ? " (" + ChatFormatting.YELLOW + "x" + stackSize + ChatFormatting.AQUA + ")" : "");
             } else {
-                name = stack.getDisplayName() + (moreThanZero ? " (" + ChatFormatting.YELLOW + stackSize + ChatFormatting.RESET + ")" : "");
+                name = ChatFormatting.GRAY + stack.getDisplayName() + (moreThanZero ? " (" + ChatFormatting.YELLOW + "x" + stackSize + ChatFormatting.GRAY + ")" : "");
             }
         } else if (entity instanceof EntityThrowable) {
             EntityThrowable throwable = (EntityThrowable) entity;
             if (throwable instanceof EntityEnderPearl) {
-                name = "Ender Pearl";
+                name = ChatFormatting.DARK_AQUA + "Ender Pearl";
             } else {
                 name = throwable.getName();
             }
         } else if (entity instanceof EntityEnderCrystal) {
-            name = "Ender Crystal";
+            name = ChatFormatting.LIGHT_PURPLE + "Ender Crystal";
         }
         return name;
     }
@@ -320,7 +325,7 @@ public final class EntityListComponent extends DraggableHudComponent {
                             final String info = String.format("\n%s\n- Key: %s\n- Enchantments: %s\n- Durability: %s", ChatFormatting.AQUA + itemStack.getDisplayName() + ChatFormatting.RESET, itemStack.getTranslationKey(), enchantStringBuilder.toString(), itemStack.getMaxDamage() - itemStack.getItemDamage());
                             Seppuku.INSTANCE.logChat(info);
                         } else {
-                            final String info = String.format("\n%s\n- Key: %s\n- Count: %s\n- Metadata: %s\n- Damage: %s\n- Max Damage: %s\n- Durability: %s", itemStack.getDisplayName(), itemStack.getTranslationKey(), itemStack.getCount(), itemStack.getMetadata(), itemStack.getItemDamage(), itemStack.getMaxDamage(), itemStack.getMaxDamage() - itemStack.getItemDamage());
+                            final String info = String.format("\n%s\n- Key: %s\n- Count: %s\n- Metadata: %s\n- Damage: %s\n- Max Damage: %s\n- Durability: %s", ChatFormatting.GRAY + itemStack.getDisplayName(), itemStack.getTranslationKey(), itemStack.getCount(), itemStack.getMetadata(), itemStack.getItemDamage(), itemStack.getMaxDamage(), itemStack.getMaxDamage() - itemStack.getItemDamage());
                             Seppuku.INSTANCE.logChat(info);
                             NBTTagCompound tagCompound = itemStack.getTagCompound();
                             if (tagCompound != null && !tagCompound.isEmpty()) {

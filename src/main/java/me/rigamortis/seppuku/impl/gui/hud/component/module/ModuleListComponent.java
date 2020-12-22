@@ -103,6 +103,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
         }
 
         // Background & title
+        //RenderUtil.begin2D();
         RenderUtil.drawRect(this.getX() - 1, this.getY() - 1, this.getX() + this.getW() + 1, this.getY() + this.getH() + 1, 0x99101010);
         RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), ColorUtil.changeAlpha(0xFF202020, mouseInside ? 0xFF : 0x99));
         GlStateManager.enableBlend();
@@ -134,8 +135,8 @@ public final class ModuleListComponent extends ResizableHudComponent {
         RenderUtil.drawRect(this.getX() + this.getW() - SCROLL_WIDTH, MathHelper.clamp((this.getY() + offsetY + BORDER) + ((this.getH() * this.scroll) / this.totalHeight), (this.getY() + offsetY + BORDER), (this.getY() + this.getH() - BORDER)), this.getX() + this.getW() - BORDER, MathHelper.clamp((this.getY() + this.getH() - BORDER) - (this.getH() * (this.totalHeight - this.getH() - this.scroll) / this.totalHeight), (this.getY() + offsetY + BORDER), (this.getY() + this.getH() - BORDER)), ColorUtil.changeAlpha(0xFF909090, mouseInside ? 0xFF : 0x99));
 
         // Begin scissoring and render the module "buttons"
-        RenderUtil.glScissor(this.getX() + BORDER, this.getY() + offsetY + BORDER, this.getX() + this.getW() - BORDER - SCROLL_WIDTH, this.getY() + this.getH() - BORDER, sr);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        RenderUtil.glScissor(this.getX() + BORDER, this.getY() + offsetY + BORDER, this.getX() + this.getW() - BORDER - SCROLL_WIDTH, this.getY() + this.getH() - BORDER, sr);
         if (this.currentSettings != null) {
             this.title = this.currentSettings.module.getDisplayName();
             this.currentSettings.setX(this.getX() + BORDER);
@@ -152,6 +153,11 @@ public final class ModuleListComponent extends ResizableHudComponent {
             this.title = this.originalName;
             for (Module module : Seppuku.INSTANCE.getModuleManager().getModuleList(this.type)) {
                 RenderUtil.drawRect(this.getX() + BORDER + TEXT_GAP, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 2, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll, module.isEnabled() ? 0x451b002a : 0x451F1C22);
+
+                if (module.getValueList().size() != 0) {
+                    RenderUtil.drawLine(this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 4, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll + 1, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 4, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll - 1, 1f,0x45909090);
+                }
+
                 final boolean insideModule = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + mc.fontRenderer.FONT_HEIGHT + 1 + offsetY - this.scroll - mc.fontRenderer.FONT_HEIGHT + 1) && mouseY <= (this.getY() + BORDER + (mc.fontRenderer.FONT_HEIGHT) + 1 + offsetY - this.scroll);
                 if (insideModule) {
                     RenderUtil.drawGradientRect(this.getX() + BORDER + TEXT_GAP, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 2, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll, 0x30909090, 0x00101010);
@@ -202,6 +208,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                 }
             }
         }
+        //RenderUtil.end2D();
 
         // figures up a "total height (pixels)" of the inside of the list area (for calculating scroll height)
         this.totalHeight = BORDER + TEXT_GAP + offsetY + BORDER;
