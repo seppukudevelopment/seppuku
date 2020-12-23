@@ -1,5 +1,6 @@
 package me.rigamortis.seppuku.impl.module.misc;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.module.Module;
@@ -19,12 +20,14 @@ import java.util.List;
  */
 public final class ChatFilterModule extends Module {
 
-    public final Value<Boolean> unicode = new Value("Unicode", new String[]{"uc"}, "Reverts \"Fancy Chat\" characters back into normal ones. ", true);
-    public final Value<Boolean> broadcasts = new Value("Broadcasts", new String[]{"broadcast", "broad", "bc"}, "Prevents displaying chat messages that begin with [SERVER].", false);
-    public final Value<Boolean> spam = new Value("Spam", new String[]{"sp", "s"}, "Attempts to prevent spam by checking recent chat messages for duplicates.", true);
-    public final Value<Boolean> death = new Value("Death", new String[]{"dead", "d"}, "Attempts to prevent death messages.", false);
+    public final Value<Boolean> unicode = new Value<>("Unicode", new String[]{"uc"}, "Reverts \"Fancy Chat\" characters back into normal ones. ", true);
+    public final Value<Boolean> broadcasts = new Value<>("Broadcasts", new String[]{"broadcast", "broad", "bc"}, "Prevents displaying chat messages that begin with [SERVER].", false);
+    public final Value<Boolean> spam = new Value<>("Spam", new String[]{"sp", "s"}, "Attempts to prevent spam by checking recent chat messages for duplicates.", true);
+    public final Value<Boolean> death = new Value<>("Death", new String[]{"dead", "d"}, "Attempts to prevent death messages.", false);
+    public final Value<Boolean> blue = new Value<>("BlueText", new String[]{"Blue", "b"}, "Cancels blue-text containing messages.", false);
+    public final Value<Boolean> green = new Value<>("GreenText", new String[]{"Green", "g"}, "Cancels green-text containing messages.", false);
 
-    private List<String> cache = new ArrayList<>();
+    private final List<String> cache = new ArrayList<>();
 
     public ChatFilterModule() {
         super("ChatFilter", new String[]{"CFilter"}, "Filters out annoying chat messages", "NONE", -1, ModuleType.MISC);
@@ -46,7 +49,7 @@ public final class ChatFilterModule extends Module {
                 if (!Minecraft.getMinecraft().isSingleplayer()) {
                     if (Minecraft.getMinecraft().getCurrentServerData() != null) {
                         final String currentServerIP = Minecraft.getMinecraft().getCurrentServerData().serverIP;
-                        is9b9tOr2b2t = currentServerIP.equalsIgnoreCase("2b2t.org") || currentServerIP.equalsIgnoreCase("9b9t.com") || currentServerIP.equalsIgnoreCase("9b9t.org");
+                        is9b9tOr2b2t = currentServerIP.equalsIgnoreCase("2b2t.org") || currentServerIP.equalsIgnoreCase("2b2t.com") || currentServerIP.equalsIgnoreCase("9b9t.com") || currentServerIP.equalsIgnoreCase("9b9t.org");
                     }
                 }
 
@@ -115,6 +118,18 @@ public final class ChatFilterModule extends Module {
                         if (containsUnicode) {
                             packet.chatComponent = new TextComponentString(sb.toString());
                         }
+                    }
+                }
+
+                if (this.blue.getValue()) {
+                    if (packet.getChatComponent().getFormattedText().contains(ChatFormatting.BLUE + "")) {
+                        event.setCanceled(true);
+                    }
+                }
+
+                if (this.green.getValue()) {
+                    if (packet.getChatComponent().getFormattedText().contains(ChatFormatting.GREEN + "")) {
+                        event.setCanceled(true);
                     }
                 }
             }
