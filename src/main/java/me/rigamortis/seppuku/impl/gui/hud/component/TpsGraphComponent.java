@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.Vec2f;
 
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -24,8 +25,8 @@ public final class TpsGraphComponent extends ResizableHudComponent {
     private final Timer timer = new Timer();
 
     public TpsGraphComponent() {
-        super("TpsGraph", 40, 18);
-        this.setW(40);
+        super("TpsGraph", 60, 18);
+        this.setW(60);
         this.setH(18);
     }
 
@@ -50,13 +51,25 @@ public final class TpsGraphComponent extends ResizableHudComponent {
             // background
             RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x75101010);
 
+            String hoveredData = "";
+
             // tps bars
             for (int i = 0; i < this.tpsNodes.size(); i++) {
                 final TpsNode tpsNode = this.tpsNodes.get(i);
                 final float mappedX = (float) MathUtil.map((this.getW() / 2 - 1) - i, 0, (this.getW() / 2 - 1), this.getX() + this.getW() - 1, this.getX() + 1);
                 final float mappedY = (float) MathUtil.map(tpsNode.tps, 0, 20, this.getY() + this.getH() - 1, this.getY() + 1);
-                RenderUtil.drawGradientRect(mappedX - tpsNode.size, mappedY, mappedX + tpsNode.size, this.getY() + this.getH(), tpsNode.color.getRGB(), 0x000FF0000);
+                RenderUtil.drawGradientRect(mappedX - tpsNode.size, mappedY, mappedX + tpsNode.size, this.getY() + this.getH(), tpsNode.color.getRGB(), 0x00FF0000);
                 RenderUtil.drawRect(mappedX - tpsNode.size, mappedY, mappedX + tpsNode.size, mappedY + tpsNode.size, tpsNode.color.getRGB());
+                if (mouseX >= mappedX && mouseX <= mappedX + tpsNode.size && mouseY >= mappedY && mouseY <= this.getY() + this.getH()) {
+                    RenderUtil.drawRect(mappedX - tpsNode.size, mappedY, mappedX + tpsNode.size, this.getY() + this.getH(), 0x75101010);
+
+                    final DecimalFormat decimalFormat = new DecimalFormat("###.##");
+                    hoveredData = String.format("TPS: %s", decimalFormat.format(tpsNode.tps));
+                }
+            }
+
+            if (!hoveredData.equals("")) {
+                mc.fontRenderer.drawStringWithShadow(hoveredData, this.getX() + 2, this.getY() + this.getH() - mc.fontRenderer.FONT_HEIGHT - 2, 0xFFFFFFFF);
             }
 
             // border
