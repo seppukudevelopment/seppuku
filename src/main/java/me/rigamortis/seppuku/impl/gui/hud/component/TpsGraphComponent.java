@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.gui.hud.component;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
+import me.rigamortis.seppuku.api.gui.hud.component.ResizableHudComponent;
 import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
@@ -17,15 +18,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * @author noil
  */
-public final class TpsGraphComponent extends DraggableHudComponent {
+public final class TpsGraphComponent extends ResizableHudComponent {
 
     private final List<TpsNode> tpsNodes = new CopyOnWriteArrayList<TpsNode>();
     private final Timer timer = new Timer();
 
     public TpsGraphComponent() {
-        super("TpsGraph");
+        super("TpsGraph", 40, 18);
         this.setW(40);
-        this.setH(mc.fontRenderer.FONT_HEIGHT * 2);
+        this.setH(18);
     }
 
     @Override
@@ -33,12 +34,12 @@ public final class TpsGraphComponent extends DraggableHudComponent {
         super.render(mouseX, mouseY, partialTicks);
 
         if (mc.world != null && mc.getCurrentServerData() != null) {
-            if (this.tpsNodes.size() > 21) { // overflow protection
+            if (this.tpsNodes.size() > (this.getW() / 2)) { // overflow protection
                 this.tpsNodes.clear();
             }
 
             if (this.timer.passed(1000/* 1 sec */)) {
-                if (this.tpsNodes.size() > 19) {
+                if (this.tpsNodes.size() > (this.getW() / 2 - 1)) {
                     this.tpsNodes.remove(0); // remove oldest
                 }
 
@@ -47,12 +48,12 @@ public final class TpsGraphComponent extends DraggableHudComponent {
             }
 
             // background
-            RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x60101010);
+            RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x75101010);
 
             // tps bars
             for (int i = 0; i < this.tpsNodes.size(); i++) {
                 final TpsNode tpsNode = this.tpsNodes.get(i);
-                final float mappedX = (float) MathUtil.map(19 - i, 0, 19, this.getX() + this.getW() - 1, this.getX() + 1);
+                final float mappedX = (float) MathUtil.map((this.getW() / 2 - 1) - i, 0, (this.getW() / 2 - 1), this.getX() + this.getW() - 1, this.getX() + 1);
                 final float mappedY = (float) MathUtil.map(tpsNode.tps, 0, 20, this.getY() + this.getH() - 1, this.getY() + 1);
                 RenderUtil.drawGradientRect(mappedX - tpsNode.size, mappedY, mappedX + tpsNode.size, this.getY() + this.getH(), tpsNode.color.getRGB(), 0x000FF0000);
                 RenderUtil.drawRect(mappedX - tpsNode.size, mappedY, mappedX + tpsNode.size, mappedY + tpsNode.size, tpsNode.color.getRGB());
