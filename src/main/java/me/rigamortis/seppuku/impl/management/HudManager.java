@@ -99,6 +99,7 @@ public final class HudManager {
         this.componentList.add(new OverViewComponent());
         this.componentList.add(new RearViewComponent());
         this.componentList.add(new EntityListComponent());
+        this.componentList.add(new TpsGraphComponent());
 
         TrayComponent trayComponent = new TrayComponent();
         trayComponent.setAnchorPoint(BOTTOM_CENTER);

@@ -17,6 +17,8 @@ public final class TickRateManager {
     private float[] ticks = new float[20];
     private int currentTick;
 
+    private float lastTick = -1;
+
     public TickRateManager() {
         this.prevTime = -1;
 
@@ -25,6 +27,10 @@ public final class TickRateManager {
         }
 
         Seppuku.INSTANCE.getEventManager().addEventListener(this);
+    }
+
+    public float getLastTick() {
+        return this.lastTick;
     }
 
     public float getTickRate() {
@@ -53,6 +59,7 @@ public final class TickRateManager {
             if (event.getPacket() instanceof SPacketTimeUpdate) {
                 if (this.prevTime != -1) {
                     this.ticks[this.currentTick % this.ticks.length] = MathHelper.clamp((20.0f / ((float) (System.currentTimeMillis() - this.prevTime) / 1000.0f)), 0.0f, 20.0f);
+                    this.lastTick = this.ticks[this.currentTick % this.ticks.length];
                     this.currentTick++;
                 }
 
