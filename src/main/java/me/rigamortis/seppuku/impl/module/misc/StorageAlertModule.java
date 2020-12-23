@@ -41,7 +41,7 @@ import java.util.logging.Level;
 public final class StorageAlertModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Change between alert modes.", Mode.CHAT);
-    public final Value<Boolean> saveToFile = new Value<Boolean>("SaveToFile", new String[]{"Save", "Saves"}, "Saves the alert to a file in your Seppuku directory.", false);
+    public final Value<Boolean> saveToFile = new Value<Boolean>("SaveToFile", new String[]{"Save", "Saves"}, "Saves the alert to a file in your Seppuku 'Config' directory.", false);
     public final Value<Boolean> chests = new Value<Boolean>("Chests", new String[]{"Chests", "chest"}, "Count chests.", true);
     public final Value<Boolean> echests = new Value<Boolean>("EnderChests", new String[]{"EnderChests", "echest", "echest"}, "Count ender chests.", false);
     public final Value<Boolean> shulkers = new Value<Boolean>("ShulkerBoxes", new String[]{"ShulkerBoxes", "shul"}, "Count shulkers.", false);
@@ -62,8 +62,8 @@ public final class StorageAlertModule extends Module {
 
         this.locationsFile = new File(Seppuku.INSTANCE.getConfigManager().getConfigDir(), "StorageAlerts.txt");
         try {
-            if (!locationsFile.exists())
-                locationsFile.createNewFile();
+            if (!this.locationsFile.exists())
+                this.locationsFile.createNewFile();
         } catch (IOException e) {
             Seppuku.INSTANCE.getLogger().log(Level.WARNING, "Couldn't create StorageAlert locations file.");
         }
@@ -129,6 +129,6 @@ public final class StorageAlertModule extends Module {
             linesToAdd.add(data);
         }
 
-        FileUtil.write(locationsFile, linesToAdd, false);
+        FileUtil.write(this.locationsFile, linesToAdd, false);
     }
 }
