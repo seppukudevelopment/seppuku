@@ -25,12 +25,12 @@ public final class TpsGraphComponent extends ResizableHudComponent {
     private final List<TpsNode> tpsNodes = new CopyOnWriteArrayList<TpsNode>();
     private final Timer timer = new Timer();
 
-    private float timerDelay = 800.0f;
+    private float timerDelay = 500.0f;
 
     public TpsGraphComponent() {
-        super("TpsGraph", 60, 18);
+        super("TpsGraph", 60, 27);
         this.setW(60);
-        this.setH(18);
+        this.setH(27);
     }
 
     @Override
