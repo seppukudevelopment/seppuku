@@ -25,6 +25,8 @@ public final class TpsGraphComponent extends ResizableHudComponent {
     private final List<TpsNode> tpsNodes = new CopyOnWriteArrayList<TpsNode>();
     private final Timer timer = new Timer();
 
+    private float timerDelay = 800.0f;
+
     public TpsGraphComponent() {
         super("TpsGraph", 60, 18);
         this.setW(60);
@@ -40,7 +42,7 @@ public final class TpsGraphComponent extends ResizableHudComponent {
                 this.tpsNodes.clear();
             }
 
-            if (this.timer.passed(1000/* 1 sec */)) {
+            if (this.timer.passed(this.timerDelay)) {
                 if (this.tpsNodes.size() > (this.getW() / 2 - 1)) {
                     this.tpsNodes.remove(0); // remove oldest
                 }
@@ -53,7 +55,7 @@ public final class TpsGraphComponent extends ResizableHudComponent {
 
             // grid
             if (mc.currentScreen instanceof GuiHudEditor) {
-                for (float j = this.getX() + this.getW(); j > this.getX(); j -= 10) {
+                for (float j = this.getX() + this.getW(); j > this.getX(); j -= 20) {
                     if (j <= this.getX())
                         continue;
 
@@ -82,9 +84,14 @@ public final class TpsGraphComponent extends ResizableHudComponent {
                 }
             }
 
+            if (this.isMouseInside(mouseX, mouseY)) {
+                // draw delay
+                mc.fontRenderer.drawStringWithShadow(this.timerDelay + "ms", this.getX() + 2, this.getY() + this.getH() - mc.fontRenderer.FONT_HEIGHT - 2, 0xFFAAAAAA);
+            }
+
             // hovered data
             if (!hoveredData.equals("")) {
-                mc.fontRenderer.drawStringWithShadow(hoveredData, this.getX() + 2, this.getY() + this.getH() - mc.fontRenderer.FONT_HEIGHT - 2, 0xFFFFFFFF);
+                mc.fontRenderer.drawStringWithShadow(hoveredData, this.getX() + 2, this.getY() + this.getH() - mc.fontRenderer.FONT_HEIGHT * 2 - 2, 0xFFAAAAAA);
             }
 
             // border
@@ -100,6 +107,17 @@ public final class TpsGraphComponent extends ResizableHudComponent {
             GlStateManager.popMatrix();*/
         } else {
             mc.fontRenderer.drawStringWithShadow("(tps graph)", this.getX(), this.getY(), 0xFFAAAAAA);
+        }
+    }
+
+    @Override
+    public void mouseRelease(int mouseX, int mouseY, int button) {
+        super.mouseRelease(mouseX, mouseY, button);
+        if (this.isMouseInside(mouseX, mouseY) && button == 1/* right click */) {
+            this.timerDelay -= 100.0f;
+
+            if (this.timerDelay <= 0.0f)
+                this.timerDelay = 1000.0f;
         }
     }
 
