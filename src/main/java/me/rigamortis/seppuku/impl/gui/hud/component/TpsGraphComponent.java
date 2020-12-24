@@ -123,7 +123,7 @@ public final class TpsGraphComponent extends ResizableHudComponent {
                 this.timerDelay -= 100.0f;
             }
 
-            if (this.timerDelay <= 0.0f || this.timerDelay > 1000.0f)
+            if (this.timerDelay <= 0.0f || this.timerDelay > 2500.0f)
                 this.timerDelay = 1000.0f;
         }
     }
