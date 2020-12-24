@@ -29,6 +29,7 @@ import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -75,6 +76,7 @@ public final class WallHackModule extends Module {
     public final Value<Boolean> ping = new Value<Boolean>("Ping", new String[]{"Ms"}, "Draw the entity's ping (only works on players).", true);
     public final Value<Boolean> armor = new Value<Boolean>("Armor", new String[]{"Arm"}, "Draw the entity's equipped armor.", true);
     public final Value<Boolean> hearts = new Value<Boolean>("Hearts", new String[]{"Hrts"}, "Draw the entity's hearts in decimal format.", true);
+    public final Value<Boolean> absorption = new Value<Boolean>("Absorption", new String[]{"Abs", "GappleHearts"}, "Adds absorption value to heart display.", true);
     public final Value<Boolean> enchants = new Value<Boolean>("Enchants", new String[]{"Ench"}, "Draw enchant names above the entity's equipped armor. (requires Armor value to be enabled.", true);
     public final Value<PotionsMode> potions = new Value<PotionsMode>("Potions", new String[]{"Pot", "Pots", "PotsMode"}, "Rendering mode for active potion-effects on the entity.", PotionsMode.NONE);
 
@@ -180,7 +182,20 @@ public final class WallHackModule extends Module {
                             final EntityLivingBase entityLiving = (EntityLivingBase) e;
 
                             if (this.hearts.getValue()) {
-                                final float hearts = entityLiving.getHealth() / 2.0f;
+                                float hearts = entityLiving.getHealth() / 2.0f;
+                                int heartsRounded = Math.round(255.0f - (hearts * 255.0f / (entityLiving.getMaxHealth() / 2)));
+                                int heartsColor = 255 - heartsRounded << 8 | heartsRounded << 16;
+
+                                if (this.absorption.getValue()) {
+                                    if (entityLiving.getAbsorptionAmount() > 0) {
+                                        hearts += entityLiving.getAbsorptionAmount() / 2.0f;
+
+                                        if (entityLiving.getAbsorptionAmount() >= 16)
+                                            heartsColor = 0xFFFB7DFF;
+                                        else
+                                            heartsColor = 0xFF00FF00;
+                                    }
+                                }
 
                                 if (hearts <= 0)
                                     heartsFormatted = "*DEAD*";
@@ -198,8 +213,6 @@ public final class WallHackModule extends Module {
                                 else if (this.ping.getValue() && entityLiving instanceof EntityPlayer)
                                     startX = -(mc.fontRenderer.getStringWidth(pingFormatted) / 2.0f) - (mc.fontRenderer.getStringWidth(heartsFormatted) / 2.0f);
 
-                                int heartsRounded = Math.round(255.0f - (hearts * 255.0f / (entityLiving.getMaxHealth() / 2)));
-                                int heartsColor = 255 - heartsRounded << 8 | heartsRounded << 16;
 
                                 if (this.background.getValue()) {
                                     RenderUtil.drawRect(bounds[0] + (bounds[2] - bounds[0]) / 2 + startX, bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 2, bounds[0] + (bounds[2] - bounds[0]) / 2 + startX + mc.fontRenderer.getStringWidth(heartsFormatted), bounds[1] + (bounds[3] - bounds[1]) - 1, 0x75101010);

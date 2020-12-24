@@ -60,8 +60,6 @@ public final class ModuleListComponent extends ResizableHudComponent {
         this.setLocked(true);
         this.setW(100);
         this.setH(100);
-        this.setX(20);
-        this.setY(20);
     }
 
     @Override
