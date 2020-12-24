@@ -133,15 +133,13 @@ public final class TpsGraphComponent extends ResizableHudComponent {
 
         public TpsNode(float tps) {
             super(0, 0);
+
             this.tps = tps;
 
             int colorR = (int) MathUtil.map(tps, 0, 20, 255, 0);
             int colorG = (int) MathUtil.map(tps, 0, 20, 0, 255);
             int colorB = 0;
-
             this.color = new Color(colorR, colorG, colorB);
         }
     }
-
-
 }
