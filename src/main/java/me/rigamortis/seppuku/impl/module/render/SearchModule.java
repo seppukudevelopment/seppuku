@@ -12,6 +12,7 @@ import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockEnderChest;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -84,6 +85,10 @@ public final class SearchModule extends Module {
             final Vec3d searchBlock = this.blocks.get(i);
             final BlockPos blockPos = new BlockPos(searchBlock.x, searchBlock.y, searchBlock.z);
             final Block block = mc.world.getBlockState(blockPos).getBlock();
+
+            if (block instanceof BlockAir)
+                continue;
+
             if (mc.player.getDistance(searchBlock.x, searchBlock.y, searchBlock.z) < this.range.getValue()) {
                 final AxisAlignedBB bb = this.boundingBoxForBlock(blockPos);
 
