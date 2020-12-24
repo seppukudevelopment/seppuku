@@ -11,6 +11,7 @@ import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.Vec2f;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 import java.text.DecimalFormat;
@@ -114,9 +115,15 @@ public final class TpsGraphComponent extends ResizableHudComponent {
     public void mouseRelease(int mouseX, int mouseY, int button) {
         super.mouseRelease(mouseX, mouseY, button);
         if (this.isMouseInside(mouseX, mouseY) && button == 1/* right click */) {
-            this.timerDelay -= 100.0f;
+            if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
+                this.timerDelay += 100.0f;
+            } else if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                this.timerDelay -= 10.0f;
+            } else {
+                this.timerDelay -= 100.0f;
+            }
 
-            if (this.timerDelay <= 0.0f)
+            if (this.timerDelay <= 0.0f || this.timerDelay > 1000.0f)
                 this.timerDelay = 1000.0f;
         }
     }
