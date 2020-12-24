@@ -5,6 +5,7 @@ import me.rigamortis.seppuku.api.event.render.EventRender2D;
 import me.rigamortis.seppuku.api.gui.hud.component.HudComponent;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.ReflectionUtil;
+import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
 import me.rigamortis.seppuku.impl.gui.hud.component.*;
@@ -15,6 +16,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -68,46 +70,46 @@ public final class HudManager {
                 moduleList.setY(moduleList.getY() + moduleListYOffset);
             }
 
-            this.componentList.add(moduleList);
+            add(moduleList);
 
             moduleListXOffset += moduleList.getW() + 4 /* gap between each list */;
         }
 
-        this.componentList.add(new WatermarkComponent());
-        this.componentList.add(new EnabledModsComponent(TOP_RIGHT)); // creates the enabled mods component & by default anchors in the top right (to aid new users)
-        this.componentList.add(new TpsComponent());
-        this.componentList.add(new PotionEffectsComponent());
-        this.componentList.add(new FpsComponent());
-        this.componentList.add(new CoordsComponent());
-        this.componentList.add(new NetherCoordsComponent());
-        this.componentList.add(new SpeedComponent());
-        this.componentList.add(new ArmorComponent());
-        this.componentList.add(new PingComponent());
-        this.componentList.add(new ServerBrandComponent());
-        this.componentList.add(new BiomeComponent());
-        this.componentList.add(new DirectionComponent());
-        this.componentList.add(new PacketTimeComponent());
-        this.componentList.add(new TimeComponent());
-        this.componentList.add(new EnemyPotionsComponent());
-        this.componentList.add(new CompassComponent());
-        this.componentList.add(new HubComponent());
-        this.componentList.add(new InventoryComponent());
-        this.componentList.add(new TotemCountComponent());
-        this.componentList.add(new TutorialComponent());
-        this.componentList.add(new HoleOverlayComponent());
-        this.componentList.add(new PlayerCountComponent());
-        this.componentList.add(new OverViewComponent());
-        this.componentList.add(new RearViewComponent());
-        this.componentList.add(new EntityListComponent());
-        this.componentList.add(new TpsGraphComponent());
+        add(new WatermarkComponent());
+        add(new EnabledModsComponent(TOP_RIGHT)); // creates the enabled mods component & by default anchors in the top right (to aid new users)
+        add(new TpsComponent());
+        add(new PotionEffectsComponent());
+        add(new FpsComponent());
+        add(new CoordsComponent());
+        add(new NetherCoordsComponent());
+        add(new SpeedComponent());
+        add(new ArmorComponent());
+        add(new PingComponent());
+        add(new ServerBrandComponent());
+        add(new BiomeComponent());
+        add(new DirectionComponent());
+        add(new PacketTimeComponent());
+        add(new TimeComponent());
+        add(new EnemyPotionsComponent());
+        add(new CompassComponent());
+        add(new HubComponent());
+        add(new InventoryComponent());
+        add(new TotemCountComponent());
+        add(new TutorialComponent());
+        add(new HoleOverlayComponent());
+        add(new PlayerCountComponent());
+        add(new OverViewComponent());
+        add(new RearViewComponent());
+        add(new EntityListComponent());
+        add(new TpsGraphComponent());
 
         TrayComponent trayComponent = new TrayComponent();
         trayComponent.setAnchorPoint(BOTTOM_CENTER);
-        this.componentList.add(trayComponent);
+        add(trayComponent);
 
         NotificationsComponent notificationsComponent = new NotificationsComponent();
         notificationsComponent.setAnchorPoint(TOP_CENTER);
-        this.componentList.add(notificationsComponent);
+        add(notificationsComponent);
 
         this.loadExternalHudComponents();
 
@@ -118,6 +120,29 @@ public final class HudManager {
         this.firstLaunchComponent = new FirstLaunchComponent();
 
         Seppuku.INSTANCE.getEventManager().addEventListener(this);
+    }
+
+    /**
+     * Find all fields within the hud component that are values
+     * and add them to the list of values inside of the hud component
+     *
+     * @param component the HudComponent to add
+     */
+    public void add(HudComponent component) {
+        try {
+            for (Field field : component.getClass().getDeclaredFields()) {
+                if (Value.class.isAssignableFrom(field.getType())) {
+                    if (!field.isAccessible()) {
+                        field.setAccessible(true);
+                    }
+                    final Value val = (Value) field.get(component);
+                    component.getValueList().add(val);
+                }
+            }
+            this.componentList.add(component);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

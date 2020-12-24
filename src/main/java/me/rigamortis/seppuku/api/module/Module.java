@@ -116,7 +116,7 @@ public class Module {
         return msg;
     }
 
-    public Value find(String alias) {
+    public Value findValue(String alias) {
         for (Value v : this.getValueList()) {
             for (String s : v.getAlias()) {
                 if (alias.equalsIgnoreCase(s)) {

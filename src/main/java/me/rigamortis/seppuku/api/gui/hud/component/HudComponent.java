@@ -1,5 +1,10 @@
 package me.rigamortis.seppuku.api.gui.hud.component;
 
+import me.rigamortis.seppuku.api.value.Value;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Author Seth
  * 7/25/2019 @ 4:14 AM.
@@ -17,6 +22,8 @@ public class HudComponent {
     private String tooltipText = "No description to be found.";
 
     private boolean visible;
+
+    private List<Value> valueList = new ArrayList<Value>();
 
     public HudComponent() {
 
@@ -91,6 +98,21 @@ public class HudComponent {
         return collisionX && collisionY;
     }
 
+    public Value findValue(String alias) {
+        for (Value v : this.getValueList()) {
+            for (String s : v.getAlias()) {
+                if (alias.equalsIgnoreCase(s)) {
+                    return v;
+                }
+            }
+
+            if (v.getName().equalsIgnoreCase(alias)) {
+                return v;
+            }
+        }
+        return null;
+    }
+
     public float getX() {
         return x;
     }
@@ -153,5 +175,13 @@ public class HudComponent {
 
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+
+    public List<Value> getValueList() {
+        return valueList;
+    }
+
+    public void setValueList(List<Value> valueList) {
+        this.valueList = valueList;
     }
 }

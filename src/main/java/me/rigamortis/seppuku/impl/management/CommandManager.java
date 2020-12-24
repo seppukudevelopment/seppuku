@@ -135,7 +135,7 @@ public final class CommandManager {
 
                         final String[] split = input.split(" ");
 
-                        final Value v = module.find(split[1]);
+                        final Value v = module.findValue(split[1]);
 
                         if (v != null) {
                             if (v.getValue() instanceof Boolean) {

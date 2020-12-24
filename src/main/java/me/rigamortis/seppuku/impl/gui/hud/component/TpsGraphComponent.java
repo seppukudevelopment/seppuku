@@ -1,15 +1,12 @@
 package me.rigamortis.seppuku.impl.gui.hud.component;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.gui.hud.component.ResizableHudComponent;
-import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.util.Timer;
+import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.Vec2f;
 import org.lwjgl.input.Keyboard;
 
@@ -23,10 +20,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public final class TpsGraphComponent extends ResizableHudComponent {
 
+    public final Value<Float> delay = new Value<Float>("Delay", new String[]{"Del"}, "The amount of delay in milliseconds.", 500.0f, 0.0f, 2500.0f, 100.0f);
+
     private final List<TpsNode> tpsNodes = new CopyOnWriteArrayList<TpsNode>();
     private final Timer timer = new Timer();
-
-    private float timerDelay = 500.0f;
 
     public TpsGraphComponent() {
         super("TpsGraph", 60, 27);
@@ -43,7 +40,7 @@ public final class TpsGraphComponent extends ResizableHudComponent {
                 this.tpsNodes.clear();
             }
 
-            if (this.timer.passed(this.timerDelay)) {
+            if (this.timer.passed(this.delay.getValue())) {
                 if (this.tpsNodes.size() > (this.getW() / 2 - 1)) {
                     this.tpsNodes.remove(0); // remove oldest
                 }
@@ -87,7 +84,7 @@ public final class TpsGraphComponent extends ResizableHudComponent {
 
             if (this.isMouseInside(mouseX, mouseY)) {
                 // draw delay
-                mc.fontRenderer.drawStringWithShadow(this.timerDelay + "ms", this.getX() + 2, this.getY() + this.getH() - mc.fontRenderer.FONT_HEIGHT - 2, 0xFFAAAAAA);
+                mc.fontRenderer.drawStringWithShadow(this.delay.getValue() + "ms", this.getX() + 2, this.getY() + this.getH() - mc.fontRenderer.FONT_HEIGHT - 2, 0xFFAAAAAA);
             }
 
             // hovered data
@@ -116,15 +113,15 @@ public final class TpsGraphComponent extends ResizableHudComponent {
         super.mouseRelease(mouseX, mouseY, button);
         if (this.isMouseInside(mouseX, mouseY) && button == 1/* right click */) {
             if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
-                this.timerDelay += 100.0f;
+                this.delay.setValue(this.delay.getValue() + this.delay.getInc());
             } else if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-                this.timerDelay -= 10.0f;
+                this.delay.setValue(this.delay.getValue() - 10.0f);
             } else {
-                this.timerDelay -= 100.0f;
+                this.delay.setValue(this.delay.getValue() - this.delay.getInc());
             }
 
-            if (this.timerDelay <= 0.0f || this.timerDelay > 2500.0f)
-                this.timerDelay = 1000.0f;
+            if (this.delay.getValue() <= this.delay.getMin() || this.delay.getValue() > this.delay.getMax())
+                this.delay.setValue(1000.0f);
         }
     }
 
