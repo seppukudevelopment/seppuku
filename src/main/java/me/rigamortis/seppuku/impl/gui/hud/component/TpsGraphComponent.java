@@ -91,12 +91,12 @@ public final class TpsGraphComponent extends ResizableHudComponent {
 
             if (this.isMouseInside(mouseX, mouseY)) { // mouse is inside
                 // draw delay
-                mc.fontRenderer.drawStringWithShadow(this.delay.getValue() + "ms", this.getX() + 2, this.getY() + this.getH() - mc.fontRenderer.FONT_HEIGHT - 2, 0xFFAAAAAA);
+                mc.fontRenderer.drawStringWithShadow(this.delay.getValue() + "ms", this.getX() + 2, this.getY() + this.getH() - mc.fontRenderer.FONT_HEIGHT - 1, 0xFFAAAAAA);
             }
 
             // draw hovered data
             if (!hoveredData.equals("")) {
-                mc.fontRenderer.drawStringWithShadow(hoveredData, this.getX() + 2, this.getY() + this.getH() - mc.fontRenderer.FONT_HEIGHT * 2 - 2, 0xFFAAAAAA);
+                mc.fontRenderer.drawStringWithShadow(hoveredData, this.getX() + 2, this.getY() + this.getH() - mc.fontRenderer.FONT_HEIGHT * 2 - 1, 0xFFAAAAAA);
             }
 
             // border
