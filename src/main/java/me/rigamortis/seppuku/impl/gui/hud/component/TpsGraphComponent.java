@@ -51,9 +51,6 @@ public final class TpsGraphComponent extends ResizableHudComponent {
 
             String hoveredData = "";
 
-            // background
-            RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x75101010);
-
             // grid
             if (mc.currentScreen instanceof GuiHudEditor) {
                 for (float j = this.getX() + this.getW(); j > this.getX(); j -= 10) {
@@ -65,6 +62,9 @@ public final class TpsGraphComponent extends ResizableHudComponent {
 
                     RenderUtil.drawLine(j, this.getY(), j, this.getY() + this.getH(), 2.0f, 0x75101010);
                 }
+            } else {
+                // background
+                RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x75101010);
             }
 
             // tps bars
