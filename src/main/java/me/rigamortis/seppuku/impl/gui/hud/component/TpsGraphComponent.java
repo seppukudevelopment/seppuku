@@ -49,8 +49,6 @@ public final class TpsGraphComponent extends ResizableHudComponent {
                 this.timer.reset();
             }
 
-            String hoveredData = "";
-
             // grid
             if (mc.currentScreen instanceof GuiHudEditor) {
                 for (float j = this.getX() + this.getW(); j > this.getX(); j -= 20) {
@@ -67,42 +65,42 @@ public final class TpsGraphComponent extends ResizableHudComponent {
                 RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x75101010);
             }
 
+            // create temporary hovered data string
+            String hoveredData = "";
+
             // tps bars
             for (int i = 0; i < this.tpsNodes.size(); i++) {
                 final TpsNode tpsNode = this.tpsNodes.get(i);
                 final float mappedX = (float) MathUtil.map((this.getW() / 2 - 1) - i, 0, (this.getW() / 2 - 1), this.getX() + this.getW() - 1, this.getX() + 1);
                 final float mappedY = (float) MathUtil.map(tpsNode.tps, 0, 20, this.getY() + this.getH() - 1, this.getY() + 1);
+                // gradient of bar
                 RenderUtil.drawGradientRect(mappedX - tpsNode.size, mappedY, mappedX + tpsNode.size, this.getY() + this.getH(), tpsNode.color.getRGB(), 0x00FF0000);
+                // rect on top of bar
                 RenderUtil.drawRect(mappedX - tpsNode.size, mappedY, mappedX + tpsNode.size, mappedY + tpsNode.size, tpsNode.color.getRGB());
+
+                // draw hover
                 if (mouseX >= mappedX && mouseX <= mappedX + tpsNode.size && mouseY >= mappedY && mouseY <= this.getY() + this.getH()) {
+                    // hover bar
                     RenderUtil.drawRect(mappedX - tpsNode.size, mappedY, mappedX + tpsNode.size, this.getY() + this.getH(), 0x40101010);
 
+                    // set hovered data
                     final DecimalFormat decimalFormat = new DecimalFormat("###.##");
                     hoveredData = String.format("TPS: %s", decimalFormat.format(tpsNode.tps));
                 }
             }
 
-            if (this.isMouseInside(mouseX, mouseY)) {
+            if (this.isMouseInside(mouseX, mouseY)) { // mouse is inside
                 // draw delay
                 mc.fontRenderer.drawStringWithShadow(this.delay.getValue() + "ms", this.getX() + 2, this.getY() + this.getH() - mc.fontRenderer.FONT_HEIGHT - 2, 0xFFAAAAAA);
             }
 
-            // hovered data
+            // draw hovered data
             if (!hoveredData.equals("")) {
                 mc.fontRenderer.drawStringWithShadow(hoveredData, this.getX() + 2, this.getY() + this.getH() - mc.fontRenderer.FONT_HEIGHT * 2 - 2, 0xFFAAAAAA);
             }
 
             // border
             RenderUtil.drawBorderedRectBlurred(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 2.0f, 0x00000000, 0x90101010);
-
-            /*GlStateManager.pushMatrix();
-            GlStateManager.scale(0.5f, 0.5f, 0.5f);
-            final String avg = String.format(ChatFormatting.WHITE + "AVG: %.2f", Seppuku.INSTANCE.getTickRateManager().getTickRate());
-            final String last = String.format(ChatFormatting.WHITE + "LAST: %.2f", Seppuku.INSTANCE.getTickRateManager().getLastTick());
-            mc.fontRenderer.drawStringWithShadow(avg, this.getX() * 2.0f + 4, this.getY() * 2.0f + 4, -1);
-            mc.fontRenderer.drawStringWithShadow(last, this.getX() * 2.0f + 4, this.getY() * 2.0f + 4 + mc.fontRenderer.FONT_HEIGHT, -1);
-            //GlStateManager.scale(-0.5f, -0.5f, -0.5f);
-            GlStateManager.popMatrix();*/
         } else {
             mc.fontRenderer.drawStringWithShadow("(tps graph)", this.getX(), this.getY(), 0xFFAAAAAA);
         }
