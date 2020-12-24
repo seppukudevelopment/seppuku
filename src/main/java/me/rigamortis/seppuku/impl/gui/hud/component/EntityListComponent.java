@@ -322,10 +322,10 @@ public final class EntityListComponent extends DraggableHudComponent {
                                 }
                             }
 
-                            final String info = String.format("\n%s\n- Key: %s\n- Enchantments: %s\n- Durability: %s", ChatFormatting.AQUA + itemStack.getDisplayName() + ChatFormatting.RESET, itemStack.getTranslationKey(), enchantStringBuilder.toString(), itemStack.getMaxDamage() - itemStack.getItemDamage());
+                            final String info = String.format("\n%s\n- Pos: %s\n- Key: %s\n- Enchantments: %s\n- Durability: %s", ChatFormatting.AQUA + itemStack.getDisplayName() + ChatFormatting.RESET, entityItem.getPosition().toString(), itemStack.getTranslationKey(), enchantStringBuilder.toString(), itemStack.getMaxDamage() - itemStack.getItemDamage());
                             Seppuku.INSTANCE.logChat(info);
                         } else {
-                            final String info = String.format("\n%s\n- Key: %s\n- Count: %s\n- Metadata: %s\n- Damage: %s\n- Max Damage: %s\n- Durability: %s", ChatFormatting.GRAY + itemStack.getDisplayName(), itemStack.getTranslationKey(), itemStack.getCount(), itemStack.getMetadata(), itemStack.getItemDamage(), itemStack.getMaxDamage(), itemStack.getMaxDamage() - itemStack.getItemDamage());
+                            final String info = String.format("\n%s\n- Pos: %s\n- Key: %s\n- Count: %s\n- Metadata: %s\n- Damage: %s\n- Max Damage: %s\n- Durability: %s", ChatFormatting.GRAY + itemStack.getDisplayName(), entityItem.getPosition().toString(), itemStack.getTranslationKey(), itemStack.getCount(), itemStack.getMetadata(), itemStack.getItemDamage(), itemStack.getMaxDamage(), itemStack.getMaxDamage() - itemStack.getItemDamage());
                             Seppuku.INSTANCE.logChat(info);
                             NBTTagCompound tagCompound = itemStack.getTagCompound();
                             if (tagCompound != null && !tagCompound.isEmpty()) {
