@@ -99,7 +99,6 @@ public final class TpsGraphComponent extends ResizableHudComponent {
             //GlStateManager.scale(-0.5f, -0.5f, -0.5f);
             GlStateManager.popMatrix();*/
         } else {
-            this.setW(mc.fontRenderer.getStringWidth("(tps graph)"));
             mc.fontRenderer.drawStringWithShadow("(tps graph)", this.getX(), this.getY(), 0xFFAAAAAA);
         }
     }
