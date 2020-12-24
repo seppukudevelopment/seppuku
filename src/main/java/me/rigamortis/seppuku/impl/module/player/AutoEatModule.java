@@ -75,6 +75,7 @@ public final class AutoEatModule extends Module {
                 this.foodSlot = -1;
                 this.previousHeldItem = -1;
             } else {
+                mc.displayGuiScreen(null);
                 mc.gameSettings.keyBindUseItem.pressed = true;
             }
         }
