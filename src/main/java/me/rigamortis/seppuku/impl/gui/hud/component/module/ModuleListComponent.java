@@ -96,7 +96,9 @@ public final class ModuleListComponent extends ResizableHudComponent {
             if (this.getW() > MAX_WIDTH) {
                 this.setW(MAX_WIDTH);
             }
-        } else if (this.currentSettings == null && this.getH() > this.getTotalHeight()) {
+        } else if (!this.isLocked() && this.currentSettings == null && this.getH() > this.getTotalHeight()) {
+            this.setH(this.getTotalHeight());
+        } else if (this.currentSettings == null && this.getH() > this.getTotalHeight() && this.getTotalHeight() > this.getInitialHeight()) {
             this.setH(this.getTotalHeight());
         }
 
