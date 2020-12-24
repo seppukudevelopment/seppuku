@@ -8,6 +8,7 @@ import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.util.Timer;
+import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.Vec2f;
 
@@ -48,10 +49,23 @@ public final class TpsGraphComponent extends ResizableHudComponent {
                 this.timer.reset();
             }
 
+            String hoveredData = "";
+
             // background
             RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x75101010);
 
-            String hoveredData = "";
+            // grid
+            if (mc.currentScreen instanceof GuiHudEditor) {
+                for (float j = this.getX() + this.getW(); j > this.getX(); j -= 10) {
+                    if (j <= this.getX())
+                        continue;
+
+                    if (j >= this.getX() + this.getW())
+                        continue;
+
+                    RenderUtil.drawLine(j, this.getY(), j, this.getY() + this.getH(), 2.0f, 0x75101010);
+                }
+            }
 
             // tps bars
             for (int i = 0; i < this.tpsNodes.size(); i++) {
@@ -61,13 +75,14 @@ public final class TpsGraphComponent extends ResizableHudComponent {
                 RenderUtil.drawGradientRect(mappedX - tpsNode.size, mappedY, mappedX + tpsNode.size, this.getY() + this.getH(), tpsNode.color.getRGB(), 0x00FF0000);
                 RenderUtil.drawRect(mappedX - tpsNode.size, mappedY, mappedX + tpsNode.size, mappedY + tpsNode.size, tpsNode.color.getRGB());
                 if (mouseX >= mappedX && mouseX <= mappedX + tpsNode.size && mouseY >= mappedY && mouseY <= this.getY() + this.getH()) {
-                    RenderUtil.drawRect(mappedX - tpsNode.size, mappedY, mappedX + tpsNode.size, this.getY() + this.getH(), 0x75101010);
+                    RenderUtil.drawRect(mappedX - tpsNode.size, mappedY, mappedX + tpsNode.size, this.getY() + this.getH(), 0x40101010);
 
                     final DecimalFormat decimalFormat = new DecimalFormat("###.##");
                     hoveredData = String.format("TPS: %s", decimalFormat.format(tpsNode.tps));
                 }
             }
 
+            // hovered data
             if (!hoveredData.equals("")) {
                 mc.fontRenderer.drawStringWithShadow(hoveredData, this.getX() + 2, this.getY() + this.getH() - mc.fontRenderer.FONT_HEIGHT - 2, 0xFFFFFFFF);
             }
