@@ -283,7 +283,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
 
     private void handleScrolling(int mouseX, int mouseY) {
         if (this.isMouseInside(mouseX, mouseY) && Mouse.hasWheel()) {
-            this.scroll += -(Mouse.getDWheel() / 10);
+            this.scroll += -(Mouse.getDWheel() / 5);
 
             if (this.scroll < 0) {
                 this.scroll = 0;

@@ -180,7 +180,7 @@ public final class HubComponent extends ResizableHudComponent {
 
     private void handleScrolling(int mouseX, int mouseY) {
         if (this.isMouseInside(mouseX, mouseY) && Mouse.hasWheel()) {
-            this.scroll += -(Mouse.getDWheel() / 10.0f);
+            this.scroll += -(Mouse.getDWheel() / 5);
             this.clampScroll();
         }
     }
