@@ -433,8 +433,8 @@ public final class ModuleListComponent extends ResizableHudComponent {
             };
             components.add(keybindText);
 
-            ColorComponent colorComponent = new ColorComponent("Color", module.getColor());
-            colorComponent.setTooltipText("The current hex color for this module.");
+            ColorComponent colorComponent = new ColorComponent("List Color", module.getColor());
+            colorComponent.setTooltipText("The hex color for this module in the enabled mods list.");
             colorComponent.returnListener = new ComponentListener() {
                 @Override
                 public void onComponentEvent() {
@@ -550,17 +550,16 @@ public final class ModuleListComponent extends ResizableHudComponent {
                 int offsetX = 0;
 
                 if (component instanceof TextComponent) {
-                    boolean isChildComponent = false;
                     boolean skipRendering = false;
                     for (HudComponent otherComponent : this.components) {
                         if (otherComponent instanceof ButtonComponent) {
-                            isChildComponent = component.getName().toLowerCase().startsWith(otherComponent.getName().toLowerCase());
+                            boolean isChildComponent = component.getName().toLowerCase().startsWith(otherComponent.getName().toLowerCase());
                             if (isChildComponent) {
-                                if (!((ButtonComponent) otherComponent).rightClickEnabled && !component.getName().equals("Color")/* don't listen for module display-color components */) {
+                                if (!((ButtonComponent) otherComponent).rightClickEnabled && !component.getName().equals("List Color")/* don't listen for module display-color components */) {
                                     skipRendering = true;
                                 }
 
-                                offsetX += 3;
+                                offsetX += 4;
                             }
                         }
                     }
@@ -571,9 +570,14 @@ public final class ModuleListComponent extends ResizableHudComponent {
 
                 component.setX(this.getX() + 1 + offsetX);
                 component.setY(this.getY() + offsetY);
-                component.setW(this.getW() - (offsetX * 2));
+                component.setW(this.getW() - offsetX);
                 component.setH(Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT);
                 component.render(mouseX, mouseY, partialTicks);
+
+                if (offsetX > 0) {
+                    RenderUtil.drawLine(component.getX() - offsetX + 1, component.getY(), component.getX() - offsetX + 1, component.getY() + component.getH(), 2.0f, 0xFF202020);
+                    RenderUtil.drawLine(component.getX() - offsetX + 1, component.getY() + component.getH() / 2, component.getX(), component.getY() + component.getH() / 2, 2.0f, 0xFF202020);
+                }
 
                 offsetY += Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1;
             }
@@ -608,7 +612,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
             for (HudComponent component : this.components) {
                 if (component instanceof ButtonComponent) {
                     boolean similarName = hudComponent.getName().toLowerCase().startsWith(component.getName().toLowerCase());
-                    if (similarName && !hudComponent.getName().equals("Color") /* don't listen for module display-color components */) {
+                    if (similarName && !hudComponent.getName().equals("List Color") /* don't listen for module display-color components */) {
                         if (((ButtonComponent) component).rightClickListener == null) {
                             ((ButtonComponent) component).rightClickListener = new ComponentListener() {
                                 @Override
