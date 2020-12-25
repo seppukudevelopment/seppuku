@@ -25,12 +25,10 @@ import java.util.List;
  */
 public final class NewChunksModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"M", "type", "t"}, "Select which mode to draw the new chunk visual.", Mode.BOX);
-    public final Value<Integer> red = new Value<Integer>("Red", new String[]{"Re", "r"}, "Red value for the new chunk visual.", 255, 0, 255, 1);
-    public final Value<Integer> green = new Value<Integer>("Green", new String[]{"Gre", "g"}, "Green value for the new chunk visual.", 255, 0, 255, 1);
-    public final Value<Integer> blue = new Value<Integer>("Blue", new String[]{"Blu", "b"}, "Blue value for the new chunk visual.", 255, 0, 255, 1);
-    public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"Alp", "Opacity", "a", "o"}, "Alpha value for the new chunk visual.", 127, 0, 255, 1);
-    public final Value<Float> width = new Value<Float>("Width", new String[]{"W", "size", "s"}, "Width value of the new chunk visual.", 1.5f, 0.0f, 5.0f, 0.1f);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"M", "type", "t"}, "Select a mode to use to draw the chunk visual.", Mode.BOX);
+    public final Value<Color> color = new Value<Color>("Color", new String[]{"color", "c"}, "Change the color of the chunk visual.", new Color(255, 255, 255));
+    public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"Alp", "Opacity", "a", "o"}, "Edit the alpha of the chunk visual.", 127, 0, 255, 1);
+    public final Value<Float> width = new Value<Float>("Width", new String[]{"W", "size", "s"}, "Edit the width chunk visual.", 1.5f, 0.0f, 5.0f, 0.1f);
 
     public enum Mode {
         BOX, OUTLINE, PLANE
@@ -43,7 +41,7 @@ public final class NewChunksModule extends Module {
 
     public NewChunksModule() {
         super("NewChunks", new String[]{"ChunkGen"}, "Highlights newly generated chunks", "NONE", -1, ModuleType.RENDER);
-        this.currentColor = new Color(this.red.getValue(), this.blue.getValue(), this.green.getValue(), this.alpha.getValue());
+        this.currentColor = new Color(this.color.getValue().getRed(), this.color.getValue().getGreen(), this.color.getValue().getBlue(), this.alpha.getValue());
     }
 
     @Listener
@@ -108,7 +106,7 @@ public final class NewChunksModule extends Module {
 
     @Listener
     public void onConfigSave(EventSaveConfig event) {
-        this.currentColor = new Color(this.red.getValue(), this.green.getValue(), this.blue.getValue());
+        this.currentColor = new Color(this.color.getValue().getRed(), this.color.getValue().getGreen(), this.color.getValue().getBlue());
     }
 
     private boolean contains(final ChunkData chunkData) {

@@ -25,9 +25,7 @@ import java.awt.*;
 public final class BlockHighlightModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"M", "type", "t"}, "Select which mode to draw the highlight visual.", Mode.BOX);
-    public final Value<Integer> red = new Value<Integer>("Red", new String[]{"Re", "r"}, "Red value for the highlight visual.", 255, 0, 255, 1);
-    public final Value<Integer> green = new Value<Integer>("Green", new String[]{"Gre", "g"}, "Green value for the highlight visual.", 255, 0, 255, 1);
-    public final Value<Integer> blue = new Value<Integer>("Blue", new String[]{"Blu", "b"}, "Blue value for the highlight visual.", 255, 0, 255, 1);
+    public final Value<Color> color = new Value<Color>("Color", new String[]{"Col", "c"}, "Edit the block highlight color.", new Color(255, 255, 255));
     public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"Alp", "Opacity", "a", "o"}, "Alpha value for the highlight visual.", 127, 0, 255, 1);
     public final Value<Float> width = new Value<Float>("Width", new String[]{"W", "size", "s"}, "Width value of the highlight visual.", 1.5f, 0.0f, 5.0f, 0.1f);
     public final Value<Boolean> breaking = new Value<Boolean>("Breaking", new String[]{"Break", "block", "brk"}, "Sizes the highlight visual based on the block breaking damage.", true);
@@ -82,6 +80,6 @@ public final class BlockHighlightModule extends Module {
 
     @Listener
     public void onConfigSave(EventSaveConfig event) {
-        this.currentColor = new Color(this.red.getValue(), this.green.getValue(), this.blue.getValue());
+        this.currentColor = new Color(this.color.getValue().getRed(), this.color.getValue().getGreen(), this.color.getValue().getBlue());
     }
 }

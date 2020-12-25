@@ -533,6 +533,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         @Override
                         public void onComponentEvent() {
                             value.setValue(valueColor.getCurrentColor());
+                            Seppuku.INSTANCE.getConfigManager().saveAll();
                         }
                     };
                     components.add(valueColor);

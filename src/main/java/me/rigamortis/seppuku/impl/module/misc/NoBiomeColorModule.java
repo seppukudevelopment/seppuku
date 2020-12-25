@@ -10,6 +10,8 @@ import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
+import java.awt.*;
+
 /**
  * Author Seth
  * 8/11/2019 @ 1:27 AM.
@@ -22,9 +24,7 @@ public final class NoBiomeColorModule extends Module {
         DEFAULT, CUSTOM
     }
 
-    public final Value<Integer> red = new Value<Integer>("Red", new String[]{"R"}, "Red value for custom biome color.", 255, 0, 255, 1);
-    public final Value<Integer> green = new Value<Integer>("Green", new String[]{"G"}, "Green value for custom biome color.", 255, 0, 255, 1);
-    public final Value<Integer> blue = new Value<Integer>("Blue", new String[]{"B"}, "Blue value for custom biome color.", 255, 0, 255, 1);
+    public final Value<Color> color = new Value<Color>("Color", new String[]{"color", "c"}, "Edit the custom biome color.", new Color(255, 255, 255));
 
     private float prevRed;
     private float prevGreen;
@@ -68,22 +68,22 @@ public final class NoBiomeColorModule extends Module {
     }
 
     private int getHex() {
-        return (255 << 24) | (this.red.getValue().intValue() << 16) | (this.green.getValue().intValue() << 8 | this.blue.getValue().intValue());
+        return (255 << 24) | (this.color.getValue().getRed() << 16) | (this.color.getValue().getGreen() << 8 | this.color.getValue().getBlue());
     }
 
     @Listener
     public void onUpdate(EventPlayerUpdate event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
-            if (this.prevRed != this.red.getValue()) {
-                this.prevRed = this.red.getValue();
+            if (this.prevRed != this.color.getValue().getRed()) {
+                this.prevRed = this.color.getValue().getRed();
                 this.reload();
             }
-            if (this.prevGreen != this.green.getValue()) {
-                this.prevGreen = this.green.getValue();
+            if (this.prevGreen != this.color.getValue().getGreen()) {
+                this.prevGreen = this.color.getValue().getGreen();
                 this.reload();
             }
-            if (this.prevBlue != this.blue.getValue()) {
-                this.prevBlue = this.blue.getValue();
+            if (this.prevBlue != this.color.getValue().getBlue()) {
+                this.prevBlue = this.color.getValue().getBlue();
                 this.reload();
             }
             if (this.prevMode != this.mode.getValue()) {

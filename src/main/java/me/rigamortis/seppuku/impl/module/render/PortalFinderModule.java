@@ -45,17 +45,15 @@ public final class PortalFinderModule extends Module {
     public final Value<Boolean> chat = new Value<Boolean>("Chat", new String[]{"Chat", "ChatMessages", "ChatNotifications"}, "Display a message in chat when a portal is found (Hover the message for more info).", true);
 
     public final Value<Boolean> remove = new Value<Boolean>("Remove", new String[]{"R", "Delete"}, "Removes a portal from being drawn if the player is a distance aways from it.", true);
-    public final Value<Integer> removeDistance = new Value<Integer>("RemoveDistance", new String[]{"RD", "RemoveRange"}, "Minimum distance in blocks the player must be from a portal for it to stop being drawn.", 200, 1, 2000, 1);
+    public final Value<Integer> removeDistance = new Value<Integer>("Remove Distance", new String[]{"RemoveDistance", "RD", "RemoveRange"}, "Minimum distance in blocks the player must be from a portal for it to stop being drawn.", 200, 1, 2000, 1);
 
-    public final Value<Boolean> showInfo = new Value<Boolean>("ShowInfo", new String[]{"SI", "DrawInfo", "DrawText"}, "Draws information about the portal at it's location.", true);
-    public final Value<Float> infoScale = new Value<Float>("InfoScale", new String[]{"IS", "Scale", "TextScale"}, "Scale of the text size on the drawn information.", 1.0f, 0.0f, 3.0f, 0.25f);
+    public final Value<Boolean> showInfo = new Value<Boolean>("Info", new String[]{"SI", "DrawInfo", "DrawText"}, "Draws information about the portal at it's location.", true);
+    public final Value<Float> infoScale = new Value<Float>("Info Scale", new String[]{"InfoScale", "IS", "Scale", "TextScale"}, "Scale of the text size on the drawn information.", 1.0f, 0.0f, 3.0f, 0.25f);
 
     public final Value<Boolean> tracer = new Value<Boolean>("Tracer", new String[]{"TracerLine", "trace", "line"}, "Display a tracer line to each found portal.", true);
-    public final Value<Float> width = new Value<Float>("Width", new String[]{"W", "Width"}, "Width of each line that is drawn to indicate a portal's location.", 0.5f, 0.0f, 5.0f, 0.1f);
-    public final Value<Integer> red = new Value<Integer>("Red", new String[]{"R"}, "Red value for each drawn line.", 255, 0, 255, 1);
-    public final Value<Integer> green = new Value<Integer>("Green", new String[]{"G"}, "Green value for each drawn line.", 255, 0, 255, 1);
-    public final Value<Integer> blue = new Value<Integer>("Blue", new String[]{"B"}, "Blue value for each drawn line.", 255, 0, 255, 1);
-    public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"A", "Opacity", "Op"}, "Alpha value for each drawn line.", 255, 0, 255, 1);
+    public final Value<Color> color = new Value<Color>("Tracer Color", new String[]{"TracerColor", "Color", "c"}, "Edit the portal tracer color.", new Color(255, 255, 255));
+    public final Value<Float> width = new Value<Float>("Tracer Width", new String[]{"TracerWidth", "W", "Width"}, "Width of each line that is drawn to indicate a portal's location.", 0.5f, 0.0f, 5.0f, 0.1f);
+    public final Value<Integer> alpha = new Value<Integer>("Tracer Alpha", new String[]{"TracerAlpha", "A", "Opacity", "Op"}, "Alpha value for each drawn line.", 255, 0, 255, 1);
 
     private final List<Vec3d> portals = new CopyOnWriteArrayList<>();
 
@@ -81,7 +79,7 @@ public final class PortalFinderModule extends Module {
 
                 // Line
                 if (this.tracer.getValue()) {
-                    RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), event.getScaledResolution().getScaledWidth() / 2.0f, event.getScaledResolution().getScaledHeight() / 2.0f, this.width.getValue(), ColorUtil.changeAlpha(new Color(red.getValue() / 255.0f, green.getValue() / 255.0f, blue.getValue() / 255.0f).getRGB(), this.alpha.getValue()));
+                    RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), event.getScaledResolution().getScaledWidth() / 2.0f, event.getScaledResolution().getScaledHeight() / 2.0f, this.width.getValue(), ColorUtil.changeAlpha(new Color(this.color.getValue().getRed() / 255.0f, this.color.getValue().getGreen() / 255.0f, this.color.getValue().getBlue() / 255.0f).getRGB(), this.alpha.getValue()));
                 }
 
                 // Info
@@ -113,7 +111,7 @@ public final class PortalFinderModule extends Module {
 
                 // Line
                 if (this.tracer.getValue()) {
-                    RenderUtil.drawLine3D(forward.x, forward.y + mc.player.getEyeHeight(), forward.z, portal.x - mc.getRenderManager().renderPosX, portal.y - mc.getRenderManager().renderPosY, portal.z - mc.getRenderManager().renderPosZ, this.width.getValue(), ColorUtil.changeAlpha(new Color(red.getValue() / 255.0f, green.getValue() / 255.0f, blue.getValue() / 255.0f).getRGB(), this.alpha.getValue()));
+                    RenderUtil.drawLine3D(forward.x, forward.y + mc.player.getEyeHeight(), forward.z, portal.x - mc.getRenderManager().renderPosX, portal.y - mc.getRenderManager().renderPosY, portal.z - mc.getRenderManager().renderPosZ, this.width.getValue(), ColorUtil.changeAlpha(new Color(this.color.getValue().getRed() / 255.0f, this.color.getValue().getGreen() / 255.0f, this.color.getValue().getBlue() / 255.0f).getRGB(), this.alpha.getValue()));
                 }
 
                 // Info

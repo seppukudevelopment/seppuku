@@ -40,6 +40,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
+import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,13 +61,28 @@ public final class WallHackModule extends Module {
     }
 
     public final Value<Boolean> players = new Value<Boolean>("Players", new String[]{"Player"}, "Choose to enable on players.", true);
+    public final Value<Color> playersColor = new Value<Color>("Players Color", new String[]{"playerscolor", "pc"}, "Change the color of players on esp.", new Color(255, 68, 68));
+
     public final Value<Boolean> mobs = new Value<Boolean>("Mobs", new String[]{"Mob"}, "Choose to enable on mobs.", true);
+    public final Value<Color> mobsColor = new Value<Color>("Mobs Color", new String[]{"mobscolor", "mc"}, "Change the color of mobs on esp.", new Color(255, 170, 0));
+
     public final Value<Boolean> animals = new Value<Boolean>("Animals", new String[]{"Animal"}, "Choose to enable on animals.", true);
+    public final Value<Color> animalsColor = new Value<Color>("Animals Color", new String[]{"animalscolor", "ac"}, "Change the color of animals on esp.", new Color(0, 255, 68));
+
     public final Value<Boolean> vehicles = new Value<Boolean>("Vehicles", new String[]{"Vehic", "Vehicle"}, "Choose to enable on vehicles.", true);
+    public final Value<Color> vehiclesColor = new Value<Color>("Vehicles Color", new String[]{"vehiclescolor", "vc"}, "Change the color of vehicles on esp.", new Color(213, 255, 0));
+
     public final Value<Boolean> items = new Value<Boolean>("Items", new String[]{"Item"}, "Choose to enable on items.", true);
+    public final Value<Color> itemsColor = new Value<Color>("Items Color", new String[]{"itemscolor", "ic"}, "Change the color of items on esp", new Color(0, 255, 170));
+
     public final Value<Boolean> local = new Value<Boolean>("Local", new String[]{"Self"}, "Choose to enable on self/local-player.", true);
+
     public final Value<Boolean> crystals = new Value<Boolean>("Crystals", new String[]{"crystal", "crystals", "endcrystal", "endcrystals"}, "Choose to enable on end crystals.", true);
+    public final Value<Color> crystalsColor = new Value<Color>("Crystals Color", new String[]{"endercrystalscolor", "endercrystalcolor", "crystalscolor", "crystalcolor", "ecc"}, "Change the color of ender crystals on esp.", new Color(205, 0, 205));
+
     public final Value<Boolean> pearls = new Value<Boolean>("Pearls", new String[]{"Pearl"}, "Choose to enable on ender pearls.", true);
+    public final Value<Color> pearlsColor = new Value<Color>("Pearls Color", new String[]{"enderpearlscolor", "enderpearlcolor", "pearlscolor", "pearlcolor", "epc"}, "Change the color of ender pearls on esp.", new Color(151, 255, 252));
+
     public final Value<Boolean> armorStand = new Value<Boolean>("ArmorStands", new String[]{"ArmorStand", "ArmourStand", "ArmourStands", "ArmStand"}, "Choose to enable on armor-stands.", true);
     public final Value<Boolean> footsteps = new Value<Boolean>("FootSteps", new String[]{"FootStep", "Steps"}, "Choose to draw entity footsteps.", false);
     public final Value<Boolean> owner = new Value<Boolean>("Owner", new String[]{"Owners", "MobOwner"}, "Choose to draw entity (tame-able or horse) owner name.", false);
@@ -78,6 +94,9 @@ public final class WallHackModule extends Module {
     public final Value<Boolean> absorption = new Value<Boolean>("Absorption", new String[]{"Abs", "GappleHearts"}, "Adds absorption value to heart display.", true);
     public final Value<Boolean> enchants = new Value<Boolean>("Enchants", new String[]{"Ench"}, "Draw enchant names above the entity's equipped armor. (requires Armor value to be enabled.", true);
     public final Value<PotionsMode> potions = new Value<PotionsMode>("Potions", new String[]{"Pot", "Pots", "PotsMode"}, "Rendering mode for active potion-effects on the entity.", PotionsMode.NONE);
+
+    public final Value<Color> friendsColor = new Value<Color>("Friends Color", new String[]{"friendscolor", "friendcolor", "fc"}, "Change the color of friendly players on esp.", new Color(153, 0, 238));
+    public final Value<Color> sneakingColor = new Value<Color>("Sneaking Color", new String[]{"sneakingcolor", "sneakcolor", "sc"}, "Change the color of sneaking players on esp.", new Color(238, 153, 0));
 
     private enum PotionsMode {
         NONE, ICON, TEXT
@@ -140,11 +159,11 @@ public final class WallHackModule extends Module {
 
                             if (friend != null) {
                                 name = friend.getAlias();
-                                color = 0xFF9900EE;
+                                color = this.friendsColor.getValue().getRGB();
                             }
 
                             if (this.background.getValue()) {
-                                RenderUtil.drawRect(bounds[0] + (bounds[2] - bounds[0]) / 2 - mc.fontRenderer.getStringWidth(name) / 2.0f - 1, bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 2, bounds[0] + (bounds[2] - bounds[0]) / 2 + mc.fontRenderer.getStringWidth(name) / 2 + 1, bounds[1] + (bounds[3] - bounds[1]) - 1, 0x75101010);
+                                RenderUtil.drawRect(bounds[0] + (bounds[2] - bounds[0]) / 2 - mc.fontRenderer.getStringWidth(name) / 2.0f - 1, bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 2, bounds[0] + (bounds[2] - bounds[0]) / 2 + mc.fontRenderer.getStringWidth(name) / 2.0f + 1, bounds[1] + (bounds[3] - bounds[1]) - 1, 0x75101010);
                             }
 
                             mc.fontRenderer.drawStringWithShadow(name, bounds[0] + (bounds[2] - bounds[0]) / 2 - mc.fontRenderer.getStringWidth(name) / 2.0f, bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 1, color);
@@ -529,39 +548,39 @@ public final class WallHackModule extends Module {
     }
 
     private int getColor(Entity entity) {
-        int ret = -1;
+        int ret = 0xFFFFFFFF;
 
         if (entity instanceof IAnimals && !(entity instanceof IMob)) {
-            ret = 0xFF00FF44;
+            ret = this.animalsColor.getValue().getRGB();
         }
         if (entity instanceof IMob) {
-            ret = 0xFFFFAA00;
+            ret = this.mobsColor.getValue().getRGB();
         }
         if (entity instanceof EntityBoat || entity instanceof EntityMinecart) {
-            ret = 0xFF00FFAA;
+            ret = this.vehiclesColor.getValue().getRGB();
         }
         if (entity instanceof EntityItem) {
-            ret = 0xFF00FFAA;
+            ret = this.itemsColor.getValue().getRGB();
         }
         if (entity instanceof EntityEnderCrystal) {
-            ret = 0xFFCD00CD;
+            ret = this.crystalsColor.getValue().getRGB();;
         }
         if (entity instanceof EntityEnderPearl) {
-            ret = 0xFFCD00CD;
+            ret = this.pearlsColor.getValue().getRGB();
         }
         if (entity instanceof EntityPlayer) {
-            ret = 0xFFFF4444;
+            ret = this.playersColor.getValue().getRGB();
 
             if (entity == Minecraft.getMinecraft().player) {
                 ret = -1;
             }
 
             if (entity.isSneaking()) {
-                ret = 0xFFEE9900;
+                ret = this.sneakingColor.getValue().getRGB();
             }
 
             if (Seppuku.INSTANCE.getFriendManager().isFriend(entity) != null) {
-                ret = 0xFF9900EE;
+                ret = this.friendsColor.getValue().getRGB();
             }
         }
         return ret;

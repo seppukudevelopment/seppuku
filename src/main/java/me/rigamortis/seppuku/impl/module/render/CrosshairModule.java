@@ -18,9 +18,7 @@ public final class CrosshairModule extends Module {
 
     public final Value<Float> size = new Value<Float>("Size", new String[]{"chsize", "CrosshairSize", "CrosshairScale", "size", "scale", "crosssize", "cs"}, "The size of the crosshair in pixels.", 5.0f, 0.0f, 15.0f, 0.1f);
     public final Value<Boolean> outline = new Value<Boolean>("Outline", new String[]{"choutline", "CrosshairOutline", "CrosshairBackground", "CrosshairBg", "outline", "out", "chout", "chbg", "crossbg", "bg"}, "Enable or disable the crosshair background/outline.", true);
-    public final Value<Integer> red = new Value<Integer>("Red", new String[]{"chred", "CrosshairRed", "red", "cr", "chr"}, "The red RGBA value for the crosshair.", 255, 0, 255, 1);
-    public final Value<Integer> green = new Value<Integer>("Green", new String[]{"chgreen", "CrosshairGreen", "green", "cg", "chg"}, "The green RGBA value for the crosshair.", 255, 0, 255, 1);
-    public final Value<Integer> blue = new Value<Integer>("Blue", new String[]{"chblue", "CrosshairBlue", "blue", "cb", "chb"}, "The blue RGBA value for the crosshair.", 255, 0, 255, 1);
+    public final Value<Color> color = new Value<Color>("Color", new String[]{"color", "c"}, "Change the color of the cross-hair.", new Color(255, 255, 255));
     public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"chalpha", "CrosshairAlpha", "alpha", "ca", "cha"}, "The alpha RGBA value of the crosshair.", 255, 0, 255, 1);
 
     private int CROSSHAIR_COLOR = 0xFFFFFFFF;
@@ -73,7 +71,7 @@ public final class CrosshairModule extends Module {
     }
 
     private void updateColors() {
-        this.CROSSHAIR_COLOR = ColorUtil.changeAlpha(new Color(this.red.getValue(), this.green.getValue(), this.blue.getValue()).getRGB(), this.alpha.getValue());
+        this.CROSSHAIR_COLOR = ColorUtil.changeAlpha(new Color(this.color.getValue().getRed(), this.color.getValue().getGreen(), this.color.getValue().getBlue()).getRGB(), this.alpha.getValue());
         this.CROSSHAIR_OUTLINE_COLOR = ColorUtil.changeAlpha(0xFF000000, this.alpha.getValue());
     }
 

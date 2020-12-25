@@ -21,6 +21,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL32;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -45,10 +46,8 @@ public final class ProjectilesModule extends Module {
     private final Queue<Vec3d> flightPoint = new ConcurrentLinkedQueue<>();
 
     public final Value<Float> width = new Value<Float>("Width", new String[]{"W", "Width"}, "Pixel width of the projectile path.", 1.0f, 0.0f, 5.0f, 0.1f);
-    public final Value<Integer> red = new Value<Integer>("Red", new String[]{"R"}, "Red value for the projectile path.", 255, 0, 255, 1);
-    public final Value<Integer> green = new Value<Integer>("Green", new String[]{"G"}, "Green value for the projectile path.", 255, 0, 255, 1);
-    public final Value<Integer> blue = new Value<Integer>("Blue", new String[]{"B"}, "Blue value for the projectile path.", 255, 0, 255, 1);
-    public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"A"}, "Alpha value for the projectile path.", 255, 0, 255, 1);
+    public final Value<Color> color = new Value<Color>("Path Color", new String[]{"pathcolor", "color", "c", "pc"}, "Change the color of the predicted path.", new Color(255, 255, 255));
+    public final Value<Integer> alpha = new Value<Integer>("Path Alpha", new String[]{"pathalpha", "opacity", "a", "o", "pa", "po"}, "Alpha value for the predicted path.", 255, 0, 255, 1);
 
     public ProjectilesModule() {
         super("Projectiles", new String[]{"Proj"}, "Projects the possible path of an entity that was fired.", "NONE", -1, ModuleType.RENDER);
@@ -90,11 +89,11 @@ public final class ProjectilesModule extends Module {
             if (head == null)
                 continue;
 
-            bufferbuilder.pos(head.x, head.y, head.z).color(red.getValue() / 255.0f, green.getValue() / 255.0f, blue.getValue() / 255.0f, alpha.getValue() / 255.0f).endVertex();
+            bufferbuilder.pos(head.x, head.y, head.z).color(this.color.getValue().getRed() / 255.0f, this.color.getValue().getGreen() / 255.0f, this.color.getValue().getBlue() / 255.0f, this.alpha.getValue() / 255.0f).endVertex();
 
             if (flightPoint.peek() != null) {
                 Vec3d point = flightPoint.peek();
-                bufferbuilder.pos(point.x, point.y, point.z).color(red.getValue() / 255.0f, green.getValue() / 255.0f, blue.getValue() / 255.0f, alpha.getValue() / 255.0f).endVertex();
+                bufferbuilder.pos(point.x, point.y, point.z).color(this.color.getValue().getRed() / 255.0f, this.color.getValue().getGreen() / 255.0f, this.color.getValue().getBlue() / 255.0f, this.alpha.getValue() / 255.0f).endVertex();
             }
 
             tessellator.draw();
@@ -122,7 +121,7 @@ public final class ProjectilesModule extends Module {
             }
 
             if (bb != null) {
-                RenderUtil.drawBoundingBox(bb, width.getValue(), red.getValue() / 255.0f, green.getValue() / 255.0f, blue.getValue() / 255.0f, alpha.getValue() / 255.0f);
+                RenderUtil.drawBoundingBox(bb, width.getValue(), this.color.getValue().getRed() / 255.0f, this.color.getValue().getGreen() / 255.0f, this.color.getValue().getBlue() / 255.0f, this.alpha.getValue() / 255.0f);
             }
         }
         RenderUtil.end3D();
