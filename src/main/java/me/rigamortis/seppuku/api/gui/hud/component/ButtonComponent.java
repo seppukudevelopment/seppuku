@@ -32,7 +32,7 @@ public class ButtonComponent extends HudComponent {
             if (this.rightClickEnabled) {
                 RenderUtil.drawRect(this.getX() + this.getW() - 7, this.getY() + 2, this.getX() + this.getW() - 2, this.getY() + this.getH() - 2, 0xFF6D55FF);
             } else {
-                RenderUtil.drawRect(this.getX() + this.getW() - 7, this.getY() + 2, this.getX() + this.getW() - 2, this.getY() + this.getH() - 2, 0x30909090);
+                RenderUtil.drawRect(this.getX() + this.getW() - 7, this.getY() + 2, this.getX() + this.getW() - 2, this.getY() + this.getH() - 2, 0x45909090);
             }
             RenderUtil.drawBorderedRect(this.getX() + this.getW() - 7, this.getY() + 2, this.getX() + this.getW() - 2, this.getY() + this.getH() - 2, 1.0f, 0x00000000, 0x7506002A);
         }
