@@ -2,6 +2,7 @@ package me.rigamortis.seppuku.impl.gui.hud.component.module;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
+import me.rigamortis.seppuku.api.gui.hud.component.TextComponent;
 import me.rigamortis.seppuku.api.gui.hud.component.*;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.texture.Texture;
@@ -19,6 +20,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -152,7 +154,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
         } else {
             this.title = this.originalName;
             for (Module module : Seppuku.INSTANCE.getModuleManager().getModuleList(this.type)) {
-                RenderUtil.drawRect(this.getX() + BORDER + TEXT_GAP, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 2, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll, module.isEnabled() ? 0x451b002a : 0x451F1C22);
+                RenderUtil.drawRect(this.getX() + BORDER + TEXT_GAP, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 2, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll, module.isEnabled() ? 0x451B002A : 0x451F1C22);
 
                 if (module.getValueList().size() != 0) {
                     RenderUtil.drawLine(this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 4, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll + 1, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 4, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll - 1, 1f, 0x45909090);
@@ -478,7 +480,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         }
                     };
                     components.add(valueNumberText);
-
+                    this.addComponentToButtons(valueNumberText);
                     //TODO: after v3.1
                     //SliderComponent sliderComponent = new SliderComponent(value.getName(), value);
                     //sliderComponent.setTooltipText(value.getDesc() + " " + ChatFormatting.GRAY + "(" + value.getMin() + " - " + value.getMax() + ")");
@@ -507,6 +509,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         }
                     };
                     components.add(valueText);
+                    this.addComponentToButtons(valueText);
                 } else if (value.getValue() instanceof String) {
                     TextComponent valueText = new TextComponent(value.getName(), value.getValue().toString().toLowerCase(), false);
                     valueText.setTooltipText(value.getDesc());
@@ -522,6 +525,18 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         }
                     };
                     components.add(valueText);
+                    this.addComponentToButtons(valueText);
+                } else if (value.getValue() instanceof Color) {
+                    ColorComponent valueColor = new ColorComponent(value.getName(), ((Color) value.getValue()).getRGB());
+                    valueColor.setTooltipText("Edit the hex value of: " + value.getName());
+                    valueColor.returnListener = new ComponentListener() {
+                        @Override
+                        public void onComponentEvent() {
+                            value.setValue(valueColor.getCurrentColor());
+                        }
+                    };
+                    components.add(valueColor);
+                    this.addComponentToButtons(valueColor);
                 }
             }
         }
@@ -532,11 +547,34 @@ public final class ModuleListComponent extends ResizableHudComponent {
 
             int offsetY = 1;
             for (HudComponent component : this.components) {
-                component.setX(this.getX() + 1);
+                int offsetX = 0;
+
+                if (component instanceof TextComponent) {
+                    boolean isChildComponent = false;
+                    boolean skipRendering = false;
+                    for (HudComponent otherComponent : this.components) {
+                        if (otherComponent instanceof ButtonComponent) {
+                            isChildComponent = component.getName().toLowerCase().startsWith(otherComponent.getName().toLowerCase());
+                            if (isChildComponent) {
+                                if (!((ButtonComponent) otherComponent).rightClickEnabled && !component.getName().equals("Color")/* don't listen for module display-color components */) {
+                                    skipRendering = true;
+                                }
+
+                                offsetX += 3;
+                            }
+                        }
+                    }
+
+                    if (skipRendering)
+                        continue;
+                }
+
+                component.setX(this.getX() + 1 + offsetX);
                 component.setY(this.getY() + offsetY);
-                component.setW(this.getW());
+                component.setW(this.getW() - (offsetX * 2));
                 component.setH(Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT);
                 component.render(mouseX, mouseY, partialTicks);
+
                 offsetY += Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1;
             }
         }
@@ -563,6 +601,24 @@ public final class ModuleListComponent extends ResizableHudComponent {
             super.keyTyped(typedChar, keyCode);
             for (HudComponent component : this.components) {
                 component.keyTyped(typedChar, keyCode);
+            }
+        }
+
+        private void addComponentToButtons(HudComponent hudComponent) {
+            for (HudComponent component : this.components) {
+                if (component instanceof ButtonComponent) {
+                    boolean similarName = hudComponent.getName().toLowerCase().startsWith(component.getName().toLowerCase());
+                    if (similarName && !hudComponent.getName().equals("Color") /* don't listen for module display-color components */) {
+                        if (((ButtonComponent) component).rightClickListener == null) {
+                            ((ButtonComponent) component).rightClickListener = new ComponentListener() {
+                                @Override
+                                public void onComponentEvent() {
+                                    ((ButtonComponent) component).rightClickEnabled = !((ButtonComponent) component).rightClickEnabled;
+                                }
+                            };
+                        }
+                    }
+                }
             }
         }
     }

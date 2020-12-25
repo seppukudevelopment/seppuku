@@ -13,26 +13,34 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecart;
-import net.minecraft.entity.item.EntityMinecartContainer;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
+import java.awt.*;
+
 /**
- * Author Seth
- * 4/23/2019 @ 4:05 AM.
+ * @author Seth
+ * @author noil
  */
 public final class TracersModule extends Module {
 
     public final Value<Boolean> players = new Value<Boolean>("Players", new String[]{"Player"}, "Choose to enable on players.", true);
+    public final Value<Color> playersColor = new Value<Color>("Players Color", new String[]{"playerscolor", "pc"}, "Change the color of player tracer lines.", new Color(255, 68, 68));
     public final Value<Boolean> mobs = new Value<Boolean>("Mobs", new String[]{"Mob"}, "Choose to enable on mobs.", true);
+    public final Value<Color> mobsColor = new Value<Color>("Mobs Color", new String[]{"mobscolor", "mc"}, "Change the color of mob tracer lines.", new Color(255, 170, 0));
     public final Value<Boolean> animals = new Value<Boolean>("Animals", new String[]{"Animal"}, "Choose to enable on animals.", true);
+    public final Value<Color> animalsColor = new Value<Color>("Animals Color", new String[]{"animalscolor", "ac"}, "Change the color of animal tracer lines.", new Color(0, 255, 68));
     public final Value<Boolean> vehicles = new Value<Boolean>("Vehicles", new String[]{"Vehic", "Vehicle"}, "Choose to enable on vehicles.", true);
+    public final Value<Color> vehiclesColor = new Value<Color>("Vehicles Color", new String[]{"vehiclescolor", "vc"}, "Change the color of vehicle tracer lines.", new Color(213, 255, 0));
     public final Value<Boolean> items = new Value<Boolean>("Items", new String[]{"Item"}, "Choose to enable on items.", true);
+    public final Value<Color> itemsColor = new Value<Color>("Items Color", new String[]{"itemscolor", "ic"}, "Change the color of item tracer lines.", new Color(0, 255, 170));
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode"}, "The rendering mode to use for drawing the tracer-line.", Mode.TWO_D);
+
+    public final Value<Color> friendsColor = new Value<Color>("Friends Color", new String[]{"friendscolor", "fc"}, "Change the color of added friends tracer lines.", new Color(153, 0, 238));
 
     private enum Mode {
         TWO_D, THREE_D // TWO_DIMENSIONAL, THREE_DIMENSIONAL
@@ -58,13 +66,8 @@ public final class TracersModule extends Module {
                 if (e != null) {
                     if (this.checkFilter(e)) {
                         final Vec3d pos = MathUtil.interpolateEntity(e, event.getPartialTicks());
-
-                        if (pos != null) {
-                            final GLUProjection.Projection projection = GLUProjection.getInstance().project(pos.x - mc.getRenderManager().viewerPosX, pos.y - mc.getRenderManager().viewerPosY, pos.z - mc.getRenderManager().viewerPosZ, GLUProjection.ClampMode.NONE, true);
-                            if (projection != null) {
-                                RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), (float) event.getScaledResolution().getScaledWidth() / 2.0f, (float) event.getScaledResolution().getScaledHeight() / 2.0f, this.width.getValue(), this.getColor(e));
-                            }
-                        }
+                        final GLUProjection.Projection projection = GLUProjection.getInstance().project(pos.x - mc.getRenderManager().viewerPosX, pos.y - mc.getRenderManager().viewerPosY, pos.z - mc.getRenderManager().viewerPosZ, GLUProjection.ClampMode.NONE, true);
+                        RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), (float) event.getScaledResolution().getScaledWidth() / 2.0f, (float) event.getScaledResolution().getScaledHeight() / 2.0f, this.width.getValue(), this.getColor(e));
                     }
                 }
             }
@@ -110,7 +113,7 @@ public final class TracersModule extends Module {
             ret = true;
         }
 
-        if (this.vehicles.getValue() && (entity instanceof EntityBoat || entity instanceof EntityMinecart || entity instanceof EntityMinecartContainer)) {
+        if (this.vehicles.getValue() && (entity instanceof EntityBoat || entity instanceof EntityMinecart)) {
             ret = true;
         }
 
@@ -125,26 +128,26 @@ public final class TracersModule extends Module {
         int ret = -1;
 
         if (entity instanceof IAnimals && !(entity instanceof IMob)) {
-            ret = 0xFF00FF44;
+            ret = this.animalsColor.getValue().getRGB();
         }
 
         if (entity instanceof IMob) {
-            ret = 0xFFFFAA00;
+            ret = this.mobsColor.getValue().getRGB();
         }
 
-        if (entity instanceof EntityBoat || entity instanceof EntityMinecart || entity instanceof EntityMinecartContainer) {
-            ret = 0xFF00FFAA;
+        if (entity instanceof EntityBoat || entity instanceof EntityMinecart) {
+            ret = this.vehiclesColor.getValue().getRGB();
         }
 
         if (entity instanceof EntityItem) {
-            ret = 0xFF00FFAA;
+            ret = this.itemsColor.getValue().getRGB();
         }
 
         if (entity instanceof EntityPlayer) {
-            ret = 0xFFFF4444;
+            ret = this.playersColor.getValue().getRGB();
 
             if (Seppuku.INSTANCE.getFriendManager().isFriend(entity) != null) {
-                ret = 0xFF9900EE;
+                ret = this.friendsColor.getValue().getRGB();
             }
         }
 

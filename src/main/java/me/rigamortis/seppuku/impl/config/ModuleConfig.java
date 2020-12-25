@@ -6,6 +6,7 @@ import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.FileUtil;
 import me.rigamortis.seppuku.api.value.Value;
 
+import java.awt.*;
 import java.io.File;
 
 /**
@@ -62,6 +63,8 @@ public class ModuleConfig extends Configurable {
                         }
                     } else if (val.getValue() instanceof Enum) {
                         val.setEnumValue(entry.getValue().getAsString());
+                    } else if (val.getValue() instanceof Color) {
+                        val.setValue(new Color((int) Long.parseLong(entry.getValue().getAsString(), 16)));
                     }
                 }
             }
@@ -90,6 +93,8 @@ public class ModuleConfig extends Configurable {
                     }
                 } else if (value.getValue() instanceof Enum) {
                     moduleJsonObject.addProperty(value.getName(), ((Enum) value.getValue()).name());
+                } else if (value.getValue() instanceof Color) {
+                    moduleJsonObject.addProperty(value.getName(), Integer.toHexString(((Color)value.getValue()).getRGB()).toUpperCase());
                 }
             });
         }
