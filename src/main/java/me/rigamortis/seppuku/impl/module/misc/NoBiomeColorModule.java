@@ -24,7 +24,7 @@ public final class NoBiomeColorModule extends Module {
         DEFAULT, CUSTOM
     }
 
-    public final Value<Color> color = new Value<Color>("Color", new String[]{"color", "c"}, "Edit the custom biome color.", new Color(255, 255, 255));
+    public final Value<Color> color = new Value<Color>("Custom Color", new String[]{"customcolor", "color", "c"}, "Edit the custom biome color.", new Color(255, 255, 255));
 
     private float prevRed;
     private float prevGreen;
