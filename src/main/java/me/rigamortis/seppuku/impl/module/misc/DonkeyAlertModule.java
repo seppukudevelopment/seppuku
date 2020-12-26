@@ -47,13 +47,13 @@ public final class DonkeyAlertModule extends Module {
             String distance = "";
 
             if (this.donkey.getValue() && entity instanceof EntityDonkey) {
-                alertText += ChatFormatting.YELLOW + "Donkey found!";
+                alertText += ChatFormatting.YELLOW + "Donkey found";
             } else if (this.lama.getValue() && entity instanceof EntityLlama) {
-                alertText += ChatFormatting.YELLOW + "Llama found!";
+                alertText += ChatFormatting.YELLOW + "Llama found";
             } else if (this.horse.getValue() && (entity instanceof EntityHorse || entity instanceof EntitySkeletonHorse)) {
-                alertText += ChatFormatting.YELLOW + "Horse found!";
+                alertText += ChatFormatting.YELLOW + "Horse found";
             } else if (this.mule.getValue() && entity instanceof EntityMule) {
-                alertText += ChatFormatting.YELLOW + "Mule found!";
+                alertText += ChatFormatting.YELLOW + "Mule found";
             }
 
             if (!alertText.equals("")) {
