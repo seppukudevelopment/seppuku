@@ -75,9 +75,9 @@ public final class DonkellamaModule extends Module {
 
                     Seppuku.INSTANCE.logcChat(storageEntityToChat);
                 }
-            }
 
-            this.timer.reset();
+                this.timer.reset();
+            }
         }
     }
 }
