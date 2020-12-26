@@ -47,13 +47,13 @@ public final class DonkeyAlertModule extends Module {
             String distance = "";
 
             if (this.donkey.getValue() && entity instanceof EntityDonkey) {
-                alertText += ChatFormatting.YELLOW + "Donkey found";
+                alertText += "Donkey found";
             } else if (this.lama.getValue() && entity instanceof EntityLlama) {
-                alertText += ChatFormatting.YELLOW + "Llama found";
+                alertText += "Llama found";
             } else if (this.horse.getValue() && (entity instanceof EntityHorse || entity instanceof EntitySkeletonHorse)) {
-                alertText += ChatFormatting.YELLOW + "Horse found";
+                alertText += "Horse found";
             } else if (this.mule.getValue() && entity instanceof EntityMule) {
-                alertText += ChatFormatting.YELLOW + "Mule found";
+                alertText += "Mule found";
             }
 
             if (!alertText.equals("")) {
@@ -65,7 +65,7 @@ public final class DonkeyAlertModule extends Module {
                 }
 
                 if (this.mode.getValue() == Mode.CHAT || this.mode.getValue() == Mode.BOTH) {
-                    final TextComponentString storageEntityToChat = new TextComponentString(alertText);
+                    final TextComponentString storageEntityToChat = new TextComponentString(ChatFormatting.YELLOW + alertText);
 
                     if (this.hoverInfo.getValue()) {
                         String coords = String.format("X: %s, Y: %s, Z: %s", entity.getPosition().getX(), entity.getPosition().getY(), entity.getPosition().getZ());
