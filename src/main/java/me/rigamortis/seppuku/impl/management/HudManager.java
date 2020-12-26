@@ -102,6 +102,7 @@ public final class HudManager {
         add(new RearViewComponent());
         add(new EntityListComponent());
         add(new TpsGraphComponent());
+        add(new MovementGraphComponent());
 
         TrayComponent trayComponent = new TrayComponent();
         trayComponent.setAnchorPoint(BOTTOM_CENTER);

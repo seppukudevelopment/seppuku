@@ -20,7 +20,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public final class TpsGraphComponent extends ResizableHudComponent {
 
-    public final Value<Float> delay = new Value<Float>("Delay", new String[]{"Del"}, "The amount of delay in milliseconds.", 500.0f, 0.0f, 2500.0f, 100.0f);
+    public final Value<Float> delay = new Value<Float>("Delay", new String[]{"Del"}, "The amount of delay(ms) between updates.", 500.0f, 0.0f, 2500.0f, 100.0f);
 
     private final List<TpsNode> tpsNodes = new CopyOnWriteArrayList<TpsNode>();
     private final Timer timer = new Timer();

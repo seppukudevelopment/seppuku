@@ -25,6 +25,9 @@ public class ColorComponent extends TextComponent {
     public void render(int mouseX, int mouseY, float partialTicks) {
         //super.render(mouseX, mouseY, partialTicks);
 
+        if (isMouseInside(mouseX, mouseY))
+            RenderUtil.drawGradientRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x30909090, 0x00101010);
+
         RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x45303030);
         RenderUtil.drawRect(this.getX() + BORDER, this.getY() + BORDER, this.getX() + BORDER + COLOR_SIZE, this.getY() + BORDER + COLOR_SIZE, ColorUtil.changeAlpha(this.currentColor.getRGB(), 0xFF));
 
