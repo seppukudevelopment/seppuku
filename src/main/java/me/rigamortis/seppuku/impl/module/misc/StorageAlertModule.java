@@ -97,7 +97,7 @@ public final class StorageAlertModule extends Module {
                                     .setStyle(new Style()
                                             .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("\2476" + "Create a waypoint for this position.")))
                                             .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, commandsModule.getPrefix().getValue() + "waypoint add " + String.format("x%s_z%s", position.x, position.y) + " " + position.x + " 120 " + position.y))));
-                            Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(textComponent);
+                            Seppuku.INSTANCE.logcChat(textComponent);
                         }
                     }
                     if (this.mode.getValue() == Mode.NOTIFICATION || this.mode.getValue() == Mode.BOTH) {
