@@ -35,7 +35,7 @@ public final class DonkellamaModule extends Module {
     }
 
     public DonkellamaModule() {
-        super("Donkellama", new String[]{"Donkeyllama", "DonkeyFinder", "LlamaFinder", "StorageEntityFinder", "Dllama", "Donkelama", "Donkeylama"}, "Alerts you about donkeys and llamas! (horses, mules, too..)", "NONE", -1, ModuleType.WORLD);
+        super("DonkeyAlert", new String[]{"Donkellama", "Donkeyllama", "DonkeyFinder", "LlamaFinder", "StorageEntityFinder", "Dllama", "Donkelama", "Donkeylama", "Donk", "DonkAlert", "DonkeyAlert", "LlamaAlert"}, "Alerts you about donkeys and llamas! (horses, mules, too..)", "NONE", -1, ModuleType.WORLD);
     }
 
     @Listener
