@@ -1,4 +1,4 @@
-package me.rigamortis.seppuku.impl.module.world;
+package me.rigamortis.seppuku.impl.module.misc;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
@@ -17,7 +17,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 /**
  * @author noil
  */
-public final class DonkellamaModule extends Module {
+public final class DonkeyAlertModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Change between alert modes.", Mode.BOTH);
 
@@ -34,8 +34,8 @@ public final class DonkellamaModule extends Module {
         CHAT, NOTIFICATION, BOTH
     }
 
-    public DonkellamaModule() {
-        super("DonkeyAlert", new String[]{"Donkellama", "Donkeyllama", "DonkeyFinder", "LlamaFinder", "StorageEntityFinder", "Dllama", "Donkelama", "Donkeylama", "Donk", "DonkAlert", "DonkeyAlert", "LlamaAlert"}, "Alerts you about donkeys and llamas! (horses, mules, too..)", "NONE", -1, ModuleType.WORLD);
+    public DonkeyAlertModule() {
+        super("DonkeyAlert", new String[]{"Donkellama", "Donkeyllama", "DonkeyFinder", "LlamaFinder", "StorageEntityFinder", "Dllama", "Donkelama", "Donkeylama", "Donk", "DonkAlert", "DonkeyAlert", "LlamaAlert"}, "Alerts you about donkeys and llamas! (horses, mules, too..)", "NONE", -1, ModuleType.MISC);
     }
 
     @Listener
