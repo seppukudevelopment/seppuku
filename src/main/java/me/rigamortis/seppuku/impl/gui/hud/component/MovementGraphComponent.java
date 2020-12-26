@@ -1,6 +1,5 @@
 package me.rigamortis.seppuku.impl.gui.hud.component;
 
-import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.gui.hud.component.ResizableHudComponent;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
@@ -9,7 +8,6 @@ import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec2f;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -93,6 +91,8 @@ public final class MovementGraphComponent extends ResizableHudComponent {
 
                 final float mappedX = (float) MathUtil.map((this.getW() / 2 - 1) - i, 0, (this.getW() / 2 - 1), this.getX() + this.getW() - 1, this.getX() + 1);
                 final float mappedY = (float) MathUtil.map(movementNode.speed, -2.0f, this.getAverageHeight(), this.getY() + this.getH() - 1, this.getY() + 1) + this.getH() / 2;
+
+                // set node's mapped coordinates
                 movementNode.mappedX = mappedX;
                 movementNode.mappedY = mappedY;
 
@@ -104,20 +104,20 @@ public final class MovementGraphComponent extends ResizableHudComponent {
                 }
 
                 // draw dot
-                RenderUtil.drawRect(mappedX - movementNode.size, mappedY, mappedX + movementNode.size, mappedY + movementNode.size, movementNode.color.getRGB());
+                RenderUtil.drawRect(movementNode.mappedX - movementNode.size, movementNode.mappedY - movementNode.size, movementNode.mappedX + movementNode.size, movementNode.mappedY + movementNode.size, movementNode.color.getRGB());
 
                 // draw text
                 if (i == this.movementNodes.size() - 1) {
                     final String textToDraw = decimalFormat.format(movementNode.speed) + "bps";
-                    mc.fontRenderer.drawStringWithShadow(textToDraw, mappedX - mc.fontRenderer.getStringWidth(textToDraw), mappedY + 3, 0xFFAAAAAA);
+                    mc.fontRenderer.drawStringWithShadow(textToDraw, movementNode.mappedX - mc.fontRenderer.getStringWidth(textToDraw), movementNode.mappedY + 3, 0xFFAAAAAA);
                 }
 
                 // draw hover
-                if (mouseX >= mappedX && mouseX <= mappedX + movementNode.size && mouseY >= this.getY() && mouseY <= this.getY() + this.getH()) {
+                if (mouseX >= movementNode.mappedX && mouseX <= movementNode.mappedX + movementNode.size && mouseY >= this.getY() && mouseY <= this.getY() + this.getH()) {
                     // hover bar
-                    RenderUtil.drawRect(mappedX - movementNode.size, this.getY(), mappedX + movementNode.size, this.getY() + this.getH(), 0x40101010);
+                    RenderUtil.drawRect(movementNode.mappedX - movementNode.size, this.getY(), movementNode.mappedX + movementNode.size, this.getY() + this.getH(), 0x40101010);
                     // hover red dot
-                    RenderUtil.drawRect(mappedX - movementNode.size, mappedY, mappedX + movementNode.size, mappedY + movementNode.size, 0xFFFF0000);
+                    RenderUtil.drawRect(movementNode.mappedX - movementNode.size, movementNode.mappedY - movementNode.size, movementNode.mappedX + movementNode.size, movementNode.mappedY + movementNode.size, 0xFFFF0000);
 
                     // set hovered data
                     hoveredData = String.format("Speed: %s", decimalFormat.format(movementNode.speed));
@@ -180,7 +180,7 @@ public final class MovementGraphComponent extends ResizableHudComponent {
 
     private class MovementNode {
 
-        public float size = 1.0f;
+        public float size = 0.5f;
         public float speed = 0.0f;
         public Color color;
 
