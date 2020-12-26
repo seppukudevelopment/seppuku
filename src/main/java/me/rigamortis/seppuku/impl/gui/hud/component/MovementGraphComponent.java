@@ -104,9 +104,11 @@ public final class MovementGraphComponent extends ResizableHudComponent {
                 RenderUtil.drawRect(mappedX - movementNode.size, mappedY, mappedX + movementNode.size, mappedY + movementNode.size, movementNode.color.getRGB());
 
                 // draw hover
-                if (mouseX >= mappedX && mouseX <= mappedX + movementNode.size && mouseY >= mappedY && mouseY <= this.getY() + this.getH()) {
+                if (mouseX >= mappedX && mouseX <= mappedX + movementNode.size && mouseY >= this.getY() && mouseY <= this.getY() + this.getH()) {
                     // hover bar
-                    RenderUtil.drawRect(mappedX - movementNode.size, mappedY, mappedX + movementNode.size, this.getY() + this.getH(), 0x40101010);
+                    RenderUtil.drawRect(mappedX - movementNode.size, this.getY(), mappedX + movementNode.size, this.getY() + this.getH(), 0x40101010);
+                    // hover red dot
+                    RenderUtil.drawRect(mappedX - movementNode.size, mappedY, mappedX + movementNode.size, mappedY + movementNode.size, 0xFFFF0000);
 
                     // set hovered data
                     final DecimalFormat decimalFormat = new DecimalFormat("###.##");
