@@ -92,7 +92,7 @@ public final class StorageAlertModule extends Module {
                         if (this.commandsModule == null) {
                             this.commandsModule = (CommandsModule) Seppuku.INSTANCE.getModuleManager().find(CommandsModule.class);
                         } else {
-                            final TextComponentString textComponent = new TextComponentString(ChatFormatting.YELLOW + message + "at X: " + position.x + " Z: " + position.y);
+                            final TextComponentString textComponent = new TextComponentString(ChatFormatting.YELLOW + message + " at X: " + position.x + " Z: " + position.y);
                             textComponent.appendSibling(new TextComponentString("(*)")
                                     .setStyle(new Style()
                                             .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("\2476" + "Create a waypoint for this position.")))
