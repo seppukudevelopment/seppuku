@@ -34,7 +34,7 @@ import java.util.logging.Level;
  */
 public final class StorageAlertModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Change between alert modes.", Mode.CHAT);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Change between alert modes.", Mode.BOTH);
     public final Value<Boolean> saveToFile = new Value<Boolean>("SaveToFile", new String[]{"Save", "Saves"}, "Saves the alert to a file in your Seppuku 'Config' directory.", false);
     public final Value<Boolean> chests = new Value<Boolean>("Chests", new String[]{"Chests", "chest"}, "Count chests.", true);
     public final Value<Boolean> echests = new Value<Boolean>("EnderChests", new String[]{"EnderChests", "echest", "echest"}, "Count ender chests.", false);
@@ -87,12 +87,12 @@ public final class StorageAlertModule extends Module {
                 }
 
                 if (foundStorage.size() > 0) {
-                    final String message = foundStorage.size() + " storage blocks located at X: " + position.x + " Z: " + position.y;
+                    final String message = foundStorage.size() + " storage blocks located";
                     if (this.mode.getValue() == Mode.CHAT || this.mode.getValue() == Mode.BOTH) {
                         if (this.commandsModule == null) {
                             this.commandsModule = (CommandsModule) Seppuku.INSTANCE.getModuleManager().find(CommandsModule.class);
                         } else {
-                            final TextComponentString textComponent = new TextComponentString(ChatFormatting.YELLOW + message);
+                            final TextComponentString textComponent = new TextComponentString(ChatFormatting.YELLOW + message + "at X: " + position.x + " Z: " + position.y);
                             textComponent.appendSibling(new TextComponentString("(*)")
                                     .setStyle(new Style()
                                             .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("\2476" + "Create a waypoint for this position.")))
