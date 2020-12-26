@@ -87,15 +87,24 @@ public final class StorageAlertModule extends Module {
                 }
 
                 if (foundStorage.size() > 0) {
-                    final String message = foundStorage.size() + " storage blocks located";
+                    String id = "storage block" + (foundStorage.size() == 1 ? "" : "s");
+
+                    for (String type : foundStorage.keySet()) {
+                        final Vec2f otherPosition = foundStorage.get(type);
+                        if (position.equals(otherPosition)) {
+                            id = type.replaceAll("minecraft:", "");
+                        }
+                    }
+
+                    final String message = foundStorage.size() + " " + id + " located";
                     if (this.mode.getValue() == Mode.CHAT || this.mode.getValue() == Mode.BOTH) {
                         if (this.commandsModule == null) {
                             this.commandsModule = (CommandsModule) Seppuku.INSTANCE.getModuleManager().find(CommandsModule.class);
                         } else {
-                            final TextComponentString textComponent = new TextComponentString(ChatFormatting.YELLOW + message + " at X: " + position.x + " Z: " + position.y);
+                            final TextComponentString textComponent = new TextComponentString(ChatFormatting.YELLOW + message);
                             textComponent.appendSibling(new TextComponentString("(*)")
                                     .setStyle(new Style()
-                                            .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("\2476" + "Create a waypoint for this position.")))
+                                            .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("\2476" + "Create a waypoint for this position" + "\n" + ChatFormatting.WHITE + "X: " + position.x + ", Z: " + position.y)))
                                             .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, commandsModule.getPrefix().getValue() + "waypoint add " + String.format("x%s_z%s", position.x, position.y) + " " + position.x + " 120 " + position.y))));
                             Seppuku.INSTANCE.logcChat(textComponent);
                         }
