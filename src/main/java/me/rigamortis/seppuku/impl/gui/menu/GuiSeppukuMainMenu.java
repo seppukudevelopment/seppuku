@@ -31,8 +31,12 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
     private MainMenuButton alts;
     private MainMenuButton mods;
     private MainMenuButton quit;
+    private MainMenuButton disable;
+    private MainMenuButton language;
 
     private Texture seppukuLogo;
+
+    private boolean inactive = false;
 
     public GuiSeppukuMainMenu() {
         Seppuku.INSTANCE.getEventManager().addEventListener(this);
@@ -134,10 +138,28 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
                 mc.shutdown();
             }
         };
+
+        this.disable = new MainMenuButton(2, 2, 14, 14, "X") {
+            @Override
+            public void action() {
+                inactive = true;
+                mc.displayGuiScreen(new GuiMainMenu());
+            }
+        };
+
+        this.language = new MainMenuButton(2, 18, 14, 14, "L") {
+            @Override
+            public void action() {
+                mc.displayGuiScreen(new GuiLanguage(new GuiSeppukuMainMenu(), mc.gameSettings, mc.getLanguageManager()));
+            }
+        };
     }
 
     @Listener
     public void displayScreen(EventDisplayGui event) {
+        if (this.inactive)
+            return;
+
         if (event.getScreen() == null && mc.world == null) {
             event.setCanceled(true);
             Minecraft.getMinecraft().displayGuiScreen(this);
@@ -193,6 +215,8 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
         this.hudEditor.render(mouseX, mouseY, partialTicks);
         //this.alts.render(mouseX, mouseY, partialTicks);
         this.quit.render(mouseX, mouseY, partialTicks);
+        this.disable.render(mouseX, mouseY, partialTicks);
+        this.language.render(mouseX, mouseY, partialTicks);
 
         // end gl states
         GlStateManager.disableAlpha();
@@ -210,6 +234,8 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
             this.hudEditor.mouseClicked(mouseX, mouseY, mouseButton);
             //this.alts.mouseClicked(mouseX, mouseY, mouseButton);
             this.quit.mouseClicked(mouseX, mouseY, mouseButton);
+            this.disable.mouseClicked(mouseX, mouseY, mouseButton);
+            this.language.mouseClicked(mouseX, mouseY, mouseButton);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -225,6 +251,8 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
         this.hudEditor.mouseRelease(mouseX, mouseY, state);
         //this.alts.mouseRelease(mouseX, mouseY, state);
         this.quit.mouseRelease(mouseX, mouseY, state);
+        this.disable.mouseRelease(mouseX, mouseY, state);
+        this.language.mouseRelease(mouseX, mouseY, state);
     }
 
     @Override

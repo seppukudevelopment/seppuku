@@ -163,6 +163,7 @@ public final class ModuleManager {
         add(new AutoGappleModule());
         add(new AutoEatModule());
         add(new NoFriendHurtModule());
+        add(new DonkellamaModule());
 
         // p2w experience
         if (Seppuku.INSTANCE.getCapeManager().hasCape())
