@@ -35,10 +35,10 @@ public final class Notification {
 
         final NotificationsComponent notificationsComponent = (NotificationsComponent) Seppuku.INSTANCE.getHudManager().findComponent(NotificationsComponent.class);
         if (notificationsComponent != null) {
-            this.setX(notificationsComponent.getX());
-            this.setY(notificationsComponent.getY());
             this.transitionX = notificationsComponent.getX();
             this.transitionY = notificationsComponent.getY();
+            this.setX(notificationsComponent.getX());
+            this.setY(notificationsComponent.getY());
         }
 
         this.timer.reset();
@@ -49,7 +49,7 @@ public final class Notification {
     }
 
     public void update() {
-        int incline = 10;
+        int incline = 8;
         this.transitionX = (float) MathUtil.parabolic(this.transitionX, this.x, incline);
         this.transitionY = (float) MathUtil.parabolic(this.transitionY, this.y, incline);
         if (this.timer.passed((this.duration))) {
