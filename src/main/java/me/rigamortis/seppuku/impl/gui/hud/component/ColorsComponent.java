@@ -39,7 +39,7 @@ public final class ColorsComponent extends ResizableHudComponent {
         super("Colors", 100, 120);
         this.setVisible(true);
         this.setSnappable(false);
-        this.setW(100);
+        this.setW(120);
         this.setH(120);
         this.setX((mc.displayWidth / 2.0f) - (this.getW() / 2));
         this.setY((mc.displayHeight / 2.0f) - (this.getH() / 2));
@@ -157,16 +157,18 @@ public final class ColorsComponent extends ResizableHudComponent {
             RenderUtil.drawRect(this.getX() + BORDER, this.getY() + BORDER + mc.fontRenderer.FONT_HEIGHT + 1, this.getX() + this.getW() - BORDER, this.getY() + this.getH() - BORDER, 0xCC101010);
 
             // draw color
-            RenderUtil.drawRect(this.getX() + (this.getW() / 2) - 16, this.getY() + (this.getH() / 4) - 16, this.getX() + (this.getW() / 2) + 16, this.getY() + (this.getH() / 4) + 16, this.currentColorComponent.getCurrentColor().getRGB());
-            RenderUtil.drawBorderedRect(this.getX() + (this.getW() / 2) - 16, this.getY() + (this.getH() / 4) - 16, this.getX() + (this.getW() / 2) + 16, this.getY() + (this.getH() / 4) + 16, 1.0f, 0x00000000, 0xFFAAAAAA);
-            mc.fontRenderer.drawStringWithShadow(this.currentColorComponent.getName(), this.getX() + (this.getW() / 2) - mc.fontRenderer.getStringWidth(this.currentColorComponent.getName()) / 2.0f, this.getY() + (this.getH() / 4) + 18, 0xFFFFFFFF);
+            RenderUtil.drawRect(this.getX() + (this.getW() / 2) - 10, this.getY() + (this.getH() / 4) - 10, this.getX() + (this.getW() / 2) + 10, this.getY() + (this.getH() / 4) + 10, this.currentColorComponent.getCurrentColor().getRGB());
+            RenderUtil.drawBorderedRect(this.getX() + (this.getW() / 2) - 10, this.getY() + (this.getH() / 4) - 10, this.getX() + (this.getW() / 2) + 10, this.getY() + (this.getH() / 4) + 10, 1.0f, 0x00000000, 0xFFAAAAAA);
 
             if (this.getW() > 180) {
                 final String hexColor = "#" + Integer.toHexString(this.currentColorComponent.getCurrentColor().getRGB()).toLowerCase().substring(2);
                 final String rgbColor = String.format("r%s g%s b%s", this.currentColorComponent.getCurrentColor().getRed(), this.currentColorComponent.getCurrentColor().getGreen(), this.currentColorComponent.getCurrentColor().getBlue());
-                mc.fontRenderer.drawStringWithShadow(hexColor, this.getX() + (this.getW() / 2) + 18, this.getY() + (this.getH() / 4) - 18 + mc.fontRenderer.FONT_HEIGHT, 0xFFAAAAAA);
-                mc.fontRenderer.drawStringWithShadow(rgbColor, this.getX() + (this.getW() / 2) + 18, this.getY() + (this.getH() / 4) - 18 + (mc.fontRenderer.FONT_HEIGHT * 2), 0xFFAAAAAA);
+                mc.fontRenderer.drawStringWithShadow(hexColor, this.getX() + (this.getW() / 2) + 12, this.getY() + (this.getH() / 4) - 16 + mc.fontRenderer.FONT_HEIGHT, 0xFFAAAAAA);
+                mc.fontRenderer.drawStringWithShadow(rgbColor, this.getX() + (this.getW() / 2) + 12, this.getY() + (this.getH() / 4) - 16 + (mc.fontRenderer.FONT_HEIGHT * 2), 0xFFAAAAAA);
             }
+
+            // draw name
+            mc.fontRenderer.drawStringWithShadow(this.currentColorComponent.getName(), this.getX() + (this.getW() / 2) - mc.fontRenderer.getStringWidth(this.currentColorComponent.getName()) / 2.0f, this.getY() + (this.getH() / 4) + 14, 0xFFFFFFFF);
         }
 
         // end scissoring
