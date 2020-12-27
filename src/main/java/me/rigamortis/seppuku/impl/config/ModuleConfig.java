@@ -94,7 +94,7 @@ public class ModuleConfig extends Configurable {
                 } else if (value.getValue() instanceof Enum) {
                     moduleJsonObject.addProperty(value.getName(), ((Enum) value.getValue()).name());
                 } else if (value.getValue() instanceof Color) {
-                    moduleJsonObject.addProperty(value.getName(), Integer.toHexString(((Color)value.getValue()).getRGB()).toUpperCase());
+                    moduleJsonObject.addProperty(value.getName(), Integer.toHexString(((Color) value.getValue()).getRGB()).toUpperCase());
                 }
             });
         }

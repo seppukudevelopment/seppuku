@@ -563,7 +563,8 @@ public final class WallHackModule extends Module {
             ret = this.itemsColor.getValue().getRGB();
         }
         if (entity instanceof EntityEnderCrystal) {
-            ret = this.crystalsColor.getValue().getRGB();;
+            ret = this.crystalsColor.getValue().getRGB();
+            ;
         }
         if (entity instanceof EntityEnderPearl) {
             ret = this.pearlsColor.getValue().getRGB();

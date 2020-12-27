@@ -7,7 +7,6 @@ import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
-import net.minecraft.util.math.Vec2f;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;

@@ -180,7 +180,7 @@ public final class ColorsComponent extends ResizableHudComponent {
             this.currentColorComponent.setH(10);
 
             // draw bg
-            RenderUtil.drawRect(this.currentColorComponent.getX(),  this.currentColorComponent.getY(),  this.currentColorComponent.getX() +  this.currentColorComponent.getW(),  this.currentColorComponent.getY() +  this.currentColorComponent.getH(), 0xFF101010);
+            RenderUtil.drawRect(this.currentColorComponent.getX(), this.currentColorComponent.getY(), this.currentColorComponent.getX() + this.currentColorComponent.getW(), this.currentColorComponent.getY() + this.currentColorComponent.getH(), 0xFF101010);
             this.currentColorComponent.render(mouseX, mouseY, partialTicks);
         }
 
