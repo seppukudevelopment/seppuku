@@ -123,15 +123,13 @@ public final class TpsGraphComponent extends ResizableHudComponent {
         }
     }
 
-    private class TpsNode extends Vec2f {
+    private class TpsNode {
 
         public float size = 1.0f;
         public float tps = 0.0f;
         public Color color;
 
         public TpsNode(float tps) {
-            super(0, 0);
-
             this.tps = tps;
 
             int colorR = (int) MathUtil.map(tps, 0, 20, 255, 0);
