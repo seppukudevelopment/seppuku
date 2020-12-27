@@ -1,6 +1,5 @@
 package me.rigamortis.seppuku.impl.module.render;
 
-import me.rigamortis.seppuku.api.event.client.EventSaveConfig;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.ColorUtil;
@@ -34,8 +33,6 @@ public final class BlockHighlightModule extends Module {
         BOX, OUTLINE, CROSS
     }
 
-    private Color currentColor = new Color(255, 255, 255, 255);
-
     public BlockHighlightModule() {
         super("BlockHighlight", new String[]{"BHighlight", "BlockHigh"}, "Highlights the block at your cross-hair", "NONE", -1, ModuleType.RENDER);
     }
@@ -58,7 +55,7 @@ public final class BlockHighlightModule extends Module {
                 RenderUtil.begin3D();
                 final Vec3d interp = MathUtil.interpolateEntity(mc.player, mc.getRenderPartialTicks());
                 final AxisAlignedBB bb = iblockstate.getSelectedBoundingBox(mc.world, blockpos).shrink(currentDamage / 2.0f).offset(-interp.x, -interp.y, -interp.z);
-                final int color = ColorUtil.changeAlpha(currentColor.getRGB(), this.alpha.getValue());
+                final int color = ColorUtil.changeAlpha(this.color.getValue().getRGB(), this.alpha.getValue());
                 switch (this.mode.getValue()) {
                     case BOX:
                         RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(color, this.alpha.getValue() / 2));
@@ -76,10 +73,5 @@ public final class BlockHighlightModule extends Module {
                 RenderUtil.end3D();
             }
         }
-    }
-
-    @Listener
-    public void onConfigSave(EventSaveConfig event) {
-        this.currentColor = new Color(this.color.getValue().getRed(), this.color.getValue().getGreen(), this.color.getValue().getBlue());
     }
 }
