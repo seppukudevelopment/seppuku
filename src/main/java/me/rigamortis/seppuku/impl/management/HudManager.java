@@ -103,6 +103,7 @@ public final class HudManager {
         add(new EntityListComponent());
         add(new TpsGraphComponent());
         add(new MovementGraphComponent());
+        add(new ColorsComponent());
 
         TrayComponent trayComponent = new TrayComponent();
         trayComponent.setAnchorPoint(BOTTOM_CENTER);

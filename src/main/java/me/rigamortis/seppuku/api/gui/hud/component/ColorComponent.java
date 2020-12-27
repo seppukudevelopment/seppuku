@@ -15,10 +15,17 @@ public class ColorComponent extends TextComponent {
     private static final int TEXT_BLOCK_PADDING = 1;
     private static final int COLOR_SIZE = 7;
 
+    private String customDisplayValue;
+
     public ColorComponent(String name, int defaultColor) {
         super(name, String.valueOf(defaultColor), false);
         this.currentColor = new Color(defaultColor);
         this.displayValue = "#" + Integer.toHexString(this.currentColor.getRGB()).toLowerCase().substring(2);
+    }
+
+    public ColorComponent(String name, int defaultColor, String customDisplayValue) {
+        this(name, defaultColor);
+        this.customDisplayValue = customDisplayValue;
     }
 
     @Override
@@ -31,7 +38,13 @@ public class ColorComponent extends TextComponent {
         RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x45303030);
         RenderUtil.drawRect(this.getX() + BORDER, this.getY() + BORDER, this.getX() + BORDER + COLOR_SIZE, this.getY() + BORDER + COLOR_SIZE, ColorUtil.changeAlpha(this.currentColor.getRGB(), 0xFF));
 
-        final String displayedName = this.focused ? this.displayValue : this.getName();
+        // draw name / display value
+        String displayedName = this.getName();
+        if (this.focused) {
+            displayedName = this.displayValue;
+        } else if (customDisplayValue != null) {
+            displayedName = customDisplayValue;
+        }
         Minecraft.getMinecraft().fontRenderer.drawString(displayedName, (int) this.getX() + BORDER + COLOR_SIZE + BORDER, (int) this.getY() + BORDER, this.focused ? 0xFFFFFFFF : 0xFFAAAAAA);
 
         if (this.focused) {
@@ -63,5 +76,13 @@ public class ColorComponent extends TextComponent {
 
     public void setCurrentColor(Color currentColor) {
         this.currentColor = currentColor;
+    }
+
+    public String getCustomDisplayValue() {
+        return customDisplayValue;
+    }
+
+    public void setCustomDisplayValue(String customDisplayValue) {
+        this.customDisplayValue = customDisplayValue;
     }
 }
