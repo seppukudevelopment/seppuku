@@ -23,6 +23,7 @@ jobs:
             - v1-dependencies-{{ checksum "build.gradle" }}
             - v1-dependencies-
 
+      - run: ./gradlew setupDecompWorkspace
       - run: ./gradlew build
 
       - store_artifacts:
