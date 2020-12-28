@@ -71,38 +71,40 @@ public final class NukerModule extends Module {
                     pos = this.getClosestBlock(false);
                     break;
                 case CREATIVE:
-                    /* the amazing creative nuker straight from the latch hacked client */
-                    for (double y = Math.round(mc.player.posY - 1) + this.vDistance.getValue(); y > Math.round(mc.player.posY - 1); y -= 1.0D) {
-                        for (double x = mc.player.posX - this.hDistance.getValue(); x < mc.player.posX + this.hDistance.getValue(); x += 1.0D) {
-                            for (double z = mc.player.posZ - this.hDistance.getValue(); z < mc.player.posZ + this.hDistance.getValue(); z += 1.0D) {
-                                final BlockPos blockPos = new BlockPos(x, y, z);
-                                final Block block = BlockUtil.getBlock(blockPos);
-                                if (block == Blocks.AIR || !mc.world.getBlockState(blockPos).isFullBlock())
-                                    continue;
-
-                                final Vec3d eyesPos = new Vec3d(mc.player.posX, mc.player.posY + mc.player.getEyeHeight(), mc.player.posZ);
-                                final Vec3d posVec = new Vec3d(blockPos).add(0.5f, 0.5f, 0.5f);
-                                double distanceSqPosVec = eyesPos.squareDistanceTo(posVec);
-
-                                for (EnumFacing side : EnumFacing.values()) {
-                                    final Vec3d hitVec = posVec.add(new Vec3d(side.getDirectionVec()).scale(0.5f));
-                                    double distanceSqHitVec = eyesPos.squareDistanceTo(hitVec);
-
-                                    // check if hitVec is within range (6 blocks)
-                                    if (distanceSqHitVec > 36)
+                    if (mc.player.capabilities.isCreativeMode) {
+                        /* the amazing creative 'nuker' straight from the latch hacked client */
+                        for (double y = Math.round(mc.player.posY - 1) + this.vDistance.getValue(); y > Math.round(mc.player.posY - 1); y -= 1.0D) {
+                            for (double x = mc.player.posX - this.hDistance.getValue(); x < mc.player.posX + this.hDistance.getValue(); x += 1.0D) {
+                                for (double z = mc.player.posZ - this.hDistance.getValue(); z < mc.player.posZ + this.hDistance.getValue(); z += 1.0D) {
+                                    final BlockPos blockPos = new BlockPos(x, y, z);
+                                    final Block block = BlockUtil.getBlock(blockPos);
+                                    if (block == Blocks.AIR || !mc.world.getBlockState(blockPos).isFullBlock())
                                         continue;
 
-                                    // check if side is facing towards player
-                                    if (distanceSqHitVec >= distanceSqPosVec)
-                                        continue;
+                                    final Vec3d eyesPos = new Vec3d(mc.player.posX, mc.player.posY + mc.player.getEyeHeight(), mc.player.posZ);
+                                    final Vec3d posVec = new Vec3d(blockPos).add(0.5f, 0.5f, 0.5f);
+                                    double distanceSqPosVec = eyesPos.squareDistanceTo(posVec);
 
-                                    // face block
-                                    final float[] rotations = EntityUtil.getRotations(hitVec.x, hitVec.y, hitVec.z);
-                                    Seppuku.INSTANCE.getRotationManager().setPlayerRotations(rotations[0], rotations[1]);
+                                    for (EnumFacing side : EnumFacing.values()) {
+                                        final Vec3d hitVec = posVec.add(new Vec3d(side.getDirectionVec()).scale(0.5f));
+                                        double distanceSqHitVec = eyesPos.squareDistanceTo(hitVec);
 
-                                    // damage block
-                                    if (mc.playerController.onPlayerDamageBlock(blockPos, side)) {
-                                        mc.player.swingArm(EnumHand.MAIN_HAND);
+                                        // check if hitVec is within range (6 blocks)
+                                        if (distanceSqHitVec > 36)
+                                            continue;
+
+                                        // check if side is facing towards player
+                                        if (distanceSqHitVec >= distanceSqPosVec)
+                                            continue;
+
+                                        // face block
+                                        final float[] rotations = EntityUtil.getRotations(hitVec.x, hitVec.y, hitVec.z);
+                                        Seppuku.INSTANCE.getRotationManager().setPlayerRotations(rotations[0], rotations[1]);
+
+                                        // damage block
+                                        if (mc.playerController.onPlayerDamageBlock(blockPos, side)) {
+                                            mc.player.swingArm(EnumHand.MAIN_HAND);
+                                        }
                                     }
                                 }
                             }
