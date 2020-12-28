@@ -1,4 +1,9 @@
 version: 2
+
+general:
+  branches:
+    - master
+
 jobs:
   build:
     docker:
@@ -18,7 +23,6 @@ jobs:
             - v1-dependencies-{{ checksum "build.gradle" }}
             - v1-dependencies-
 
-      - run: gradle setupDecompWorkspace
       - run: gradle build
 
       - store_artifacts:
