@@ -18,19 +18,9 @@ jobs:
     steps:
       - checkout
 
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "build.gradle" }}
-            - v1-dependencies-
-
       - run: ./gradlew clean
       - run: ./gradlew setupDecompWorkspace
       - run: ./gradlew build
 
       - store_artifacts:
           path: build/libs/
-
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}
