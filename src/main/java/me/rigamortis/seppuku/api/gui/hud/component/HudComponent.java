@@ -19,7 +19,7 @@ public class HudComponent {
     private float emptyH;
 
     private String name;
-    private String tooltipText = "No description to be found.";
+    private String tooltipText = "";
 
     private boolean visible;
 
