@@ -23,6 +23,7 @@ jobs:
             - v1-dependencies-{{ checksum "build.gradle" }}
             - v1-dependencies-
 
+      - run: sed -i 's/def buildmode = "IDE"/def buildmode = "RELEASE"/' build.gradle
       - run: ./gradlew clean
       - run: ./gradlew setupDecompWorkspace
       - run: ./gradlew build
