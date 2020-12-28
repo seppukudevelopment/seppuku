@@ -59,6 +59,8 @@ public final class ModuleListComponent extends ResizableHudComponent {
 
         this.setSnappable(false);
         this.setLocked(true);
+        this.setX(20);
+        this.setY(20);
         this.setW(100);
         this.setH(100);
     }
