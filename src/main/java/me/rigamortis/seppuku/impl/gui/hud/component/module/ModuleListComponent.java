@@ -6,7 +6,6 @@ import me.rigamortis.seppuku.api.gui.hud.component.TextComponent;
 import me.rigamortis.seppuku.api.gui.hud.component.*;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.texture.Texture;
-import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
@@ -85,8 +84,6 @@ public final class ModuleListComponent extends ResizableHudComponent {
             this.setDragging(false);
         }
 
-        // Is mouse inside
-        final boolean mouseInside = isMouseInside(mouseX, mouseY);
 
         // clamp max width & height
         if (this.isResizeDragging()) {
@@ -107,21 +104,21 @@ public final class ModuleListComponent extends ResizableHudComponent {
         // Background & title
         //RenderUtil.begin2D();
         RenderUtil.drawRect(this.getX() - 1, this.getY() - 1, this.getX() + this.getW() + 1, this.getY() + this.getH() + 1, 0x99101010);
-        RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), ColorUtil.changeAlpha(0xFF202020, mouseInside ? 0xFF : 0x99));
+        RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0xFF202020);
         GlStateManager.enableBlend();
         texture.bind();
         texture.render(this.getX() + BORDER, this.getY() + BORDER, TEXTURE_SIZE, TEXTURE_SIZE);
         GlStateManager.disableBlend();
-        mc.fontRenderer.drawStringWithShadow(this.title, this.getX() + BORDER + /* texture width */ TEXTURE_SIZE + BORDER, this.getY() + BORDER, ColorUtil.changeAlpha(0xFFFFFFFF, mouseInside ? 0xFF : 0x99));
+        mc.fontRenderer.drawStringWithShadow(this.title, this.getX() + BORDER + /* texture width */ TEXTURE_SIZE + BORDER, this.getY() + BORDER, 0xFFFFFFFF);
         offsetY += mc.fontRenderer.FONT_HEIGHT + 1;
 
         // Behind hub
-        RenderUtil.drawRect(this.getX() + BORDER, this.getY() + offsetY + BORDER, this.getX() + this.getW() - SCROLL_WIDTH - BORDER, this.getY() + this.getH() - BORDER, ColorUtil.changeAlpha(0xFF101010, mouseInside ? 0xFF : 0x99));
+        RenderUtil.drawRect(this.getX() + BORDER, this.getY() + offsetY + BORDER, this.getX() + this.getW() - SCROLL_WIDTH - BORDER, this.getY() + this.getH() - BORDER, 0xFF101010);
 
         // Scrollbar bg
-        RenderUtil.drawRect(this.getX() + this.getW() - SCROLL_WIDTH, this.getY() + offsetY + BORDER, this.getX() + this.getW() - BORDER, this.getY() + this.getH() - BORDER, ColorUtil.changeAlpha(0xFF101010, mouseInside ? 0xFF : 0x99));
+        RenderUtil.drawRect(this.getX() + this.getW() - SCROLL_WIDTH, this.getY() + offsetY + BORDER, this.getX() + this.getW() - BORDER, this.getY() + this.getH() - BORDER,  0xFF101010);
         // Scrollbar highlights
-        if (mouseInside) {
+        if (this.isMouseInside(mouseX, mouseY)) {
             if (mouseX >= (this.getX() + this.getW() - SCROLL_WIDTH) && mouseX <= (this.getX() + this.getW() - BORDER)) { // mouse is inside scroll area on x-axis
                 RenderUtil.drawGradientRect(this.getX() + this.getW() - SCROLL_WIDTH, this.getY() + offsetY + BORDER, this.getX() + this.getW() - BORDER, this.getY() + offsetY + 8 + BORDER, 0xFF909090, 0x00101010);
                 RenderUtil.drawGradientRect(this.getX() + this.getW() - SCROLL_WIDTH, this.getY() + this.getH() - 8 - BORDER, this.getX() + this.getW() - BORDER, this.getY() + this.getH() - BORDER, 0x00101010, 0xFF909090);
@@ -134,7 +131,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
             }
         }
         // Scrollbar
-        RenderUtil.drawRect(this.getX() + this.getW() - SCROLL_WIDTH, MathHelper.clamp((this.getY() + offsetY + BORDER) + ((this.getH() * this.scroll) / this.totalHeight), (this.getY() + offsetY + BORDER), (this.getY() + this.getH() - BORDER)), this.getX() + this.getW() - BORDER, MathHelper.clamp((this.getY() + this.getH() - BORDER) - (this.getH() * (this.totalHeight - this.getH() - this.scroll) / this.totalHeight), (this.getY() + offsetY + BORDER), (this.getY() + this.getH() - BORDER)), ColorUtil.changeAlpha(0xFF909090, mouseInside ? 0xFF : 0x99));
+        RenderUtil.drawRect(this.getX() + this.getW() - SCROLL_WIDTH, MathHelper.clamp((this.getY() + offsetY + BORDER) + ((this.getH() * this.scroll) / this.totalHeight), (this.getY() + offsetY + BORDER), (this.getY() + this.getH() - BORDER)), this.getX() + this.getW() - BORDER, MathHelper.clamp((this.getY() + this.getH() - BORDER) - (this.getH() * (this.totalHeight - this.getH() - this.scroll) / this.totalHeight), (this.getY() + offsetY + BORDER), (this.getY() + this.getH() - BORDER)), 0xFF909090);
 
         // Begin scissoring and render the module "buttons"
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
@@ -164,7 +161,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                 if (insideModule) {
                     RenderUtil.drawGradientRect(this.getX() + BORDER + TEXT_GAP, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 2, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll, 0x30909090, 0x00101010);
                 }
-                mc.fontRenderer.drawStringWithShadow(module.getDisplayName(), this.getX() + BORDER + TEXT_GAP + 1, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, module.isEnabled() ? ColorUtil.changeAlpha(0xFFC255FF, mouseInside ? 0xFF : 0x99) : ColorUtil.changeAlpha(0xFF7A6E80, mouseInside ? 0xFF : 0x99));
+                mc.fontRenderer.drawStringWithShadow(module.getDisplayName(), this.getX() + BORDER + TEXT_GAP + 1, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, module.isEnabled() ? 0xFFC255FF : 0xFF7A6E80);
                 offsetY += mc.fontRenderer.FONT_HEIGHT + TEXT_GAP;
             }
         }
