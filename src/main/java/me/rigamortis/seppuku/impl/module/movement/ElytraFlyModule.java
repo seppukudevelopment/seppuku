@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.module.movement;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
+import me.rigamortis.seppuku.api.event.player.EventMove;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.InventoryUtil;
@@ -31,7 +32,7 @@ public final class ElytraFlyModule extends Module {
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Mode to use for elytra flight.", Mode.VANILLA);
 
     private enum Mode {
-        VANILLA, PACKET, BYPASS, CONTROL
+        VANILLA, PACKET, CONTROL
     }
 
     public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd", "amount", "s"}, "Speed multiplier for elytra flight, higher values equals more speed.", 1.0f, 0.0f, 5.0f, 0.01f);
@@ -147,86 +148,41 @@ public final class ElytraFlyModule extends Module {
 
                 // ensure the player is in the elytra flying state
                 if (mc.player.isElytraFlying()) {
-                    switch (this.mode.getValue()) {
-                        case VANILLA:
-                            final float speedScaled = this.speed.getValue() * 0.05f; // 5/100 of original value
-                            final double[] directionSpeedVanilla = MathUtil.directionSpeed(speedScaled);
-                            if (mc.player.movementInput.jump) {
-                                mc.player.motionY = this.speed.getValue();
-                            }
+                    if (this.mode.getValue() == Mode.PACKET) {
+                        this.freezePlayer(mc.player);
+                        this.runNoKick(mc.player);
 
-                            if (mc.player.movementInput.sneak) {
-                                mc.player.motionY = -this.speed.getValue();
-                            }
-                            if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
-                                mc.player.motionX += directionSpeedVanilla[0];
-                                mc.player.motionZ += directionSpeedVanilla[1];
-                            }
+                        final double[] directionSpeedPacket = MathUtil.directionSpeed(this.speed.getValue());
 
-                            break;
-                        case PACKET:
-                            this.freezePlayer(mc.player);
-                            this.runNoKick(mc.player);
+                        if (mc.player.movementInput.jump) {
+                            mc.player.motionY = this.speed.getValue();
+                        }
 
-                            final double[] directionSpeedPacket = MathUtil.directionSpeed(this.speed.getValue());
+                        if (mc.player.movementInput.sneak) {
+                            mc.player.motionY = -this.speed.getValue();
+                        }
 
-                            if (mc.player.movementInput.jump) {
-                                mc.player.motionY = this.speed.getValue();
-                            }
+                        if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
+                            mc.player.motionX = directionSpeedPacket[0];
+                            mc.player.motionZ = directionSpeedPacket[1];
+                        }
 
-                            if (mc.player.movementInput.sneak) {
-                                mc.player.motionY = -this.speed.getValue();
-                            }
+                        mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
+                        mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
+                    } else if (this.mode.getValue() == Mode.VANILLA) {
+                        final float speedScaled = this.speed.getValue() * 0.05f; // 5/100 of original value
+                        final double[] directionSpeedVanilla = MathUtil.directionSpeed(speedScaled);
+                        if (mc.player.movementInput.jump) {
+                            mc.player.motionY = this.speed.getValue();
+                        }
 
-                            if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
-                                mc.player.motionX = directionSpeedPacket[0];
-                                mc.player.motionZ = directionSpeedPacket[1];
-                            }
-
-                            mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
-                            mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
-                            break;
-                        case BYPASS: // Bypass / 9b9t (possibly broken currently?)
-                            if (mc.gameSettings.keyBindJump.isKeyDown()) {
-                                mc.player.motionY = 0.02f;
-                            }
-
-                            if (mc.gameSettings.keyBindSneak.isKeyDown()) {
-                                mc.player.motionY = -0.2f;
-                            }
-
-                            if (mc.player.ticksExisted % 8 == 0 && mc.player.posY <= 240) {
-                                mc.player.motionY = 0.02f;
-                            }
-
-                            mc.player.capabilities.isFlying = true;
-                            mc.player.capabilities.setFlySpeed(0.025f);
-
-                            final double[] directionSpeedBypass = MathUtil.directionSpeed(0.52f);
-
-                            if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
-                                mc.player.motionX = directionSpeedBypass[0];
-                                mc.player.motionZ = directionSpeedBypass[1];
-                            } else {
-                                mc.player.motionX = 0;
-                                mc.player.motionZ = 0;
-                            }
-                            break;
-                        case CONTROL:
-                            final double[] directionSpeedControl = MathUtil.directionSpeed(this.speed.getValue());
-                            mc.player.motionY = 0;
-                            mc.player.motionX = 0;
-                            mc.player.motionZ = 0;
-                            if (mc.player.movementInput.jump) {
-                                mc.player.motionY = this.speed.getValue() / 2;
-                            } else if (mc.player.movementInput.sneak) {
-                                mc.player.motionY = -this.speed.getValue() / 2;
-                            }
-                            if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
-                                mc.player.motionX = directionSpeedControl[0];
-                                mc.player.motionZ = directionSpeedControl[1];
-                            }
-                            break;
+                        if (mc.player.movementInput.sneak) {
+                            mc.player.motionY = -this.speed.getValue();
+                        }
+                        if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
+                            mc.player.motionX += directionSpeedVanilla[0];
+                            mc.player.motionZ += directionSpeedVanilla[1];
+                        }
                     }
                 }
 
@@ -239,6 +195,34 @@ public final class ElytraFlyModule extends Module {
                     mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
                 }
                 break;
+        }
+    }
+
+    @Listener
+    public void move (EventMove event) {
+        Minecraft mc = Minecraft.getMinecraft();
+
+        if (mc.player.isElytraFlying()) {
+            if (this.mode.getValue() == Mode.CONTROL) {
+                mc.player.motionY = 0; // Prevent the player from slowly falling down
+
+                final double[] directionSpeedControl = MathUtil.directionSpeed(this.speed.getValue());
+                mc.player.motionX = 0;
+                mc.player.motionZ = 0;
+                if (mc.player.movementInput.jump) {
+                    mc.player.motionY = this.speed.getValue() / 2;
+                } else if (mc.player.movementInput.sneak) {
+                    mc.player.motionY = -this.speed.getValue() / 2;
+                }
+                if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
+                    mc.player.motionX = directionSpeedControl[0];
+                    mc.player.motionZ = directionSpeedControl[1];
+                }
+
+                event.setX(mc.player.motionX);
+                event.setY(mc.player.motionY);
+                event.setZ(mc.player.motionZ);
+            }
         }
     }
 
