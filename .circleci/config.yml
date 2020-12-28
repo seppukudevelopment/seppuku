@@ -23,7 +23,7 @@ jobs:
             - v1-dependencies-{{ checksum "build.gradle" }}
             - v1-dependencies-
 
-      - run: gradle build
+      - run: ./gradlew build
 
       - store_artifacts:
           path: build/libs/
