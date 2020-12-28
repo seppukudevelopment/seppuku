@@ -529,7 +529,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                     this.addComponentToButtons(valueText);
                 } else if (value.getValue() instanceof Color) {
                     ColorComponent valueColor = new ColorComponent(value.getName(), ((Color) value.getValue()).getRGB());
-                    valueColor.setTooltipText("Edit the hex value of: " + value.getName());
+                    //valueColor.setTooltipText("Edit the hex value of: " + value.getName());
                     valueColor.returnListener = new ComponentListener() {
                         @Override
                         public void onComponentEvent() {
