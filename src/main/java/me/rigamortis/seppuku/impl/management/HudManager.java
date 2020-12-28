@@ -53,8 +53,8 @@ public final class HudManager {
         for (AnchorPoint anchorPoint : this.anchorPoints)
             anchorPoint.updatePosition(sr);
 
-        int moduleListXOffset = 20;
-        int moduleListYOffset = 20;
+        int moduleListXOffset = 0;
+        int moduleListYOffset = 0;
         for (Module.ModuleType type : Module.ModuleType.values()) {
             if (type.equals(Module.ModuleType.HIDDEN) || type.equals(Module.ModuleType.UI))
                 continue;

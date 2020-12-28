@@ -37,7 +37,6 @@ public final class ColorsComponent extends ResizableHudComponent {
     public ColorsComponent() {
         super("Colors", 100, 120);
 
-        this.setVisible(true);
         this.setSnappable(false);
         this.setW(120);
         this.setH(120);
