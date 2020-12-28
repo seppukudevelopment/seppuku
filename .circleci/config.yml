@@ -29,7 +29,8 @@ jobs:
       - run: ./gradlew build
 
       - store_artifacts:
-          path: build/libs/
+          path: build/libs/seppuku-*-full.jar
+          destination: seppuku.jar
 
       - save_cache:
           paths:
