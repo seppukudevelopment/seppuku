@@ -58,7 +58,7 @@ public final class CapeManager {
                     final ResourceLocation cape = this.findResource(user.getCape());
 
                     if (cape == null) {
-                        URL url = new URL("https://seppuku.pw/files/" + user.getCape());
+                        URL url = new URL(user.getCape());
                         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                         httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.76");
                         final DynamicTexture texture = new DynamicTexture(ImageIO.read(httpURLConnection.getInputStream()));
@@ -92,14 +92,14 @@ public final class CapeManager {
      */
     protected void downloadCapeUsers() {
         try {
-            URL url = new URL("https://seppuku.pw/files/capes.txt");
+            URL url = new URL("https://seppuku.pw/files/capes_new.txt");
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.76");
             final BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
 
             String line;
             while ((line = reader.readLine()) != null) {
-                final String[] split = line.split(":");
+                final String[] split = line.split(";");
                 this.capeUserList.add(new CapeUser(split[0], split[1]));
             }
 

@@ -434,7 +434,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
             components.add(keybindText);
 
             ColorComponent colorComponent = new ColorComponent("List Color", module.getColor());
-            colorComponent.setTooltipText("The hex color for this module in the enabled mods list.");
+            //colorComponent.setTooltipText("The hex color for this module in the enabled mods list.");
             colorComponent.returnListener = new ComponentListener() {
                 @Override
                 public void onComponentEvent() {

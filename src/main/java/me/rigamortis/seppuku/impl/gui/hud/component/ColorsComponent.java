@@ -37,6 +37,7 @@ public final class ColorsComponent extends ResizableHudComponent {
 
     public ColorsComponent() {
         super("Colors", 100, 120);
+
         this.setVisible(true);
         this.setSnappable(false);
         this.setW(120);
@@ -179,7 +180,7 @@ public final class ColorsComponent extends ResizableHudComponent {
             this.currentColorComponent.setX(this.getX() + 20);
             this.currentColorComponent.setY(this.getY() + (this.getH() / 2));
             this.currentColorComponent.setW(this.getW() - 40);
-            this.currentColorComponent.setH(10);
+            this.currentColorComponent.setH(9);
 
             // draw bg
             RenderUtil.drawRect(this.currentColorComponent.getX(), this.currentColorComponent.getY(), this.currentColorComponent.getX() + this.currentColorComponent.getW(), this.currentColorComponent.getY() + this.currentColorComponent.getH(), 0xFF101010);
@@ -217,7 +218,7 @@ public final class ColorsComponent extends ResizableHudComponent {
 
                         final boolean insideComponent = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + mc.fontRenderer.FONT_HEIGHT + 1 + offsetY - this.scroll) && mouseY <= (this.getY() + BORDER + (mc.fontRenderer.FONT_HEIGHT * 2) + 1 + offsetY - this.scroll);
                         if (insideComponent && this.currentColorComponent == null) {
-                            ColorComponent colorComponent = new ColorComponent(component.getName() + " " + value.getName(), ((Color) value.getValue()).getRGB(), ChatFormatting.WHITE + "Click to edit...");
+                            ColorComponent colorComponent = new ColorComponent(component.getName() + " " + value.getName(), ((Color) value.getValue()).getRGB(), ChatFormatting.WHITE + "Click to edit");
                             colorComponent.returnListener = new ComponentListener() {
                                 @Override
                                 public void onComponentEvent() {
@@ -240,7 +241,7 @@ public final class ColorsComponent extends ResizableHudComponent {
 
                         final boolean insideComponent = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + mc.fontRenderer.FONT_HEIGHT + 1 + offsetY - this.scroll) && mouseY <= (this.getY() + BORDER + (mc.fontRenderer.FONT_HEIGHT * 2) + 1 + offsetY - this.scroll);
                         if (insideComponent && this.currentColorComponent == null) {
-                            ColorComponent colorComponent = new ColorComponent(module.getDisplayName() + " " + value.getName(), ((Color) value.getValue()).getRGB(), ChatFormatting.WHITE + "Click to edit...");
+                            ColorComponent colorComponent = new ColorComponent(module.getDisplayName() + " " + value.getName(), ((Color) value.getValue()).getRGB(), ChatFormatting.WHITE + "Click to edit");
                             colorComponent.returnListener = new ComponentListener() {
                                 @Override
                                 public void onComponentEvent() {

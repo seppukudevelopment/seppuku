@@ -34,7 +34,7 @@ public final class TpsGraphComponent extends ResizableHudComponent {
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
 
-        if (mc.world != null && mc.getCurrentServerData() != null) {
+        if (mc.world != null) {
             if (this.tpsNodes.size() > (this.getW() / 2)) { // overflow protection
                 this.tpsNodes.clear();
             }
