@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.command;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.command.Command;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.impl.config.ModuleConfig;
 
 /**
  * Author Seth
@@ -32,7 +33,7 @@ public final class ToggleCommand extends Command {
                 mod.toggle();
                 Seppuku.INSTANCE.logChat("Toggled " + (mod.isEnabled() ? "\247a" : "\247c") + mod.getDisplayName());
             }
-            Seppuku.INSTANCE.getConfigManager().saveAll();
+            Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class);
         } else {
             Seppuku.INSTANCE.errorChat("Unknown module " + "\247f\"" + split[1] + "\"");
             final Module similar = Seppuku.INSTANCE.getModuleManager().findSimilar(split[1]);

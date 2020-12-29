@@ -9,6 +9,8 @@ import me.rigamortis.seppuku.api.gui.hud.component.ResizableHudComponent;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.value.Value;
+import me.rigamortis.seppuku.impl.config.HudConfig;
+import me.rigamortis.seppuku.impl.config.ModuleConfig;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.math.MathHelper;
@@ -221,6 +223,7 @@ public final class ColorsComponent extends ResizableHudComponent {
                                 @Override
                                 public void onComponentEvent() {
                                     value.setValue(colorComponent.getCurrentColor());
+                                    Seppuku.INSTANCE.getConfigManager().save(HudConfig.class);
                                 }
                             };
                             this.currentColorComponent = colorComponent;
@@ -244,7 +247,7 @@ public final class ColorsComponent extends ResizableHudComponent {
                                 @Override
                                 public void onComponentEvent() {
                                     value.setValue(colorComponent.getCurrentColor());
-                                    Seppuku.INSTANCE.getConfigManager().saveAll();
+                                    Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class);
                                 }
                             };
                             this.currentColorComponent = colorComponent;

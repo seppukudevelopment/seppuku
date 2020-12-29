@@ -199,7 +199,7 @@ public final class ElytraFlyModule extends Module {
     }
 
     @Listener
-    public void move (EventMove event) {
+    public void move(EventMove event) {
         Minecraft mc = Minecraft.getMinecraft();
 
         if (mc.player.isElytraFlying()) {

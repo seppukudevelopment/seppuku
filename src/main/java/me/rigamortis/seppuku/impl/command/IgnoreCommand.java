@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.command;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.command.Command;
 import me.rigamortis.seppuku.api.ignore.Ignored;
+import me.rigamortis.seppuku.impl.config.IgnoreConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextComponentString;
 
@@ -46,7 +47,7 @@ public final class IgnoreCommand extends Command {
             } else {
                 Seppuku.INSTANCE.logChat("Added \247c" + split[2] + "\247f to your ignore list");
                 Seppuku.INSTANCE.getIgnoredManager().add(split[2]);
-                Seppuku.INSTANCE.getConfigManager().saveAll();
+                Seppuku.INSTANCE.getConfigManager().save(IgnoreConfig.class);
             }
         } else if (equals(removeAlias, split[1])) {
             if (!this.clamp(input, 3, 3)) {
@@ -66,7 +67,7 @@ public final class IgnoreCommand extends Command {
             if (ignored != null) {
                 Seppuku.INSTANCE.logChat("Removed \247c" + ignored.getName() + "\247f from your ignore list");
                 Seppuku.INSTANCE.getIgnoredManager().getIgnoredList().remove(ignored);
-                Seppuku.INSTANCE.getConfigManager().saveAll();
+                Seppuku.INSTANCE.getConfigManager().save(IgnoreConfig.class);
             } else {
                 Seppuku.INSTANCE.logChat("\247c" + split[1] + " \247fis not ignored");
             }
@@ -101,7 +102,7 @@ public final class IgnoreCommand extends Command {
             if (size > 0) {
                 Seppuku.INSTANCE.logChat("Removed \247c" + size + "\247f ignored player" + (size > 1 ? "s" : ""));
                 Seppuku.INSTANCE.getIgnoredManager().getIgnoredList().clear();
-                Seppuku.INSTANCE.getConfigManager().saveAll();
+                Seppuku.INSTANCE.getConfigManager().save(IgnoreConfig.class);
             } else {
                 Seppuku.INSTANCE.logChat("You don't have anyone ignored");
             }

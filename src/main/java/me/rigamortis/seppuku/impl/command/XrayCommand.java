@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.command;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.command.Command;
 import me.rigamortis.seppuku.api.util.StringUtil;
+import me.rigamortis.seppuku.impl.config.XrayConfig;
 import me.rigamortis.seppuku.impl.module.render.XrayModule;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -64,7 +65,7 @@ public final class XrayCommand extends Command {
                                 if (xray.isEnabled()) {
                                     xray.updateRenders();
                                 }
-                                Seppuku.INSTANCE.getConfigManager().saveAll();
+                                Seppuku.INSTANCE.getConfigManager().save(XrayConfig.class);
                                 Seppuku.INSTANCE.logChat("Added " + block.getLocalizedName() + " to xray");
                             }
                         } else {
@@ -87,7 +88,7 @@ public final class XrayCommand extends Command {
                                 if (xray.isEnabled()) {
                                     xray.updateRenders();
                                 }
-                                Seppuku.INSTANCE.getConfigManager().saveAll();
+                                Seppuku.INSTANCE.getConfigManager().save(XrayConfig.class);
                                 Seppuku.INSTANCE.logChat("Added " + block.getLocalizedName() + " to xray");
                             }
                         }
@@ -113,7 +114,7 @@ public final class XrayCommand extends Command {
                                 if (xray.isEnabled()) {
                                     xray.updateRenders();
                                 }
-                                Seppuku.INSTANCE.getConfigManager().saveAll();
+                                Seppuku.INSTANCE.getConfigManager().save(XrayConfig.class);
                                 Seppuku.INSTANCE.logChat("Removed " + block.getLocalizedName() + " from xray");
                             } else {
                                 Seppuku.INSTANCE.logChat("Xray doesn't contain " + block.getLocalizedName());
@@ -136,7 +137,7 @@ public final class XrayCommand extends Command {
                                 if (xray.isEnabled()) {
                                     xray.updateRenders();
                                 }
-                                Seppuku.INSTANCE.getConfigManager().saveAll();
+                                Seppuku.INSTANCE.getConfigManager().save(XrayConfig.class);
                                 Seppuku.INSTANCE.logChat("Removed " + block.getLocalizedName() + " from xray");
                             } else {
                                 Seppuku.INSTANCE.logChat("Xray doesn't contain " + block.getLocalizedName());
@@ -174,7 +175,7 @@ public final class XrayCommand extends Command {
                 if (xray.isEnabled()) {
                     xray.updateRenders();
                 }
-                Seppuku.INSTANCE.getConfigManager().saveAll();
+                Seppuku.INSTANCE.getConfigManager().save(XrayConfig.class);
                 Seppuku.INSTANCE.logChat("Cleared all blocks from xray");
             } else {
                 Seppuku.INSTANCE.errorChat("Unknown input " + "\247f\"" + input + "\"");

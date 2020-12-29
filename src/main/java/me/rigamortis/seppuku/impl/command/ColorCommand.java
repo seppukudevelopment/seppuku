@@ -4,6 +4,7 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.command.Command;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.StringUtil;
+import me.rigamortis.seppuku.impl.config.ModuleConfig;
 
 /**
  * Author Seth
@@ -33,7 +34,7 @@ public final class ColorCommand extends Command {
                 if (StringUtil.isLong(split[2], 16)) {
                     Seppuku.INSTANCE.logChat("\247c" + mod.getDisplayName() + "\247f color has been set to " + split[2].toUpperCase());
                     mod.setColor((int) Long.parseLong(split[2], 16));
-                    Seppuku.INSTANCE.getConfigManager().saveAll();
+                    Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class);
                 } else {
                     Seppuku.INSTANCE.errorChat("Invalid input " + "\"" + split[2] + "\" expected a hex value");
                 }

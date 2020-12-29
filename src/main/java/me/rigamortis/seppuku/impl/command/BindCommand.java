@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.command;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.command.Command;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.impl.config.ModuleConfig;
 import org.lwjgl.input.Keyboard;
 
 /**
@@ -64,11 +65,11 @@ public final class BindCommand extends Command {
                         if (split[2].equalsIgnoreCase("NONE")) {
                             Seppuku.INSTANCE.logChat("Bound \247c" + mod.getDisplayName() + "\247f to " + split[2].toUpperCase());
                             mod.setKey(split[2].toUpperCase());
-                            Seppuku.INSTANCE.getConfigManager().saveAll();
+                            Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class);
                         } else if (Keyboard.getKeyIndex(split[2].toUpperCase()) != Keyboard.KEY_NONE) {
                             Seppuku.INSTANCE.logChat("Bound \247c" + mod.getDisplayName() + "\247f to " + split[2].toUpperCase());
                             mod.setKey(split[2].toUpperCase());
-                            Seppuku.INSTANCE.getConfigManager().saveAll();
+                            Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class);
                         } else {
                             Seppuku.INSTANCE.logChat("\247c" + split[2] + "\247f is not a valid key");
                         }

@@ -32,7 +32,7 @@ public final class FriendManager {
         final Friend friend = new Friend(name, alias);
         this.friendList.add(friend);
 
-        //Seppuku.INSTANCE.getConfigManager().saveAll();
+        //Seppuku.INSTANCE.getConfigManager().save(FriendConfig.class);
 
         if (grabUUID) {
             try {
@@ -47,7 +47,7 @@ public final class FriendManager {
                         final JSONObject obj = (JSONObject) JSONValue.parseWithException(json);
                         final String uuid = obj.get("id").toString();
                         friend.setUuid(uuid);
-                        //Seppuku.INSTANCE.getConfigManager().saveAll();
+                        //Seppuku.INSTANCE.getConfigManager().save(FriendConfig.class);
                     } catch (ParseException e) {
                         e.printStackTrace();
                     } catch (MalformedURLException e) {

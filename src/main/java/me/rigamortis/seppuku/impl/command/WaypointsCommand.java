@@ -4,6 +4,8 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.command.Command;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.StringUtil;
+import me.rigamortis.seppuku.impl.config.WaypointsConfig;
+import me.rigamortis.seppuku.impl.config.WorldConfig;
 import me.rigamortis.seppuku.impl.module.world.WaypointsModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.Vec3d;
@@ -73,7 +75,7 @@ public final class WaypointsCommand extends Command {
 
                                 Seppuku.INSTANCE.logChat("Added waypoint " + name + " at x:" + x + " y:" + y + " z:" + z);
                                 Seppuku.INSTANCE.getWaypointManager().getWaypointDataList().add(new WaypointsModule.WaypointData(host, name, Minecraft.getMinecraft().player.dimension, Double.parseDouble(split[3]), Double.parseDouble(split[4]), Double.parseDouble(split[5])));
-                                Seppuku.INSTANCE.getConfigManager().saveAll();
+                                Seppuku.INSTANCE.getConfigManager().save(WaypointsConfig.class);
                             } else {
                                 Seppuku.INSTANCE.errorChat("Unknown number " + "\247f\"" + split[5] + "\"");
                             }
@@ -87,7 +89,7 @@ public final class WaypointsCommand extends Command {
                     final DecimalFormat format = new DecimalFormat("#.#");
                     Seppuku.INSTANCE.logChat("Added waypoint " + name + " at x:" + format.format(Minecraft.getMinecraft().player.posX) + " y:" + format.format(Minecraft.getMinecraft().player.posY + Minecraft.getMinecraft().player.getEyeHeight()) + " z:" + format.format(Minecraft.getMinecraft().player.posZ));
                     Seppuku.INSTANCE.getWaypointManager().getWaypointDataList().add(new WaypointsModule.WaypointData(host, name, Minecraft.getMinecraft().player.dimension, Minecraft.getMinecraft().player.posX, Minecraft.getMinecraft().player.posY + Minecraft.getMinecraft().player.getEyeHeight(), Minecraft.getMinecraft().player.posZ));
-                    Seppuku.INSTANCE.getConfigManager().saveAll();
+                    Seppuku.INSTANCE.getConfigManager().save(WaypointsConfig.class);
                 }
             }
         } else if (equals(removeAlias, split[1])) {
@@ -103,7 +105,7 @@ public final class WaypointsCommand extends Command {
             if (waypointData != null) {
                 Seppuku.INSTANCE.logChat("Removed waypoint \247c" + waypointData.getName() + " \247f");
                 Seppuku.INSTANCE.getWaypointManager().getWaypointDataList().remove(waypointData);
-                Seppuku.INSTANCE.getConfigManager().saveAll();
+                Seppuku.INSTANCE.getConfigManager().save(WaypointsConfig.class);
             } else {
                 Seppuku.INSTANCE.errorChat("Unknown waypoint " + "\247f\"" + name + "\"");
             }
@@ -172,7 +174,7 @@ public final class WaypointsCommand extends Command {
             if (waypoints > 0) {
                 Seppuku.INSTANCE.logChat("Removed \247c" + waypoints + "\247f waypoint" + (waypoints > 1 ? "s" : ""));
                 Seppuku.INSTANCE.getWaypointManager().getWaypointDataList().clear();
-                Seppuku.INSTANCE.getConfigManager().saveAll();
+                Seppuku.INSTANCE.getConfigManager().save(WorldConfig.class);
             } else {
                 Seppuku.INSTANCE.logChat("You don't have any waypoints");
             }

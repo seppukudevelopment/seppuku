@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.command;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.command.Command;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.impl.config.ModuleConfig;
 
 /**
  * Author Ice
@@ -27,12 +28,13 @@ public final class RenameModuleCommand extends Command {
         final String newModuleName = split[2];
 
         if (Seppuku.INSTANCE.getModuleManager().find(originalModuleName) != null) {
-            Module mod = Seppuku.INSTANCE.getModuleManager().find(originalModuleName);
+            final Module mod = Seppuku.INSTANCE.getModuleManager().find(originalModuleName);
+            if (mod != null) {
+                mod.setDisplayName(newModuleName);
 
-            mod.setDisplayName(newModuleName);
-
-            Seppuku.INSTANCE.getConfigManager().saveAll();
-            Seppuku.INSTANCE.logChat("Set " + originalModuleName + " custom alias to " + newModuleName);
+                Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class);
+                Seppuku.INSTANCE.logChat("Set " + originalModuleName + " custom alias to " + newModuleName);
+            }
         } else {
             Seppuku.INSTANCE.logChat(originalModuleName + " does not exist!");
         }

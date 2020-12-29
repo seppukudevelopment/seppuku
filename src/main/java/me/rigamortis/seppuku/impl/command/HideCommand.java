@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.command;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.command.Command;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.impl.config.ModuleConfig;
 
 /**
  * Author Seth
@@ -30,7 +31,7 @@ public final class HideCommand extends Command {
                 Seppuku.INSTANCE.errorChat("Cannot hide " + "\247f\"" + mod.getDisplayName() + "\"");
             } else {
                 mod.setHidden(!mod.isHidden());
-                Seppuku.INSTANCE.getConfigManager().saveAll();
+                Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class);
 
                 if (mod.isHidden()) {
                     Seppuku.INSTANCE.logChat("\247c" + mod.getDisplayName() + "\247f is now hidden");

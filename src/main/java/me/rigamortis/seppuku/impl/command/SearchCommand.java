@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.command;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.command.Command;
 import me.rigamortis.seppuku.api.util.StringUtil;
+import me.rigamortis.seppuku.impl.config.SearchConfig;
 import me.rigamortis.seppuku.impl.module.render.SearchModule;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -63,7 +64,7 @@ public final class SearchCommand extends Command {
                                 searchModule.clearBlocks();
                                 searchModule.updateRenders();
                             }
-                            Seppuku.INSTANCE.getConfigManager().saveAll();
+                            Seppuku.INSTANCE.getConfigManager().save(SearchConfig.class);
                             Seppuku.INSTANCE.logChat("Added " + block.getLocalizedName() + " to search");
                         }
                     } else {
@@ -84,7 +85,7 @@ public final class SearchCommand extends Command {
                                     searchModule.clearBlocks();
                                     searchModule.updateRenders();
                                 }
-                                Seppuku.INSTANCE.getConfigManager().saveAll();
+                                Seppuku.INSTANCE.getConfigManager().save(SearchConfig.class);
                                 Seppuku.INSTANCE.logChat("Added " + block.getLocalizedName() + " to search");
                             }
                         }
@@ -110,7 +111,7 @@ public final class SearchCommand extends Command {
                                 searchModule.clearBlocks();
                                 searchModule.updateRenders();
                             }
-                            Seppuku.INSTANCE.getConfigManager().saveAll();
+                            Seppuku.INSTANCE.getConfigManager().save(SearchConfig.class);
                             Seppuku.INSTANCE.logChat("Removed " + block.getLocalizedName() + " from search");
                         } else {
                             Seppuku.INSTANCE.logChat("Search doesn't contain " + block.getLocalizedName());
@@ -131,7 +132,7 @@ public final class SearchCommand extends Command {
                                     searchModule.clearBlocks();
                                     searchModule.updateRenders();
                                 }
-                                Seppuku.INSTANCE.getConfigManager().saveAll();
+                                Seppuku.INSTANCE.getConfigManager().save(SearchConfig.class);
                                 Seppuku.INSTANCE.logChat("Removed " + block.getLocalizedName() + " from search");
                             } else {
                                 Seppuku.INSTANCE.logChat("Search doesn't contain " + block.getLocalizedName());
@@ -170,7 +171,7 @@ public final class SearchCommand extends Command {
                     searchModule.clearBlocks();
                     searchModule.updateRenders();
                 }
-                Seppuku.INSTANCE.getConfigManager().saveAll();
+                Seppuku.INSTANCE.getConfigManager().save(SearchConfig.class);
                 Seppuku.INSTANCE.logChat("Cleared all blocks from search");
             } else {
                 Seppuku.INSTANCE.errorChat("Unknown input " + "\247f\"" + input + "\"");

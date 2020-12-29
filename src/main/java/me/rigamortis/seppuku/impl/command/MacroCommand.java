@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.command;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.command.Command;
 import me.rigamortis.seppuku.api.macro.Macro;
+import me.rigamortis.seppuku.impl.config.MacroConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
@@ -62,7 +63,7 @@ public final class MacroCommand extends Command {
 
                     Seppuku.INSTANCE.logChat("Added macro \247c" + name + "\247f bound to " + key.toUpperCase());
                     Seppuku.INSTANCE.getMacroManager().getMacroList().add(new Macro(name, key.toUpperCase(), sb.toString()));
-                    Seppuku.INSTANCE.getConfigManager().saveAll();
+                    Seppuku.INSTANCE.getConfigManager().save(MacroConfig.class);
                 } else {
                     Seppuku.INSTANCE.logChat("\247c" + key + "\247f is not a valid key");
                 }
@@ -80,7 +81,7 @@ public final class MacroCommand extends Command {
             if (macro != null) {
                 Seppuku.INSTANCE.logChat("Removed macro \247c" + macro.getName() + " \247f");
                 Seppuku.INSTANCE.getMacroManager().getMacroList().remove(macro);
-                Seppuku.INSTANCE.getConfigManager().saveAll();
+                Seppuku.INSTANCE.getConfigManager().save(MacroConfig.class);
             } else {
                 //TODO similar
                 Seppuku.INSTANCE.errorChat("Unknown macro " + "\247f\"" + name + "\"");
@@ -120,7 +121,7 @@ public final class MacroCommand extends Command {
             if (macros > 0) {
                 Seppuku.INSTANCE.logChat("Removed \247c" + macros + "\247f macro" + (macros > 1 ? "s" : ""));
                 Seppuku.INSTANCE.getMacroManager().getMacroList().clear();
-                Seppuku.INSTANCE.getConfigManager().saveAll();
+                Seppuku.INSTANCE.getConfigManager().save(MacroConfig.class);
             } else {
                 Seppuku.INSTANCE.logChat("You don't have any macros");
             }

@@ -8,6 +8,7 @@ import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.value.Value;
+import me.rigamortis.seppuku.impl.config.ModuleConfig;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import me.rigamortis.seppuku.impl.module.ui.HudEditorModule;
 import net.minecraft.client.Minecraft;
@@ -118,7 +119,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
         RenderUtil.drawRect(this.getX() + BORDER, this.getY() + offsetY + BORDER, this.getX() + this.getW() - SCROLL_WIDTH - BORDER, this.getY() + this.getH() - BORDER, 0xFF101010);
 
         // Scrollbar bg
-        RenderUtil.drawRect(this.getX() + this.getW() - SCROLL_WIDTH, this.getY() + offsetY + BORDER, this.getX() + this.getW() - BORDER, this.getY() + this.getH() - BORDER,  0xFF101010);
+        RenderUtil.drawRect(this.getX() + this.getW() - SCROLL_WIDTH, this.getY() + offsetY + BORDER, this.getX() + this.getW() - BORDER, this.getY() + this.getH() - BORDER, 0xFF101010);
         // Scrollbar highlights
         if (this.isMouseInside(mouseX, mouseY)) {
             if (mouseX >= (this.getX() + this.getW() - SCROLL_WIDTH) && mouseX <= (this.getX() + this.getW() - BORDER)) { // mouse is inside scroll area on x-axis
@@ -438,7 +439,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                 @Override
                 public void onComponentEvent() {
                     module.setColor(colorComponent.getCurrentColor().getRGB());
-                    Seppuku.INSTANCE.getConfigManager().saveAll();
+                    Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class);
                 }
             };
             components.add(colorComponent);
@@ -473,7 +474,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                                 } else if (value.getValue() instanceof Byte) {
                                     value.setValue(Byte.parseByte(valueNumberText.displayValue));
                                 }
-                                Seppuku.INSTANCE.getConfigManager().saveAll(); // save configs
+                                Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class); // save module configs
                             } catch (NumberFormatException e) {
                                 Seppuku.INSTANCE.logfChat("%s - %s: Invalid number format.", module.getDisplayName(), value.getName());
                             }
@@ -502,7 +503,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         public void onComponentEvent() {
                             if (value.getEnum(valueText.displayValue) != -1) {
                                 value.setEnumValue(valueText.displayValue);
-                                Seppuku.INSTANCE.getConfigManager().saveAll(); // save configs
+                                Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class); // save configs
                             } else {
                                 Seppuku.INSTANCE.logfChat("%s - %s: Invalid entry.", module.getDisplayName(), value.getName());
                             }
@@ -518,7 +519,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         public void onComponentEvent() {
                             if (valueText.displayValue.length() > 0) {
                                 value.setValue(valueText.displayValue);
-                                Seppuku.INSTANCE.getConfigManager().saveAll(); // save configs
+                                Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class); // save configs
                             } else {
                                 Seppuku.INSTANCE.logfChat("%s - %s: Not enough input.", module.getDisplayName(), value.getName());
                             }
@@ -533,7 +534,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         @Override
                         public void onComponentEvent() {
                             value.setValue(valueColor.getCurrentColor());
-                            Seppuku.INSTANCE.getConfigManager().saveAll();
+                            Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class);
                         }
                     };
                     components.add(valueColor);

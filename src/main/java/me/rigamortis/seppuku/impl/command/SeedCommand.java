@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.command;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.command.Command;
 import me.rigamortis.seppuku.api.util.StringUtil;
+import me.rigamortis.seppuku.impl.config.WorldConfig;
 import me.rigamortis.seppuku.impl.management.WorldManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ServerData;
@@ -39,7 +40,7 @@ public final class SeedCommand extends Command {
                     Seppuku.INSTANCE.getWorldManager().getWorldDataList().add(new WorldManager.WorldData(serverData.serverIP, seed));
                     Seppuku.INSTANCE.logChat("Set " + serverData.serverIP + "'s seed to " + seed);
                 }
-                Seppuku.INSTANCE.getConfigManager().saveAll();
+                Seppuku.INSTANCE.getConfigManager().save(WorldConfig.class);
             } else {
                 Seppuku.INSTANCE.errorChat("Cannot set seed for localhost");
             }

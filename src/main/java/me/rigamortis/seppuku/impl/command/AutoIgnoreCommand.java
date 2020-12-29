@@ -2,6 +2,7 @@ package me.rigamortis.seppuku.impl.command;
 
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.command.Command;
+import me.rigamortis.seppuku.impl.config.AutoIgnoreConfig;
 import me.rigamortis.seppuku.impl.module.misc.AutoIgnoreModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextComponentString;
@@ -59,7 +60,7 @@ public final class AutoIgnoreCommand extends Command {
             } else {
                 Seppuku.INSTANCE.logChat("Added phrase \"" + phrase + "\"");
                 autoIgnoreModule.getBlacklist().add(phrase);
-                Seppuku.INSTANCE.getConfigManager().saveAll();
+                Seppuku.INSTANCE.getConfigManager().save(AutoIgnoreConfig.class);
             }
         } else if (equals(removeAlias, split[1])) {
             if (!this.clamp(input, 3)) {
@@ -78,7 +79,7 @@ public final class AutoIgnoreCommand extends Command {
             if (autoIgnoreModule.blacklistContains(phrase.toLowerCase())) {
                 Seppuku.INSTANCE.logChat("Removed phrase \"" + phrase + "\"");
                 autoIgnoreModule.getBlacklist().remove(phrase);
-                Seppuku.INSTANCE.getConfigManager().saveAll();
+                Seppuku.INSTANCE.getConfigManager().save(AutoIgnoreConfig.class);
             } else {
                 Seppuku.INSTANCE.logChat("AutoIgnore does not contain that phrase");
             }
@@ -115,7 +116,7 @@ public final class AutoIgnoreCommand extends Command {
             if (size > 0) {
                 Seppuku.INSTANCE.logChat("Removed \247c" + size + "\247f phrase" + (size > 1 ? "s" : ""));
                 autoIgnoreModule.getBlacklist().clear();
-                Seppuku.INSTANCE.getConfigManager().saveAll();
+                Seppuku.INSTANCE.getConfigManager().save(AutoIgnoreConfig.class);
             } else {
                 Seppuku.INSTANCE.logChat("You don't have any phrases");
             }

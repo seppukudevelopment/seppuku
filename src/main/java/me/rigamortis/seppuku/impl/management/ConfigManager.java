@@ -72,11 +72,32 @@ public final class ConfigManager {
         }
     }
 
+    public void save(Class configurableClassType) {
+        for (Configurable cfg : configurableList) {
+            if (cfg.getClass().isAssignableFrom(configurableClassType)) {
+                System.out.println(cfg.getFile());
+                cfg.onSave();
+            }
+        }
+
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventSaveConfig());
+    }
+
     public void saveAll() {
         for (Configurable cfg : configurableList) {
             cfg.onSave();
         }
         Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventSaveConfig());
+    }
+
+    public void load(Class configurableClassType) {
+        for (Configurable cfg : configurableList) {
+            if (cfg.getClass().isAssignableFrom(configurableClassType)) {
+                System.out.println(cfg.getFile());
+                cfg.onLoad();
+            }
+        }
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventLoadConfig());
     }
 
     public void loadAll() {

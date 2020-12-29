@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.command;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.command.Command;
 import me.rigamortis.seppuku.api.friend.Friend;
+import me.rigamortis.seppuku.impl.config.FriendConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
@@ -80,7 +81,7 @@ public final class FriendCommand extends Command {
             if (friend != null) {
                 Seppuku.INSTANCE.logChat("Removed \247c" + friend.getAlias() + " \247f");
                 Seppuku.INSTANCE.getFriendManager().getFriendList().remove(friend);
-                Seppuku.INSTANCE.getConfigManager().saveAll();
+                Seppuku.INSTANCE.getConfigManager().save(FriendConfig.class);
             } else {
                 Seppuku.INSTANCE.logChat("\247c" + username + " \247fis not your friend");
             }
@@ -119,7 +120,7 @@ public final class FriendCommand extends Command {
             if (friends > 0) {
                 Seppuku.INSTANCE.logChat("Removed \247c" + friends + "\247f friend" + (friends > 1 ? "s" : ""));
                 Seppuku.INSTANCE.getFriendManager().getFriendList().clear();
-                Seppuku.INSTANCE.getConfigManager().saveAll();
+                Seppuku.INSTANCE.getConfigManager().save(FriendConfig.class);
             } else {
                 Seppuku.INSTANCE.logChat("You don't have any friends :(");
             }

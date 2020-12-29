@@ -80,6 +80,9 @@ public final class SearchModule extends Module {
         RenderUtil.begin3D();
         for (int i = this.blocks.size() - 1; i >= 0; i--) {
             final Vec3d searchBlock = this.blocks.get(i);
+            if (searchBlock == null)
+                continue;
+
             final BlockPos blockPos = new BlockPos(searchBlock.x, searchBlock.y, searchBlock.z);
             final Block block = mc.world.getBlockState(blockPos).getBlock();
 
