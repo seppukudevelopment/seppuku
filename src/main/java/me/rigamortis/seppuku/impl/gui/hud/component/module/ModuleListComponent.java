@@ -16,7 +16,6 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.StringUtils;
-import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -418,6 +417,17 @@ public final class ModuleListComponent extends ResizableHudComponent {
 
             //components.add(new ButtonComponent(this.getName()));
             components.add(new BackButtonComponent(parentModuleList));
+
+            ButtonComponent enabledButton = new ButtonComponent("Enabled");
+            enabledButton.setTooltipText("Enables this module.");
+            enabledButton.enabled = module.isEnabled();
+            enabledButton.mouseClickListener = new ComponentListener() {
+                @Override
+                public void onComponentEvent() {
+                    module.toggle();
+                }
+            };
+            components.add(enabledButton);
 
             ButtonComponent hiddenButton = new ButtonComponent("Hidden");
             hiddenButton.setTooltipText("Hides this module from the enabled mods list.");
