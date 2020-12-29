@@ -75,7 +75,6 @@ public final class ConfigManager {
     public void save(Class configurableClassType) {
         for (Configurable cfg : configurableList) {
             if (cfg.getClass().isAssignableFrom(configurableClassType)) {
-                System.out.println(cfg.getFile());
                 cfg.onSave();
             }
         }
@@ -93,7 +92,6 @@ public final class ConfigManager {
     public void load(Class configurableClassType) {
         for (Configurable cfg : configurableList) {
             if (cfg.getClass().isAssignableFrom(configurableClassType)) {
-                System.out.println(cfg.getFile());
                 cfg.onLoad();
             }
         }
