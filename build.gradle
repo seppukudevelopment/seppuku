@@ -18,7 +18,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 
 apply plugin: "com.github.johnrengelman.shadow"
 
-version = "3.1"
+version = "3.1.4"
 group = "me.rigamortis"
 archivesBaseName = "seppuku"
 def buildmode = "IDE"
@@ -132,8 +132,8 @@ processResources {
 
 if (buildmode.equals("IDE")) {
     sourceSets {
-        main {
+        main(({
             output.resourcesDir = output.classesDir
-        }
+        }))
     }
 }
