@@ -23,28 +23,31 @@ Check the [guide](https://seppuku.pw/guide.html) for help.
 
 ### Linux / Mac
 1. Clone the repository: `git clone git@github.com:seppukudevelopment/seppuku.git`
-2. Run `./gradlew setupDecompWorkspace` 
-3. Edit `build.gradle` and change field `buildmode` to `RELEASE`. (e.g. `def
+2. Run `./gradlew clean`
+3. Run `./gradlew setupDecompWorkspace`
+4. Edit `build.gradle` and change field `buildmode` to `RELEASE`. (e.g. `def
  buildmode = "RELEASE"`)
-4. Run `./gradlew build`.
+5. Run `./gradlew build`.
 
 Your .jar file is in `build/libs/`.
 
 #### Windows
 > Using a git shell for Windows and using the linux guide above is highly recommended. (https://git-scm.com/downloads) 
-1. Clone the repository.
-2. Import the project through Gradle via `build.gradle` (simple tutorials online for 
+1. **Clone** the repository.
+2. **Import** the project through Gradle via `build.gradle`. *(simple tutorials online for 
 [intellij](https://stackoverflow.com/questions/31256356/how-to-import-gradle-projects-in-intellij), 
-[eclipse](https://stackoverflow.com/questions/10722773/import-existing-gradle-git-project-into-eclipse), etc.)
-3. Run the gradle command `setupDecompWorkspace` via the IDE or gradlew.bat file (via command prompt: `gradlew.bat setupDecompWorkspace`) 
-4. Refresh the project (reload ide / refresh gradle workspace)
-5. Edit `build.gradle` and change field `buildmode` to `RELEASE` ex: `def
+[eclipse](https://stackoverflow.com/questions/10722773/import-existing-gradle-git-project-into-eclipse), etc...)*
+3. Run the Gradle command `clean` via the IDE or the gradlew.bat file. *(via command prompt: `./gradlew.bat clean`)*
+4. Run the Gradle command `setupDecompWorkspace` via the IDE or gradlew.bat file. *(via command prompt: `./gradlew.bat setupDecompWorkspace`)*
+5. *(for IDE building only <IntelliJ / Eclipse / etc...> )*: **Refresh the project** *(reload ide or refresh gradle workspace)*
+6. **Edit** `build.gradle` and change field `buildmode` to `RELEASE` ex: `def
 buildmode = "RELEASE"`
-6. Run the gradle command `build` via the IDE or gradlew.bat file (via
- command prompt: `gradlew.bat build`) 
+7. **Run** the gradle command `build` via the IDE or gradlew.bat file. *(via
+ command prompt: `gradlew.bat build`)*
  
 Your .jar file is in `build/libs/`.
 
 # Debugging
 - Use VM arg `-Dfml.coreMods.load=me.rigamortis.seppuku.impl.fml.core.SeppukuLoadingPlugin`
 - Ensure field `buildmode` in **build.gradle** is set to `IDE` ex: `def buildmode = "IDE"`
+- Repeat the steps from `step #2` in the **Building** guide written above to fix errors.
