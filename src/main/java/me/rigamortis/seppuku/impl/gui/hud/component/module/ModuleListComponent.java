@@ -418,28 +418,6 @@ public final class ModuleListComponent extends ResizableHudComponent {
             //components.add(new ButtonComponent(this.getName()));
             components.add(new BackButtonComponent(parentModuleList));
 
-            ButtonComponent enabledButton = new ButtonComponent("Enabled");
-            enabledButton.setTooltipText("Enables this module.");
-            enabledButton.enabled = module.isEnabled();
-            enabledButton.mouseClickListener = new ComponentListener() {
-                @Override
-                public void onComponentEvent() {
-                    module.toggle();
-                }
-            };
-            components.add(enabledButton);
-
-            ButtonComponent hiddenButton = new ButtonComponent("Hidden");
-            hiddenButton.setTooltipText("Hides this module from the enabled mods list.");
-            hiddenButton.enabled = module.isHidden();
-            hiddenButton.mouseClickListener = new ComponentListener() {
-                @Override
-                public void onComponentEvent() {
-                    module.setHidden(hiddenButton.enabled);
-                }
-            };
-            components.add(hiddenButton);
-
             TextComponent keybindText = new TextComponent("Keybind", module.getKey().toLowerCase(), false);
             keybindText.setTooltipText("The current key for toggling this module.");
             keybindText.textListener = new TextComponent.TextComponentListener() {
@@ -463,6 +441,28 @@ public final class ModuleListComponent extends ResizableHudComponent {
                 }
             };
             components.add(keybindText);
+
+            ButtonComponent enabledButton = new ButtonComponent("Enabled");
+            enabledButton.setTooltipText("Enables this module.");
+            enabledButton.enabled = module.isEnabled();
+            enabledButton.mouseClickListener = new ComponentListener() {
+                @Override
+                public void onComponentEvent() {
+                    module.toggle();
+                }
+            };
+            components.add(enabledButton);
+
+            ButtonComponent hiddenButton = new ButtonComponent("Hidden");
+            hiddenButton.setTooltipText("Hides this module from the enabled mods list.");
+            hiddenButton.enabled = module.isHidden();
+            hiddenButton.mouseClickListener = new ComponentListener() {
+                @Override
+                public void onComponentEvent() {
+                    module.setHidden(hiddenButton.enabled);
+                }
+            };
+            components.add(hiddenButton);
 
             ColorComponent colorComponent = new ColorComponent("List Color", module.getColor());
             //colorComponent.setTooltipText("The hex color for this module in the enabled mods list.");
