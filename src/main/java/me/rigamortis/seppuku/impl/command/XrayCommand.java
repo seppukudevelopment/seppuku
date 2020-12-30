@@ -154,7 +154,7 @@ public final class XrayCommand extends Command {
                 }
 
                 if (xray.getIds().size() > 0) {
-                    final TextComponentString msg = new TextComponentString("\247Xray IDs: ");
+                    final TextComponentString msg = new TextComponentString("\2477Xray IDs: ");
 
                     for (int i : xray.getIds()) {
                         msg.appendSibling(new TextComponentString("\2477[\247a" + i + "\2477] ")
@@ -162,7 +162,7 @@ public final class XrayCommand extends Command {
                                         .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(Block.getBlockById(i).getLocalizedName())))));
                     }
 
-                    Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(msg);
+                    Seppuku.INSTANCE.logcChat(msg);
                 } else {
                     Seppuku.INSTANCE.logChat("You don't have any search ids");
                 }

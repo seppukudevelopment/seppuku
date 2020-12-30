@@ -157,7 +157,7 @@ public final class SearchCommand extends Command {
                                         .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(Block.getBlockById(i).getLocalizedName())))));
                     }
 
-                    Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(msg);
+                    Seppuku.INSTANCE.logcChat(msg);
                 } else {
                     Seppuku.INSTANCE.logChat("You don't have any search ids");
                 }
