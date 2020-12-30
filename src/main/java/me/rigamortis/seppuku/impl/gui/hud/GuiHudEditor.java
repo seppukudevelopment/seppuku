@@ -176,8 +176,11 @@ public final class GuiHudEditor extends GuiScreen {
             if (component instanceof DraggableHudComponent) {
                 if (component.isVisible()) {
                     final DraggableHudComponent draggable = (DraggableHudComponent) component;
-                    if (draggable.isDragging())
+                    if (draggable.isDragging()) {
                         draggable.setDragging(false);
+                    }
+
+                    component.onClosed();
                 }
             }
         }

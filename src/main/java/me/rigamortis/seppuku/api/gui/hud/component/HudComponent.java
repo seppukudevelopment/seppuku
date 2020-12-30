@@ -83,6 +83,10 @@ public class HudComponent {
 
     }
 
+    public void onClosed() {
+
+    }
+
     public boolean isMouseInside(int mouseX, int mouseY) {
         return mouseX >= this.getX() && mouseX <= this.getX() + this.getW() && mouseY >= this.getY() && mouseY <= this.getY() + this.getH();
     }

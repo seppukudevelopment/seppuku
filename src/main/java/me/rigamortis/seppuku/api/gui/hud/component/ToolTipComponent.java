@@ -34,18 +34,17 @@ public class ToolTipComponent extends HudComponent {
 
         if (this.alpha > 0x99/* another arbitrary value, the alpha hex value at which it begins to show on screen*/) {
             this.setX(mouseX - (this.getW() / 2.0f));
-            this.setY(mouseY - 12);
+            this.setY(mouseY - 18);
 
             // clamp tooltip to stay inside the screen bounds
             this.clamp();
 
             // background
-            RenderUtil.drawRect(this.getX() - 2, this.getY() - 9, this.getX() + this.getW() + 2, this.getY() + this.getH() - 6, ColorUtil.changeAlpha(0x80101010, this.alpha / 2));
-            RenderUtil.drawRect(this.getX() - 1, this.getY() - 8, this.getX() + this.getW() + 1, this.getY() + this.getH() - 7, ColorUtil.changeAlpha(0xAD101010, this.alpha / 2));
-
+            RenderUtil.drawRect(this.getX() - 2, this.getY() - 2, this.getX() + this.getW() + 2, this.getY() + this.getH() + 2, ColorUtil.changeAlpha(0x80101010, this.alpha / 2));
+            RenderUtil.drawRect(this.getX() - 1, this.getY() - 1, this.getX() + this.getW() + 1, this.getY() + this.getH() + 1, ColorUtil.changeAlpha(0xAD101010, this.alpha / 2));
             // text
             GlStateManager.enableBlend();
-            Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(this.text, this.getX() + 1, this.getY() - 7, ColorUtil.changeAlpha(0xFFFFFFFF, this.alpha));
+            Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(this.text, this.getX() + 1, this.getY() + 1, ColorUtil.changeAlpha(0xFFFFFFFF, this.alpha));
             GlStateManager.disableBlend();
         }
     }

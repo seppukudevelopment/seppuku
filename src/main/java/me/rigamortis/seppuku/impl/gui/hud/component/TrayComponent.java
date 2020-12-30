@@ -71,7 +71,7 @@ public class TrayComponent extends DraggableHudComponent {
             }
         }
 
-        if (isMouseInside(mouseX, mouseY)) {
+        if (this.isMouseInside(mouseX, mouseY)) {
             final HudEditorModule hudEditorModule = (HudEditorModule) Seppuku.INSTANCE.getModuleManager().find(HudEditorModule.class);
             if (hudEditorModule != null) {
                 if (hudEditorModule.tooltips.getValue()) {

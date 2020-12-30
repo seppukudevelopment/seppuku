@@ -187,10 +187,6 @@ public final class ModuleListComponent extends ResizableHudComponent {
         // Handle tooltips
         if (this.hudEditorModule != null && this.hudEditorModule.tooltips.getValue() && !insideTitlebar) {
             if (this.isMouseInside(mouseX, mouseY)) {
-                if (this.currentToolTip != null) {
-                    this.currentToolTip.render(mouseX, mouseY, partialTicks);
-                }
-
                 String tooltipText = "";
                 int height = BORDER;
 
@@ -198,6 +194,12 @@ public final class ModuleListComponent extends ResizableHudComponent {
                     for (HudComponent valueComponent : this.currentSettings.components) {
                         if (valueComponent.isMouseInside(mouseX, mouseY)) {
                             tooltipText = valueComponent.getTooltipText();
+                        } else {
+                            if (this.currentToolTip != null) {
+                                if (this.currentToolTip.text.equals(valueComponent.getTooltipText())) {
+                                    this.currentToolTip = null;
+                                }
+                            }
                         }
                         height += mc.fontRenderer.FONT_HEIGHT + TEXT_GAP;
                     }
@@ -206,6 +208,12 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         final boolean insideComponent = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + mc.fontRenderer.FONT_HEIGHT + 1 + height - this.scroll) && mouseY <= (this.getY() + BORDER + (mc.fontRenderer.FONT_HEIGHT * 2) + 1 + height - this.scroll);
                         if (insideComponent) {
                             tooltipText = module.getDesc();
+                        } else {
+                            if (this.currentToolTip != null) {
+                                if (this.currentToolTip.text.equals(module.getDesc())) {
+                                    this.currentToolTip = null;
+                                }
+                            }
                         }
                         height += mc.fontRenderer.FONT_HEIGHT + TEXT_GAP;
                     }
@@ -215,11 +223,15 @@ public final class ModuleListComponent extends ResizableHudComponent {
                     if (this.currentToolTip == null) {
                         this.currentToolTip = new ToolTipComponent(tooltipText);
                     } else {
-                        if (!tooltipText.equals(this.currentToolTip.text)) {
-                            this.currentToolTip = new ToolTipComponent(tooltipText);
-                        }
+                        this.currentToolTip.render(mouseX, mouseY, partialTicks);
                     }
                 } else {
+                    if (this.currentToolTip != null) {
+                        this.currentToolTip = null;
+                    }
+                }
+            } else {
+                if (this.currentToolTip != null) {
                     this.currentToolTip = null;
                 }
             }
@@ -298,6 +310,15 @@ public final class ModuleListComponent extends ResizableHudComponent {
 
         if (this.currentSettings != null) {
             this.currentSettings.keyTyped(typedChar, keyCode);
+        }
+    }
+
+    @Override
+    public void onClosed() {
+        super.onClosed();
+
+        if (this.currentToolTip != null) {
+            this.currentToolTip = null;
         }
     }
 
