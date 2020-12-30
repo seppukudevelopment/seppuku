@@ -29,7 +29,7 @@ public class ToolTipComponent extends HudComponent {
         super.render(mouseX, mouseY, partialTicks);
 
         if (this.alpha < 0xFF/*max alpha*/) {
-            this.alpha += 1/* arbitrary value, the speed at which it fades in essentially */;
+            this.alpha += 2/* arbitrary value, the speed at which it fades in essentially */;
         }
 
         if (this.alpha > 0x99/* another arbitrary value, the alpha hex value at which it begins to show on screen*/) {

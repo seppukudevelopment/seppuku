@@ -226,14 +226,10 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         this.currentToolTip.render(mouseX, mouseY, partialTicks);
                     }
                 } else {
-                    if (this.currentToolTip != null) {
-                        this.currentToolTip = null;
-                    }
+                    this.removeTooltip();
                 }
             } else {
-                if (this.currentToolTip != null) {
-                    this.currentToolTip = null;
-                }
+                this.removeTooltip();
             }
         }
         //RenderUtil.end2D();
@@ -261,6 +257,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         switch (button) {
                             case 0:
                                 if (mouseX >= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH - 12) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH - 1)) {
+                                    this.removeTooltip();
                                     this.currentSettings = new ModuleSettingsComponent(module, this);
                                     this.setOldScroll(this.getScroll());
                                     this.setScroll(0);
@@ -270,6 +267,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                                 this.setDragging(false);
                                 break;
                             case 1:
+                                this.removeTooltip();
                                 this.currentSettings = new ModuleSettingsComponent(module, this);
                                 this.setOldScroll(this.getScroll());
                                 this.setScroll(0);
@@ -341,6 +339,11 @@ public final class ModuleListComponent extends ResizableHudComponent {
                 }
             }
         }
+    }
+
+    public void removeTooltip() {
+        if (this.currentToolTip != null)
+            this.currentToolTip = null;
     }
 
     public Module.ModuleType getType() {
@@ -418,6 +421,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                     ModuleListComponent moduleList = (ModuleListComponent) component;
                     if (moduleList.getName().equals(parentModuleList.getName())) {
                         moduleList.currentSettings = null;
+                        moduleList.removeTooltip();
                     }
                 }
             }
