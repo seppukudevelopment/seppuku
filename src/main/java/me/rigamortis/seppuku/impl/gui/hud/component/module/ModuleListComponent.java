@@ -509,6 +509,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         @Override
                         public void onComponentEvent() {
                             value.setValue(valueButton.enabled);
+                            Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class);
                         }
                     };
                     components.add(valueButton);
