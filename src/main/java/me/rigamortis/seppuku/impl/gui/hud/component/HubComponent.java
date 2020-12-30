@@ -75,6 +75,7 @@ public final class HubComponent extends ResizableHudComponent {
 
             if (this.getW() > MAX_WIDTH) {
                 this.setW(MAX_WIDTH);
+                this.setResizeDragging(false);
             }
         }
 
