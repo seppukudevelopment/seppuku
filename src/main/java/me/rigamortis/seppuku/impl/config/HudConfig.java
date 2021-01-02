@@ -58,16 +58,22 @@ public final class HudConfig extends Configurable {
                                     draggableHudComponent.setAnchorPoint(anchorPoint);
                                 }
                             }
+                        } else {
+                            draggableHudComponent.setAnchorPoint(null);
                         }
                         break;
                     case "Glue":
                         if (!entry.getValue().getAsString().equals("NONE")) {
                             draggableHudComponent.setGlued((DraggableHudComponent) Seppuku.INSTANCE.getHudManager().findComponent(entry.getValue().getAsString()));
+                        } else {
+                            draggableHudComponent.setGlued(null);
                         }
                         break;
                     case "GlueSide":
                         if (!entry.getValue().getAsString().equals("NONE")) {
                             draggableHudComponent.setGlueSide(DraggableHudComponent.GlueSide.valueOf(entry.getValue().getAsString()));
+                        } else {
+                            draggableHudComponent.setGlueSide(null);
                         }
                         break;
 
