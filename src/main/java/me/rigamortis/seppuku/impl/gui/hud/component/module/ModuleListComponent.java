@@ -36,7 +36,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
     private int totalHeight;
 
     private final int MAX_WIDTH = 150;
-    private final int SCROLL_WIDTH = 4;
+    private final int SCROLL_WIDTH = 5;
     private final int BORDER = 2;
     private final int TEXT_GAP = 1;
     private final int TEXTURE_SIZE = 8;
@@ -637,7 +637,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                     RenderUtil.drawLine(component.getX() - offsetX + 1, component.getY() + component.getH() / 2, component.getX(), component.getY() + component.getH() / 2, 2.0f, 0xFF202020);
                 }
 
-                offsetY += Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 1;
+                offsetY += component.getH() + 1;
             }
         }
 

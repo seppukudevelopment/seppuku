@@ -29,6 +29,8 @@ public class ColorComponent extends TextComponent {
         this.gearTexture = new Texture("gear_wheel.png");
         this.gearTextureEnabled = new Texture("gear_wheel-enabled.png");
         this.checkTexture = new Texture("check.png");
+
+        this.setH(9);
     }
 
     public ColorComponent(String name, int defaultColor, String customDisplayValue) {
@@ -39,6 +41,11 @@ public class ColorComponent extends TextComponent {
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         //super.render(mouseX, mouseY, partialTicks);
+        /*if (this.focused) {
+            this.setH(50);
+        } else {
+            this.setH(9);
+        }*/
 
         if (isMouseInside(mouseX, mouseY))
             RenderUtil.drawGradientRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x30909090, 0x00101010);

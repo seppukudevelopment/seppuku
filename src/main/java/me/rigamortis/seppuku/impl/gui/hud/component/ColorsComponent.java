@@ -29,7 +29,7 @@ public final class ColorsComponent extends ResizableHudComponent {
     private int totalHeight;
 
     private final int MAX_WIDTH = 215;
-    private final int SCROLL_WIDTH = 4;
+    private final int SCROLL_WIDTH = 5;
     private final int BORDER = 2;
     private final int TEXT_GAP = 1;
     private final int TITLE_BAR_HEIGHT = mc.fontRenderer.FONT_HEIGHT + 1;
@@ -181,7 +181,6 @@ public final class ColorsComponent extends ResizableHudComponent {
             this.currentColorComponent.setX(this.getX() + 20);
             this.currentColorComponent.setY(this.getY() + (this.getH() / 2));
             this.currentColorComponent.setW(this.getW() - 40);
-            this.currentColorComponent.setH(9);
 
             // draw bg
             RenderUtil.drawRect(this.currentColorComponent.getX(), this.currentColorComponent.getY(), this.currentColorComponent.getX() + this.currentColorComponent.getW(), this.currentColorComponent.getY() + this.currentColorComponent.getH(), 0xFF101010);
