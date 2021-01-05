@@ -28,6 +28,7 @@ public class TrayComponent extends DraggableHudComponent {
         super("Tray");
 
         buttons.add(new TrayButtonComponent("hub"));
+        buttons.add(new TrayButtonComponent("colors"));
         buttons.add(new TrayButtonComponent("combat"));
         buttons.add(new TrayButtonComponent("movement"));
         buttons.add(new TrayButtonComponent("render"));

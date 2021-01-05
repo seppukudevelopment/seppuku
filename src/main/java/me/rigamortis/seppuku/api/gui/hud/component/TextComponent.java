@@ -1,5 +1,6 @@
 package me.rigamortis.seppuku.api.gui.hud.component;
 
+import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.util.Timer;
 import net.minecraft.client.Minecraft;
@@ -16,6 +17,8 @@ public class TextComponent extends HudComponent {
     public ComponentListener returnListener;
     public TextComponentListener textListener;
 
+    protected Texture checkTexture;
+
     protected Timer backspaceTimer = new Timer(), backspaceWaitTimer = new Timer();
     protected boolean doBackspacing = false;
 
@@ -25,6 +28,8 @@ public class TextComponent extends HudComponent {
         this.displayValue = displayValue;
         this.focused = false;
         this.digitOnly = digitOnly;
+
+        this.checkTexture = new Texture("check.png");
     }
 
     @Override
@@ -43,6 +48,11 @@ public class TextComponent extends HudComponent {
             int blockWidth = 2;
             int blockHeight = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - 2;
             RenderUtil.drawRect(blockX, blockY, blockX + blockWidth, blockY + blockHeight, 0xFFFFFFFF);
+
+            // check
+            RenderUtil.drawRect(this.getX() + this.getW() - 10, this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0xFF101010);
+            this.checkTexture.bind();
+            this.checkTexture.render(this.getX() + this.getW() - 9, this.getY() + 0.5f, 8, 8);
 
             if (Keyboard.isKeyDown(Keyboard.KEY_BACK) || Keyboard.isKeyDown(Keyboard.KEY_DELETE)) {
                 if (this.doBackspacing && this.backspaceWaitTimer.passed(750)) {
@@ -63,12 +73,18 @@ public class TextComponent extends HudComponent {
     public void mouseRelease(int mouseX, int mouseY, int button) {
         super.mouseRelease(mouseX, mouseY, button);
 
-        if (!this.isMouseInside(mouseX, mouseY) || button != 0) {
-            this.focused = false;
-            return;
-        }
+        if (this.isMouseInside(mouseX, mouseY) && button == 0) {
+            this.focused = true;
 
-        this.focused = true;
+            // check for clicking check
+            if (!(this instanceof ColorComponent)) {
+                if (mouseX >= this.getX() + this.getW() - 10 && mouseX <= this.getX() + this.getW() && mouseY >= this.getY() && mouseY <= this.getY() + this.getH()) {
+                    this.enterPressed();
+                }
+            }
+        } else {
+            this.focused = false;
+        }
     }
 
     @Override

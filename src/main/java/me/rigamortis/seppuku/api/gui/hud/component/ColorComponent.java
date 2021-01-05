@@ -21,7 +21,6 @@ public class ColorComponent extends TextComponent {
 
     private final Texture gearTexture;
     private final Texture gearTextureEnabled;
-    private final Texture checkTexture;
 
     public ColorComponent(String name, int defaultColor) {
         super(name, String.valueOf(defaultColor), false);
@@ -29,7 +28,6 @@ public class ColorComponent extends TextComponent {
         this.displayValue = "#" + Integer.toHexString(this.currentColor.getRGB()).toLowerCase().substring(2);
         this.gearTexture = new Texture("gear_wheel.png");
         this.gearTextureEnabled = new Texture("gear_wheel-enabled.png");
-        this.checkTexture = new Texture("check.png");
 
         this.setH(9);
     }
@@ -77,10 +75,12 @@ public class ColorComponent extends TextComponent {
             RenderUtil.drawRect(blockX, blockY, blockX + blockWidth, blockY + blockHeight, 0xFFFFFFFF);
 
             // draw gear
+            RenderUtil.drawRect(this.getX() + this.getW() - 10, this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0xFF101010);
             this.gearTextureEnabled.bind();
             this.gearTextureEnabled.render(this.getX() + this.getW() - 9, this.getY() + 0.5f, 8, 8);
 
             // check
+            RenderUtil.drawRect(this.getX() + this.getW() - 20, this.getY(), this.getX() + this.getW() - 10, this.getY() + this.getH(), 0xFF101010);
             this.checkTexture.bind();
             this.checkTexture.render(this.getX() + this.getW() - 19, this.getY() + 0.5f, 8, 8);
 
@@ -107,15 +107,13 @@ public class ColorComponent extends TextComponent {
     public void mouseRelease(int mouseX, int mouseY, int button) {
         super.mouseRelease(mouseX, mouseY, button);
 
-        if (!this.focused || !this.isMouseInside(mouseX, mouseY)) // must be focused & inside
+        if (!this.focused) // must be focused
             return;
 
-        if (this.isMouseInside(mouseX, mouseY)) {
-            if (button == 0) {
-                // check for clicking check
-                if (mouseX >= this.getX() + this.getW() - 20 && mouseX <= this.getX() + this.getW() - 10 && mouseY >= this.getY() && mouseY <= this.getY() + this.getH()) {
-                    this.enterPressed();
-                }
+        if (button == 0) {
+            // check for clicking check
+            if (mouseX >= this.getX() + this.getW() - 20 && mouseX <= this.getX() + this.getW() - 10 && mouseY >= this.getY() && mouseY <= this.getY() + this.getH()) {
+                this.enterPressed();
             }
         }
     }
