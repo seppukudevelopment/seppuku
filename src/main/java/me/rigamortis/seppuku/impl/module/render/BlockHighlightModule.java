@@ -27,7 +27,7 @@ public final class BlockHighlightModule extends Module {
     public final Value<Color> color = new Value<Color>("Color", new String[]{"Col", "c"}, "Edit the block highlight color.", new Color(255, 255, 255));
     public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"Alp", "Opacity", "a", "o"}, "Alpha value for the highlight visual.", 127, 0, 255, 1);
     public final Value<Float> width = new Value<Float>("Width", new String[]{"W", "size", "s"}, "Width value of the highlight visual.", 1.5f, 0.0f, 5.0f, 0.1f);
-    public final Value<Boolean> breaking = new Value<Boolean>("Breaking", new String[]{"Break", "block", "brk"}, "Sizes the highlight visual based on the block breaking damage.", true);
+    public final Value<Boolean> breaking = new Value<Boolean>("Breaking", new String[]{"Break", "block", "brk"}, "Sizes the highlight visual based on the block breaking damage.", false);
 
     public enum Mode {
         BOX, OUTLINE, CROSS
@@ -42,36 +42,43 @@ public final class BlockHighlightModule extends Module {
         final Minecraft mc = Minecraft.getMinecraft();
         final RayTraceResult ray = mc.objectMouseOver;
         if (ray.typeOfHit == RayTraceResult.Type.BLOCK) {
-            final BlockPos blockpos = ray.getBlockPos();
-            final IBlockState iblockstate = mc.world.getBlockState(blockpos);
-            if (iblockstate.getMaterial() != Material.AIR && mc.world.getWorldBorder().contains(blockpos)) {
-                float currentDamage;
+            this.drawHighlight(ray, mc);
+        }
+    }
+
+    public void drawHighlight(final RayTraceResult ray, final Minecraft mc) {
+        final BlockPos blockpos = ray.getBlockPos();
+        final IBlockState iblockstate = mc.world.getBlockState(blockpos);
+        if (iblockstate.getMaterial() != Material.AIR && mc.world.getWorldBorder().contains(blockpos)) {
+            float currentDamage = 0.0f;
+
+            if (mc.player.isSwingInProgress) {
                 if (this.breaking.getValue()) {
-                    currentDamage = mc.playerController.curBlockDamageMP;
+                    currentDamage = Math.abs(mc.playerController.curBlockDamageMP);
                 } else {
                     currentDamage = 0.0f;
                 }
-
-                RenderUtil.begin3D();
-                final Vec3d interp = MathUtil.interpolateEntity(mc.player, mc.getRenderPartialTicks());
-                final AxisAlignedBB bb = iblockstate.getSelectedBoundingBox(mc.world, blockpos).shrink(currentDamage / 2.0f).offset(-interp.x, -interp.y, -interp.z);
-                final int color = ColorUtil.changeAlpha(this.color.getValue().getRGB(), this.alpha.getValue());
-                switch (this.mode.getValue()) {
-                    case BOX:
-                        RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(color, this.alpha.getValue() / 2));
-                        RenderUtil.drawBoundingBox(bb, this.width.getValue(), color);
-                        break;
-                    case OUTLINE:
-                        RenderUtil.drawBoundingBox(bb, this.width.getValue(), color);
-                        break;
-                    case CROSS:
-                        RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(color, this.alpha.getValue() / 2));
-                        RenderUtil.drawCrosses(bb, this.width.getValue(), color);
-                        RenderUtil.drawBoundingBox(bb, this.width.getValue(), color);
-                        break;
-                }
-                RenderUtil.end3D();
             }
+
+            RenderUtil.begin3D();
+            final Vec3d interp = MathUtil.interpolateEntity(mc.player, mc.getRenderPartialTicks());
+            final AxisAlignedBB bb = iblockstate.getSelectedBoundingBox(mc.world, blockpos).shrink(currentDamage / 2.0f).offset(-interp.x, -interp.y, -interp.z);
+            final int color = ColorUtil.changeAlpha(this.color.getValue().getRGB(), this.alpha.getValue());
+            switch (this.mode.getValue()) {
+                case BOX:
+                    RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(color, this.alpha.getValue() / 2));
+                    RenderUtil.drawBoundingBox(bb, this.width.getValue(), color);
+                    break;
+                case OUTLINE:
+                    RenderUtil.drawBoundingBox(bb, this.width.getValue(), color);
+                    break;
+                case CROSS:
+                    RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(color, this.alpha.getValue() / 2));
+                    RenderUtil.drawCrosses(bb, this.width.getValue(), color);
+                    RenderUtil.drawBoundingBox(bb, this.width.getValue(), color);
+                    break;
+            }
+            RenderUtil.end3D();
         }
     }
 }

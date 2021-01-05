@@ -60,33 +60,27 @@ public final class ChamsModule extends Module {
                 Minecraft.getMinecraft().getRenderManager().setRenderShadow(false);
                 Minecraft.getMinecraft().getRenderManager().setRenderOutlines(false);
 
-                switch (this.mode.getValue()) {
-                    case NORMAL:
-                        GlStateManager.pushMatrix();
+                GlStateManager.pushMatrix();
+                switch (this.mode.getValue().name().toLowerCase()) {
+                    case "normal":
                         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
                         glEnable(GL11.GL_POLYGON_OFFSET_FILL);
                         glPolygonOffset(1.0f, -1100000.0f);
-                        GlStateManager.popMatrix();
                         break;
-                    case TEXTURE:
-                        GlStateManager.pushMatrix();
+                    case "texture":
                         glEnable(GL11.GL_POLYGON_OFFSET_FILL);
                         glPolygonOffset(1.0f, -1100000.0f);
                         glDisable(GL11.GL_TEXTURE_2D);
                         GlStateManager.color(1, 1, 1);
-                        GlStateManager.popMatrix();
                         break;
-                    case FLAT:
-                        GlStateManager.pushMatrix();
+                    case "flat":
                         glEnable(GL11.GL_POLYGON_OFFSET_FILL);
                         glPolygonOffset(1.0f, -1100000.0f);
                         glDisable(GL11.GL_TEXTURE_2D);
                         glDisable(GL11.GL_LIGHTING);
                         GlStateManager.color(1, 1, 1);
-                        GlStateManager.popMatrix();
                         break;
-                    case WIREFRAME:
-                        GlStateManager.pushMatrix();
+                    case "wireframe":
                         glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
                         glEnable(GL11.GL_POLYGON_OFFSET_LINE);
                         glPolygonOffset(1.0f, -1100000.0f);
@@ -96,47 +90,41 @@ public final class ChamsModule extends Module {
                         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
                         glLineWidth(1);
                         GlStateManager.color(1, 1, 1);
-                        GlStateManager.popMatrix();
                         break;
                 }
+                GlStateManager.popMatrix();
             }
             if (event.getStage() == EventStageable.EventStage.POST) {
 
                 Minecraft.getMinecraft().getRenderManager().setRenderShadow(shadow);
 
-                switch (this.mode.getValue()) {
-                    case NORMAL:
-                        GlStateManager.pushMatrix();
+                GlStateManager.pushMatrix();
+                switch (this.mode.getValue().name().toLowerCase()) {
+                    case "normal":
                         glDisable(GL11.GL_POLYGON_OFFSET_FILL);
                         glPolygonOffset(1.0f, 1100000.0f);
-                        GlStateManager.popMatrix();
                         break;
-                    case TEXTURE:
-                        GlStateManager.pushMatrix();
+                    case "texture":
                         glDisable(GL11.GL_POLYGON_OFFSET_FILL);
                         glPolygonOffset(1.0f, 1100000.0f);
                         glEnable(GL11.GL_TEXTURE_2D);
-                        GlStateManager.popMatrix();
                         break;
-                    case FLAT:
-                        GlStateManager.pushMatrix();
+                    case "flat":
                         glDisable(GL11.GL_POLYGON_OFFSET_FILL);
                         glPolygonOffset(1.0f, 1100000.0f);
                         glEnable(GL11.GL_TEXTURE_2D);
                         glEnable(GL11.GL_LIGHTING);
-                        GlStateManager.popMatrix();
                         break;
-                    case WIREFRAME:
-                        GlStateManager.pushMatrix();
+                    case "wireframe":
                         glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
                         glDisable(GL11.GL_POLYGON_OFFSET_LINE);
                         glPolygonOffset(1.0f, 1100000.0f);
                         glEnable(GL11.GL_TEXTURE_2D);
                         glEnable(GL11.GL_LIGHTING);
                         glDisable(GL_LINE_SMOOTH);
-                        GlStateManager.popMatrix();
                         break;
                 }
+                GlStateManager.popMatrix();
             }
         }
     }
