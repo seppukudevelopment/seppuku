@@ -1,6 +1,7 @@
 package me.rigamortis.seppuku.api.gui.hud.component;
 
 import me.rigamortis.seppuku.api.util.RenderUtil;
+import me.rigamortis.seppuku.api.util.Timer;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Keyboard;
 
@@ -14,6 +15,9 @@ public class TextComponent extends HudComponent {
     public boolean digitOnly;
     public ComponentListener returnListener;
     public TextComponentListener textListener;
+
+    protected Timer backspaceTimer = new Timer(), backspaceWaitTimer = new Timer();
+    protected boolean doBackspacing = false;
 
     public TextComponent(String name, String displayValue, boolean digitOnly) {
         super(name);
@@ -39,6 +43,19 @@ public class TextComponent extends HudComponent {
             int blockWidth = 2;
             int blockHeight = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - 2;
             RenderUtil.drawRect(blockX, blockY, blockX + blockWidth, blockY + blockHeight, 0xFFFFFFFF);
+
+            if (Keyboard.isKeyDown(Keyboard.KEY_BACK) || Keyboard.isKeyDown(Keyboard.KEY_DELETE)) {
+                if (this.doBackspacing && this.backspaceWaitTimer.passed(750)) {
+                    if (this.backspaceTimer.passed(75)) {
+                        if (this.displayValue.length() > 0) {
+                            this.displayValue = this.displayValue.substring(0, this.displayValue.length() - 1);
+                        }
+                        this.backspaceTimer.reset();
+                    }
+                }
+            } else {
+                this.doBackspacing = false;
+            }
         }
     }
 
@@ -77,6 +94,9 @@ public class TextComponent extends HudComponent {
                 //    }
                 //    break;
                 case Keyboard.KEY_BACK:
+                case Keyboard.KEY_DELETE:
+                    this.backspaceWaitTimer.reset();
+                    this.doBackspacing = true;
                     if (this.displayValue.length() > 0) {
                         this.displayValue = this.displayValue.substring(0, this.displayValue.length() - 1);
                     }

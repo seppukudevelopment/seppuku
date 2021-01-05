@@ -5,6 +5,7 @@ import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import net.minecraft.client.Minecraft;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 
@@ -82,6 +83,19 @@ public class ColorComponent extends TextComponent {
             // check
             this.checkTexture.bind();
             this.checkTexture.render(this.getX() + this.getW() - 19, this.getY() + 0.5f, 8, 8);
+
+            if (Keyboard.isKeyDown(Keyboard.KEY_BACK) || Keyboard.isKeyDown(Keyboard.KEY_DELETE)) {
+                if (this.doBackspacing && this.backspaceWaitTimer.passed(750)) {
+                    if (this.backspaceTimer.passed(75)) {
+                        if (this.displayValue.length() > 0) {
+                            this.displayValue = this.displayValue.substring(0, this.displayValue.length() - 1);
+                        }
+                        this.backspaceTimer.reset();
+                    }
+                }
+            } else {
+                this.doBackspacing = false;
+            }
         } else {
             // draw gear
             this.gearTexture.bind();
