@@ -60,12 +60,11 @@ public final class ReachModule extends Module {
         if (this.blocks.getValue()) {
             this.currentBlockTrace = mc.player.rayTrace(this.distance.getValue(), event.getPartialTicks());
 
-            if (!this.highlight.getValue())
-                return;
-
-            if (this.blockHighlightModule != null && this.currentBlockTrace != null) {
-                if (this.blockHighlightModule.isEnabled()) {
-                    this.blockHighlightModule.drawHighlight(this.currentBlockTrace, mc);
+            if (this.highlight.getValue()) {
+                if (this.blockHighlightModule != null && this.currentBlockTrace != null) {
+                    if (this.blockHighlightModule.isEnabled()) {
+                        this.blockHighlightModule.drawHighlight(this.currentBlockTrace, mc);
+                    }
                 }
             }
         }
