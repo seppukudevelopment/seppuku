@@ -97,7 +97,7 @@ public final class ReachModule extends Module {
                         }
                         mc.player.swingArm(EnumHand.MAIN_HAND);
                     }
-                } else if (mc.gameSettings.keyBindUseItem.pressed && mc.player.ticksExisted % 3 == 0) {
+                } else if (mc.gameSettings.keyBindUseItem.pressed) {
                     final EnumActionResult actionResult = mc.playerController.processRightClickBlock(mc.player, mc.world, this.currentBlockTrace.getBlockPos(), this.currentBlockTrace.sideHit, new Vec3d(0d, 0d, 0d), EnumHand.MAIN_HAND);
                     if (actionResult.equals(EnumActionResult.SUCCESS)) {
                         mc.player.swingArm(EnumHand.MAIN_HAND);
