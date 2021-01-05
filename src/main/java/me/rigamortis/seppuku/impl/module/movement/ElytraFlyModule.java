@@ -59,7 +59,7 @@ public final class ElytraFlyModule extends Module {
         final NoHungerModule nohunger = (NoHungerModule) Seppuku.INSTANCE.getModuleManager().find(NoHungerModule.class);
         if (nohunger != null && nohunger.isEnabled()) {
             nohunger.toggle();
-            Seppuku.INSTANCE.logChat("Toggled \247c" + nohunger.getDisplayName() + "\247r because it conflicts with \247a" + this.getDisplayName());
+            Seppuku.INSTANCE.logChat("Toggled \247c" + nohunger.getDisplayName() + "\247r as it conflicts with \2477" + this.getDisplayName());
         }
     }
 
@@ -89,6 +89,14 @@ public final class ElytraFlyModule extends Module {
         switch (event.getStage()) {
             case PRE:
                 final ItemStack stackOnChestSlot = mc.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+
+                // disable stay airborne if it is on
+                if (this.stayAirborne.getValue()) {
+                    if (mc.player.onGround) {
+                        this.stayAirborne.setValue(false);
+                        Seppuku.INSTANCE.logChat("\247rToggled \2477ElytraFly " + this.stayAirborne.getName() + "\247r off as you've touched the ground.");
+                    }
+                }
 
                 if (this.autoEquip.getValue()) {
                     // ensure player has an elytra on before running any code
