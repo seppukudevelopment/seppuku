@@ -164,7 +164,7 @@ public final class XrayCommand extends Command {
 
                     Seppuku.INSTANCE.logcChat(msg);
                 } else {
-                    Seppuku.INSTANCE.logChat("You don't have any search ids");
+                    Seppuku.INSTANCE.logChat("You don't have any xray ids");
                 }
             } else if (equals(clearAlias, split[1])) {
                 if (!this.clamp(input, 2, 2)) {

@@ -9,7 +9,6 @@ import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.module.render.BlockHighlightModule;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.play.client.CPacketPlayerDigging;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.RayTraceResult;
@@ -29,6 +28,7 @@ public final class ReachModule extends Module {
     private BlockHighlightModule blockHighlightModule = null;
 
     private RayTraceResult currentBlockTrace = null;
+    //private RayTraceResult currentEntityTrace = null;
 
     public ReachModule() {
         super("Reach", new String[]{"Rch"}, "Extends the player's reach.", "NONE", -1, ModuleType.PLAYER);
@@ -68,6 +68,19 @@ public final class ReachModule extends Module {
                 }
             }
         }
+
+        /*
+        if (this.entities.getValue()) {
+            Vec3d positionEyes = mc.player.getPositionEyes(event.getPartialTicks());
+            Vec3d look = mc.player.getLook(event.getPartialTicks());
+            Vec3d end = positionEyes.add(look.x * this.distance.getValue(), look.y * this.distance.getValue(), look.z * this.distance.getValue());
+            mc.world.
+            final RayTraceResult result = mc.world.rayTraceBlocks(positionEyes, end, false, true, false);
+            assert result != null;
+            System.out.println(result.entityHit);
+            //this.currentEntityTrace = mc.world.rayTraceBlocks()
+        }
+        */
     }
 
     @Listener
@@ -87,12 +100,8 @@ public final class ReachModule extends Module {
                 if (mc.gameSettings.keyBindAttack.pressed) {
                     if (!mc.world.isAirBlock(this.currentBlockTrace.getBlockPos())) {
                         if (mc.player.capabilities.isCreativeMode) {
-                            mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, this.currentBlockTrace.getBlockPos(), this.currentBlockTrace.sideHit));
-                            mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, this.currentBlockTrace.getBlockPos(), this.currentBlockTrace.sideHit));
                             mc.playerController.onPlayerDestroyBlock(this.currentBlockTrace.getBlockPos());
-                            mc.world.setBlockToAir(this.currentBlockTrace.getBlockPos());
                         } else {
-                            mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, this.currentBlockTrace.getBlockPos(), this.currentBlockTrace.sideHit));
                             mc.playerController.onPlayerDamageBlock(this.currentBlockTrace.getBlockPos(), this.currentBlockTrace.sideHit);
                         }
                         mc.player.swingArm(EnumHand.MAIN_HAND);

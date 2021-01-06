@@ -6,6 +6,8 @@ import me.rigamortis.seppuku.api.event.minecraft.EventDisplayGui;
 import me.rigamortis.seppuku.api.event.minecraft.EventKeyPress;
 import me.rigamortis.seppuku.api.event.minecraft.EventRunTick;
 import me.rigamortis.seppuku.api.event.minecraft.EventUpdateFramebufferSize;
+import me.rigamortis.seppuku.api.event.mouse.EventMouseLeftClick;
+import me.rigamortis.seppuku.api.event.mouse.EventMouseRightClick;
 import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
@@ -194,6 +196,48 @@ public final class MinecraftPatch extends ClassPatch {
 
     public static boolean loadWorldHook(WorldClient worldClient) {
         final EventLoadWorld event = new EventLoadWorld(worldClient);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }
+
+    @MethodPatch(
+            mcpName = "clickMouse",
+            notchName = "aA",
+            mcpDesc = "()V",
+            notchDesc = "()V")
+    public void clickMouse(MethodNode methodNode, PatchManager.Environment env) {
+        final InsnList insnList = new InsnList();
+        insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "clickMouseHook", "()Z", false));
+        final LabelNode jmp = new LabelNode();
+        insnList.add(new JumpInsnNode(IFEQ, jmp));
+        insnList.add(new InsnNode(RETURN));
+        insnList.add(jmp);
+        methodNode.instructions.insert(insnList);
+    }
+
+    public static boolean clickMouseHook() {
+        final EventMouseLeftClick event = new EventMouseLeftClick();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }
+
+    @MethodPatch(
+            mcpName = "rightClickMouse",
+            notchName = "aB",
+            mcpDesc = "()V",
+            notchDesc = "()V")
+    public void rightClickMouse(MethodNode methodNode, PatchManager.Environment env) {
+        final InsnList insnList = new InsnList();
+        insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "rightClickMouseHook", "()Z", false));
+        final LabelNode jmp = new LabelNode();
+        insnList.add(new JumpInsnNode(IFEQ, jmp));
+        insnList.add(new InsnNode(RETURN));
+        insnList.add(jmp);
+        methodNode.instructions.insert(insnList);
+    }
+
+    public static boolean rightClickMouseHook() {
+        final EventMouseRightClick event = new EventMouseRightClick();
         Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
         return event.isCanceled();
     }
