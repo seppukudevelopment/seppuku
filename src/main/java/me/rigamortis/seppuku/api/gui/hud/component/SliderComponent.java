@@ -19,14 +19,13 @@ import java.text.DecimalFormat;
  */
 public final class SliderComponent extends HudComponent {
 
-    private ComponentListener mouseClickListener;
     private Value value;
-
+    private ComponentListener mouseClickListener;
     private final SliderBarComponent sliderBar;
     private TextComponent textComponent;
 
-    protected boolean sliding;
     protected final DecimalFormat decimalFormat = new DecimalFormat("#.#");
+    protected boolean sliding = false;
     protected float lastPositionX = -1;
 
     public SliderComponent(String name, Value value) {
@@ -244,7 +243,6 @@ public final class SliderComponent extends HudComponent {
                 if (button == 0) {
                     this.setValueFromPosition();
                     this.setDragging(false);
-                    //this.setX(this.getPositionFromValue());
                 }
             }
         }
