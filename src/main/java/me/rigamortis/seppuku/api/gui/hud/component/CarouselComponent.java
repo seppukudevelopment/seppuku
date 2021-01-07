@@ -18,7 +18,7 @@ public final class CarouselComponent extends HudComponent {
         super(name);
 
         this.value = value;
-        this.displayValue = value.getValue().toString();
+        this.displayValue = value.getValue().toString().toLowerCase();
         this.focused = false;
     }
 
