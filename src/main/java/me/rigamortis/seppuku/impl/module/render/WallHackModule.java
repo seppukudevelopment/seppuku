@@ -56,6 +56,7 @@ public final class WallHackModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The mode of the drawn esp/wallhack.", Mode.OPAQUE);
     public final Value<HealthMode> hpMode = new Value<HealthMode>("Hp", new String[]{"Health", "HpMode"}, "Rendering mode for the health bar.", HealthMode.NONE);
+    public final Value<PotionsMode> potionsMode = new Value<PotionsMode>("Potions", new String[]{"Pot", "Pots", "PotsMode"}, "Rendering mode for active potion-effects on the entity.", PotionsMode.NONE);
 
     private enum Mode {
         OPAQUE, BOX
@@ -94,7 +95,6 @@ public final class WallHackModule extends Module {
     public final Value<Boolean> hearts = new Value<Boolean>("Hearts", new String[]{"Hrts"}, "Draw the entity's hearts in decimal format.", true);
     public final Value<Boolean> absorption = new Value<Boolean>("Absorption", new String[]{"Abs", "GappleHearts"}, "Adds absorption value to heart display.", true);
     public final Value<Boolean> enchants = new Value<Boolean>("Enchants", new String[]{"Ench"}, "Draw enchant names above the entity's equipped armor. (requires Armor value to be enabled.", true);
-    public final Value<PotionsMode> potions = new Value<PotionsMode>("Potions", new String[]{"Pot", "Pots", "PotsMode"}, "Rendering mode for active potion-effects on the entity.", PotionsMode.NONE);
 
     public final Value<Color> friendsColor = new Value<Color>("Friends Color", new String[]{"friendscolor", "friendcolor", "fc"}, "Change the color of friendly players on esp.", new Color(153, 0, 238));
     public final Value<Color> sneakingColor = new Value<Color>("Sneaking Color", new String[]{"sneakingcolor", "sneakcolor", "sc"}, "Change the color of sneaking players on esp.", new Color(238, 153, 0));
@@ -284,7 +284,7 @@ public final class WallHackModule extends Module {
                                 }
                             }
 
-                            if (this.potions.getValue() != PotionsMode.NONE) {
+                            if (this.potionsMode.getValue() != PotionsMode.NONE) {
                                 float scale = 0.5f;
                                 int offsetX = 0;
                                 int offsetY = 0;
@@ -293,7 +293,7 @@ public final class WallHackModule extends Module {
                                     if (effect.getDuration() <= 0)
                                         continue;
                                     final Potion potion = effect.getPotion();
-                                    if (this.potions.getValue() == PotionsMode.ICON) {
+                                    if (this.potionsMode.getValue() == PotionsMode.ICON) {
                                         if (potion.hasStatusIcon()) {
                                             GlStateManager.pushMatrix();
                                             mc.getTextureManager().bindTexture(this.inventory);// bind the inventory texture
@@ -319,7 +319,7 @@ public final class WallHackModule extends Module {
 
                                             offsetY += 16;
                                         }
-                                    } else if (this.potions.getValue() == PotionsMode.TEXT) {
+                                    } else if (this.potionsMode.getValue() == PotionsMode.TEXT) {
                                         final List<String> potStringsToDraw = Lists.newArrayList();
                                         final String effectString = PotionUtil.getNameDurationString(effect);
 
