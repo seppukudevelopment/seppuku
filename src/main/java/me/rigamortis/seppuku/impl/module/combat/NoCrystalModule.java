@@ -46,7 +46,7 @@ public final class NoCrystalModule extends Module {
     public final Value<Boolean> extended = new Value<Boolean>("Extended", new String[]{"extend", "e", "big"}, "Enlarges the size of the fortress.", false);
     public final Value<Boolean> disable = new Value<Boolean>("Disable", new String[]{"dis", "autodisable", "autodis", "d"}, "Automatically disable after obsidian is placed.", false);
     public final Value<Boolean> sneak = new Value<Boolean>("PlaceOnSneak", new String[]{"sneak", "s", "pos", "sneakPlace"}, "When true, NoCrystal will only place while the player is sneaking.", false);
-    public final Value<Float> placeDelay = new Value<Float>("Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay between obsidian blocks being placed.", 100.0f, 0.0f, 500.0f, 1.0f);
+    public final Value<Float> placeDelay = new Value<Float>("Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay(ms) between obsidian blocks being placed.", 100.0f, 0.0f, 500.0f, 1.0f);
 
     private final Timer placeTimer = new Timer();
 
