@@ -53,12 +53,12 @@ public final class NotificationsComponent extends DraggableHudComponent {
 
             notification.setX(this.getX() + offsetX);
             notification.setY(this.getY() + offsetY);
-            notification.setWidth(mc.fontRenderer.getStringWidth(notification.getText()) + 4);
+            notification.setWidth(mc.fontRenderer.getStringWidth(notification.getText()));
             notification.setHeight(mc.fontRenderer.FONT_HEIGHT + 5);
 
-            RenderUtil.drawRect(notification.getTransitionX(), notification.getTransitionY(), notification.getTransitionX() + notification.getWidth(), notification.getTransitionY() + notification.getHeight(), 0x75101010);
-            RenderUtil.drawRect(notification.getTransitionX(), notification.getTransitionY(), notification.getTransitionX() + notification.getWidth(), (notification.getTransitionY() + 1), notification.getType().getColor());
-            mc.fontRenderer.drawStringWithShadow(notification.getText(), notification.getTransitionX() + 2.0F, notification.getTransitionY() + 4.0F, 0xFFFFFFFF);
+            RenderUtil.drawRect(notification.getTransitionX() - 1, notification.getTransitionY(), notification.getTransitionX() + notification.getWidth() + 1, notification.getTransitionY() + notification.getHeight(), 0x75101010);
+            RenderUtil.drawRect(notification.getTransitionX() - 1, notification.getTransitionY(), notification.getTransitionX() + notification.getWidth() + 1, (notification.getTransitionY() + 1), notification.getType().getColor());
+            mc.fontRenderer.drawStringWithShadow(notification.getText(), notification.getTransitionX(), notification.getTransitionY() + 4.0F, 0xFFFFFFFF);
 
             final float width = notification.getWidth();
             if (width >= maxWidth) {
