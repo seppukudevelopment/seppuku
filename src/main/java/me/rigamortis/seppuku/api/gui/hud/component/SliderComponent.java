@@ -141,6 +141,7 @@ public final class SliderComponent extends HudComponent {
                 } else {
                     if (this.textComponent.onCheckButtonPress(mouseX, mouseY)) {
                         this.textComponent = null;
+                        this.sliderBar.updatePositionToValue();
                         return;
                     }
 
