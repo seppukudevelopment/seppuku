@@ -18,7 +18,7 @@ public final class CarouselComponent extends HudComponent {
         super(name);
 
         this.value = value;
-        this.displayValue = value.getValue().toString().toLowerCase();
+        this.displayValue = value.getCapitalizedValue();
         this.focused = false;
     }
 
@@ -49,7 +49,7 @@ public final class CarouselComponent extends HudComponent {
             this.onLeftButtonPress(mouseX);
             this.onRightButtonPress(mouseX);
 
-            this.displayValue = this.value.getValue().toString().toLowerCase();
+            this.displayValue = this.value.getCapitalizedValue();
         } else {
             this.focused = false;
         }

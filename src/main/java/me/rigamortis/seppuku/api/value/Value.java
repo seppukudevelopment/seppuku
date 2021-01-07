@@ -77,8 +77,12 @@ public class Value<T> {
         }
     }
 
-    public String getEnumReplacedName() {
+    public String getCapitalizedName() {
         return Character.toString(this.getName().charAt(0)) + this.getName().toLowerCase().replaceFirst(Character.toString(this.getName().charAt(0)).toLowerCase(), "");
+    }
+
+    public String getCapitalizedValue() {
+        return this.getValue().toString().charAt(0) + this.getValue().toString().toLowerCase().replaceFirst(Character.toString(this.getValue().toString().charAt(0)).toLowerCase(), "");
     }
 
     public T getMin() {
