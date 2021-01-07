@@ -12,9 +12,6 @@ import net.minecraft.client.Minecraft;
 import java.text.DecimalFormat;
 
 /**
- * SliderComponent
- * - strictly for values atm (v3.1), will be used around the entire hud later on.
- *
  * @author noil
  */
 public final class SliderComponent extends HudComponent {
@@ -25,7 +22,7 @@ public final class SliderComponent extends HudComponent {
     private TextComponent textComponent;
 
     protected final DecimalFormat decimalFormat = new DecimalFormat("#.#");
-    protected boolean sliding = false;
+    protected boolean sliding;
     protected float lastPositionX = -1;
 
     public SliderComponent(String name, Value value) {
