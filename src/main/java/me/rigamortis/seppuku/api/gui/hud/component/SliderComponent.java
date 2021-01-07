@@ -216,7 +216,14 @@ public final class SliderComponent extends HudComponent {
 
         @Override
         public void render(int mouseX, int mouseY, float partialTicks) {
-            super.render(mouseX, mouseY, partialTicks);
+            //super.render(mouseX, mouseY, partialTicks);
+            if (this.isDragging()) {
+                this.setX(mouseX - this.getDeltaX());
+                this.setY(mouseY - this.getDeltaY());
+                this.clamp();
+            } else if (this.isMouseInside(mouseX, mouseY)) {
+                RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x45FFFFFF);
+            }
 
             this.clampSlider();
 
