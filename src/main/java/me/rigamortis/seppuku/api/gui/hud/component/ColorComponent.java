@@ -68,6 +68,10 @@ public class ColorComponent extends TextComponent {
         RenderUtil.drawRect(this.getX() + this.getW() - (this.focused ? 20 : 10), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x45202020);
 
         if (this.focused) {
+            if (!this.selectedText.equals("")) {
+                RenderUtil.drawRect(this.getX() + BORDER + COLOR_SIZE + BORDER, this.getY(), this.getX() + BORDER + COLOR_SIZE + BORDER + Minecraft.getMinecraft().fontRenderer.getStringWidth(this.displayValue), this.getY() + this.getH(), 0x45FFFFFF);
+            }
+
             float blockX = this.getX() + BORDER + Minecraft.getMinecraft().fontRenderer.getStringWidth(this.displayValue) + COLOR_SIZE + BORDER + TEXT_BLOCK_PADDING;
             float blockY = this.getY() + TEXT_BLOCK_PADDING;
             int blockWidth = 2;

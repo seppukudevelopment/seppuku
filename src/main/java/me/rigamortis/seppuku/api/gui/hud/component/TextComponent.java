@@ -1,17 +1,22 @@
 package me.rigamortis.seppuku.api.gui.hud.component;
 
+import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.util.Timer;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Keyboard;
 
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.util.logging.Level;
+
 /**
  * @author noil
  */
 public class TextComponent extends HudComponent {
 
-    public String displayValue;
+    public String displayValue, selectedText;
     public boolean focused;
     public boolean digitOnly;
     public ComponentListener returnListener;
@@ -26,6 +31,7 @@ public class TextComponent extends HudComponent {
         super(name);
 
         this.displayValue = displayValue;
+        this.selectedText = "";
         this.focused = false;
         this.digitOnly = digitOnly;
 
@@ -40,9 +46,15 @@ public class TextComponent extends HudComponent {
             RenderUtil.drawGradientRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x30909090, 0x00101010);
 
         RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x45303030);
-        Minecraft.getMinecraft().fontRenderer.drawString(this.getName() + ": " + this.displayValue, (int) this.getX() + 1, (int) this.getY() + 1, this.focused ? 0xFFFFFFFF : 0xFFAAAAAA);
+
+        final String displayValueText = this.getName() + ": " + this.displayValue;
+        Minecraft.getMinecraft().fontRenderer.drawString(displayValueText, (int) this.getX() + 1, (int) this.getY() + 1, this.focused ? 0xFFFFFFFF : 0xFFAAAAAA);
 
         if (this.focused) {
+            if (!this.selectedText.equals("")) {
+                RenderUtil.drawRect(this.getX() + Minecraft.getMinecraft().fontRenderer.getStringWidth(this.getName() + ": "), this.getY(), this.getX() + Minecraft.getMinecraft().fontRenderer.getStringWidth(displayValueText), this.getY() + this.getH(), 0x45FFFFFF);
+            }
+
             float blockX = this.getX() + Minecraft.getMinecraft().fontRenderer.getStringWidth(this.getName() + ": " + this.displayValue) + 1;
             float blockY = this.getY() + 1;
             int blockWidth = 2;
@@ -85,6 +97,24 @@ public class TextComponent extends HudComponent {
                 textListener.onKeyTyped(keyCode);
             }
 
+            if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
+                switch (keyCode) {
+                    case Keyboard.KEY_A:
+                        this.selectedText = this.displayValue;
+                        return;
+                    case Keyboard.KEY_V:
+                        if (!this.digitOnly) {
+                            this.displayValue += this.getClipBoard();
+                        } else if (this.getClipBoard().matches("[0-9]+") /* is a number */) {
+                            this.displayValue += this.getClipBoard();
+                        }
+                        return;
+                    case Keyboard.KEY_X:
+                    case Keyboard.KEY_C:
+                        return;
+                }
+            }
+
             switch (keyCode) {
                 case Keyboard.KEY_ESCAPE:
                     this.focused = false;
@@ -102,7 +132,9 @@ public class TextComponent extends HudComponent {
                     this.backspaceWaitTimer.reset();
                     this.doBackspacing = true;
                     if (this.displayValue.length() > 0) {
-                        this.displayValue = this.displayValue.substring(0, this.displayValue.length() - 1);
+                        if (!this.onRemoveSelectedText()) {
+                            this.displayValue = this.displayValue.substring(0, this.displayValue.length() - 1);
+                        }
                     }
                     return;
                 case Keyboard.KEY_CLEAR:
@@ -137,6 +169,8 @@ public class TextComponent extends HudComponent {
             if (digitOnly && !Character.isDigit(typedChar))
                 return;
 
+            this.onRemoveSelectedText();
+
             //if (!digitOnly && !Character.isLetterOrDigit(typedChar))
             //    return;
 
@@ -160,6 +194,15 @@ public class TextComponent extends HudComponent {
         return false;
     }
 
+    protected boolean onRemoveSelectedText() {
+        if (!this.selectedText.equals("")) {
+            this.displayValue = "";
+            this.selectedText = "";
+            return true;
+        }
+        return false;
+    }
+
     protected void handleBackspacing() {
         if (Keyboard.isKeyDown(Keyboard.KEY_BACK) || Keyboard.isKeyDown(Keyboard.KEY_DELETE)) {
             if (this.doBackspacing && this.backspaceWaitTimer.passed(600)) {
@@ -173,6 +216,15 @@ public class TextComponent extends HudComponent {
         } else {
             this.doBackspacing = false;
         }
+    }
+
+    public String getClipBoard() {
+        try {
+            return (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
+        } catch (Exception e) {
+            Seppuku.INSTANCE.getLogger().log(Level.WARNING, "Error getting clipboard while using " + this.getName());
+        }
+        return "";
     }
 
     public interface TextComponentListener {
