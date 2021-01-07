@@ -55,6 +55,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public final class WallHackModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The mode of the drawn esp/wallhack.", Mode.OPAQUE);
+    public final Value<HealthMode> hpMode = new Value<HealthMode>("Hp", new String[]{"Health", "HpMode"}, "Rendering mode for the health bar.", HealthMode.NONE);
 
     private enum Mode {
         OPAQUE, BOX
@@ -103,8 +104,6 @@ public final class WallHackModule extends Module {
     }
 
     public final Value<Boolean> background = new Value<Boolean>("Background", new String[]{"Bg"}, "Draw a transparent black background behind any text or icon drawn.", true);
-
-    public final Value<HealthMode> hpMode = new Value<HealthMode>("Hp", new String[]{"Health", "HpMode"}, "Rendering mode for the health bar.", HealthMode.NONE);
 
     private enum HealthMode {
         NONE, BAR, BARTEXT
