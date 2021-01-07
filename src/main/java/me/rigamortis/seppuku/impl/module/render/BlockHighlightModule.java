@@ -25,8 +25,8 @@ public final class BlockHighlightModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"M", "type", "t"}, "Select which mode to draw the highlight visual.", Mode.BOX);
     public final Value<Color> color = new Value<Color>("Color", new String[]{"Col", "c"}, "Edit the block highlight color.", new Color(255, 255, 255));
-    public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"Alp", "Opacity", "a", "o"}, "Alpha value for the highlight visual.", 127, 0, 255, 1);
-    public final Value<Float> width = new Value<Float>("Width", new String[]{"W", "size", "s"}, "Width value of the highlight visual.", 1.5f, 0.0f, 5.0f, 0.1f);
+    public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"Alp", "Opacity", "a", "o"}, "Alpha value for the highlight visual.", 127, 1, 255, 1);
+    public final Value<Float> width = new Value<Float>("Width", new String[]{"W", "size", "s"}, "Width value of the highlight visual.", 1.5f, 0.1f, 5.0f, 0.1f);
     public final Value<Boolean> breaking = new Value<Boolean>("Breaking", new String[]{"Break", "block", "brk"}, "Sizes the highlight visual based on the block breaking damage.", false);
 
     public enum Mode {

@@ -18,7 +18,7 @@ public class ResizableHudComponent extends DraggableHudComponent {
     private float initialWidth;
     private float initialHeight;
 
-    private final float CLICK_ZONE = 2;
+    protected final float CLICK_ZONE = 2;
 
     public ResizableHudComponent(String name, float initialWidth, float initialHeight) {
         super(name);

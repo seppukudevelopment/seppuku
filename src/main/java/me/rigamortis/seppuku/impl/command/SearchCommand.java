@@ -6,7 +6,6 @@ import me.rigamortis.seppuku.api.util.StringUtil;
 import me.rigamortis.seppuku.impl.config.SearchConfig;
 import me.rigamortis.seppuku.impl.module.render.SearchModule;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;

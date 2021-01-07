@@ -45,9 +45,9 @@ public final class ProjectilesModule extends Module {
 
     private final Queue<Vec3d> flightPoint = new ConcurrentLinkedQueue<>();
 
-    public final Value<Float> width = new Value<Float>("Width", new String[]{"W", "Width"}, "Pixel width of the projectile path.", 1.0f, 0.0f, 5.0f, 0.1f);
+    public final Value<Float> width = new Value<Float>("Width", new String[]{"W", "Width"}, "Pixel width of the projectile path.", 1.0f, 0.1f, 5.0f, 0.1f);
     public final Value<Color> color = new Value<Color>("Path Color", new String[]{"pathcolor", "color", "c", "pc"}, "Change the color of the predicted path.", new Color(255, 255, 255));
-    public final Value<Integer> alpha = new Value<Integer>("Path Alpha", new String[]{"pathalpha", "opacity", "a", "o", "pa", "po"}, "Alpha value for the predicted path.", 255, 0, 255, 1);
+    public final Value<Integer> alpha = new Value<Integer>("Path Alpha", new String[]{"pathalpha", "opacity", "a", "o", "pa", "po"}, "Alpha value for the predicted path.", 255, 1, 255, 1);
 
     public ProjectilesModule() {
         super("Projectiles", new String[]{"Proj"}, "Projects the possible path of an entity that was fired.", "NONE", -1, ModuleType.RENDER);

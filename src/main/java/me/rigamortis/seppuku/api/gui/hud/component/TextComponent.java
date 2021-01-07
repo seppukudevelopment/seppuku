@@ -74,13 +74,11 @@ public class TextComponent extends HudComponent {
         super.mouseRelease(mouseX, mouseY, button);
 
         if (this.isMouseInside(mouseX, mouseY) && button == 0) {
-            this.focused = true;
+            this.focus();
 
             // check for clicking check
             if (!(this instanceof ColorComponent)) {
-                if (mouseX >= this.getX() + this.getW() - 10 && mouseX <= this.getX() + this.getW() && mouseY >= this.getY() && mouseY <= this.getY() + this.getH()) {
-                    this.enterPressed();
-                }
+                this.onCheckButtonPress(mouseX, mouseY);
             }
         } else {
             this.focused = false;
@@ -164,7 +162,19 @@ public class TextComponent extends HudComponent {
         this.focused = false;
     }
 
+    protected boolean onCheckButtonPress(int mouseX, int mouseY) {
+        if (mouseX >= this.getX() + this.getW() - 10 && mouseX <= this.getX() + this.getW() && mouseY >= this.getY() && mouseY <= this.getY() + this.getH()) {
+            this.enterPressed();
+            return true;
+        }
+        return false;
+    }
+
     public interface TextComponentListener {
         void onKeyTyped(int keyCode);
+    }
+
+    public void focus() {
+        this.focused = true;
     }
 }

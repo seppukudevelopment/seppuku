@@ -165,8 +165,11 @@ public final class HubComponent extends ResizableHudComponent {
     }
 
     @Override
-    public void mouseClickMove(int mouseX, int mouseY, int button) {
-        super.mouseClickMove(mouseX, mouseY, button);
+    public void mouseClick(int mouseX, int mouseY, int button) {
+        final boolean insideDragZone = mouseY <= this.getY() + TITLE_BAR_HEIGHT + BORDER || mouseY >= ((this.getY() + this.getH()) - CLICK_ZONE);
+        if (insideDragZone) {
+            super.mouseClick(mouseX, mouseY, button);
+        }
     }
 
     private void clampScroll() {

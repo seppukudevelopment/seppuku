@@ -295,10 +295,13 @@ public final class ModuleListComponent extends ResizableHudComponent {
 
     @Override
     public void mouseClick(int mouseX, int mouseY, int button) {
-        super.mouseClick(mouseX, mouseY, button);
-
-        if (this.currentSettings != null) {
-            this.currentSettings.mouseClick(mouseX, mouseY, button);
+        final boolean insideDragZone = mouseY <= this.getY() + TITLE_BAR_HEIGHT + BORDER || mouseY >= ((this.getY() + this.getH()) - CLICK_ZONE);
+        if (insideDragZone) {
+            super.mouseClick(mouseX, mouseY, button);
+        } else {
+            if (this.currentSettings != null) {
+                this.currentSettings.mouseClick(mouseX, mouseY, button);
+            }
         }
     }
 
@@ -513,7 +516,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                     };
                     components.add(valueButton);
                 } else if (value.getValue() instanceof Number) {
-                    TextComponent valueNumberText = new TextComponent(value.getName(), value.getValue().toString(), true);
+                    /*TextComponent valueNumberText = new TextComponent(value.getName(), value.getValue().toString(), true);
                     valueNumberText.setTooltipText(value.getDesc() + " " + ChatFormatting.GRAY + "(" + value.getMin() + " - " + value.getMax() + ")");
                     valueNumberText.returnListener = new ComponentListener() {
                         @Override
@@ -537,11 +540,12 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         }
                     };
                     components.add(valueNumberText);
-                    this.addComponentToButtons(valueNumberText);
+                    this.addComponentToButtons(valueNumberText);*/
                     //TODO: after v3.1
-                    //SliderComponent sliderComponent = new SliderComponent(value.getName(), value);
-                    //sliderComponent.setTooltipText(value.getDesc() + " " + ChatFormatting.GRAY + "(" + value.getMin() + " - " + value.getMax() + ")");
-                    //components.add(sliderComponent);
+                    SliderComponent sliderComponent = new SliderComponent(value.getName(), value);
+                    sliderComponent.setTooltipText(value.getDesc() + " " + ChatFormatting.GRAY + "(" + value.getMin() + " - " + value.getMax() + ")");
+                    components.add(sliderComponent);
+                    this.addComponentToButtons(sliderComponent);
                 } else if (value.getValue() instanceof Enum) {
                     final Enum val = (Enum) value.getValue();
                     final StringBuilder options = new StringBuilder();
@@ -607,13 +611,13 @@ public final class ModuleListComponent extends ResizableHudComponent {
             for (HudComponent component : this.components) {
                 int offsetX = 0;
 
-                if (component instanceof TextComponent) {
+                if (component instanceof SliderComponent || component instanceof TextComponent) {
                     boolean skipRendering = false;
                     for (HudComponent otherComponent : this.components) {
                         if (otherComponent instanceof ButtonComponent) {
                             boolean isChildComponent = component.getName().toLowerCase().startsWith(otherComponent.getName().toLowerCase());
                             if (isChildComponent) {
-                                if (!((ButtonComponent) otherComponent).rightClickEnabled && !component.getName().equals("List Color")/* don't listen for module display-color components */) {
+                                if (!((ButtonComponent) otherComponent).rightClickEnabled) {
                                     skipRendering = true;
                                 }
 
@@ -649,6 +653,13 @@ public final class ModuleListComponent extends ResizableHudComponent {
             }
         }
 
+        @Override
+        public void mouseClickMove(int mouseX, int mouseY, int button) {
+            super.mouseClickMove(mouseX, mouseY, button);
+            for (HudComponent component : this.components) {
+                component.mouseClickMove(mouseX, mouseY, button);
+            }
+        }
 
         @Override
         public void mouseRelease(int mouseX, int mouseY, int button) {
@@ -670,7 +681,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
             for (HudComponent component : this.components) {
                 if (component instanceof ButtonComponent) {
                     boolean similarName = hudComponent.getName().toLowerCase().startsWith(component.getName().toLowerCase());
-                    if (similarName && !hudComponent.getName().equals("List Color") /* don't listen for module display-color components */) {
+                    if (similarName) {
                         if (((ButtonComponent) component).rightClickListener == null) {
                             ((ButtonComponent) component).rightClickListener = new ComponentListener() {
                                 @Override

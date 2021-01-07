@@ -65,9 +65,7 @@ public class DraggableHudComponent extends HudComponent {
             this.setX(mouseX - this.getDeltaX());
             this.setY(mouseY - this.getDeltaY());
             this.clamp();
-        }
-
-        if (this.isMouseInside(mouseX, mouseY)) {
+        } else if (this.isMouseInside(mouseX, mouseY)) {
             RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x45FFFFFF);
         }
 

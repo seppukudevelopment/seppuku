@@ -16,10 +16,10 @@ import java.awt.*;
 
 public final class CrosshairModule extends Module {
 
-    public final Value<Float> size = new Value<Float>("Size", new String[]{"chsize", "CrosshairSize", "CrosshairScale", "size", "scale", "crosssize", "cs"}, "The size of the crosshair in pixels.", 5.0f, 0.0f, 15.0f, 0.1f);
+    public final Value<Float> size = new Value<Float>("Size", new String[]{"chsize", "CrosshairSize", "CrosshairScale", "size", "scale", "crosssize", "cs"}, "The size of the crosshair in pixels.", 5.0f, 0.1f, 15.0f, 0.1f);
     public final Value<Boolean> outline = new Value<Boolean>("Outline", new String[]{"choutline", "CrosshairOutline", "CrosshairBackground", "CrosshairBg", "outline", "out", "chout", "chbg", "crossbg", "bg"}, "Enable or disable the crosshair background/outline.", true);
     public final Value<Color> color = new Value<Color>("Color", new String[]{"color", "c"}, "Change the color of the cross-hair.", new Color(255, 255, 255));
-    public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"chalpha", "CrosshairAlpha", "alpha", "ca", "cha"}, "The alpha RGBA value of the crosshair.", 255, 0, 255, 1);
+    public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"chalpha", "CrosshairAlpha", "alpha", "ca", "cha"}, "The alpha RGBA value of the crosshair.", 255, 1, 255, 1);
 
     private int CROSSHAIR_COLOR = 0xFFFFFFFF;
     private int CROSSHAIR_OUTLINE_COLOR = 0xFF000000;

@@ -28,8 +28,8 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class AutoMountModule extends Module {
 
-    public final Value<Float> range = new Value<>("Range", new String[]{"Dist"}, "The minimum range to begin scanning for mounts.", 4.5f, 0.0f, 5.0f, 0.1f);
-    public final Value<Float> delay = new Value<>("Delay", new String[]{"del"}, "The delay(ms) between mounts.", 5.0f, 0.0f, 1000.0f, 1f);
+    public final Value<Float> range = new Value<>("Range", new String[]{"Dist"}, "The minimum range to begin scanning for mounts.", 4.0f, 0.1f, 5.0f, 0.1f);
+    public final Value<Float> delay = new Value<>("Delay", new String[]{"del"}, "The delay(ms) between mounts.", 250.0f, 0.0f, 1000.0f, 1f);
     public final Value<Boolean> autoChest = new Value<Boolean>("AutoChest", new String[]{"Chest"}, "Tries to place a chest onto the donkey or llama before mounting (hold a chest for this to work).", false);
     public final Value<Boolean> forceStand = new Value<Boolean>("ForceStand", new String[]{"Stand", "NoSneak"}, "Forces the player to stand (un-sneak) before sending the packet to ride the entity.", true);
     public final Value<Boolean> boat = new Value<Boolean>("Boat", new String[]{"Boat"}, "Enables auto-mounting onto boats.", true);

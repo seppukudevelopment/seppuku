@@ -43,9 +43,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public final class CrystalAuraModule extends Module {
 
     public final Value<Float> range = new Value<Float>("Range", new String[]{"Dist"}, "The minimum range to attack crystals.", 4.0f, 0.0f, 7.0f, 0.1f);
-    public final Value<Float> attackDelay = new Value<Float>("Attack_Delay", new String[]{"AttackDelay", "AttackDel", "Del"}, "The delay to attack in milliseconds.", 50.0f, 0.0f, 1000.0f, 1.0f);
+    public final Value<Float> attackDelay = new Value<Float>("Attack_Delay", new String[]{"AttackDelay", "AttackDel", "Del"}, "The delay to attack in milliseconds.", 50.0f, 0.0f, 500.0f, 1.0f);
     public final Value<Boolean> place = new Value<Boolean>("Place", new String[]{"AutoPlace"}, "Automatically place crystals.", true);
-    public final Value<Float> placeDelay = new Value<Float>("Place_Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay to place crystals.", 50.0f, 0.0f, 1000.0f, 1.0f);
+    public final Value<Float> placeDelay = new Value<Float>("Place_Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay to place crystals.", 50.0f, 0.0f, 500.0f, 1.0f);
     public final Value<Float> minDamage = new Value<Float>("Min_Damage", new String[]{"MinDamage", "Min", "MinDmg"}, "The minimum explosion damage calculated to place down a crystal.", 1.5f, 0.0f, 20.0f, 0.5f);
     public final Value<Boolean> ignore = new Value<Boolean>("Ignore", new String[]{"Ig"}, "Ignore self damage checks.", false);
     public final Value<Boolean> render = new Value<Boolean>("Render", new String[]{"R"}, "Draws information about recently placed crystals from your player.", true);
