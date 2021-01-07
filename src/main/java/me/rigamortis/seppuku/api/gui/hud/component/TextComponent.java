@@ -54,18 +54,8 @@ public class TextComponent extends HudComponent {
             this.checkTexture.bind();
             this.checkTexture.render(this.getX() + this.getW() - 9, this.getY() + 0.5f, 8, 8);
 
-            if (Keyboard.isKeyDown(Keyboard.KEY_BACK) || Keyboard.isKeyDown(Keyboard.KEY_DELETE)) {
-                if (this.doBackspacing && this.backspaceWaitTimer.passed(750)) {
-                    if (this.backspaceTimer.passed(75)) {
-                        if (this.displayValue.length() > 0) {
-                            this.displayValue = this.displayValue.substring(0, this.displayValue.length() - 1);
-                        }
-                        this.backspaceTimer.reset();
-                    }
-                }
-            } else {
-                this.doBackspacing = false;
-            }
+            // handle holding backspace
+            this.handleBackspacing();
         }
     }
 
@@ -168,6 +158,21 @@ public class TextComponent extends HudComponent {
             return true;
         }
         return false;
+    }
+
+    protected void handleBackspacing() {
+        if (Keyboard.isKeyDown(Keyboard.KEY_BACK) || Keyboard.isKeyDown(Keyboard.KEY_DELETE)) {
+            if (this.doBackspacing && this.backspaceWaitTimer.passed(600)) {
+                if (this.backspaceTimer.passed(75)) {
+                    if (this.displayValue.length() > 0) {
+                        this.displayValue = this.displayValue.substring(0, this.displayValue.length() - 1);
+                    }
+                    this.backspaceTimer.reset();
+                }
+            }
+        } else {
+            this.doBackspacing = false;
+        }
     }
 
     public interface TextComponentListener {
