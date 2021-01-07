@@ -452,12 +452,14 @@ public final class RenderUtil {
         GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableTexture2D();
         GlStateManager.disableDepth();
+        //GlStateManager.disableLighting();
         GL11.glEnable(GL_LINE_SMOOTH);
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     }
 
     public static void end3D() {
         GL11.glDisable(GL_LINE_SMOOTH);
+        //GlStateManager.enableLighting();
         GlStateManager.enableDepth();
         GlStateManager.enableTexture2D();
         GlStateManager.enableBlend();
