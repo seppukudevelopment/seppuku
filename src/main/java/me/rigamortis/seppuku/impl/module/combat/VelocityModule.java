@@ -38,6 +38,9 @@ public final class VelocityModule extends Module {
     @Listener
     public void receivePacket(EventReceivePacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
+            if (mc.player == null || mc.world == null)
+                return;
+
             if (event.getPacket() instanceof SPacketEntityStatus && this.bobbers.getValue()) {
                 final SPacketEntityStatus packet = (SPacketEntityStatus) event.getPacket();
                 if (packet.getOpCode() == 31) {

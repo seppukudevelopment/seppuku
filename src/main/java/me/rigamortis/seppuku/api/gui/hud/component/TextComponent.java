@@ -227,11 +227,11 @@ public class TextComponent extends HudComponent {
         return "";
     }
 
-    public interface TextComponentListener {
-        void onKeyTyped(int keyCode);
-    }
-
     public void focus() {
         this.focused = true;
+    }
+
+    public interface TextComponentListener {
+        void onKeyTyped(int keyCode);
     }
 }

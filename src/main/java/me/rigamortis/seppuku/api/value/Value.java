@@ -70,11 +70,15 @@ public class Value<T> {
     }
 
     public void setEnumValue(String value) {
-        for (Enum e : ((Enum) this.value).getClass().getEnumConstants()) {
+        for (Enum<?> e : ((Enum<?>) this.value).getClass().getEnumConstants()) {
             if (e.name().equalsIgnoreCase(value)) {
                 this.value = (T) e;
             }
         }
+    }
+
+    public String getEnumReplacedName() {
+        return Character.toString(this.getName().charAt(0)) + this.getName().toLowerCase().replaceFirst(Character.toString(this.getName().charAt(0)).toLowerCase(), "");
     }
 
     public T getMin() {

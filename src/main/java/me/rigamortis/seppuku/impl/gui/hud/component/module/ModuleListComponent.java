@@ -548,15 +548,15 @@ public final class ModuleListComponent extends ResizableHudComponent {
                     this.addComponentToButtons(sliderComponent);
                 } else if (value.getValue() instanceof Enum) {
                     final Enum val = (Enum) value.getValue();
-                    final StringBuilder options = new StringBuilder();
                     final int size = val.getClass().getEnumConstants().length;
+                    final StringBuilder options = new StringBuilder();
 
                     for (int i = 0; i < size; i++) {
                         final Enum option = val.getClass().getEnumConstants()[i];
                         options.append(option.name().toLowerCase()).append((i == size - 1) ? "" : ", ");
                     }
 
-                    TextComponent valueText = new TextComponent(value.getName(), value.getValue().toString().toLowerCase(), false);
+                    /*TextComponent valueText = new TextComponent(value.getName(), value.getValue().toString().toLowerCase(), false);
                     valueText.setTooltipText(value.getDesc() + " " + ChatFormatting.GRAY + "(" + options.toString() + ")");
                     valueText.returnListener = new ComponentListener() {
                         @Override
@@ -570,7 +570,12 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         }
                     };
                     components.add(valueText);
-                    this.addComponentToButtons(valueText);
+                    this.addComponentToButtons(valueText);*/
+
+                    CarouselComponent carouselComponent = new CarouselComponent(value.getName(), value);
+                    carouselComponent.setTooltipText(value.getDesc() + " " + ChatFormatting.GRAY + "(" + options.toString() + ")");
+                    components.add(carouselComponent);
+                    this.addComponentToButtons(carouselComponent);
                 } else if (value.getValue() instanceof String) {
                     TextComponent valueText = new TextComponent(value.getName(), value.getValue().toString().toLowerCase(), false);
                     valueText.setTooltipText(value.getDesc());
