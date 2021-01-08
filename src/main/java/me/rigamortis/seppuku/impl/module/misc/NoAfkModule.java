@@ -33,17 +33,25 @@ public final class NoAfkModule extends Module {
 
     @Listener
     public void onWalkingUpdate(EventUpdateWalkingPlayer event) {
-        if (event.getStage() == EventStageable.EventStage.PRE) {
-            final Minecraft mc = Minecraft.getMinecraft();
-            float yaw = mc.player.rotationYaw;
-            float pitch = mc.player.rotationPitch;
-            yaw += (this.yawOffset.getValue() * Math.sin(mc.player.ticksExisted / Math.PI));
+        final Minecraft mc = Minecraft.getMinecraft();
+        if (mc.player == null || mc.world == null)
+            return;
 
-            Seppuku.INSTANCE.getRotationManager().startTask(this.rotationTask);
-            if (this.rotationTask.isOnline()) {
-                Seppuku.INSTANCE.getRotationManager().setPlayerRotations(yaw, pitch);
-                //Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
-            }
+        switch (event.getStage()) {
+            case PRE:
+                float yaw = mc.player.rotationYaw;
+                float pitch = mc.player.rotationPitch;
+                yaw += (this.yawOffset.getValue() * Math.sin(mc.player.ticksExisted / Math.PI));
+
+                Seppuku.INSTANCE.getRotationManager().startTask(this.rotationTask);
+                if (this.rotationTask.isOnline()) {
+                    Seppuku.INSTANCE.getRotationManager().setPlayerRotations(yaw, pitch);
+                }
+                break;
+            case POST:
+                if (this.rotationTask.isOnline())
+                    Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
+                break;
         }
     }
 
