@@ -1,15 +1,43 @@
 package me.rigamortis.seppuku.impl.management;
 
+import me.rigamortis.seppuku.api.task.rotation.RotationTask;
+import me.rigamortis.seppuku.api.task.rotation.RotationTaskFactory;
 import net.minecraft.client.Minecraft;
 
 /**
- * Author Seth
- * 4/30/2019 @ 2:39 AM.
+ * @author Seth
+ * @author noil
  */
 public final class RotationManager {
 
+    private final RotationTaskFactory factory;
+
     private float yaw;
     private float pitch;
+
+    public RotationManager() {
+        this.factory = new RotationTaskFactory();
+    }
+
+    public void addTask(RotationTask rotationTask) {
+        this.factory.addTask(rotationTask);
+    }
+
+    public void removeTask(RotationTask rotationTask) {
+        this.factory.removeTask(rotationTask);
+    }
+
+    public void removeTask(String rotationTaskName) {
+        this.factory.removeTask(rotationTaskName);
+    }
+
+    public void startTask(RotationTask rotationTask) {
+        this.factory.startTask(rotationTask);
+    }
+
+    public void finishTask(RotationTask rotationTask) {
+        this.factory.finishTask(rotationTask);
+    }
 
     public void updateRotations() {
         this.yaw = Minecraft.getMinecraft().player.rotationYaw;
@@ -51,5 +79,9 @@ public final class RotationManager {
 
     public void setPitch(float pitch) {
         this.pitch = pitch;
+    }
+
+    public RotationTaskFactory getFactory() {
+        return factory;
     }
 }

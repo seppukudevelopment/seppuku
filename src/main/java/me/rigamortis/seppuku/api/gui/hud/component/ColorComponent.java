@@ -5,7 +5,6 @@ import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import net.minecraft.client.Minecraft;
-import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 

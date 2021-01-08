@@ -1,6 +1,5 @@
 package me.rigamortis.seppuku.impl.module.render;
 
-import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.module.Module;
@@ -22,7 +21,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.glLineWidth;
 
 /**
  * created by noil on 10/4/2019 at 6:05 PM

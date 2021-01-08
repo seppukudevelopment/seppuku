@@ -7,6 +7,7 @@ import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.task.hand.HandSwapContext;
+import me.rigamortis.seppuku.api.task.rotation.RotationTask;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
@@ -17,6 +18,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketAnimation;
@@ -34,7 +36,7 @@ import java.util.List;
 
 /**
  * @author Seth
- * @since 5/15/2019 @ 9:20 AM.
+ * @author noil
  */
 public final class NoCrystalModule extends Module {
 
@@ -49,6 +51,7 @@ public final class NoCrystalModule extends Module {
     public final Value<Float> placeDelay = new Value<Float>("Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay(ms) between obsidian blocks being placed.", 100.0f, 0.0f, 500.0f, 1.0f);
 
     private final Timer placeTimer = new Timer();
+    private final RotationTask rotationTask = new RotationTask("NoCrystalTask", 8);
 
     private FreeCamModule freeCamModule = null;
 
@@ -56,12 +59,15 @@ public final class NoCrystalModule extends Module {
         super("NoCrystal", new String[]{"AntiCrystal", "FeetPlace", "Surround"}, "Automatically places obsidian around you to avoid crystal damage", "NONE", -1, ModuleType.COMBAT);
     }
 
+    @Override
+    public void onDisable() {
+        super.onDisable();
+        Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
+    }
+
     @Listener
     public void onWalkingUpdate(EventUpdateWalkingPlayer event) {
-        if (!event.getStage().equals(EventStageable.EventStage.PRE))
-            return;
-
-        if (!mc.player.isSneaking() && this.sneak.getValue())
+        if (event.getStage() != EventStageable.EventStage.PRE)
             return;
 
         if (freeCamModule != null && freeCamModule.isEnabled())
@@ -111,32 +117,51 @@ public final class NoCrystalModule extends Module {
         if (!blocksToPlace.isEmpty()) { // we have blocks to place
             final HandSwapContext handSwapContext = new HandSwapContext(
                     mc.player.inventory.currentItem, this.findObsidianInHotbar(mc.player));
-            if (handSwapContext.getNewSlot() == -1)
+            if (handSwapContext.getNewSlot() == -1) {
+                Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
                 return;
+            }
 
-            // swap to obby
-            handSwapContext.handleHandSwap(false, mc);
+            if (!mc.player.isSneaking() && this.sneak.getValue()) {
+                if (this.rotationTask.isOnline()) {
+                    Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
+                }
+                return;
+            }
 
-            // 0.005f: Absolute minimum velocity to register as standing still.
-            // Don't ask me why, I'm just a comment.
-            for (BlockPos blockPos : blocksToPlace) {
+            Seppuku.INSTANCE.getRotationManager().startTask(this.rotationTask);
+            if (this.rotationTask.isOnline()) {
+                // swap to obby
+                handSwapContext.handleHandSwap(false, mc);
+
                 if (this.center.getValue()) {
                     final double[] newPos = {Math.floor(mc.player.posX) + 0.5d, mc.player.posY, Math.floor(mc.player.posZ) + 0.5d};
                     final CPacketPlayer.Position middleOfPos = new CPacketPlayer.Position(newPos[0], newPos[1], newPos[2], mc.player.onGround);
-                    mc.player.connection.sendPacket(middleOfPos);
-                    mc.player.setPosition(newPos[0], newPos[1], newPos[2]);
+                    if (!mc.world.isAirBlock(new BlockPos(newPos[0], newPos[1], newPos[2]).down())) {
+                        if (mc.player.posX != middleOfPos.x && mc.player.posZ != middleOfPos.z) {
+                            mc.player.connection.sendPacket(middleOfPos);
+                            mc.player.setPosition(newPos[0], newPos[1], newPos[2]);
+                        }
+                    }
                 }
 
-                if (this.placeDelay.getValue() <= 0.0f) {
-                    this.place(blockPos);
-                } else if (placeTimer.passed(this.placeDelay.getValue())) {
-                    this.place(blockPos);
-                    this.placeTimer.reset();
+                for (BlockPos blockPos : blocksToPlace) {
+                    if (!this.valid(blockPos))
+                        continue;
+
+                    if (this.placeDelay.getValue() <= 0.0f) {
+                        this.place(blockPos);
+                    } else if (placeTimer.passed(this.placeDelay.getValue())) {
+                        this.place(blockPos);
+                        this.placeTimer.reset();
+                    }
                 }
+
+                // swap back to original
+                handSwapContext.handleHandSwap(true, mc);
             }
-
-            // swap back to original
-            handSwapContext.handleHandSwap(true, mc);
+        } else {
+            Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
         }
 
         if (this.disable.getValue()) {
@@ -172,7 +197,8 @@ public final class NoCrystalModule extends Module {
         if (!mc.world.checkNoEntityCollision(new AxisAlignedBB(pos)))
             return false;
         // Check if the block is replaceable
-        return mc.world.getBlockState(pos).getBlock().isReplaceable(mc.world, pos);
+        final Block block = mc.world.getBlockState(pos).getBlock();
+        return block.isReplaceable(mc.world, pos) && !(block == Blocks.OBSIDIAN) && !(block == Blocks.BEDROCK);
     }
 
     private void place(BlockPos pos) {

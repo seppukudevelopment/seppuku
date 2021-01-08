@@ -6,6 +6,7 @@ import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.task.rotation.RotationTask;
 import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
@@ -43,6 +44,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public final class CrystalAuraModule extends Module {
 
     public final Value<Float> range = new Value<Float>("Range", new String[]{"Dist"}, "The minimum range to attack crystals.", 4.0f, 0.0f, 7.0f, 0.1f);
+    public final Value<Boolean> attack = new Value<Boolean>("Attack", new String[]{"AutoAttack"}, "Automatically attack crystals.", true);
     public final Value<Float> attackDelay = new Value<Float>("Attack_Delay", new String[]{"AttackDelay", "AttackDel", "Del"}, "The delay to attack in milliseconds.", 50.0f, 0.0f, 500.0f, 1.0f);
     public final Value<Boolean> place = new Value<Boolean>("Place", new String[]{"AutoPlace"}, "Automatically place crystals.", true);
     public final Value<Float> placeDelay = new Value<Float>("Place_Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay to place crystals.", 50.0f, 0.0f, 500.0f, 1.0f);
@@ -57,106 +59,147 @@ public final class CrystalAuraModule extends Module {
 
     private final List<PlaceLocation> placeLocations = new CopyOnWriteArrayList<>();
 
+    private final RotationTask placeRotationTask = new RotationTask("CrystalAuraPlaceTask", 6);
+    private final RotationTask attackRotationTask = new RotationTask("CrystalAuraAttackTask", 7);
+
+    private BlockPos currentPlacePosition = null;
+    private Entity currentAttackEntity = null;
+
     public CrystalAuraModule() {
         super("CrystalAura", new String[]{"AutoCrystal", "Crystal"}, "Automatically places crystals near enemies and detonates them", "NONE", -1, ModuleType.COMBAT);
     }
 
+    @Override
+    public void onDisable() {
+        super.onDisable();
+        Seppuku.INSTANCE.getRotationManager().finishTask(this.placeRotationTask);
+        Seppuku.INSTANCE.getRotationManager().finishTask(this.attackRotationTask);
+    }
+
     @Listener
     public void onWalkingUpdate(EventUpdateWalkingPlayer event) {
-        if (event.getStage() == EventStageable.EventStage.PRE) {
-            final Minecraft mc = Minecraft.getMinecraft();
-            if (mc.player == null || mc.world == null)
-                return;
+        final Minecraft mc = Minecraft.getMinecraft();
+        if (mc.player == null || mc.world == null)
+            return;
 
-            if (mc.player.getHeldItem(this.offHand.getValue() ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND).getItem() != Items.END_CRYSTAL)
-                return;
+        switch (event.getStage()) {
+            case PRE:
+                this.currentPlacePosition = null;
+                this.currentAttackEntity = null;
 
-            if (this.place.getValue()) {
-                if (this.placeTimer.passed(this.placeDelay.getValue())) {
-                    final float radius = this.range.getValue();
+                if (mc.player.getHeldItem(this.offHand.getValue() ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND).getItem() == Items.END_CRYSTAL) {
+                    if (this.place.getValue()) {
+                        if (this.placeTimer.passed(this.placeDelay.getValue())) {
+                            final float radius = this.range.getValue();
 
-                    float damage = 0;
-                    double maxDist = 6.0f;
-                    BlockPos pos = null;
-                    EntityPlayer target = null;
+                            float damage = 0;
+                            double maxDist = 6.0f;
 
-                    for (float x = radius; x >= -radius; x--) {
-                        for (float y = radius; y >= -radius; y--) {
-                            for (float z = radius; z >= -radius; z--) {
-                                final BlockPos blockPos = new BlockPos(mc.player.posX + x, mc.player.posY + y, mc.player.posZ + z);
+                            EntityLivingBase targetPlayer = null;
 
-                                if (canPlaceCrystal(blockPos)) {
-                                    for (Entity entity : mc.world.loadedEntityList) {
-                                        if (entity instanceof EntityPlayer) {
-                                            final EntityPlayer player = (EntityPlayer) entity;
-                                            if (player != mc.player && !player.getName().equals(mc.player.getName()) && player.getHealth() > 0 && Seppuku.INSTANCE.getFriendManager().isFriend(player) == null) {
-                                                final double distToBlock = entity.getDistance(blockPos.getX() + 0.5f, blockPos.getY() + 1, blockPos.getZ() + 0.5f);
-                                                final double distToLocal = entity.getDistance(mc.player.posX, mc.player.posY, mc.player.posZ);
-                                                if (distToBlock <= 14 && distToLocal <= maxDist) {
-                                                    target = player;
-                                                    maxDist = distToLocal;
+                            for (float x = radius; x >= -radius; x--) {
+                                for (float y = radius; y >= -radius; y--) {
+                                    for (float z = radius; z >= -radius; z--) {
+                                        final BlockPos blockPos = new BlockPos(mc.player.posX + x, mc.player.posY + y, mc.player.posZ + z);
+
+                                        if (canPlaceCrystal(blockPos)) {
+                                            for (Entity entity : mc.world.loadedEntityList) {
+                                                if (entity instanceof EntityPlayer) {
+                                                    final EntityPlayer player = (EntityPlayer) entity;
+                                                    if (player != mc.player && !player.getName().equals(mc.player.getName()) && player.getHealth() > 0 && Seppuku.INSTANCE.getFriendManager().isFriend(player) == null) {
+                                                        final double distToBlock = entity.getDistance(blockPos.getX() + 0.5f, blockPos.getY() + 1, blockPos.getZ() + 0.5f);
+                                                        final double distToLocal = entity.getDistance(mc.player.posX, mc.player.posY, mc.player.posZ);
+                                                        if (distToBlock <= 14 && distToLocal <= maxDist) {
+                                                            targetPlayer = player;
+                                                            maxDist = distToLocal;
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            if (targetPlayer != null) {
+                                                final float currentDamage = calculateExplosionDamage(targetPlayer, 6.0f, blockPos.getX() + 0.5f, blockPos.getY() + 1.0f, blockPos.getZ() + 0.5f) / 2.0f;
+
+                                                float localDamage = calculateExplosionDamage(mc.player, 6.0f, blockPos.getX() + 0.5f, blockPos.getY() + 1.0f, blockPos.getZ() + 0.5f) / 2.0f;
+
+                                                if (this.isLocalImmune()) {
+                                                    localDamage = -1;
+                                                }
+
+                                                if (currentDamage > damage && currentDamage >= this.minDamage.getValue() && localDamage <= currentDamage) {
+                                                    damage = currentDamage;
+                                                    this.currentPlacePosition = blockPos;
                                                 }
                                             }
                                         }
                                     }
-
-                                    if (target != null) {
-                                        final float currentDamage = calculateExplosionDamage(target, 6.0f, blockPos.getX() + 0.5f, blockPos.getY() + 1.0f, blockPos.getZ() + 0.5f) / 2.0f;
-
-                                        float localDamage = calculateExplosionDamage(mc.player, 6.0f, blockPos.getX() + 0.5f, blockPos.getY() + 1.0f, blockPos.getZ() + 0.5f) / 2.0f;
-
-                                        if (this.isLocalImmune()) {
-                                            localDamage = -1;
-                                        }
-
-                                        if (currentDamage > damage && currentDamage >= this.minDamage.getValue() && localDamage <= currentDamage) {
-                                            damage = currentDamage;
-                                            pos = blockPos;
-                                        }
-                                    }
                                 }
                             }
-                        }
-                    }
 
-                    if (pos != null && damage > 0) {
-                        final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f));
-                        Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
-                        mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, EnumFacing.UP, this.offHand.getValue() ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0, 0, 0));
-                        this.placeLocations.add(new PlaceLocation(pos.getX(), pos.getY(), pos.getZ(), damage));
-                    }
+                            if (this.currentPlacePosition != null && damage > 0) {
+                                final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d(this.currentPlacePosition.getX() + 0.5f, this.currentPlacePosition.getY() + 0.5f, this.currentPlacePosition.getZ() + 0.5f));
 
-                    this.placeTimer.reset();
-                }
-            }
-
-            for (Entity entity : mc.world.loadedEntityList) {
-                if (entity instanceof EntityEnderCrystal) {
-                    if (mc.player.getDistance(entity) <= this.range.getValue()) {
-                        for (Entity ent : mc.world.loadedEntityList) {
-                            if (ent != null && ent != mc.player && (ent.getDistance(entity) <= 14.0f) && ent != entity && ent instanceof EntityPlayer) {
-                                final EntityPlayer player = (EntityPlayer) ent;
-                                float currentDamage = calculateExplosionDamage(player, 6.0f, (float) entity.posX, (float) entity.posY, (float) entity.posZ) / 2.0f;
-                                float localDamage = calculateExplosionDamage(mc.player, 6.0f, (float) entity.posX, (float) entity.posY, (float) entity.posZ) / 2.0f;
-
-                                if (this.isLocalImmune()) {
-                                    localDamage = -1;
-                                }
-
-                                if (localDamage <= currentDamage && currentDamage >= this.minDamage.getValue()) {
-                                    final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), entity.getPositionVector());
+                                Seppuku.INSTANCE.getRotationManager().startTask(this.placeRotationTask);
+                                if (this.placeRotationTask.isOnline()) {
                                     Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
-                                    if (this.attackTimer.passed(this.attackDelay.getValue())) {
-                                        mc.player.swingArm(this.offHand.getValue() ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND);
-                                        mc.playerController.attackEntity(mc.player, entity);
-                                        this.attackTimer.reset();
+                                }
+                            }
+
+                            this.placeTimer.reset();
+                        }
+                    }
+
+                    if (this.attack.getValue()) {
+                        for (Entity entity : mc.world.loadedEntityList) {
+                            if (entity instanceof EntityEnderCrystal) {
+                                if (mc.player.getDistance(entity) <= this.range.getValue()) {
+                                    for (Entity ent : mc.world.loadedEntityList) {
+                                        if (ent != null && ent != mc.player && (ent.getDistance(entity) <= 14.0f) && ent != entity && ent instanceof EntityPlayer) {
+                                            final EntityPlayer player = (EntityPlayer) ent;
+                                            float currentDamage = calculateExplosionDamage(player, 6.0f, (float) entity.posX, (float) entity.posY, (float) entity.posZ) / 2.0f;
+                                            float localDamage = calculateExplosionDamage(mc.player, 6.0f, (float) entity.posX, (float) entity.posY, (float) entity.posZ) / 2.0f;
+
+                                            if (this.isLocalImmune()) {
+                                                localDamage = -1;
+                                            }
+
+                                            if (localDamage <= currentDamage && currentDamage >= this.minDamage.getValue()) {
+                                                final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), entity.getPositionVector());
+
+                                                Seppuku.INSTANCE.getRotationManager().startTask(this.attackRotationTask);
+                                                if (this.attackRotationTask.isOnline()) {
+                                                    Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
+                                                    this.currentAttackEntity = entity;
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
-            }
+                break;
+            case POST:
+                if (this.currentPlacePosition != null) {
+                    if (this.placeRotationTask.isOnline()) {
+                        mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(this.currentPlacePosition, EnumFacing.UP, this.offHand.getValue() ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0, 0, 0));
+                        this.placeLocations.add(new PlaceLocation(this.currentPlacePosition.getX(), this.currentPlacePosition.getY(), this.currentPlacePosition.getZ()));
+                    }
+                } else {
+                    Seppuku.INSTANCE.getRotationManager().finishTask(this.placeRotationTask);
+                }
+
+                if (this.currentAttackEntity != null) {
+                    if (this.attackTimer.passed(this.attackDelay.getValue()) && this.attackRotationTask.isOnline()) {
+                        mc.player.swingArm(this.offHand.getValue() ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND);
+                        mc.playerController.attackEntity(mc.player, this.currentAttackEntity);
+                        this.attackTimer.reset();
+                    }
+                } else {
+                    Seppuku.INSTANCE.getRotationManager().finishTask(this.attackRotationTask);
+                }
+                break;
         }
     }
 
@@ -208,10 +251,12 @@ public final class CrystalAuraModule extends Module {
                     GlStateManager.pushMatrix();
                     RenderUtil.glBillboardDistanceScaled((float) placeLocation.getX() + 0.5f, (float) placeLocation.getY() + 0.5f, (float) placeLocation.getZ() + 0.5f, mc.player, 1);
                     final float damage = placeLocation.damage;
-                    final String damageText = (Math.floor(damage) == damage ? (int) damage : String.format("%.1f", damage)) + "";
-                    GlStateManager.disableDepth();
-                    GlStateManager.translate(-(mc.fontRenderer.getStringWidth(damageText) / 2.0d), 0, 0);
-                    mc.fontRenderer.drawStringWithShadow(damageText, 0, 0, 0xFFAAAAAA);
+                    if (damage != -1) {
+                        final String damageText = (Math.floor(damage) == damage ? (int) damage : String.format("%.1f", damage)) + "";
+                        //GlStateManager.disableDepth();
+                        GlStateManager.translate(-(mc.fontRenderer.getStringWidth(damageText) / 2.0d), 0, 0);
+                        mc.fontRenderer.drawStringWithShadow(damageText, 0, 0, 0xFFAAAAAA);
+                    }
                     GlStateManager.popMatrix();
                 }
             }
@@ -284,11 +329,15 @@ public final class CrystalAuraModule extends Module {
 
         private int alpha = 0xAA;
         private boolean placed = false;
-        private final float damage;
+        private float damage = -1;
 
         private PlaceLocation(int xIn, int yIn, int zIn, float damage) {
             super(xIn, yIn, zIn);
             this.damage = damage;
+        }
+
+        private PlaceLocation(int xIn, int yIn, int zIn) {
+            super(xIn, yIn, zIn);
         }
 
         private void update() {

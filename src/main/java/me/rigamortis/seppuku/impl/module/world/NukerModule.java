@@ -1,10 +1,10 @@
 package me.rigamortis.seppuku.impl.module.world;
 
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventRightClickBlock;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.task.rotation.RotationTask;
 import me.rigamortis.seppuku.api.util.BlockUtil;
 import me.rigamortis.seppuku.api.util.EntityUtil;
 import me.rigamortis.seppuku.api.util.MathUtil;
@@ -37,7 +37,10 @@ public final class NukerModule extends Module {
     public final Value<Float> vDistance = new Value<Float>("VerticalDistance", new String[]{"Vertical", "vdist", "VD"}, "Maximum vertical distance in blocks the nuker will reach.", 4.5f, 0.0f, 5.0f, 0.1f);
     public final Value<Float> hDistance = new Value<Float>("HorizontalDistance", new String[]{"Horizontal", "hist", "HD"}, "Maximum horizontal distance in blocks the nuker will reach.", 3f, 0.0f, 5.0f, 0.1f);
 
-    private Block selected;
+    private final RotationTask rotationTask = new RotationTask("NukerTask", 2);
+
+    private Block selected = null;
+    private BlockPos currentPos = null;
 
     public NukerModule() {
         super("Nuker", new String[]{"Nuke"}, "Automatically mines blocks within reach.", "NONE", -1, ModuleType.WORLD);
@@ -50,27 +53,45 @@ public final class NukerModule extends Module {
     }
 
     @Override
+    public void onDisable() {
+        super.onDisable();
+        Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
+    }
+
+    @Override
     public String getMetaData() {
         return this.mode.getValue().name();
     }
 
     @Listener
     public void onWalkingUpdate(EventUpdateWalkingPlayer event) {
-        if (event.getStage() == EventStageable.EventStage.PRE) {
-            final Minecraft mc = Minecraft.getMinecraft();
-            if (mc.player == null || mc.world == null)
-                return;
+        final Minecraft mc = Minecraft.getMinecraft();
+        if (mc.player == null || mc.world == null)
+            return;
 
-            BlockPos pos = null;
+        switch (event.getStage()) {
+            case PRE:
+                this.currentPos = null;
 
-            switch (this.mode.getValue()) {
-                case SELECTION:
-                    pos = this.getClosestBlock(true);
-                    break;
-                case ALL:
-                    pos = this.getClosestBlock(false);
-                    break;
-                case CREATIVE:
+                switch (this.mode.getValue()) {
+                    case SELECTION:
+                        this.currentPos = this.getClosestBlock(true);
+                        break;
+                    case ALL:
+                        this.currentPos = this.getClosestBlock(false);
+                        break;
+                }
+
+                if (this.currentPos != null) {
+                    Seppuku.INSTANCE.getRotationManager().startTask(this.rotationTask);
+                    if (this.rotationTask.isOnline()) {
+                        final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d(this.currentPos.getX() + 0.5f, this.currentPos.getY() + 0.5f, this.currentPos.getZ() + 0.5f));
+                        Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
+                    }
+                }
+                break;
+            case POST:
+                if (this.mode.getValue().equals(Mode.CREATIVE)) {
                     if (mc.player.capabilities.isCreativeMode) {
                         /* the amazing creative 'nuker' straight from the latch hacked client */
                         for (double y = Math.round(mc.player.posY - 1) + this.vDistance.getValue(); y > Math.round(mc.player.posY - 1); y -= 1.0D) {
@@ -110,19 +131,19 @@ public final class NukerModule extends Module {
                             }
                         }
                     }
-                    break;
-            }
-
-            /* do the other nuker modes */
-            if (pos != null) {
-                final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f));
-                Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
-
-                if (canBreak(pos)) {
-                    mc.playerController.onPlayerDamageBlock(pos, mc.player.getHorizontalFacing());
-                    mc.player.swingArm(EnumHand.MAIN_HAND);
+                } else {
+                    if (this.currentPos != null) {
+                        if (this.rotationTask.isOnline()) {
+                            if (this.canBreak(this.currentPos)) {
+                                mc.playerController.onPlayerDamageBlock(this.currentPos, mc.player.getHorizontalFacing());
+                                mc.player.swingArm(EnumHand.MAIN_HAND);
+                            }
+                        }
+                    } else {
+                        Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
+                    }
                 }
-            }
+                break;
         }
     }
 
