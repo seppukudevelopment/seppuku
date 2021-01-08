@@ -29,7 +29,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class AutoMountModule extends Module {
 
     public final Value<Float> range = new Value<>("Range", new String[]{"Dist"}, "The minimum range to begin scanning for mounts.", 4.0f, 0.1f, 5.0f, 0.1f);
-    public final Value<Float> delay = new Value<>("Delay", new String[]{"del"}, "The delay(ms) between mounts.", 250.0f, 0.0f, 1000.0f, 1f);
+    public final Value<Float> delay = new Value<>("Delay", new String[]{"del"}, "The delay(ms) between mounts.", 500.0f, 0.0f, 1000.0f, 1f);
     public final Value<Boolean> autoChest = new Value<Boolean>("AutoChest", new String[]{"Chest"}, "Tries to place a chest onto the donkey or llama before mounting (hold a chest for this to work).", false);
     public final Value<Boolean> forceStand = new Value<Boolean>("ForceStand", new String[]{"Stand", "NoSneak"}, "Forces the player to stand (un-sneak) before sending the packet to ride the entity.", true);
     public final Value<Boolean> boat = new Value<Boolean>("Boat", new String[]{"Boat"}, "Enables auto-mounting onto boats.", true);
@@ -51,7 +51,7 @@ public final class AutoMountModule extends Module {
         if (event.getStage().equals(EventStageable.EventStage.POST)) {
             final Minecraft mc = Minecraft.getMinecraft();
             if (mc.player != null && mc.world != null) {
-                if (!mc.player.isRiding()) { // the player is not riding anything currently
+                if (!mc.player.isRiding() && !mc.gameSettings.keyBindSneak.isKeyDown()) { // the player is not riding anything currently
                     Entity nearestValidMount = this.findMount(mc, this.range.getValue()); // find a mount nearby
                     if (nearestValidMount != null) { // mountable entity found
                         // start delay
@@ -62,13 +62,14 @@ public final class AutoMountModule extends Module {
                                     if (mc.player.getHeldItemMainhand().getItem().equals(Item.getItemFromBlock(Blocks.CHEST))) { // checks if the player is holding a chest
                                         if (!nearestAbstractChestHorse.hasChest() && nearestAbstractChestHorse.isTame()) { // filter for entities that don't already have chests on them, and must be tamed
                                             mc.player.connection.sendPacket(new CPacketUseEntity(nearestValidMount, EnumHand.MAIN_HAND));
+                                            return;
                                         }
                                     }
                                 }
                             }
 
                             if (!nearestValidMount.isBeingRidden()) { // mountable entity has no rider, so let's try to mount it!
-                                mc.player.startRiding(nearestValidMount); // note: this function is client sided.
+                                //mc.player.startRiding(nearestValidMount); // note: this function is client sided.
 
                                 // force standing before mounting
                                 if (this.forceStand.getValue()) {
@@ -83,6 +84,9 @@ public final class AutoMountModule extends Module {
                             this.delayTimer.reset();
                         }
                     }
+                } else {
+                    // reset delay
+                    this.delayTimer.reset();
                 }
             }
         }
