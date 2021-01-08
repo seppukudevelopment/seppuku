@@ -1,8 +1,9 @@
 package me.rigamortis.seppuku.impl.module.movement;
 
-import me.rigamortis.seppuku.api.event.EventStageable;
+import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.task.rotation.RotationTask;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
@@ -23,9 +24,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 /**
  * Author Seth
  * 6/4/2019 @ 10:18 PM.
@@ -33,11 +31,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public final class ScaffoldModule extends Module {
 
     public final Value<Boolean> refill = new Value<Boolean>("Refill", new String[]{"ref"}, "If the held item is empty or not a block, fill the slot with a block from the inventory when the scaffold is triggered to place.", true);
-    public final Value<Boolean> destroy = new Value<Boolean>("Destroy", new String[]{"Dest"}, "When enabled, after placing the block, forces the player to swing/destroy at the same position.", false);
+    public final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"rot"}, "Should we rotate the player's head according to the place position?", true);
+    //public final Value<Boolean> destroy = new Value<Boolean>("Destroy", new String[]{"Dest"}, "When enabled, after placing the block, forces the player to swing/destroy at the same position.", false);
 
-    private int[] blackList = new int[]{145, 130, 12, 252, 54, 146, 122, 13, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 50};
+    private final int[] blackList = new int[]{145, 130, 12, 252, 54, 146, 122, 13, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 50};
 
-    private List<BlockPos> blocks = new CopyOnWriteArrayList<BlockPos>();
+    //private final List<BlockPos> blocks = new CopyOnWriteArrayList<BlockPos>();
+    private BlockPos currentPlaceBlock = null;
+
+    private final RotationTask rotationTask = new RotationTask("ScaffoldTask", 3);
 
     public ScaffoldModule() {
         super("Scaffold", new String[]{"Scaff"}, "Automatically places blocks where you are walking.", "NONE", -1, ModuleType.MOVEMENT);
@@ -51,72 +53,83 @@ public final class ScaffoldModule extends Module {
     @Override
     public void onToggle() {
         super.onToggle();
-        this.blocks.clear();
+        //this.blocks.clear();
+    }
+
+    @Override
+    public void onDisable() {
+        super.onDisable();
+        Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
+        this.currentPlaceBlock = null;
     }
 
     @Listener
     public void onWalkingUpdate(EventUpdateWalkingPlayer event) {
-        if (event.getStage() == EventStageable.EventStage.PRE) {
-            final Minecraft mc = Minecraft.getMinecraft();
+        final Minecraft mc = Minecraft.getMinecraft();
+        if (mc.player == null || mc.world == null)
+            return;
 
-            if (mc.player.noClip) {
-                return;
-            }
+        switch (event.getStage()) {
+            case PRE:
+                if (!mc.player.noClip) {
+                    if ((mc.player.movementInput.moveForward != 0 || mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.jump) && !mc.player.movementInput.sneak) {
+                        final double[] dir = MathUtil.directionSpeed(1);
 
-            if (this.destroy.getValue()) {
-                double maxDist = 4.5f;
-                BlockPos closest = null;
+                        if (mc.player.getHeldItemMainhand().getItem() != Items.AIR && mc.player.getHeldItemMainhand().getItem() instanceof ItemBlock && canPlace(mc.player.getHeldItemMainhand())) {
+                            final Vec3d block = this.getFirstBlock(dir);
 
-                for (BlockPos pos : this.blocks) {
-                    if (mc.world.getBlockState(pos).getBlock() != Blocks.AIR && this.canBreak(pos) && mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ()) <= 4.5f && mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ()) >= 2 && pos != mc.player.getPosition()) {
-                        final double dist = mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ());
-                        if (dist <= maxDist) {
-                            maxDist = dist;
-                            closest = pos;
-                        }
-                    }
-                }
+                            if (block != null) {
+                                final BlockPos pos = new BlockPos(block.x, block.y, block.z);
 
-                if (closest != null) {
-                    mc.playerController.onPlayerDamageBlock(closest, EnumFacing.DOWN);
-                    mc.player.swingArm(EnumHand.MAIN_HAND);
-                }
-            }
-
-            if ((mc.player.movementInput.moveForward != 0 || mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.jump) && !mc.player.movementInput.sneak) {
-                final double[] dir = MathUtil.directionSpeed(1);
-
-                if (mc.player.getHeldItemMainhand().getItem() != Items.AIR && mc.player.getHeldItemMainhand().getItem() instanceof ItemBlock && canPlace(mc.player.getHeldItemMainhand())) {
-                    final Vec3d block = getFirstBlock(dir);
-
-                    if (block != null) {
-                        final BlockPos pos = new BlockPos(block.x, block.y, block.z);
-                        this.placeBlock(pos);
-
-                        if (this.destroy.getValue() && this.canBreak(pos)) {
-                            this.blocks.add(pos);
-                        }
-                    }
-                } else {
-                    final Vec3d block = getFirstBlock(dir);
-
-                    if (this.refill.getValue() && block != null) {
-                        final int slot = this.findStackHotbar();
-                        if (slot != -1) {
-                            mc.player.inventory.currentItem = slot;
-                            mc.playerController.updateController();
+                                if (this.rotate.getValue()) {
+                                    Seppuku.INSTANCE.getRotationManager().startTask(this.rotationTask);
+                                    if (this.rotationTask.isOnline()) {
+                                        final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f));
+                                        Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
+                                        this.currentPlaceBlock = pos;
+                                    }
+                                } else {
+                                    this.currentPlaceBlock = pos;
+                                }
+                            }
                         } else {
-                            final int invSlot = findStackInventory();
-                            if (invSlot != -1) {
-                                final int empty = findEmptyhotbar();
-                                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, invSlot, empty == -1 ? mc.player.inventory.currentItem : empty, ClickType.SWAP, mc.player);
-                                mc.playerController.updateController();
-                                mc.player.setVelocity(0, 0, 0);
+                            final Vec3d block = this.getFirstBlock(dir);
+
+                            if (this.refill.getValue() && block != null) {
+                                final int slot = this.findStackHotbar();
+                                if (slot != -1) {
+                                    mc.player.inventory.currentItem = slot;
+                                    mc.playerController.updateController();
+                                } else {
+                                    final int invSlot = findStackInventory();
+                                    if (invSlot != -1) {
+                                        final int empty = findEmptyhotbar();
+                                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, invSlot, empty == -1 ? mc.player.inventory.currentItem : empty, ClickType.SWAP, mc.player);
+                                        mc.playerController.updateController();
+                                        mc.player.setVelocity(0, 0, 0);
+                                    }
+                                }
                             }
                         }
                     }
                 }
-            }
+                break;
+            case POST:
+                if (this.currentPlaceBlock != null) {
+                    if (this.rotate.getValue()) {
+                        if (this.rotationTask.isOnline()) {
+                            this.placeBlock(this.currentPlaceBlock);
+                        }
+                    } else {
+                        this.placeBlock(this.currentPlaceBlock);
+                    }
+                    this.currentPlaceBlock = null;
+                } else {
+                    if (this.rotationTask.isOnline()) {
+                        Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
+                    }
+                }
+                break;
         }
     }
 
@@ -175,7 +188,7 @@ public final class ScaffoldModule extends Module {
         for (int i = 0; i < 6; i++) {
             final Block block = mc.world.getBlockState(posit[i / 2][i % 2]).getBlock();
             final boolean activated = block.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, EnumHand.MAIN_HAND, EnumFacing.UP, 0, 0, 0);
-            if (block != null && block != Blocks.AIR && !(block instanceof BlockLiquid)) {
+            if (block != Blocks.AIR && !(block instanceof BlockLiquid)) {
                 if (activated)
                     mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
                 if (mc.playerController.processRightClickBlock(mc.player, mc.world, posit[i / 2][i % 2], facing[i / 2][i % 2], new Vec3d(0d, 0d, 0d), EnumHand.MAIN_HAND) != EnumActionResult.FAIL)
@@ -187,8 +200,8 @@ public final class ScaffoldModule extends Module {
     }
 
     private boolean canPlace(ItemStack stack) {
-        for (int id = 0; id < this.blackList.length; id++) {
-            if (Item.getIdFromItem(stack.getItem()) == this.blackList[id]) {
+        for (int i : this.blackList) {
+            if (Item.getIdFromItem(stack.getItem()) == i) {
                 return false;
             }
         }

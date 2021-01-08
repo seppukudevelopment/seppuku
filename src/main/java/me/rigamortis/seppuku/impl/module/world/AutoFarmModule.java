@@ -13,10 +13,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemDye;
-import net.minecraft.item.ItemSeedFood;
-import net.minecraft.item.ItemSeeds;
+import net.minecraft.item.*;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -30,6 +27,7 @@ public final class AutoFarmModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "m"}, "The current farming mode.", Mode.HARVEST);
     public final Value<Float> range = new Value<Float>("Range", new String[]{"Range", "Reach", "r"}, "The range in blocks your player should reach to farm.", 4.0f, 1.0f, 9.0f, 0.1f);
+    public final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"rot"}, "Should we rotate the player's head when Auto-Farming?", true);
 
     private BlockPos currentBlockPos;
 
@@ -42,6 +40,8 @@ public final class AutoFarmModule extends Module {
     @Listener
     public void onMotionUpdate(EventUpdateWalkingPlayer event) {
         final Minecraft mc = Minecraft.getMinecraft();
+        if (mc.player == null || mc.world == null)
+            return;
 
         switch (event.getStage()) {
             case PRE:
@@ -52,12 +52,15 @@ public final class AutoFarmModule extends Module {
                             BlockPos blockPos = new BlockPos(x, y, z);
                             if (this.isBlockValid(blockPos, mc)) {
                                 if (this.currentBlockPos == null) {
-                                    this.currentBlockPos = blockPos;
-
-                                    Seppuku.INSTANCE.getRotationManager().startTask(this.rotationTask);
-                                    if (this.rotationTask.isOnline()) {
-                                        final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d(blockPos.getX() + 0.5f, blockPos.getY() + 0.5f, blockPos.getZ() + 0.5f));
-                                        Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
+                                    if (this.rotate.getValue()) {
+                                        Seppuku.INSTANCE.getRotationManager().startTask(this.rotationTask);
+                                        if (this.rotationTask.isOnline()) {
+                                            final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d(blockPos.getX() + 0.5f, blockPos.getY() + 0.5f, blockPos.getZ() + 0.5f));
+                                            Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
+                                            this.currentBlockPos = blockPos;
+                                        }
+                                    } else {
+                                        this.currentBlockPos = blockPos;
                                     }
                                 }
                             }
@@ -67,19 +70,12 @@ public final class AutoFarmModule extends Module {
                 break;
             case POST:
                 if (this.currentBlockPos != null) {
-                    if (this.rotationTask.isOnline()) {
-                        switch (mode.getValue()) {
-                            case HARVEST:
-                                if (mc.playerController.onPlayerDamageBlock(currentBlockPos, EntityUtil.getFacingDirectionToPosition(currentBlockPos))) {
-                                    mc.player.swingArm(EnumHand.MAIN_HAND);
-                                }
-                                break;
-                            case PLANT:
-                            case HOE:
-                            case BONEMEAL:
-                                mc.playerController.processRightClickBlock(mc.player, mc.world, currentBlockPos, EntityUtil.getFacingDirectionToPosition(currentBlockPos), new Vec3d(currentBlockPos.getX() / 2F, currentBlockPos.getY() / 2F, currentBlockPos.getZ() / 2F), EnumHand.MAIN_HAND);
-                                break;
+                    if (this.rotate.getValue()) {
+                        if (this.rotationTask.isOnline()) {
+                            this.doFarming(mc);
                         }
+                    } else {
+                        this.doFarming(mc);
                     }
                     this.currentBlockPos = null;
                 } else {
@@ -91,6 +87,21 @@ public final class AutoFarmModule extends Module {
         }
 
         //if ((this.currentBlock == null) && ((mc.world.getBlockState(new BlockPos(pos)).getBlock() == Blocks.TALLGRASS) || (mc.world.getBlockState(new BlockPos(pos)).getBlock() == Blocks.DOUBLE_PLANT) || (mc.world.getBlockState(new BlockPos(pos)).getBlock() == Blocks.RED_FLOWER) || (mc.world.getBlockState(new BlockPos(pos)).getBlock() == Blocks.YELLOW_FLOWER) || (mc.world.getBlockState(new BlockPos(pos)).getBlock() instanceof BlockCrops)) && (mc.player.getDistance(pos.x, pos.y, pos.z) <= this.range)) {
+    }
+
+    private void doFarming(final Minecraft mc) {
+        switch (mode.getValue()) {
+            case HARVEST:
+                if (mc.playerController.onPlayerDamageBlock(currentBlockPos, EntityUtil.getFacingDirectionToPosition(currentBlockPos))) {
+                    mc.player.swingArm(EnumHand.MAIN_HAND);
+                }
+                break;
+            case PLANT:
+            case HOE:
+            case BONEMEAL:
+                mc.playerController.processRightClickBlock(mc.player, mc.world, currentBlockPos, EntityUtil.getFacingDirectionToPosition(currentBlockPos), new Vec3d(currentBlockPos.getX() / 2F, currentBlockPos.getY() / 2F, currentBlockPos.getZ() / 2F), EnumHand.MAIN_HAND);
+                break;
+        }
     }
 
     private boolean isBlockValid(BlockPos position, final Minecraft mc) {
@@ -158,9 +169,13 @@ public final class AutoFarmModule extends Module {
                 }
                 break;
             case HOE:
-                if (block == Blocks.DIRT || block == Blocks.GRASS) {
-                    if (mc.world.getBlockState(position.up()).getBlock() == Blocks.AIR) {
-                        temp = true;
+                if (!mc.player.getHeldItemMainhand().isEmpty()) {
+                    if (mc.player.getHeldItemMainhand().getItem() instanceof ItemHoe) {
+                        if (block == Blocks.DIRT || block == Blocks.GRASS) {
+                            if (mc.world.getBlockState(position.up()).getBlock() == Blocks.AIR) {
+                                temp = true;
+                            }
+                        }
                     }
                 }
                 break;
