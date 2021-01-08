@@ -25,7 +25,7 @@ import java.util.List;
  */
 public final class NewChunksModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"M", "type", "t"}, "Select a mode to use to draw the chunk visual.", Mode.BOX);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"M", "type", "t"}, "Select a mode to use to draw the chunk visual.", Mode.PLANE);
     public final Value<Color> color = new Value<Color>("Color", new String[]{"color", "c"}, "Change the color of the chunk visual.", new Color(255, 255, 255));
     public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"Alp", "Opacity", "a", "o"}, "Edit the alpha of the chunk visual.", 127, 1, 255, 1);
     public final Value<Float> width = new Value<Float>("Width", new String[]{"W", "size", "s"}, "Edit the width chunk visual.", 1.5f, 0.1f, 5.0f, 0.1f);
