@@ -1,8 +1,11 @@
 package me.rigamortis.seppuku.impl.module.world;
 
+import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.task.rotation.RotationTask;
 import me.rigamortis.seppuku.api.util.EntityUtil;
+import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -30,6 +33,8 @@ public final class AutoFarmModule extends Module {
 
     private BlockPos currentBlockPos;
 
+    private final RotationTask rotationTask = new RotationTask("AutoFarmTask", 3);
+
     public AutoFarmModule() {
         super("AutoFarm", new String[]{"AutoFarm", "Farm", "AutoHoe", "AutoBoneMeal", "AutoPlant"}, "Good ol' farming, just change the \"Mode\" value.", "NONE", -1, ModuleType.WORLD);
     }
@@ -48,32 +53,39 @@ public final class AutoFarmModule extends Module {
                             if (this.isBlockValid(blockPos, mc)) {
                                 if (this.currentBlockPos == null) {
                                     this.currentBlockPos = blockPos;
+
+                                    Seppuku.INSTANCE.getRotationManager().startTask(this.rotationTask);
+                                    if (this.rotationTask.isOnline()) {
+                                        final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d(blockPos.getX() + 0.5f, blockPos.getY() + 0.5f, blockPos.getZ() + 0.5f));
+                                        Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
+                                    }
                                 }
                             }
                         }
                     }
                 }
-
-                if (this.currentBlockPos == null) {
-                    return;
-                }
-
                 break;
             case POST:
                 if (this.currentBlockPos != null) {
-                    switch (mode.getValue()) {
-                        case HARVEST:
-                            if (mc.playerController.onPlayerDamageBlock(currentBlockPos, EntityUtil.getFacingDirectionToPosition(currentBlockPos))) {
-                                mc.player.swingArm(EnumHand.MAIN_HAND);
-                            }
-                            break;
-                        case PLANT:
-                        case HOE:
-                        case BONEMEAL:
-                            mc.playerController.processRightClickBlock(mc.player, mc.world, currentBlockPos, EntityUtil.getFacingDirectionToPosition(currentBlockPos), new Vec3d(currentBlockPos.getX() / 2F, currentBlockPos.getY() / 2F, currentBlockPos.getZ() / 2F), EnumHand.MAIN_HAND);
-                            break;
+                    if (this.rotationTask.isOnline()) {
+                        switch (mode.getValue()) {
+                            case HARVEST:
+                                if (mc.playerController.onPlayerDamageBlock(currentBlockPos, EntityUtil.getFacingDirectionToPosition(currentBlockPos))) {
+                                    mc.player.swingArm(EnumHand.MAIN_HAND);
+                                }
+                                break;
+                            case PLANT:
+                            case HOE:
+                            case BONEMEAL:
+                                mc.playerController.processRightClickBlock(mc.player, mc.world, currentBlockPos, EntityUtil.getFacingDirectionToPosition(currentBlockPos), new Vec3d(currentBlockPos.getX() / 2F, currentBlockPos.getY() / 2F, currentBlockPos.getZ() / 2F), EnumHand.MAIN_HAND);
+                                break;
+                        }
                     }
                     this.currentBlockPos = null;
+                } else {
+                    if (this.rotationTask.isOnline()) {
+                        Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
+                    }
                 }
                 break;
         }
