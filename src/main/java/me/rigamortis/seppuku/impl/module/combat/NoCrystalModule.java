@@ -114,7 +114,7 @@ public final class NoCrystalModule extends Module {
             blocksToPlace.add(blockPos);
         }
 
-        if (!blocksToPlace.isEmpty()) { // we have blocks to place
+        if (blocksToPlace.size() != 0) { // we have blocks to place
             final HandSwapContext handSwapContext = new HandSwapContext(
                     mc.player.inventory.currentItem, this.findObsidianInHotbar(mc.player));
             if (handSwapContext.getNewSlot() == -1) {
@@ -193,9 +193,14 @@ public final class NoCrystalModule extends Module {
     }
 
     private boolean valid(BlockPos pos) {
-        // There are no entities to block placement,
+        // There are no entities colliding with block placement
         if (!mc.world.checkNoEntityCollision(new AxisAlignedBB(pos)))
             return false;
+
+        // Player is too far from distance
+        if (mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ()) > 6.0f)
+            return false;
+
         // Check if the block is replaceable
         final Block block = mc.world.getBlockState(pos).getBlock();
         return block.isReplaceable(mc.world, pos) && !(block == Blocks.OBSIDIAN) && !(block == Blocks.BEDROCK);
