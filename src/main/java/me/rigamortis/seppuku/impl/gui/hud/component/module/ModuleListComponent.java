@@ -616,24 +616,25 @@ public final class ModuleListComponent extends ResizableHudComponent {
             for (HudComponent component : this.components) {
                 int offsetX = 0;
 
-                if (component instanceof SliderComponent || component instanceof TextComponent) {
-                    boolean skipRendering = false;
-                    for (HudComponent otherComponent : this.components) {
-                        if (otherComponent instanceof ButtonComponent) {
-                            boolean isChildComponent = component.getName().toLowerCase().startsWith(otherComponent.getName().toLowerCase());
-                            if (isChildComponent) {
-                                if (!((ButtonComponent) otherComponent).rightClickEnabled) {
-                                    skipRendering = true;
-                                }
+                boolean skipRendering = false;
+                for (HudComponent otherComponent : this.components) {
+                    if (otherComponent == component || otherComponent.getName().equals(component.getName()))
+                        continue;
 
-                                offsetX += 4;
+                    if (otherComponent instanceof ButtonComponent) {
+                        boolean isChildComponent = component.getName().toLowerCase().startsWith(otherComponent.getName().toLowerCase());
+                        if (isChildComponent) {
+                            if (!((ButtonComponent) otherComponent).rightClickEnabled) {
+                                skipRendering = true;
                             }
+
+                            offsetX += 4;
                         }
                     }
-
-                    if (skipRendering)
-                        continue;
                 }
+
+                if (skipRendering)
+                    continue;
 
                 component.setX(this.getX() + 1 + offsetX);
                 component.setY(this.getY() + offsetY);
