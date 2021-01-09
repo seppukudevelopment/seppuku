@@ -9,6 +9,7 @@ import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.task.hand.HandSwapContext;
 import me.rigamortis.seppuku.api.task.rotation.RotationTask;
+import me.rigamortis.seppuku.api.util.InventoryUtil;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
@@ -61,6 +62,11 @@ public final class AutoWitherModule extends Module {
     public void onDisable() {
         super.onDisable();
         Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
+    }
+
+    @Override
+    public String getMetaData() {
+        return "" + this.buildableWithers();
     }
 
     @Listener
@@ -224,6 +230,44 @@ public final class AutoWitherModule extends Module {
                 return index;
 
         return -1;
+    }
+
+    private int getWitherSkullCount() {
+        int skulls = 0;
+        for (int i = 0; i < 45; i++) {
+            final ItemStack itemStack = mc.player.inventory.getStackInSlot(i);
+            if (itemStack.getItem() instanceof ItemSkull) {
+                if (itemStack.getMetadata() == 1) {
+                    skulls += itemStack.getCount();
+                }
+            }
+        }
+
+        return skulls;
+    }
+
+    private int buildableWithers() {
+        int buildable = 0;
+
+        if (mc.player == null || mc.world == null)
+            return buildable;
+
+        final int soulSand = InventoryUtil.getBlockCount(Blocks.SOUL_SAND);
+        final int skulls = this.getWitherSkullCount();
+
+        if (soulSand >= 4 && skulls >= 3) {
+            final int soulSandDivided = soulSand / 4;
+            final int skullsDivided = skulls / 3;
+
+            if (skullsDivided < soulSandDivided)
+                return skullsDivided;
+            else if (soulSandDivided < skullsDivided)
+                return soulSandDivided;
+            else
+                return 1;
+        }
+
+        return buildable;
     }
 
     private boolean valid(BlockPos pos, boolean isSkull) {
