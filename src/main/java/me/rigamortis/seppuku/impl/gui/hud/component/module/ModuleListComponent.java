@@ -52,7 +52,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
     private ModuleSettingsComponent currentSettings;
 
     public ModuleListComponent(Module.ModuleType type) {
-        super(StringUtils.capitalize(type.name().toLowerCase()), 100, 100, 150, 1000);
+        super(StringUtils.capitalize(type.name().toLowerCase()), 100, 100, 150, 400);
         this.type = type;
         this.originalName = StringUtils.capitalize(type.name().toLowerCase());
         this.hudEditorModule = (HudEditorModule) Seppuku.INSTANCE.getModuleManager().find(HudEditorModule.class);

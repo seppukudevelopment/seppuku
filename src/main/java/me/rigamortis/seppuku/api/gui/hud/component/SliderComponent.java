@@ -24,6 +24,7 @@ public final class SliderComponent extends HudComponent {
     protected final DecimalFormat decimalFormat = new DecimalFormat("#.#");
     protected boolean sliding;
     protected float lastPositionX = -1;
+    protected float lastWidth = -1;
 
     public SliderComponent(String name, Value value) {
         super(name);
@@ -53,6 +54,9 @@ public final class SliderComponent extends HudComponent {
                     if (this.getX() != this.lastPositionX) {
                         this.sliderBar.updatePositionToValue();
                         this.lastPositionX = this.getX();
+                    } else if (this.getW() != this.lastWidth) {
+                        this.sliderBar.updatePositionToValue();
+                        this.lastWidth = this.getW();
                     }
                 } else {
                     if (mouseX < this.getX() || mouseX > this.getX() + this.getW()) { // mouse must be inside X at all times to slide
