@@ -28,7 +28,6 @@ public final class ColorsComponent extends ResizableHudComponent {
 
     private int totalHeight;
 
-    private final int MAX_WIDTH = 215;
     private final int SCROLL_WIDTH = 5;
     private final int BORDER = 2;
     private final int TEXT_GAP = 1;
@@ -37,7 +36,7 @@ public final class ColorsComponent extends ResizableHudComponent {
     private ColorComponent currentColorComponent = null;
 
     public ColorsComponent() {
-        super("Colors", 100, 120);
+        super("Colors", 100, 120, 215, 1000);
 
         this.setSnappable(false);
         this.setW(120);
@@ -74,11 +73,6 @@ public final class ColorsComponent extends ResizableHudComponent {
         if (this.isResizeDragging()) {
             if (this.getH() > this.getTotalHeight()) {
                 this.setH(this.getTotalHeight());
-                this.setResizeDragging(false);
-            }
-
-            if (this.getW() > MAX_WIDTH) {
-                this.setW(MAX_WIDTH);
                 this.setResizeDragging(false);
             }
         }

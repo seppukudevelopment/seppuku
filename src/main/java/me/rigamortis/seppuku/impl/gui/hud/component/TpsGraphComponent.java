@@ -25,7 +25,7 @@ public final class TpsGraphComponent extends ResizableHudComponent {
     private final Timer timer = new Timer();
 
     public TpsGraphComponent() {
-        super("TpsGraph", 60, 27);
+        super("TpsGraph", 60, 27, 600, 400);
         this.setW(60);
         this.setH(27);
     }

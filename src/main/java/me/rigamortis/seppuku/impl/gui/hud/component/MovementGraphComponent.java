@@ -27,7 +27,7 @@ public final class MovementGraphComponent extends ResizableHudComponent {
     private final Timer timer = new Timer();
 
     public MovementGraphComponent() {
-        super("MovementGraph", 60, 27);
+        super("MovementGraph", 60, 27, 600, 400);
         this.setW(60);
         this.setH(27);
     }

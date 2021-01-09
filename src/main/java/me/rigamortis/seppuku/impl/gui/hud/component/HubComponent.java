@@ -21,7 +21,6 @@ public final class HubComponent extends ResizableHudComponent {
 
     private int totalHeight;
 
-    private final int MAX_WIDTH = 125;
     private final int SCROLL_WIDTH = 5;
     private final int BORDER = 2;
     private final int TEXT_GAP = 1;
@@ -31,7 +30,7 @@ public final class HubComponent extends ResizableHudComponent {
     private final Texture texture;
 
     public HubComponent() {
-        super("Hub", 100, 120);
+        super("Hub", 100, 120, 125, 1000);
         this.texture = new Texture("module-hub.png");
 
         this.setVisible(true);
@@ -70,11 +69,6 @@ public final class HubComponent extends ResizableHudComponent {
         if (this.isResizeDragging()) {
             if (this.getH() > this.getTotalHeight()) {
                 this.setH(this.getTotalHeight());
-                this.setResizeDragging(false);
-            }
-
-            if (this.getW() > MAX_WIDTH) {
-                this.setW(MAX_WIDTH);
                 this.setResizeDragging(false);
             }
         }

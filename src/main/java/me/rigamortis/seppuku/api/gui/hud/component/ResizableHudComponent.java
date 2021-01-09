@@ -17,13 +17,17 @@ public class ResizableHudComponent extends DraggableHudComponent {
 
     private float initialWidth;
     private float initialHeight;
+    private float maxWidth;
+    private float maxHeight;
 
     protected final float CLICK_ZONE = 2;
 
-    public ResizableHudComponent(String name, float initialWidth, float initialHeight) {
+    public ResizableHudComponent(String name, float initialWidth, float initialHeight, float maxWidth, float maxHeight) {
         super(name);
         this.initialWidth = initialWidth;
         this.initialHeight = initialHeight;
+        this.maxWidth = maxWidth;
+        this.maxHeight = maxHeight;
     }
 
     @Override
@@ -53,14 +57,13 @@ public class ResizableHudComponent extends DraggableHudComponent {
             this.clampMaxs();
         }
 
-        final boolean inside = mouseX >= this.getX() + this.getW() - CLICK_ZONE && mouseX <= this.getX() + this.getW() + CLICK_ZONE && mouseY >= this.getY() + this.getH() - CLICK_ZONE && mouseY <= this.getY() + this.getH() + CLICK_ZONE;
-
-        if (inside) {
-            RenderUtil.drawRect(this.getX() + this.getW() - CLICK_ZONE, this.getY() + this.getH() - CLICK_ZONE, this.getX() + this.getW() + CLICK_ZONE, this.getY() + this.getH() + CLICK_ZONE, 0x45FFFFFF);
+        if (Minecraft.getMinecraft().currentScreen instanceof GuiHudEditor) {
+            RenderUtil.drawRect(this.getX() + this.getW() - CLICK_ZONE, this.getY() + this.getH() - CLICK_ZONE, this.getX() + this.getW() + CLICK_ZONE, this.getY() + this.getH() + CLICK_ZONE, 0x90202020);
         }
 
-        if (Minecraft.getMinecraft().currentScreen instanceof GuiHudEditor) {
-            RenderUtil.drawRect(this.getX() + this.getW() - CLICK_ZONE, this.getY() + this.getH() - CLICK_ZONE, this.getX() + this.getW() + CLICK_ZONE, this.getY() + this.getH() + CLICK_ZONE, 0x75101010);
+        final boolean insideClickZone = mouseX >= this.getX() + this.getW() - CLICK_ZONE && mouseX <= this.getX() + this.getW() + CLICK_ZONE && mouseY >= this.getY() + this.getH() - CLICK_ZONE && mouseY <= this.getY() + this.getH() + CLICK_ZONE;
+        if (insideClickZone) {
+            RenderUtil.drawRect(this.getX() + this.getW() - CLICK_ZONE, this.getY() + this.getH() - CLICK_ZONE, this.getX() + this.getW() + CLICK_ZONE, this.getY() + this.getH() + CLICK_ZONE, 0x45FFFFFF);
         }
 
         this.clampMaxs();
@@ -84,6 +87,14 @@ public class ResizableHudComponent extends DraggableHudComponent {
 
         if (this.getH() <= this.getInitialHeight()) {
             this.setH(this.getInitialHeight());
+        }
+
+        if (this.getW() >= this.getMaxWidth()) {
+            this.setW(this.getMaxWidth());
+        }
+
+        if (this.getH() >= this.getMaxHeight()) {
+            this.setH(this.getMaxHeight());
         }
     }
 
@@ -125,5 +136,21 @@ public class ResizableHudComponent extends DraggableHudComponent {
 
     public void setInitialHeight(float initialHeight) {
         this.initialHeight = initialHeight;
+    }
+
+    public float getMaxWidth() {
+        return maxWidth;
+    }
+
+    public void setMaxWidth(float maxWidth) {
+        this.maxWidth = maxWidth;
+    }
+
+    public float getMaxHeight() {
+        return maxHeight;
+    }
+
+    public void setMaxHeight(float maxHeight) {
+        this.maxHeight = maxHeight;
     }
 }

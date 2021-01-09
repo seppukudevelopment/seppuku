@@ -35,7 +35,6 @@ public final class ModuleListComponent extends ResizableHudComponent {
     private int oldScroll = 0;
     private int totalHeight;
 
-    private final int MAX_WIDTH = 150;
     private final int SCROLL_WIDTH = 5;
     private final int BORDER = 2;
     private final int TEXT_GAP = 1;
@@ -53,7 +52,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
     private ModuleSettingsComponent currentSettings;
 
     public ModuleListComponent(Module.ModuleType type) {
-        super(StringUtils.capitalize(type.name().toLowerCase()), 100, 100);
+        super(StringUtils.capitalize(type.name().toLowerCase()), 100, 100, 150, 1000);
         this.type = type;
         this.originalName = StringUtils.capitalize(type.name().toLowerCase());
         this.hudEditorModule = (HudEditorModule) Seppuku.INSTANCE.getModuleManager().find(HudEditorModule.class);
@@ -93,11 +92,6 @@ public final class ModuleListComponent extends ResizableHudComponent {
         if (this.isResizeDragging()) {
             if (this.getH() > this.getTotalHeight()) {
                 this.setH(this.getTotalHeight());
-                this.setResizeDragging(false);
-            }
-
-            if (this.getW() > MAX_WIDTH) {
-                this.setW(MAX_WIDTH);
                 this.setResizeDragging(false);
             }
         } else if (!this.isLocked() && this.currentSettings == null && this.getH() > this.getTotalHeight()) {

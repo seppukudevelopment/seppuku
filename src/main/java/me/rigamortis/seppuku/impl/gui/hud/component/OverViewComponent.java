@@ -21,7 +21,7 @@ public final class OverViewComponent extends ResizableHudComponent {
     private float distance = 35.0f;
 
     public OverViewComponent() {
-        super("OverView", 120, 120);
+        super("OverView", 120, 120, 400, 400);
         Seppuku.INSTANCE.getCameraManager().addCamera(overviewCamera);
         this.setW(120);
         this.setH(120);

@@ -14,7 +14,7 @@ public final class RearViewComponent extends ResizableHudComponent {
     private final Camera rearviewCamera = new Camera();
 
     public RearViewComponent() {
-        super("RearView", 120, 120);
+        super("RearView", 120, 120, 400, 400);
         Seppuku.INSTANCE.getCameraManager().addCamera(rearviewCamera);
         this.setW(120);
         this.setH(120);
