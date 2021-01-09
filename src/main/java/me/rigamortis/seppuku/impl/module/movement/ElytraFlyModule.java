@@ -42,12 +42,15 @@ public final class ElytraFlyModule extends Module {
     public final Value<Boolean> autoEquip = new Value<Boolean>("AutoEquip", new String[]{"AutoEquipt", "AutoElytra", "Equip", "Equipt", "ae"}, "Automatically equips a durable elytra before or during flight. (inventory only, not hotbar!)", false);
     public final Value<Float> autoEquipDelay = new Value<Float>("EquipDelay", new String[]{"AutoEquipDelay", "AutoEquiptDelay", "equipdelay", "aed"}, "Delay(ms) between elytra equip swap attempts.", 200.0f, 0.0f, 1000.0f, 10.0f);
     public final Value<Boolean> stayAirborne = new Value<Boolean>("StayAirborne", new String[]{"Airborne", "StayInAir", "air", "sa"}, "Attempts to always keep the player airborne (only use when AutoEquip is enabled).", false);
+    public final Value<Boolean> stayAirborneDisable = new Value<Boolean>("StayAirborneDisable", new String[]{"AutoDisableStayAirborne", "StayAirborneAutoDisable", "DisableStayInAir", "adsa", "dsa", "sad"}, "Automatically disables StayAirborne when touching the ground.", true);
+    public final Value<Float> stayAirborneDelay = new Value<Float>("StayAirborneDelay", new String[]{"StayAirborneWait", "sadelay"}, "Automatically disables StayAirborne when touching the ground.", 0.0f, 0.0f, 200.0f, 5.0f);
     public final Value<Boolean> disableInLiquid = new Value<Boolean>("DisableInLiquid", new String[]{"DisableInWater", "DisableInLava", "disableliquid", "liquidoff", "noliquid", "dil"}, "Disables all elytra flight when the player is in contact with liquid.", false);
     public final Value<Boolean> infiniteDurability = new Value<Boolean>("InfiniteDurability", new String[]{"InfiniteDura", "dura", "inf", "infdura"}, "Enables an old exploit that sends the start elytra-flying packet each tick.", false);
     public final Value<Boolean> noKick = new Value<Boolean>("NoKick", new String[]{"AntiKick", "Kick", "nk"}, "Bypass the server kicking you for flying while in elytra flight (Only works for Packet mode!).", true);
 
     private final Timer startDelayTimer = new Timer();
     private final Timer equipDelayTimer = new Timer();
+    private final Timer stayAirborneTimer = new Timer();
 
     public ElytraFlyModule() {
         super("ElytraFly", new String[]{"Elytra", "ElytraPlus", "Elytra+"}, "Allows you to fly with elytras", "NONE", -1, ModuleType.MOVEMENT);
@@ -90,8 +93,8 @@ public final class ElytraFlyModule extends Module {
             case PRE:
                 final ItemStack stackOnChestSlot = mc.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 
-                // disable stay airborne if it is on
-                if (this.stayAirborne.getValue()) {
+                // handle disabling stay airborne if it is on
+                if (this.stayAirborneDisable.getValue() && this.stayAirborne.getValue()) {
                     if (mc.player.onGround) {
                         this.stayAirborne.setValue(false);
                         Seppuku.INSTANCE.logChat("\247rToggled \2477ElytraFly " + this.stayAirborne.getName() + "\247r off as you've touched the ground.");
@@ -123,9 +126,9 @@ public final class ElytraFlyModule extends Module {
                         }
 
                         if (this.stayAirborne.getValue() && !mc.player.isElytraFlying() && mc.player.motionY < 0) { // player motion is falling
-                            if (this.startDelayTimer.passed(this.autoStartDelay.getValue())) {
+                            if (this.stayAirborneTimer.passed(this.stayAirborneDelay.getValue())) {
                                 mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
-                                this.startDelayTimer.reset();
+                                this.stayAirborneTimer.reset();
                             }
                         }
                     }
