@@ -166,7 +166,7 @@ public final class ModuleManager {
         add(new DonkeyAlertModule());
         add(new ReachModule());
         add(new AutoWitherModule());
-        add(new NotebotModule());
+        add(new NoteBotModule());
 
         // p2w experience
         if (Seppuku.INSTANCE.getCapeManager().hasCape())
