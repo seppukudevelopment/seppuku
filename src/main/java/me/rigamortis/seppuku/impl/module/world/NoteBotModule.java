@@ -150,8 +150,7 @@ public final class NoteBotModule extends Module {
                 if (this.state.getValue() == BotState.PLAYING && this.notePlayer.getNotesToPlay().size() > 0) {
                     int playingNote = this.notePlayer.getNotesToPlay().get(this.currentNote) % 24;
                     if (playingNote != -1) {
-                        this.currentBlock = new BlockPos(this.getPosition(playingNote));
-                        this.lookAtPosition(this.currentBlock);
+                        this.setCurrentNoteBlock(this.getPosition(playingNote));
                     }
                 }
 
@@ -241,12 +240,14 @@ public final class NoteBotModule extends Module {
                             }
                             this.currentNote++;
                             if (this.currentNote != -1) {
-                                mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, this.currentBlock, direction));
-                                mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.ABORT_DESTROY_BLOCK, this.currentBlock, direction));
-                                if (this.swing.getValue()) {
-                                    mc.player.swingArm(EnumHand.MAIN_HAND);
+                                if (this.currentBlock != null) {
+                                    mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, this.currentBlock, direction));
+                                    mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.ABORT_DESTROY_BLOCK, this.currentBlock, direction));
+                                    if (this.swing.getValue()) {
+                                        mc.player.swingArm(EnumHand.MAIN_HAND);
+                                    }
+                                    this.currentBlock = null;
                                 }
-                                this.currentBlock = null;
                             }
                             break;
                     }
@@ -288,13 +289,13 @@ public final class NoteBotModule extends Module {
     }
 
     private void clearData() {
+        this.currentBlock = null;
         this.discoveredBlocks.clear();
         if (!this.mode.getValue().equals(Mode.DEBUG)) { // is not debug, so let's wipe our previously tuned blocks data
             this.tunedBlocks.clear();
         }
         this.blocks.clear();
-        this.notePlayer.getNotesToPlay().clear();
-        this.currentBlock = null;
+        this.notePlayer.end();
     }
 
     public enum BotState {
