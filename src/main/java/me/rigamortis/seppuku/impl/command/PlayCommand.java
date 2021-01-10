@@ -3,7 +3,7 @@ package me.rigamortis.seppuku.impl.command;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.command.Command;
-import me.rigamortis.seppuku.impl.module.world.NotebotModule;
+import me.rigamortis.seppuku.impl.module.world.NoteBotModule;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -38,7 +38,7 @@ public final class PlayCommand extends Command {
 
         final String[] split = input.split(" ");
 
-        final NotebotModule notebotModule = (NotebotModule) Seppuku.INSTANCE.getModuleManager().find(NotebotModule.class);
+        final NoteBotModule notebotModule = (NoteBotModule) Seppuku.INSTANCE.getModuleManager().find(NoteBotModule.class);
         if (notebotModule != null) {
             try {
                 File file = new File(directory, split[1] + ".js");

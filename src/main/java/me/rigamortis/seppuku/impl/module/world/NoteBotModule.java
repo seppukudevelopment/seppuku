@@ -30,7 +30,7 @@ import java.util.stream.IntStream;
 /**
  * @author noil
  */
-public final class NotebotModule extends Module {
+public final class NoteBotModule extends Module {
 
     private final Value<BotState> state = new Value<BotState>("State", new String[]{"State", "s"}, "Current state of the note-bot.", BotState.IDLE);
     private final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"mod", "m"}, "Current mode of the note-bot.", Mode.AUTOMATIC);
@@ -55,8 +55,8 @@ public final class NotebotModule extends Module {
     private final int BLOCK_AREA = 25;
     private final Minecraft mc = Minecraft.getMinecraft();
 
-    public NotebotModule() {
-        super("Notebot", new String[]{"Notebot+", "MusicBot", "MusicPlayer", "MidiPlayer", "MidiBot"}, "Play .midi files on a 5x5 grid of note-blocks.", "NONE", -1, ModuleType.WORLD);
+    public NoteBotModule() {
+        super("NoteBot", new String[]{"NoteBot+", "MusicBot", "MusicPlayer", "MidiPlayer", "MidiBot"}, "Play .midi files on a 5x5 grid of note-blocks.", "NONE", -1, ModuleType.WORLD);
     }
 
     @Override
@@ -66,7 +66,7 @@ public final class NotebotModule extends Module {
         if (mc.world == null)
             return;
 
-        IntStream.range(0, 25).forEach(note -> {
+        IntStream.range(0, BLOCK_AREA).forEach(note -> {
             int[] area = this.blockArea(note);
             this.blocks.add(new BlockPos(area[0], area[1], area[2]));
         });
