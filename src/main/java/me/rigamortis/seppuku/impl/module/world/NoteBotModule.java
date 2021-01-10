@@ -155,11 +155,13 @@ public final class NoteBotModule extends Module {
                 }
 
                 if (this.mode.getValue().equals(Mode.NORMAL)) {
+                    /*
                     if (this.state.getValue().equals(BotState.PLAYING)) {
                         if (this.getNotePlayer().getNotesToPlay().size() <= 0) {
                             //this.state.setValue(BotState.IDLE);
                         }
                     }
+                    */
 
                     if (this.state.getValue().equals(BotState.TUNING)) {
                         if (this.discoveredBlocks.size() == BLOCK_AREA && this.tunedBlocks.size() == BLOCK_AREA) {
@@ -295,7 +297,8 @@ public final class NoteBotModule extends Module {
             this.tunedBlocks.clear();
         }
         this.blocks.clear();
-        this.notePlayer.end();
+        this.notePlayer.getNotesToPlay().clear();
+        //this.notePlayer.end();
     }
 
     public enum BotState {
