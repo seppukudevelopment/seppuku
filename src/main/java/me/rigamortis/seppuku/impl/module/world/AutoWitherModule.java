@@ -45,10 +45,14 @@ public final class AutoWitherModule extends Module {
 
     public final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"rotation", "r", "rotate"}, "Rotate to place blocks.", true);
     public final Value<Boolean> disable = new Value<Boolean>("Disable", new String[]{"dis", "autodisable", "autodis", "d"}, "Automatically disable after wither is placed.", false);
-    public final Value<Boolean> sneak = new Value<Boolean>("PlaceOnSneak", new String[]{"sneak", "s", "pos", "sneakPlace"}, "When true, AutoWitherModule will only place while the player is sneaking.", false);
+    public final Value<Boolean> sneak = new Value<Boolean>("PlaceOnSneak", new String[]{"sneak", "s", "pos", "sneakPlace"}, "When true, AutoWither will only place while the player is sneaking.", false);
+    public final Value<Boolean> noSkulls = new Value<Boolean>("NoSkulls", new String[]{"skulls", "ns", "noheads", "nowitherskulls", "noskull", "nowitherskull"}, "When true, AutoWither will only place the soul sand.", false);
+    public final Value<Float> range = new Value<Float>("Range", new String[]{"MaxRange", "MaximumRange"}, "The maximum block reaching range to continue building in.", 6.0f, 1.0f, 10.0f, 0.5f);
     public final Value<Float> placeDelay = new Value<Float>("Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay(ms) between blocks being placed.", 100.0f, 0.0f, 500.0f, 1.0f);
+    public final Value<Float> waitDelay = new Value<Float>("WaitDelay", new String[]{"RightClickDelay", "wd"}, "The delay(ms) between withers being created on right click.", 750.0f, 0.0f, 1000.0f, 1.0f);
 
     private final Timer placeTimer = new Timer();
+    private final Timer waitTimer = new Timer();
     private final RotationTask rotationTask = new RotationTask("AutoWitherTask", 2);
 
     private FreeCamModule freeCamModule = null;
@@ -75,7 +79,14 @@ public final class AutoWitherModule extends Module {
             if (this.rotationTask.isOnline())
                 Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
 
-            this.beginBuildingPos = event.getPos();
+            if (this.waitDelay.getValue() <= 0) {
+                this.beginBuildingPos = event.getPos();
+            } else {
+                if (this.waitTimer.passed(this.waitDelay.getValue())) {
+                    this.beginBuildingPos = event.getPos();
+                    this.waitTimer.reset();
+                }
+            }
         }
     }
 
@@ -117,12 +128,14 @@ public final class AutoWitherModule extends Module {
         }
 
         // find missing skulls
-        for (int j = 0; j < skullBlocks.length; j++) {
-            BlockPos blockPos = skullBlocks[j];
-            if (!this.valid(blockPos, true))
-                continue;
+        if (!this.noSkulls.getValue()) {
+            for (int j = 0; j < skullBlocks.length; j++) {
+                BlockPos blockPos = skullBlocks[j];
+                if (!this.valid(blockPos, true))
+                    continue;
 
-            skullsToPlace.add(blockPos);
+                skullsToPlace.add(blockPos);
+            }
         }
 
         if (soulSandToPlace.size() != 0) { // we have soul sand to place
@@ -276,7 +289,7 @@ public final class AutoWitherModule extends Module {
             return false;
 
         // Player is too far from distance
-        if (mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ()) > 6.0f)
+        if (mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ()) > this.range.getValue())
             return false;
 
         // Check if the block is replaceable
@@ -315,17 +328,6 @@ public final class AutoWitherModule extends Module {
 
         mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(sideOffset, otherSide, EnumHand.MAIN_HAND, 0.5F, 0.5F, 0.5F));
         mc.player.connection.sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
-
-        //mc.playerController.processRightClickBlock(mc.player, mc.world, sideOffset, otherSide, new Vec3d(0.5F, 0.5F, 0.5F), EnumHand.MAIN_HAND);
-        //mc.player.swingArm(EnumHand.MAIN_HAND);
-
-        /*if (!visible.getValue()) {
-            mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(sideOffset, otherSide, EnumHand.MAIN_HAND, 0.5F, 0.5F, 0.5F));
-            mc.player.connection.sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
-        } else {
-            mc.playerController.processRightClickBlock(mc.player, mc.world, sideOffset, otherSide, new Vec3d(0.5F, 0.5F, 0.5F), EnumHand.MAIN_HAND);
-            mc.player.swingArm(EnumHand.MAIN_HAND);
-        }*/
 
         if (activated)
             mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));

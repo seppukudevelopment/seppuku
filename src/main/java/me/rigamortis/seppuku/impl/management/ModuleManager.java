@@ -166,6 +166,7 @@ public final class ModuleManager {
         add(new DonkeyAlertModule());
         add(new ReachModule());
         add(new AutoWitherModule());
+        add(new NotebotModule());
 
         // p2w experience
         if (Seppuku.INSTANCE.getCapeManager().hasCape())
@@ -173,7 +174,7 @@ public final class ModuleManager {
 
         this.loadExternalModules();
 
-        Collections.sort(moduleList, Comparator.comparing(Module::getDisplayName));
+        moduleList.sort(Comparator.comparing(Module::getDisplayName));
     }
 
     /**
@@ -200,13 +201,11 @@ public final class ModuleManager {
                         //create a new instance of the class
                         final Module module = (Module) clazz.newInstance();
 
-                        if (module != null) {
-                            //add the class to our list of modules
-                            add(module);
+                        //add the class to our list of modules
+                        add(module);
 
-                            Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventModuleLoad(module));
-                            Seppuku.INSTANCE.getLogger().log(Level.INFO, "Found external module " + module.getDisplayName());
-                        }
+                        Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventModuleLoad(module));
+                        Seppuku.INSTANCE.getLogger().log(Level.INFO, "Found external module " + module.getDisplayName());
                     }
                 }
             }

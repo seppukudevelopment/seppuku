@@ -71,6 +71,7 @@ public final class CommandManager {
         this.commandList.add(new CalcStrongholdCommand());
         this.commandList.add(new LastInvCommand());
         this.commandList.add(new SearchCommand());
+        this.commandList.add(new PlayCommand());
 
         //create commands for every value within every module
         loadValueCommands();
@@ -78,7 +79,7 @@ public final class CommandManager {
         //load our external commands
         loadExternalCommands();
 
-        Collections.sort(commandList, Comparator.comparing(Command::getDisplayName));
+        commandList.sort(Comparator.comparing(Command::getDisplayName));
     }
 
     /**

@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.api.util;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,5 +42,13 @@ public class BlockUtil {
             }
         }
         return list;
+    }
+
+    public static boolean rayTrace(Vec3d to) {
+        return (mc.world.rayTraceBlocks(new Vec3d(mc.player.posX, mc.player.posY + mc.player.getEyeHeight(), mc.player.posZ), to, false, true, false) == null);
+    }
+
+    public static boolean rayTrace(BlockPos to) {
+        return (mc.world.rayTraceBlocks(new Vec3d(mc.player.posX, mc.player.posY + mc.player.getEyeHeight(), mc.player.posZ), new Vec3d(to.getX(), to.getY(), to.getZ()), false, true, false) == null);
     }
 }

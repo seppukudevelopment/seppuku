@@ -97,7 +97,7 @@ public final class ElytraFlyModule extends Module {
                 if (this.stayAirborneDisable.getValue() && this.stayAirborne.getValue()) {
                     if (mc.player.onGround) {
                         this.stayAirborne.setValue(false);
-                        Seppuku.INSTANCE.logChat("\247rToggled \2477ElytraFly " + this.stayAirborne.getName() + "\247r off as you've touched the ground.");
+                        Seppuku.INSTANCE.logChat("\247rToggled\2477 ElytraFly " + this.stayAirborne.getName() + " \247coff\247r, as you've touched the ground.");
                     }
                 }
 
