@@ -106,6 +106,7 @@ public final class NoteBotModule extends Module {
     @Listener
     public void onLoadWorld(EventLoadWorld event) {
         if (event.getWorld() != null) {
+            this.clearData();
             this.toggle(); // toggle off
             Seppuku.INSTANCE.logChat("\247rToggled\2477 " + this.getDisplayName() + " \247coff\247r, as you've loaded into a new world.");
         }
