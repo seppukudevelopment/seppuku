@@ -51,7 +51,7 @@ public final class PlayCommand extends Command {
                 if (midiFile.exists()) {
                     notebotModule.getState().setEnumValue("PLAYING");
                     notebotModule.getNotePlayer().begin(midiFile, notebotModule);
-                    Seppuku.INSTANCE.logChat("Playing '" + ChatFormatting.YELLOW + midiFile.getName() + ChatFormatting.GRAY + "'");
+                    Seppuku.INSTANCE.logChat("Playing '" + ChatFormatting.YELLOW + midiFile.getName() + ChatFormatting.RESET + "'");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
