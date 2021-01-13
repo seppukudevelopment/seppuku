@@ -1,95 +1,116 @@
 package me.rigamortis.seppuku.api.module.notebot;
 
-import java.util.ArrayList;
-import java.util.List;
+import me.rigamortis.seppuku.impl.module.world.NoteBotModule;
+
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Sequencer;
+import java.io.File;
 
 /**
  * @author noil
  */
 public class NotePlayer {
 
-    private final List<Integer> notesToPlay = new ArrayList<>();
+    /*
+    public static final int NOTE_ON = 0x90;
+    public static final int NOTE_OFF = 0x80;
+    public static final String[] NOTE_NAMES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+    */
 
-    public void play(int index) {
-        this.notesToPlay.add(index);
+    private Sequencer sequencer;
+    private Sequence currentSequence;
+
+    private String currentSongName = "";
+
+    public NotePlayer() {
+        //Seppuku.INSTANCE.getEventManager().addEventListener(this);
     }
 
-    public void rest(int index) {
-        for (int i = 0; i < index; i++)
-            this.notesToPlay.add(-1);
+    public void begin(File file, NoteBotModule module) throws Exception {
+        this.end();
+
+        this.sequencer = MidiSystem.getSequencer(false);
+        this.currentSequence = MidiSystem.getSequence(file);
+        this.currentSongName = file.getName();
+        this.sequencer.getTransmitter().setReceiver(module.getReceiver());
+        this.sequencer.open();
+        this.sequencer.setSequence(this.currentSequence);
+        this.sequencer.start();
+        this.sequencer.setMasterSyncMode(Sequencer.SyncMode.INTERNAL_CLOCK);
+        this.sequencer.setTempoInBPM(120);
+
+        //int resolution = this.currentSequence.getResolution();
     }
 
-    public void chord(int index) {
-        switch (index) {
-            case 1:
-                play(1);
-                play(5);
-                play(8);
-                break;
-            case 2:
-                play(2);
-                play(6);
-                play(9);
-                break;
-            case 3:
-                play(3);
-                play(6);
-                play(10);
-                break;
-            case 4:
-                play(4);
-                play(6);
-                play(10);
-                break;
-            case 5:
-                play(5);
-                play(7);
-                play(12);
-                break;
-            case 6:
-                play(6);
-                play(10);
-                play(13);
-                break;
-            case 7:
-                play(7);
-                play(10);
-                play(14);
-                break;
-            case 8:
-                play(8);
-                play(12);
-                play(15);
-                break;
-            case 9:
-                play(9);
-                play(13);
-                play(16);
-                break;
-            case 10:
-                play(10);
-                play(13);
-                play(17);
-                break;
-            case 11:
-                play(11);
-                play(15);
-                play(18);
-                break;
-            case 12:
-                play(12);
-                play(16);
-                play(19);
-                break;
-            case 13:
-                play(13);
-                play(17);
-                play(20);
-                break;
+    public void end() {
+        if (this.sequencer != null) {
+            if (this.sequencer.isRunning())
+                this.sequencer.stop();
+
+            if (this.sequencer.isOpen())
+                this.sequencer.close();
+
+            this.sequencer = null;
+        }
+
+        if (this.currentSequence != null) {
+            this.currentSequence = null;
         }
     }
 
-    public List<Integer> getNotesToPlay() {
-        return this.notesToPlay;
+    private String getNote(int note) {
+        int octaveNote = note % 12;
+        switch (octaveNote) {
+            case 0:
+                return "F#";
+            case 1:
+                return "G";
+            case 2:
+                return "G#";
+            case 3:
+                return "A";
+            case 4:
+                return "A#";
+            case 5:
+                return "B";
+            case 6:
+                return "C";
+            case 7:
+                return "C#";
+            case 8:
+                return "D";
+            case 9:
+                return "D#";
+            case 10:
+                return "E";
+            case 11:
+                return "F";
+            case 12:
+                return "Gb";
+        }
+        return "null";
+    }
+
+    public int getTempoInBPM(MetaMessage mm) {
+        byte[] data = mm.getData();
+        if (mm.getType() != 81 || data.length != 3) {
+            throw new IllegalArgumentException("mm=" + mm);
+        }
+        int mspq = ((data[0] & 0xff) << 16) | ((data[1] & 0xff) << 8) | (data[2] & 0xff);
+        return Math.round(60000001f / mspq);
+    }
+
+    public Sequencer getSequencer() {
+        return sequencer;
+    }
+
+    public Sequence getCurrentSequence() {
+        return currentSequence;
+    }
+
+    public String getCurrentSongName() {
+        return currentSongName;
     }
 }

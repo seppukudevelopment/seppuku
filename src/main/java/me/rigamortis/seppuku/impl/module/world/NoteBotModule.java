@@ -21,6 +21,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.ShortMessage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,11 +45,12 @@ public final class NoteBotModule extends Module {
     private final RotationTask rotationTask = new RotationTask("NoteBot", 2);
 
     private BlockPos currentBlock;
-    private int currentNote;
 
     private final int[] positionOffsets = new int[]{2, 1, 2};
 
     private final NotePlayer notePlayer = new NotePlayer();
+    private final NoteReceiver receiver = new NoteReceiver();
+
     private final Timer discoverTimer = new Timer();
     private final Timer tuneTimer = new Timer();
     private final Timer stateTimer = new Timer();
@@ -92,6 +96,10 @@ public final class NoteBotModule extends Module {
 
     @Override
     public String getMetaData() {
+        if (this.state.getValue().equals(BotState.PLAYING)) {
+            return this.state.getValue().name() + " " + this.getNotePlayer().getCurrentSongName();
+        }
+
         return this.state.getValue().name();
     }
 
@@ -147,20 +155,7 @@ public final class NoteBotModule extends Module {
 
         switch (event.getStage()) {
             case PRE:
-                if (this.state.getValue() == BotState.PLAYING && this.notePlayer.getNotesToPlay().size() > 0) {
-                    int playingNote = this.notePlayer.getNotesToPlay().get(this.currentNote) % 24;
-                    if (playingNote != -1) {
-                        this.setCurrentNoteBlock(this.getPosition(playingNote));
-                    }
-                }
-
                 if (this.mode.getValue().equals(Mode.NORMAL)) {
-                    if (this.state.getValue().equals(BotState.PLAYING)) {
-                        if (this.getNotePlayer().getNotesToPlay().size() <= 0) {
-                            //this.state.setValue(BotState.IDLE);
-                        }
-                    }
-
                     if (this.state.getValue().equals(BotState.TUNING)) {
                         if (this.discoveredBlocks.size() == BLOCK_AREA && this.tunedBlocks.size() == BLOCK_AREA) {
                             this.state.setValue(BotState.IDLE);
@@ -234,20 +229,13 @@ public final class NoteBotModule extends Module {
                             }
                             break;
                         case PLAYING:
-                            if (this.currentNote >= this.notePlayer.getNotesToPlay().size()) {
-                                this.currentNote = 0;
-                                return;
-                            }
-                            this.currentNote++;
-                            if (this.currentNote != -1) {
-                                if (this.currentBlock != null) {
-                                    mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, this.currentBlock, direction));
-                                    mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.ABORT_DESTROY_BLOCK, this.currentBlock, direction));
-                                    if (this.swing.getValue()) {
-                                        mc.player.swingArm(EnumHand.MAIN_HAND);
-                                    }
-                                    this.currentBlock = null;
+                            if (this.currentBlock != null) {
+                                mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, this.currentBlock, direction));
+                                mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.ABORT_DESTROY_BLOCK, this.currentBlock, direction));
+                                if (this.swing.getValue()) {
+                                    mc.player.swingArm(EnumHand.MAIN_HAND);
                                 }
+                                this.currentBlock = null;
                             }
                             break;
                     }
@@ -314,11 +302,31 @@ public final class NoteBotModule extends Module {
         return notePlayer;
     }
 
-    public int getCurrentNote() {
-        return currentNote;
+    public NoteReceiver getReceiver() {
+        return receiver;
     }
 
-    public void setCurrentNote(int currentNote) {
-        this.currentNote = currentNote;
+    public class NoteReceiver implements Receiver {
+        @Override
+        public void send(MidiMessage midiMessage, long l) {
+            if (midiMessage instanceof ShortMessage) {
+                ShortMessage shortMessage = (ShortMessage) midiMessage;
+                if (shortMessage.getCommand() == ShortMessage.NOTE_ON) {
+                    int key = shortMessage.getData1() - 6;
+                    int octave = (key / 12) - 1;
+                    int note = key > 12 ? key % 24 : key % 12;
+                    int velocity = shortMessage.getData2();
+                    if (velocity > 0) {
+                        mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, getPosition(note), EnumFacing.UP));
+                        mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.ABORT_DESTROY_BLOCK, getPosition(note), EnumFacing.UP));
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void close() {
+
+        }
     }
 }
