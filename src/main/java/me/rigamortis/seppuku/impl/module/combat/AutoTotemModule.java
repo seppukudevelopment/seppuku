@@ -5,7 +5,6 @@ import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.Item;
@@ -20,6 +19,7 @@ public final class AutoTotemModule extends Module {
 
     public final Value<Float> health = new Value<>("Health", new String[]{"Hp", "h"}, "The amount of health needed to acquire a totem.", 7.0f, 0.0f, 20.0f, 0.5f);
     public final Value<Boolean> crystals = new Value<>("Crystals", new String[]{"cry", "c"}, "Go back to crystals in offhand after health is replenished.", false);
+    public final Value<Boolean> checkScreen = new Value<>("CheckScreen", new String[]{"screen", "check", "cs"}, "Checks if a screen is not opened to begin (usually disabled).", false);
 
     public AutoTotemModule() {
         super("AutoTotem", new String[]{"Totem"}, "Automatically places a totem of undying in your offhand", "NONE", -1, ModuleType.COMBAT);
@@ -35,35 +35,38 @@ public final class AutoTotemModule extends Module {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             final Minecraft mc = Minecraft.getMinecraft();
 
-            if (mc.currentScreen == null || mc.currentScreen instanceof GuiInventory) {
-                final ItemStack offHand = mc.player.getHeldItemOffhand();
+            if (this.checkScreen.getValue()) {
+                if (mc.currentScreen != null)
+                    return;
+            }
 
-                if (mc.player.getHealth() <= this.health.getValue()) {
-                    if (offHand.getItem() == Items.TOTEM_OF_UNDYING) {
-                        return;
-                    }
+            final ItemStack offHand = mc.player.getHeldItemOffhand();
 
-                    final int totemSlot = this.getTotemSlot();
+            if (mc.player.getHealth() <= this.health.getValue()) {
+                if (offHand.getItem() == Items.TOTEM_OF_UNDYING) {
+                    return;
+                }
 
-                    if (totemSlot != -1) {
-                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, totemSlot, 0, ClickType.PICKUP, mc.player);
-                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 45, 0, ClickType.PICKUP, mc.player);
-                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, totemSlot, 0, ClickType.PICKUP, mc.player);
-                        mc.playerController.updateController();
-                    }
-                } else if (this.crystals.getValue()) {
-                    if (offHand.getItem() == Items.END_CRYSTAL) {
-                        return;
-                    }
+                final int totemSlot = this.getTotemSlot();
 
-                    final int crystalSlot = this.getCrystalSlot();
+                if (totemSlot != -1) {
+                    mc.playerController.windowClick(mc.player.inventoryContainer.windowId, totemSlot, 0, ClickType.PICKUP, mc.player);
+                    mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 45, 0, ClickType.PICKUP, mc.player);
+                    mc.playerController.windowClick(mc.player.inventoryContainer.windowId, totemSlot, 0, ClickType.PICKUP, mc.player);
+                    mc.playerController.updateController();
+                }
+            } else if (this.crystals.getValue()) {
+                if (offHand.getItem() == Items.END_CRYSTAL) {
+                    return;
+                }
 
-                    if (crystalSlot != -1) {
-                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, crystalSlot, 0, ClickType.PICKUP, mc.player);
-                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 45, 0, ClickType.PICKUP, mc.player);
-                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, crystalSlot, 0, ClickType.PICKUP, mc.player);
-                        mc.playerController.updateController();
-                    }
+                final int crystalSlot = this.getCrystalSlot();
+
+                if (crystalSlot != -1) {
+                    mc.playerController.windowClick(mc.player.inventoryContainer.windowId, crystalSlot, 0, ClickType.PICKUP, mc.player);
+                    mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 45, 0, ClickType.PICKUP, mc.player);
+                    mc.playerController.windowClick(mc.player.inventoryContainer.windowId, crystalSlot, 0, ClickType.PICKUP, mc.player);
+                    mc.playerController.updateController();
                 }
             }
         }
