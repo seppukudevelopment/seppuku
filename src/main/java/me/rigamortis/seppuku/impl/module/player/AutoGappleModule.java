@@ -1,9 +1,12 @@
 package me.rigamortis.seppuku.impl.module.player;
 
+import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
+import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.Value;
+import me.rigamortis.seppuku.impl.module.combat.AutoTotemModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
@@ -15,11 +18,13 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class AutoGappleModule extends Module {
 
-    public final Value<Float> health = new Value<Float>("Health", new String[]{"Hp", "h"}, "The amount of health needed to acquire a notch apple.", 8.0f, 0.0f, 20.0f, 0.5f);
+    public final Value<Float> health = new Value<Float>("Health", new String[]{"Hp", "h"}, "The amount of health needed to acquire a notch apple.", 15.0f, 0.0f, 20.0f, 0.5f);
     public final Value<Integer> forcedSlot = new Value<Integer>("Slot", new String[]{"s"}, "The hot-bar slot to put the notch apple into. (45 for offhand)", 44, 0, 44, 1);
 
     private int previousHeldItem = -1;
     private int notchAppleSlot = -1;
+
+    private AutoTotemModule autoTotemModule;
 
     public AutoGappleModule() {
         super("AutoGapple", new String[]{"Gapple", "AutoApple"}, "Automatically swaps & eats a (notch) apple when health is below the set threshold.", "NONE", -1, ModuleType.PLAYER);
@@ -31,6 +36,13 @@ public final class AutoGappleModule extends Module {
     }
 
     @Listener
+    public void onLoadWorld(EventLoadWorld event) {
+        if (event.getWorld() != null) {
+            this.autoTotemModule = (AutoTotemModule) Seppuku.INSTANCE.getModuleManager().find(AutoTotemModule.class);
+        }
+    }
+
+    @Listener
     public void onPlayerUpdate(EventPlayerUpdate event) {
         if (event.getStage() != EventStageable.EventStage.PRE)
             return;
@@ -38,6 +50,15 @@ public final class AutoGappleModule extends Module {
         final Minecraft mc = Minecraft.getMinecraft();
         if (mc.player == null)
             return;
+
+        if (this.autoTotemModule != null) {
+            if (this.autoTotemModule.isEnabled()) {
+                if (this.autoTotemModule.getTotemCount() > 0) {
+                    if (mc.player.getHealth() <= this.autoTotemModule.health.getValue() && !mc.player.getHeldItemOffhand().getItem().equals(Items.TOTEM_OF_UNDYING))
+                        return;
+                }
+            }
+        }
 
         if (mc.player.getHealth() < this.health.getValue() && mc.player.getAbsorptionAmount() == 0) {
             this.notchAppleSlot = this.findNotchApple();

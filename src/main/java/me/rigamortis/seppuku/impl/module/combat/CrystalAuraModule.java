@@ -318,10 +318,7 @@ public final class CrystalAuraModule extends Module {
 
     private float scaleExplosionDamage(EntityLivingBase entity, Explosion explosion, float damage) {
         damage = CombatRules.getDamageAfterAbsorb(damage, (float) entity.getTotalArmorValue(), (float) entity.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue());
-
         damage *= (1.0F - MathHelper.clamp(EnchantmentHelper.getEnchantmentModifierDamage(entity.getArmorInventoryList(), DamageSource.causeExplosionDamage(explosion)), 0.0F, 20.0F) / 25.0F);
-
-        damage = Math.max(damage - entity.getAbsorptionAmount(), 0.0F);
         return damage;
     }
 

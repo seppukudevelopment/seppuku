@@ -18,7 +18,8 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class AutoTotemModule extends Module {
 
-    public final Value<Float> health = new Value("Health", new String[]{"Hp"}, "The amount of health needed to acquire a totem.", 16.0f, 0.0f, 20.0f, 0.5f);
+    public final Value<Float> health = new Value<>("Health", new String[]{"Hp", "h"}, "The amount of health needed to acquire a totem.", 7.0f, 0.0f, 20.0f, 0.5f);
+    public final Value<Boolean> crystals = new Value<>("Crystals", new String[]{"cry", "c"}, "Go back to crystals in offhand after health is replenished.", false);
 
     public AutoTotemModule() {
         super("AutoTotem", new String[]{"Totem"}, "Automatically places a totem of undying in your offhand", "NONE", -1, ModuleType.COMBAT);
@@ -35,24 +36,50 @@ public final class AutoTotemModule extends Module {
             final Minecraft mc = Minecraft.getMinecraft();
 
             if (mc.currentScreen == null || mc.currentScreen instanceof GuiInventory) {
-                if (mc.player.getHealth() <= this.health.getValue()) {
-                    final ItemStack offHand = mc.player.getHeldItemOffhand();
+                final ItemStack offHand = mc.player.getHeldItemOffhand();
 
+                if (mc.player.getHealth() <= this.health.getValue()) {
                     if (offHand.getItem() == Items.TOTEM_OF_UNDYING) {
                         return;
                     }
 
-                    final int slot = this.getTotemSlot();
+                    final int totemSlot = this.getTotemSlot();
 
-                    if (slot != -1) {
-                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 0, ClickType.PICKUP, mc.player);
+                    if (totemSlot != -1) {
+                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, totemSlot, 0, ClickType.PICKUP, mc.player);
                         mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 45, 0, ClickType.PICKUP, mc.player);
-                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 0, ClickType.PICKUP, mc.player);
+                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, totemSlot, 0, ClickType.PICKUP, mc.player);
+                        mc.playerController.updateController();
+                    }
+                } else if (this.crystals.getValue()) {
+                    if (offHand.getItem() == Items.END_CRYSTAL) {
+                        return;
+                    }
+
+                    final int crystalSlot = this.getCrystalSlot();
+
+                    if (crystalSlot != -1) {
+                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, crystalSlot, 0, ClickType.PICKUP, mc.player);
+                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 45, 0, ClickType.PICKUP, mc.player);
+                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, crystalSlot, 0, ClickType.PICKUP, mc.player);
                         mc.playerController.updateController();
                     }
                 }
             }
         }
+    }
+
+    private int getCrystalSlot() {
+        for (int i = 0; i < 36; i++) {
+            final Item item = Minecraft.getMinecraft().player.inventory.getStackInSlot(i).getItem();
+            if (item == Items.END_CRYSTAL) {
+                if (i < 9) {
+                    i += 36;
+                }
+                return i;
+            }
+        }
+        return -1;
     }
 
     private int getTotemSlot() {
@@ -68,7 +95,7 @@ public final class AutoTotemModule extends Module {
         return -1;
     }
 
-    private int getTotemCount() {
+    public int getTotemCount() {
         int totems = 0;
 
         if (Minecraft.getMinecraft().player == null)
