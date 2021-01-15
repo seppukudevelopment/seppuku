@@ -12,6 +12,9 @@ import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.module.player.NoHungerModule;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.inventory.GuiShulkerBox;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
@@ -91,7 +94,7 @@ public final class ElytraFlyModule extends Module {
 
         switch (event.getStage()) {
             case PRE:
-                final ItemStack stackOnChestSlot = mc.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+                final ItemStack stackOnChestPlateSlot = mc.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 
                 // handle disabling stay airborne if it is on
                 if (this.stayAirborneDisable.getValue() && this.stayAirborne.getValue()) {
@@ -101,34 +104,36 @@ public final class ElytraFlyModule extends Module {
                     }
                 }
 
-                if (this.autoEquip.getValue()) {
-                    // ensure player has an elytra on before running any code
-                    if (stackOnChestSlot.isEmpty() && stackOnChestSlot.getItem() != Items.ELYTRA) {
-                        if (InventoryUtil.hasItem(Items.ELYTRA)) {
-                            if (this.getElytraSlot() != -1 && this.equipDelayTimer.passed(this.autoEquipDelay.getValue())) {
-                                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, this.getElytraSlot(), 0, ClickType.QUICK_MOVE, mc.player);
-                                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
-                                this.equipDelayTimer.reset();
-                            }
-                        }
-                    }
-
-                    // check for broken elytra when auto equip is enabled
-                    if (!stackOnChestSlot.isEmpty() && stackOnChestSlot.getItem() == Items.ELYTRA) {
-                        if (!ItemElytra.isUsable(stackOnChestSlot)) {
-                            if (this.getElytraCount() > 0 && this.getElytraSlot() != -1 && this.equipDelayTimer.passed(this.autoEquipDelay.getValue())) {
-                                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 6, 0, ClickType.QUICK_MOVE, mc.player);
-                                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, this.getElytraSlot(), 0, ClickType.PICKUP, mc.player);
-                                mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 6, 0, ClickType.PICKUP, mc.player);
-                                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
-                                this.equipDelayTimer.reset();
+                if (!(mc.currentScreen instanceof GuiShulkerBox) && !(mc.currentScreen instanceof GuiChest)) {
+                    if (this.autoEquip.getValue()) {
+                        // ensure player has an elytra on before running any code
+                        if (stackOnChestPlateSlot.isEmpty() && stackOnChestPlateSlot.getItem() != Items.ELYTRA) {
+                            if (InventoryUtil.hasItem(Items.ELYTRA)) {
+                                if (this.getElytraSlot() != -1 && this.equipDelayTimer.passed(this.autoEquipDelay.getValue())) {
+                                    mc.playerController.windowClick(mc.player.inventoryContainer.windowId, this.getElytraSlot(), 0, ClickType.QUICK_MOVE, mc.player);
+                                    mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
+                                    this.equipDelayTimer.reset();
+                                }
                             }
                         }
 
-                        if (this.stayAirborne.getValue() && !mc.player.isElytraFlying() && mc.player.motionY < 0) { // player motion is falling
-                            if (this.stayAirborneTimer.passed(this.stayAirborneDelay.getValue())) {
-                                mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
-                                this.stayAirborneTimer.reset();
+                        // check for broken elytra when auto equip is enabled
+                        if (!stackOnChestPlateSlot.isEmpty() && stackOnChestPlateSlot.getItem() == Items.ELYTRA) {
+                            if (!ItemElytra.isUsable(stackOnChestPlateSlot)) {
+                                if (this.getElytraCount() > 0 && this.getElytraSlot() != -1 && this.equipDelayTimer.passed(this.autoEquipDelay.getValue())) {
+                                    mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 6, 0, ClickType.QUICK_MOVE, mc.player);
+                                    mc.playerController.windowClick(mc.player.inventoryContainer.windowId, this.getElytraSlot(), 0, ClickType.PICKUP, mc.player);
+                                    mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 6, 0, ClickType.PICKUP, mc.player);
+                                    mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
+                                    this.equipDelayTimer.reset();
+                                }
+                            }
+
+                            if (this.stayAirborne.getValue() && !mc.player.isElytraFlying() && mc.player.motionY < 0) { // player motion is falling
+                                if (this.stayAirborneTimer.passed(this.stayAirborneDelay.getValue())) {
+                                    mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
+                                    this.stayAirborneTimer.reset();
+                                }
                             }
                         }
                     }
