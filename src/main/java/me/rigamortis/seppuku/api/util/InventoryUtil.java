@@ -14,6 +14,15 @@ public final class InventoryUtil {
 
     private static final Minecraft mc = Minecraft.getMinecraft();
 
+    public static boolean isInventoryFull() {
+        for (int i = 0; i < 36; i++) {
+            if (mc.player.inventory.getStackInSlot(i).isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static boolean hasItem(Item input) {
         for (int i = 0; i < 36; i++) {
             final Item item = mc.player.inventory.getStackInSlot(i).getItem();

@@ -121,9 +121,15 @@ public final class ElytraFlyModule extends Module {
                         if (!stackOnChestPlateSlot.isEmpty() && stackOnChestPlateSlot.getItem() == Items.ELYTRA) {
                             if (!ItemElytra.isUsable(stackOnChestPlateSlot)) {
                                 if (this.getElytraCount() > 0 && this.getElytraSlot() != -1 && this.equipDelayTimer.passed(this.autoEquipDelay.getValue())) {
-                                    mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 6, 0, ClickType.QUICK_MOVE, mc.player);
-                                    mc.playerController.windowClick(mc.player.inventoryContainer.windowId, this.getElytraSlot(), 0, ClickType.PICKUP, mc.player);
-                                    mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 6, 0, ClickType.PICKUP, mc.player);
+                                    final int newElytraSlot = this.getElytraSlot();
+                                    if (InventoryUtil.isInventoryFull()) {
+                                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 6, 0, ClickType.PICKUP, mc.player);
+                                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, newElytraSlot, 0, ClickType.QUICK_MOVE, mc.player);
+                                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, newElytraSlot, 0, ClickType.PICKUP, mc.player);
+                                    } else {
+                                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 6, 0, ClickType.QUICK_MOVE, mc.player);
+                                        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, newElytraSlot, 0, ClickType.QUICK_MOVE, mc.player);
+                                    }
                                     mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
                                     this.equipDelayTimer.reset();
                                 }
