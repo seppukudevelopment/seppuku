@@ -45,20 +45,25 @@ public final class BurrowModule extends Module {
 
         final Minecraft mc = Minecraft.getMinecraft();
         if (mc.player != null) {
-            // attempt to center
-            if (this.center.getValue()) {
-                final double[] newPos = {Math.floor(mc.player.posX) + 0.5d, mc.player.posY, Math.floor(mc.player.posZ) + 0.5d};
-                final CPacketPlayer.Position middleOfPos = new CPacketPlayer.Position(newPos[0], newPos[1], newPos[2], mc.player.onGround);
-                if (!mc.world.isAirBlock(new BlockPos(newPos[0], newPos[1], newPos[2]).down())) {
-                    if (mc.player.posX != middleOfPos.x && mc.player.posZ != middleOfPos.z) {
-                        mc.player.connection.sendPacket(middleOfPos);
-                        mc.player.setPosition(newPos[0], newPos[1], newPos[2]);
+            if (InventoryUtil.getBlockCount(Blocks.OBSIDIAN) > 0) {
+                // attempt to center
+                if (this.center.getValue()) {
+                    final double[] newPos = {Math.floor(mc.player.posX) + 0.5d, mc.player.posY, Math.floor(mc.player.posZ) + 0.5d};
+                    final CPacketPlayer.Position middleOfPos = new CPacketPlayer.Position(newPos[0], newPos[1], newPos[2], mc.player.onGround);
+                    if (!mc.world.isAirBlock(new BlockPos(newPos[0], newPos[1], newPos[2]).down())) {
+                        if (mc.player.posX != middleOfPos.x && mc.player.posZ != middleOfPos.z) {
+                            mc.player.connection.sendPacket(middleOfPos);
+                            mc.player.setPosition(newPos[0], newPos[1], newPos[2]);
+                        }
                     }
                 }
-            }
 
-            mc.player.jump(); // jump
-            this.timer.reset(); // start timer
+                mc.player.jump(); // jump
+                this.timer.reset(); // start timer
+            } else {
+                Seppuku.INSTANCE.getNotificationManager().addNotification("", "You don't have any obsidian to use " + this.getDisplayName());
+                this.toggle(); // toggle off
+            }
         }
     }
 
