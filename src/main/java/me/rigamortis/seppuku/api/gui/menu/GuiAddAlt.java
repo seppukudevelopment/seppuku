@@ -1,5 +1,6 @@
 package me.rigamortis.seppuku.api.gui.menu;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.impl.gui.menu.GuiAltManager;
 import net.minecraft.client.gui.GuiButton;
@@ -42,7 +43,7 @@ public final class GuiAddAlt extends GuiScreen {
         this.drawDefaultBackground();
 
         mc.fontRenderer.drawStringWithShadow("Email", (this.width / 2.0f - 100), 56 - mc.fontRenderer.FONT_HEIGHT - 1, 0xFFAAAAAA);
-        mc.fontRenderer.drawStringWithShadow("Username", (this.width / 2.0f - 100), 96.0F - mc.fontRenderer.FONT_HEIGHT - 1, 0xFFAAAAAA);
+        mc.fontRenderer.drawStringWithShadow(ChatFormatting.RESET + "Username " + ChatFormatting.DARK_GRAY + "(caches player head)", (this.width / 2.0f - 100), 96.0F - mc.fontRenderer.FONT_HEIGHT - 1, 0xFFAAAAAA);
         mc.fontRenderer.drawStringWithShadow("Password", (this.width / 2.0f - 100), 136.0F - mc.fontRenderer.FONT_HEIGHT - 1, 0xFFAAAAAA);
         this.emailField.drawTextBox();
         this.usernameField.drawTextBox();
@@ -73,6 +74,10 @@ public final class GuiAddAlt extends GuiScreen {
                 if (emailFieldEmpty && !usernameFieldEmpty && !passwordFieldEmpty) {
                     final AltData semiPremiumAlt = new AltData(this.usernameField.getText().trim(), this.passwordField.getText().trim());
                     Seppuku.INSTANCE.getAltManager().addAlt(semiPremiumAlt);
+                }
+                if (!emailFieldEmpty && usernameFieldEmpty && !passwordFieldEmpty) {
+                    final AltData emailPremiumAlt = new AltData(this.emailField.getText().trim(), this.passwordField.getText().trim());
+                    Seppuku.INSTANCE.getAltManager().addAlt(emailPremiumAlt);
                 }
                 mc.displayGuiScreen(this.parent);
                 break;
