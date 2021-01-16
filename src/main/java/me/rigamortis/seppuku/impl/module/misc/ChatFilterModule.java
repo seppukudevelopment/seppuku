@@ -53,41 +53,53 @@ public final class ChatFilterModule extends Module {
                     }
                 }
 
-                if (this.death.getValue()) {
-                    if (packet.getChatComponent().getFormattedText().contains("\2474") || packet.getChatComponent().getFormattedText().contains("\247c")) {
-                        event.setCanceled(true);
-                    }
-                }
-
-                if (this.broadcasts.getValue()) {
-                    if (packet.getChatComponent().getFormattedText().startsWith("\2475[SERVER]")) {
-                        event.setCanceled(true);
+                if (is9b9tOr2b2t) {
+                    if (this.death.getValue()) {
+                        if (packet.getChatComponent().getFormattedText().contains("\2474") || packet.getChatComponent().getFormattedText().contains("\247c")) {
+                            event.setCanceled(true);
+                        }
                     }
 
-                    if (is9b9tOr2b2t) {
+                    if (this.broadcasts.getValue()) {
+                        if (packet.getChatComponent().getFormattedText().startsWith("\2475[SERVER]")) {
+                            event.setCanceled(true);
+                        }
+
                         if (packet.getChatComponent().getFormattedText().contains("\2472")) {
                             event.setCanceled(true);
                         }
                     }
-                }
 
-                if (this.spam.getValue()) {
-                    final String chat = packet.getChatComponent().getUnformattedText();
+                    if (this.spam.getValue()) {
+                        final String chat = packet.getChatComponent().getUnformattedText();
 
-                    if (this.cache.size() > 0) {
-                        for (String s : this.cache) {
-                            final double diff = StringUtil.levenshteinDistance(s, chat);
+                        if (this.cache.size() > 0) {
+                            for (String s : this.cache) {
+                                final double diff = StringUtil.levenshteinDistance(s, chat);
 
-                            if (diff >= 0.75f) {
-                                event.setCanceled(true);
+                                if (diff >= 0.75f) {
+                                    event.setCanceled(true);
+                                }
                             }
+                        }
+
+                        this.cache.add(chat);
+
+                        if (this.cache.size() >= 10) {
+                            this.cache.remove(0);
                         }
                     }
 
-                    this.cache.add(chat);
+                    if (this.blue.getValue()) {
+                        if (packet.getChatComponent().getFormattedText().contains(ChatFormatting.BLUE + "")) {
+                            event.setCanceled(true);
+                        }
+                    }
 
-                    if (this.cache.size() >= 10) {
-                        this.cache.remove(0);
+                    if (this.green.getValue()) {
+                        if (packet.getChatComponent().getFormattedText().contains(ChatFormatting.GREEN + "")) {
+                            event.setCanceled(true);
+                        }
                     }
                 }
 
@@ -100,36 +112,20 @@ public final class ChatFilterModule extends Module {
                         boolean containsUnicode = false;
 
                         for (String s : component.getFormattedText().split(" ")) {
-
-                            String line = "";
-
+                            StringBuilder line = new StringBuilder();
                             for (char c : s.toCharArray()) {
                                 if (c >= 0xFEE0) {
                                     c -= 0xFEE0;
                                     containsUnicode = true;
                                 }
-
-                                line += c;
+                                line.append(c);
                             }
-
-                            sb.append(line + " ");
+                            sb.append(line).append(" ");
                         }
 
                         if (containsUnicode) {
                             packet.chatComponent = new TextComponentString(sb.toString());
                         }
-                    }
-                }
-
-                if (this.blue.getValue()) {
-                    if (packet.getChatComponent().getFormattedText().contains(ChatFormatting.BLUE + "")) {
-                        event.setCanceled(true);
-                    }
-                }
-
-                if (this.green.getValue()) {
-                    if (packet.getChatComponent().getFormattedText().contains(ChatFormatting.GREEN + "")) {
-                        event.setCanceled(true);
                     }
                 }
             }
