@@ -40,10 +40,14 @@ public class GuiEntryAlt implements GuiListExtended.IGuiListEntry {
             Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(password, x + 22, y + 2 + Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT, 0xFFAAAAAA);
         }
 
+        // draw rect behind head
+        RenderUtil.drawRect(x, y, x + 20, y + 20, 0xFFAAAAAA);
+
+        // load resource location & download skin from minotar's public api
         if (this.resourceLocation == null) {
             this.resourceLocation = AbstractClientPlayer.getLocationSkin(this.alt.getUsername());
             this.getDownloadImageSkin(this.resourceLocation, this.alt.getUsername());
-        } else {
+        } else { // render player head
             Minecraft.getMinecraft().getTextureManager().bindTexture(this.resourceLocation);
             GlStateManager.enableTexture2D();
             RenderUtil.drawTexture(x, y, 20, 20, 0, 0, 1, 1);
