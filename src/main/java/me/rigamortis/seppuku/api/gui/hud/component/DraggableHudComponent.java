@@ -226,7 +226,7 @@ public class DraggableHudComponent extends HudComponent {
 
             this.setDragging(false);
         } else if (button == 2) {
-            if (isMouseInside(mouseX, mouseY)) {
+            if (this.isMouseInside(mouseX, mouseY)) {
                 this.setLocked(!this.isLocked());
             }
         }

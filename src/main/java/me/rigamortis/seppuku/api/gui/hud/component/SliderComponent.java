@@ -246,7 +246,7 @@ public final class SliderComponent extends HudComponent {
 
         @Override
         public void mouseRelease(int mouseX, int mouseY, int button) {
-            super.mouseRelease(mouseX, mouseY, button);
+            //super.mouseRelease(mouseX, mouseY, button);
 
             if (this.isMouseInside(mouseX, mouseY)) {
                 if (button == 0) {

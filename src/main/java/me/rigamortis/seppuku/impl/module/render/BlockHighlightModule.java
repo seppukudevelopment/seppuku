@@ -40,9 +40,14 @@ public final class BlockHighlightModule extends Module {
     @Listener
     public void render3D(EventRender3D event) {
         final Minecraft mc = Minecraft.getMinecraft();
-        final RayTraceResult ray = mc.objectMouseOver;
-        if (ray.typeOfHit == RayTraceResult.Type.BLOCK) {
-            this.drawHighlight(ray, mc);
+        if (mc.player == null)
+            return;
+
+        if (mc.objectMouseOver != null) {
+            final RayTraceResult ray = mc.objectMouseOver;
+            if (ray.typeOfHit == RayTraceResult.Type.BLOCK) {
+                this.drawHighlight(ray, mc);
+            }
         }
     }
 
