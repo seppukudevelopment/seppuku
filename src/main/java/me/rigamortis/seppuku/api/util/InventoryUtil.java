@@ -1,7 +1,10 @@
 package me.rigamortis.seppuku.api.util;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockObsidian;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -68,6 +71,21 @@ public final class InventoryUtil {
                 return i;
             }
         }
+        return -1;
+    }
+
+    public static boolean isItemStackObsidian(final ItemStack itemStack) {
+        if (itemStack.getItem() instanceof ItemBlock)
+            return ((ItemBlock) itemStack.getItem()).getBlock() instanceof BlockObsidian;
+
+        return false;
+    }
+
+    public static int findObsidianInHotbar(final EntityPlayerSP player) {
+        for (int index = 0; InventoryPlayer.isHotbar(index); index++)
+            if (isItemStackObsidian(player.inventory.getStackInSlot(index)))
+                return index;
+
         return -1;
     }
 }

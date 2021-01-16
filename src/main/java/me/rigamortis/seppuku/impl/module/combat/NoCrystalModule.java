@@ -8,19 +8,15 @@ import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.task.hand.HandSwapContext;
 import me.rigamortis.seppuku.api.task.rotation.RotationTask;
+import me.rigamortis.seppuku.api.util.InventoryUtil;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.module.player.FreeCamModule;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockObsidian;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketAnimation;
 import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.network.play.client.CPacketPlayer;
@@ -117,7 +113,7 @@ public final class NoCrystalModule extends Module {
 
         if (blocksToPlace.size() != 0) { // we have blocks to place
             final HandSwapContext handSwapContext = new HandSwapContext(
-                    mc.player.inventory.currentItem, this.findObsidianInHotbar(mc.player));
+                    mc.player.inventory.currentItem, InventoryUtil.findObsidianInHotbar(mc.player));
             if (handSwapContext.getNewSlot() == -1) {
                 Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
                 return;
@@ -176,21 +172,6 @@ public final class NoCrystalModule extends Module {
         if (event.getWorld() != null) {
             freeCamModule = (FreeCamModule) Seppuku.INSTANCE.getModuleManager().find(FreeCamModule.class);
         }
-    }
-
-    private boolean isItemStackObsidian(final ItemStack itemStack) {
-        if (itemStack.getItem() instanceof ItemBlock)
-            return ((ItemBlock) itemStack.getItem()).getBlock() instanceof BlockObsidian;
-
-        return false;
-    }
-
-    private int findObsidianInHotbar(final EntityPlayerSP player) {
-        for (int index = 0; InventoryPlayer.isHotbar(index); index++)
-            if (this.isItemStackObsidian(player.inventory.getStackInSlot(index)))
-                return index;
-
-        return -1;
     }
 
     private boolean valid(BlockPos pos) {

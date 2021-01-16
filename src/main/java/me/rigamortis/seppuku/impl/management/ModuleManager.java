@@ -18,7 +18,6 @@ import me.rigamortis.seppuku.impl.module.world.*;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
@@ -167,6 +166,7 @@ public final class ModuleManager {
         add(new ReachModule());
         add(new AutoWitherModule());
         add(new NoteBotModule());
+        add(new BurrowModule());
 
         // p2w experience
         if (Seppuku.INSTANCE.getCapeManager().hasCape())
