@@ -64,6 +64,7 @@ public final class ConfigManager {
         this.configurableList.add(new WorldConfig(configDir));
         this.configurableList.add(new IgnoreConfig(configDir));
         this.configurableList.add(new AutoIgnoreConfig(configDir));
+        this.configurableList.add(new AltConfig(configDir));
 
         if (this.firstLaunch) {
             this.saveAll();

@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.gui.menu;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.minecraft.EventDisplayGui;
+import me.rigamortis.seppuku.api.gui.menu.MainMenuButton;
 import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.impl.fml.SeppukuMod;
 import net.minecraft.client.Minecraft;
@@ -95,6 +96,15 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
 
         height += 20;
 
+        this.alts = new MainMenuButton(res.getScaledWidth() / 2.0f - 70, height, "Alts") {
+            @Override
+            public void action() {
+                mc.displayGuiScreen(new GuiAltManager(menu));
+            }
+        };
+
+        height += 20;
+
         this.donate = new MainMenuButton(res.getScaledWidth() / 2.0f - 70, height, 69, 18, ChatFormatting.YELLOW + "Donate") {
             @Override
             public void action() {
@@ -122,15 +132,6 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
         };
 
         height += 20;
-
-        /*this.alts = new MainMenuButton(res.getScaledWidth() / 2.0f - 70, height, "Alts") {
-            @Override
-            public void action() {
-                //TODO
-            }
-        };
-
-        height += 20;*/
 
         this.quit = new MainMenuButton(res.getScaledWidth() / 2.0f - 70, height, "Quit") {
             @Override
@@ -213,7 +214,7 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
         this.mods.render(mouseX, mouseY, partialTicks);
         this.donate.render(mouseX, mouseY, partialTicks);
         this.hudEditor.render(mouseX, mouseY, partialTicks);
-        //this.alts.render(mouseX, mouseY, partialTicks);
+        this.alts.render(mouseX, mouseY, partialTicks);
         this.quit.render(mouseX, mouseY, partialTicks);
         this.disable.render(mouseX, mouseY, partialTicks);
         this.language.render(mouseX, mouseY, partialTicks);
@@ -232,7 +233,7 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
             this.mods.mouseClicked(mouseX, mouseY, mouseButton);
             this.donate.mouseClicked(mouseX, mouseY, mouseButton);
             this.hudEditor.mouseClicked(mouseX, mouseY, mouseButton);
-            //this.alts.mouseClicked(mouseX, mouseY, mouseButton);
+            this.alts.mouseClicked(mouseX, mouseY, mouseButton);
             this.quit.mouseClicked(mouseX, mouseY, mouseButton);
             this.disable.mouseClicked(mouseX, mouseY, mouseButton);
             this.language.mouseClicked(mouseX, mouseY, mouseButton);
@@ -249,7 +250,7 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
         this.mods.mouseRelease(mouseX, mouseY, state);
         this.donate.mouseRelease(mouseX, mouseY, state);
         this.hudEditor.mouseRelease(mouseX, mouseY, state);
-        //this.alts.mouseRelease(mouseX, mouseY, state);
+        this.alts.mouseRelease(mouseX, mouseY, state);
         this.quit.mouseRelease(mouseX, mouseY, state);
         this.disable.mouseRelease(mouseX, mouseY, state);
         this.language.mouseRelease(mouseX, mouseY, state);

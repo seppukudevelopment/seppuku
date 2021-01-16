@@ -1,4 +1,4 @@
-package me.rigamortis.seppuku.impl.gui.menu;
+package me.rigamortis.seppuku.api.gui.menu;
 
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import net.minecraft.client.Minecraft;
