@@ -6,7 +6,6 @@ import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.input.Mouse;
 
 import javax.vecmath.Vector2f;
-import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Particle {
@@ -16,7 +15,7 @@ public class Particle {
     private Vector2f acceleration;
 
     private int alpha;
-    private int maxAlpha;
+    private final int maxAlpha;
 
     private float size;
 
