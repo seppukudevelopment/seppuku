@@ -197,14 +197,14 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
         this.drawDefaultBackground();
         final ScaledResolution res = new ScaledResolution(mc);
 
+        // draw particle system
+        if (this.particleSystem != null)
+            this.particleSystem.render(mouseX, mouseY);
+
         // begin gl states
         GlStateManager.enableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-
-        // draw particle system
-        if (this.particleSystem != null)
-            this.particleSystem.render(mouseX, mouseY);
 
         // draw logo
         this.seppukuLogo.bind();
