@@ -55,8 +55,6 @@ public class Particle {
 
         this.pos.add(acceleration);
         this.pos.add(velocity);
-
-        //this.lifeAlpha -= 1;
     }
 
     public void render(int mouseX, int mouseY) {
