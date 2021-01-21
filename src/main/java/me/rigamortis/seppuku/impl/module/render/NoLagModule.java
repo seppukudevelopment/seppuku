@@ -35,6 +35,7 @@ public final class NoLagModule extends Module {
     public final Value<Boolean> light = new Value<Boolean>("Light", new String[]{"Lit", "l"}, "Choose to enable the lighting lag fix. Disables lighting updates.", true);
     public final Value<Boolean> signs = new Value<Boolean>("Signs", new String[]{"Sign", "si"}, "Choose to enable the sign lag fix. Disables the rendering of sign text.", false);
     public final Value<Boolean> sounds = new Value<Boolean>("Sounds", new String[]{"Sound", "s"}, "Choose to enable the sound lag fix. Disable entity swap-item/equip sound.", true);
+    public final Value<Boolean> fluids = new Value<Boolean>("Fluids", new String[]{"Fluid", "f", "Liquids", "liq", "Water", "Lava"}, "Disables the rendering of all fluids.", false);
     public final Value<Boolean> pistons = new Value<Boolean>("Pistons", new String[]{"Piston", "p"}, "Choose to enable the piston lag fix. Disables pistons from rendering.", false);
     public final Value<Boolean> slimes = new Value<Boolean>("Slimes", new String[]{"Slime", "sl"}, "Choose to enable the slime lag fix. Disables slimes from spawning.", false);
     public final Value<Boolean> items = new Value<Boolean>("Items", new String[]{"Item", "i"}, "Disables the rendering of items.", false);
@@ -42,7 +43,7 @@ public final class NoLagModule extends Module {
     public final Value<Boolean> sky = new Value<Boolean>("Sky", new String[]{"Skies", "ski"}, "Disables the rendering of the sky.", false);
     public final Value<Boolean> names = new Value<Boolean>("Names", new String[]{"Name", "n"}, "Disables the rendering of vanilla name-tags.", false);
     public final Value<Boolean> withers = new Value<Boolean>("Withers", new String[]{"Wither", "w"}, "Disables the rendering of withers.", false);
-    public final Value<Boolean> witherSkulls = new Value<Boolean>("WitherSkulls", new String[]{"WitherSkull", "skulls", "skull", "ws"}, "Disables the rendering of flying wither skulls.", false);
+    public final Value<Boolean> skulls = new Value<Boolean>("Skulls", new String[]{"WitherSkull", "skulls", "skull", "ws"}, "Disables the rendering of flying wither skulls.", false);
     public final Value<Boolean> crystals = new Value<Boolean>("Crystals", new String[]{"Wither", "w"}, "Disables the rendering of crystals.", false);
     public final Value<Boolean> tnt = new Value<Boolean>("TNT", new String[]{"Wither", "w"}, "Disables the rendering of (primed) TNT.", false);
 
@@ -51,12 +52,21 @@ public final class NoLagModule extends Module {
     }
 
     @Listener
-    public void recievePacket(EventReceivePacket event) {
+    public void onReceivePacket(EventReceivePacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             if (this.slimes.getValue()) {
                 if (event.getPacket() instanceof SPacketSpawnMob) {
                     final SPacketSpawnMob packet = (SPacketSpawnMob) event.getPacket();
                     if (packet.getEntityType() == 55) {
+                        event.setCanceled(true);
+                    }
+                }
+            }
+
+            if (this.sounds.getValue()) {
+                if (event.getPacket() instanceof SPacketSoundEffect) {
+                    final SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
+                    if (packet.getCategory() == SoundCategory.PLAYERS && packet.getSound() == SoundEvents.ITEM_ARMOR_EQUIP_GENERIC) {
                         event.setCanceled(true);
                     }
                 }
@@ -103,16 +113,10 @@ public final class NoLagModule extends Module {
     }
 
     @Listener
-    public void receivePacket(EventReceivePacket event) {
-        if (event.getStage() == EventStageable.EventStage.PRE) {
-            if (event.getPacket() instanceof SPacketSoundEffect) {
-                if (this.sounds.getValue()) {
-                    final SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
-                    if (packet.getCategory() == SoundCategory.PLAYERS && packet.getSound() == SoundEvents.ITEM_ARMOR_EQUIP_GENERIC) {
-                        event.setCanceled(true);
-                    }
-                }
-            }
+    public void onRenderFluid(EventRenderFluid event) {
+        if (this.fluids.getValue()) {
+            event.setRenderable(false);
+            event.setCanceled(true);
         }
     }
 
@@ -129,7 +133,7 @@ public final class NoLagModule extends Module {
                     event.setCanceled(true);
             }
 
-            if (this.witherSkulls.getValue()) {
+            if (this.skulls.getValue()) {
                 if (event.getEntity() instanceof EntityWitherSkull)
                     event.setCanceled(true);
             }

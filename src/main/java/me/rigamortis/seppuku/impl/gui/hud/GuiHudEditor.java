@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.gui.hud;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.gui.hud.component.HudComponent;
+import me.rigamortis.seppuku.api.gui.hud.particle.ParticleSystem;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
 import me.rigamortis.seppuku.impl.module.ui.HudEditorModule;
@@ -19,6 +20,15 @@ import java.io.IOException;
  * 7/25/2019 @ 4:15 AM.
  */
 public final class GuiHudEditor extends GuiScreen {
+
+    private ParticleSystem particleSystem;
+
+    @Override
+    public void initGui() {
+        super.initGui();
+
+        this.particleSystem = new ParticleSystem(new ScaledResolution(mc));
+    }
 
     @Override
     public void keyTyped(char typedChar, int keyCode) throws IOException {
@@ -47,6 +57,8 @@ public final class GuiHudEditor extends GuiScreen {
     public void onResize(Minecraft mcIn, int w, int h) {
         super.onResize(mcIn, w, h);
 
+        this.particleSystem = new ParticleSystem(new ScaledResolution(mcIn));
+
         final ScaledResolution sr = new ScaledResolution(mcIn);
         for (AnchorPoint anchorPoint : Seppuku.INSTANCE.getHudManager().getAnchorPoints()) {
             anchorPoint.updatePosition(sr);
@@ -59,6 +71,9 @@ public final class GuiHudEditor extends GuiScreen {
         this.drawDefaultBackground();
 
         final ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
+
+        if (this.particleSystem != null)
+            this.particleSystem.render(mouseX, mouseY);
 
         final float halfWidth = res.getScaledWidth() / 2.0f;
         final float halfHeight = res.getScaledHeight() / 2.0f;
@@ -187,6 +202,14 @@ public final class GuiHudEditor extends GuiScreen {
 
         // go back to previous screen
         super.onGuiClosed();
+    }
+
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
+
+        if (this.particleSystem != null)
+            this.particleSystem.update();
     }
 
     public void unload() {

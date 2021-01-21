@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.gui.menu;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.minecraft.EventDisplayGui;
+import me.rigamortis.seppuku.api.gui.hud.particle.ParticleSystem;
 import me.rigamortis.seppuku.api.gui.menu.MainMenuButton;
 import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.impl.fml.SeppukuMod;
@@ -37,6 +38,8 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
 
     private Texture seppukuLogo;
 
+    private ParticleSystem particleSystem;
+
     private boolean inactive = false;
 
     public GuiSeppukuMainMenu() {
@@ -47,13 +50,15 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
     public void initGui() {
         super.initGui();
 
+        final GuiSeppukuMainMenu menu = this;
+        final Minecraft mc = Minecraft.getMinecraft();
+        final ScaledResolution res = new ScaledResolution(mc);
+
         if (this.seppukuLogo == null)
             this.seppukuLogo = new Texture("seppuku-logo.png");
 
-        final GuiSeppukuMainMenu menu = this;
-
-        final Minecraft mc = Minecraft.getMinecraft();
-        final ScaledResolution res = new ScaledResolution(mc);
+        if (this.particleSystem == null)
+            this.particleSystem = new ParticleSystem(res);
 
         // resize the seppuku hud editor with the size of the main menu
         Seppuku.INSTANCE.getHudEditor().onResize(mc, res.getScaledWidth(), res.getScaledHeight());
@@ -179,10 +184,22 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
     }
 
     @Override
+    public void updateScreen() {
+        super.updateScreen();
+
+        if (this.particleSystem != null)
+            this.particleSystem.update();
+    }
+
+    @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.drawDefaultBackground();
         final ScaledResolution res = new ScaledResolution(mc);
+
+        // draw particle system
+        if (this.particleSystem != null)
+            this.particleSystem.render(mouseX, mouseY);
 
         // begin gl states
         GlStateManager.enableBlend();
@@ -259,6 +276,8 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
     @Override
     public void onResize(Minecraft mcIn, int w, int h) {
         super.onResize(mcIn, w, h);
+
+        this.particleSystem = new ParticleSystem(new ScaledResolution(mcIn));
 
         // resize the seppuku hud editor with the size of the main menu
         Seppuku.INSTANCE.getHudEditor().onResize(mcIn, w, h);

@@ -45,7 +45,7 @@ public final class PatchManager {
         this.patchList.add(new BlockSoulSandPatch());
         this.patchList.add(new KeyBindingPatch());
         this.patchList.add(new BlockModelRendererPatch());
-        //this.patchList.add(new BlockFluidRendererPatch());
+        this.patchList.add(new BlockFluidRendererPatch());
         this.patchList.add(new ActiveRenderInfoPatch());
         this.patchList.add(new BlockSlimePatch());
         this.patchList.add(new BlockLiquidPatch());
