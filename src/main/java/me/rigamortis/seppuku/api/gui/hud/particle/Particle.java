@@ -62,8 +62,8 @@ public class Particle {
             float deltaXToMouse = mouseX - this.pos.getX();
             float deltaYToMouse = mouseY - this.pos.getY();
             if (Math.abs(deltaXToMouse) < 50 && Math.abs(deltaYToMouse) < 50) {
-                this.acceleration.setX(this.acceleration.getX() + (deltaXToMouse * 0.0025f));
-                this.acceleration.setY(this.acceleration.getY() + (deltaYToMouse * 0.0025f));
+                this.acceleration.setX(this.acceleration.getX() + (deltaXToMouse * 0.0015f));
+                this.acceleration.setY(this.acceleration.getY() + (deltaYToMouse * 0.0015f));
             }
         }
 
