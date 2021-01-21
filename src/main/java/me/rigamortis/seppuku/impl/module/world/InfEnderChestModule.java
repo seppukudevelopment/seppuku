@@ -2,11 +2,13 @@ package me.rigamortis.seppuku.impl.module.world;
 
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
+import me.rigamortis.seppuku.api.event.client.EventLoad;
 import me.rigamortis.seppuku.api.event.minecraft.EventDisplayGui;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.network.EventSendPacket;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.event.player.EventRightClickBlock;
+import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
 import me.rigamortis.seppuku.api.module.Module;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -48,6 +50,14 @@ public final class InfEnderChestModule extends Module {
             Minecraft.getMinecraft().player.connection.sendPacket(new CPacketCloseWindow(Minecraft.getMinecraft().player.inventoryContainer.windowId));
             this.resetBackupEnderChest();
             Seppuku.INSTANCE.logChat("Container closed.");
+        }
+    }
+
+    @Listener
+    public void loadWorld(EventLoadWorld event) {
+        if (Minecraft.getMinecraft().world != null) {
+            Minecraft.getMinecraft().player.connection.sendPacket(new CPacketCloseWindow(Minecraft.getMinecraft().player.inventoryContainer.windowId));
+            this.resetBackupEnderChest();
         }
     }
 
