@@ -81,8 +81,9 @@ public final class HubComponent extends ResizableHudComponent {
         mc.fontRenderer.drawStringWithShadow(this.getName(), this.getX() + BORDER + /* texture width */ TEXTURE_SIZE + BORDER, this.getY() + BORDER, 0xFFFFFFFF);
         offsetY += mc.fontRenderer.FONT_HEIGHT + 1;
 
-        // Behind hub
-        RenderUtil.drawRect(this.getX() + BORDER, this.getY() + offsetY + BORDER, this.getX() + this.getW() - SCROLL_WIDTH - BORDER, this.getY() + this.getH() - BORDER, 0xFF101010);
+        // Behind list
+        final float listTop = this.getY() + offsetY + BORDER;
+        RenderUtil.drawRect(this.getX() + BORDER, listTop, this.getX() + this.getW() - SCROLL_WIDTH - BORDER, this.getY() + this.getH() - BORDER, 0xFF101010);
 
         // Scrollbar bg
         RenderUtil.drawRect(this.getX() + this.getW() - SCROLL_WIDTH, this.getY() + offsetY + BORDER, this.getX() + this.getW() - BORDER, this.getY() + this.getH() - BORDER, 0xFF101010);
@@ -120,6 +121,14 @@ public final class HubComponent extends ResizableHudComponent {
             }
         }
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
+        // Over list
+        if (this.scroll > 6) {
+            RenderUtil.drawGradientRect(this.getX() + BORDER, listTop, this.getX() + this.getW() - SCROLL_WIDTH - BORDER, listTop + 8, 0xFF101010, 0x00000000);
+        }
+        if (this.getH() != this.getTotalHeight() && this.scroll != (this.totalHeight - this.getH())) {
+            RenderUtil.drawGradientRect(this.getX() + BORDER, this.getY() + this.getH() - BORDER - 8, this.getX() + this.getW() - SCROLL_WIDTH - BORDER, this.getY() + this.getH() - BORDER, 0x00000000, 0xFF101010);
+        }
 
         // figures up a "total height (pixels)" of the inside of the list area (for calculating scroll height)
         this.totalHeight = BORDER + TEXT_GAP + offsetY + BORDER;
