@@ -6,6 +6,7 @@ import me.rigamortis.seppuku.api.gui.hud.component.HudComponent;
 import me.rigamortis.seppuku.api.gui.hud.particle.ParticleSystem;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
+import me.rigamortis.seppuku.impl.gui.hud.component.ParticlesComponent;
 import me.rigamortis.seppuku.impl.module.ui.HudEditorModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -22,12 +23,18 @@ import java.io.IOException;
 public final class GuiHudEditor extends GuiScreen {
 
     private ParticleSystem particleSystem;
+    private ParticlesComponent particlesComponent;
 
     @Override
     public void initGui() {
         super.initGui();
 
-        this.particleSystem = new ParticleSystem(new ScaledResolution(mc));
+        this.particlesComponent = (ParticlesComponent) Seppuku.INSTANCE.getHudManager().findComponent(ParticlesComponent.class);
+        if (particlesComponent != null) {
+            if (particlesComponent.isVisible()) {
+                this.particleSystem = new ParticleSystem(new ScaledResolution(mc));
+            }
+        }
     }
 
     @Override
@@ -57,7 +64,8 @@ public final class GuiHudEditor extends GuiScreen {
     public void onResize(Minecraft mcIn, int w, int h) {
         super.onResize(mcIn, w, h);
 
-        this.particleSystem = new ParticleSystem(new ScaledResolution(mcIn));
+        if (this.particleSystem != null)
+            this.particleSystem = new ParticleSystem(new ScaledResolution(mcIn));
 
         final ScaledResolution sr = new ScaledResolution(mcIn);
         for (AnchorPoint anchorPoint : Seppuku.INSTANCE.getHudManager().getAnchorPoints()) {
@@ -208,8 +216,22 @@ public final class GuiHudEditor extends GuiScreen {
     public void updateScreen() {
         super.updateScreen();
 
-        if (this.particleSystem != null)
+        if (this.particleSystem != null) {
+            if (this.particlesComponent != null) {
+                if (!this.particlesComponent.isVisible()) {
+                    this.particleSystem = null;
+                    return;
+                }
+            }
+
             this.particleSystem.update();
+        } else {
+            if (this.particlesComponent != null) {
+                if (this.particlesComponent.isVisible()) {
+                    this.particleSystem = new ParticleSystem(new ScaledResolution(mc));
+                }
+            }
+        }
     }
 
     public void unload() {

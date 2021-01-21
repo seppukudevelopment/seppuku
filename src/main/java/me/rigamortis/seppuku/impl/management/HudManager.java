@@ -75,6 +75,7 @@ public final class HudManager {
             moduleListXOffset += moduleList.getW() + 4 /* gap between each list */;
         }
 
+        add(new ParticlesComponent());
         add(new WatermarkComponent());
         add(new EnabledModsComponent(TOP_RIGHT)); // creates the enabled mods component & by default anchors in the top right (to aid new users)
         add(new TpsComponent());
