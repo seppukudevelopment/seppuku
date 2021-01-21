@@ -38,6 +38,8 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
 
     private Texture seppukuLogo;
 
+    private ScaledResolution scaledResolution;
+
     private ParticleSystem particleSystem;
 
     private boolean inactive = false;
@@ -52,20 +54,20 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
 
         final GuiSeppukuMainMenu menu = this;
         final Minecraft mc = Minecraft.getMinecraft();
-        final ScaledResolution res = new ScaledResolution(mc);
+        this.scaledResolution = new ScaledResolution(mc);
 
         if (this.seppukuLogo == null)
             this.seppukuLogo = new Texture("seppuku-logo.png");
 
         if (this.particleSystem == null)
-            this.particleSystem = new ParticleSystem(res);
+            this.particleSystem = new ParticleSystem(this.scaledResolution);
 
         // resize the seppuku hud editor with the size of the main menu
-        Seppuku.INSTANCE.getHudEditor().onResize(mc, res.getScaledWidth(), res.getScaledHeight());
+        Seppuku.INSTANCE.getHudEditor().onResize(mc, this.scaledResolution.getScaledWidth(), this.scaledResolution.getScaledHeight());
 
-        float height = (res.getScaledHeight() / 4.0f) + mc.fontRenderer.FONT_HEIGHT / 2.0f + 18;
+        float height = (this.scaledResolution.getScaledHeight() / 4.0f) + mc.fontRenderer.FONT_HEIGHT / 2.0f + 18;
 
-        this.singlePlayer = new MainMenuButton(res.getScaledWidth() / 2.0f - 70, height, "Singleplayer") {
+        this.singlePlayer = new MainMenuButton(this.scaledResolution.getScaledWidth() / 2.0f - 70, height, "Singleplayer") {
             @Override
             public void action() {
                 mc.displayGuiScreen(new GuiWorldSelection(menu));
@@ -74,7 +76,7 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
 
         height += 20;
 
-        this.multiPlayer = new MainMenuButton(res.getScaledWidth() / 2.0f - 70, height, "Multiplayer") {
+        this.multiPlayer = new MainMenuButton(this.scaledResolution.getScaledWidth() / 2.0f - 70, height, "Multiplayer") {
             @Override
             public void action() {
                 mc.displayGuiScreen(new GuiMultiplayer(menu));
@@ -83,7 +85,7 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
 
         height += 20;
 
-        this.options = new MainMenuButton(res.getScaledWidth() / 2.0f - 70, height, "Options") {
+        this.options = new MainMenuButton(this.scaledResolution.getScaledWidth() / 2.0f - 70, height, "Options") {
             @Override
             public void action() {
                 mc.displayGuiScreen(new GuiOptions(menu, mc.gameSettings));
@@ -92,7 +94,7 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
 
         height += 20;
 
-        this.mods = new MainMenuButton(res.getScaledWidth() / 2.0f - 70, height, "Mods") {
+        this.mods = new MainMenuButton(this.scaledResolution.getScaledWidth() / 2.0f - 70, height, "Mods") {
             @Override
             public void action() {
                 mc.displayGuiScreen(new GuiModList(menu));
@@ -101,7 +103,7 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
 
         height += 20;
 
-        this.alts = new MainMenuButton(res.getScaledWidth() / 2.0f - 70, height, "Alts") {
+        this.alts = new MainMenuButton(this.scaledResolution.getScaledWidth() / 2.0f - 70, height, "Alts") {
             @Override
             public void action() {
                 mc.displayGuiScreen(new GuiAltManager(menu));
@@ -110,7 +112,7 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
 
         height += 20;
 
-        this.donate = new MainMenuButton(res.getScaledWidth() / 2.0f - 70, height, 69, 18, ChatFormatting.YELLOW + "Donate") {
+        this.donate = new MainMenuButton(this.scaledResolution.getScaledWidth() / 2.0f - 70, height, 69, 18, ChatFormatting.YELLOW + "Donate") {
             @Override
             public void action() {
                 try {
@@ -129,7 +131,7 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
             }
         };
 
-        this.hudEditor = new MainMenuButton(res.getScaledWidth() / 2.0f + 1, height, 69, 18, ChatFormatting.GRAY + "Hud Editor") {
+        this.hudEditor = new MainMenuButton(this.scaledResolution.getScaledWidth() / 2.0f + 1, height, 69, 18, ChatFormatting.GRAY + "Hud Editor") {
             @Override
             public void action() {
                 mc.displayGuiScreen(Seppuku.INSTANCE.getHudEditor());
@@ -138,7 +140,7 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
 
         height += 20;
 
-        this.quit = new MainMenuButton(res.getScaledWidth() / 2.0f - 70, height, "Quit") {
+        this.quit = new MainMenuButton(this.scaledResolution.getScaledWidth() / 2.0f - 70, height, "Quit") {
             @Override
             public void action() {
                 mc.shutdown();
@@ -187,15 +189,16 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
     public void updateScreen() {
         super.updateScreen();
 
-        if (this.particleSystem != null)
+        if (this.particleSystem != null) {
+            this.particleSystem.setScaledResolution(this.scaledResolution);
             this.particleSystem.update();
+        }
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.drawDefaultBackground();
-        final ScaledResolution res = new ScaledResolution(mc);
 
         // draw particle system
         if (this.particleSystem != null)
@@ -208,7 +211,7 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
 
         // draw logo
         this.seppukuLogo.bind();
-        this.seppukuLogo.render((res.getScaledWidth() / 2.0f) - 120, (res.getScaledHeight() / 8.0f), 240, 38);
+        this.seppukuLogo.render((this.scaledResolution.getScaledWidth() / 2.0f) - 120, (this.scaledResolution.getScaledHeight() / 8.0f), 240, 38);
         //RenderUtil.drawLine(res.getScaledWidth() / 2, 0, res.getScaledWidth() / 2, res.getScaledHeight(), 1, 0x75909090);
         //RenderUtil.drawLine(0, res.getScaledHeight() / 2, res.getScaledWidth(), res.getScaledHeight() / 2, 1, 0x75909090);
 

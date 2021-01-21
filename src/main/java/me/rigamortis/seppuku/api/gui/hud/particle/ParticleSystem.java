@@ -14,7 +14,7 @@ public final class ParticleSystem {
     private final int PARTS = 100;
     private final Particle[] particles = new Particle[PARTS];
 
-    private final ScaledResolution scaledResolution;
+    private ScaledResolution scaledResolution;
 
     public ParticleSystem(ScaledResolution scaledResolution) {
         this.scaledResolution = scaledResolution;
@@ -63,5 +63,13 @@ public final class ParticleSystem {
 
             particle.render(mouseX, mouseY);
         }
+    }
+
+    public ScaledResolution getScaledResolution() {
+        return scaledResolution;
+    }
+
+    public void setScaledResolution(ScaledResolution scaledResolution) {
+        this.scaledResolution = scaledResolution;
     }
 }
