@@ -2,13 +2,18 @@ package me.rigamortis.seppuku.impl.module.player;
 
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
+import me.rigamortis.seppuku.api.event.player.EventClickBlock;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
+import me.rigamortis.seppuku.api.event.player.EventRightClickBlock;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.module.render.BlockHighlightModule;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.play.client.CPacketPlayer;
+import net.minecraft.network.play.client.CPacketPlayerDigging;
+import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.RayTraceResult;
@@ -20,15 +25,21 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class ReachModule extends Module {
 
+    public enum Mode {
+        BYPASS, VANILLA
+    }
+
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Type", "T", "M"}, "Change between reach modes.", Mode.BYPASS);
     public final Value<Float> distance = new Value<Float>("Distance", new String[]{"Dist", "D"}, "The distance (in blocks) to reach.", 5.5f, 0.0f, 10.0f, 0.5f);
     public final Value<Boolean> highlight = new Value<Boolean>("Highlight", new String[]{"Hover", "H"}, "Enables rendering the BlockHighlight for the extended reach.", true);
     public final Value<Boolean> blocks = new Value<Boolean>("Blocks", new String[]{"Block", "B"}, "Enables reaching for breaking & building blocks.", true);
     //public final Value<Boolean> entities = new Value<Boolean>("Entities", new String[]{"Entity", "Entitie", "E"}, "Enables reaching for attacking and interacting with entities.", false);
 
     private BlockHighlightModule blockHighlightModule = null;
-
     private RayTraceResult currentBlockTrace = null;
     //private RayTraceResult currentEntityTrace = null;
+
+    private final Minecraft mc = Minecraft.getMinecraft();
 
     public ReachModule() {
         super("Reach", new String[]{"Rch"}, "Extends the player's reach.", "NONE", -1, ModuleType.PLAYER);
@@ -44,8 +55,6 @@ public final class ReachModule extends Module {
 
     @Listener
     public void onRender3D(EventRender3D event) {
-        final Minecraft mc = Minecraft.getMinecraft();
-
         if (mc.player == null)
             return;
 
@@ -84,11 +93,42 @@ public final class ReachModule extends Module {
     }
 
     @Listener
+    public void onClickBlock(EventClickBlock event) {
+        if (!this.mode.getValue().equals(Mode.VANILLA))
+            return;
+
+        if (event.getPos() != null) {
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(event.getPos().getX(), event.getPos().getY() + 2, event.getPos().getZ(), mc.player.onGround));
+            mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, event.getPos(), event.getFace()));
+            mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, event.getPos(), event.getFace()));
+            mc.player.swingArm(EnumHand.MAIN_HAND);
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY, mc.player.posZ, mc.player.onGround));
+            event.setCanceled(true);
+        }
+    }
+
+    @Listener
+    public void onRightClickBlock(EventRightClickBlock event) {
+        if (!this.mode.getValue().equals(Mode.VANILLA))
+            return;
+
+        if (event.getPos() != null) {
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(event.getPos().getX(), event.getPos().getY() + 2, event.getPos().getZ(), mc.player.onGround));
+            mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(event.getPos(), event.getFacing(), EnumHand.MAIN_HAND, 0.5F, 0.5F, 0.5F));
+            mc.player.swingArm(EnumHand.MAIN_HAND);
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY, mc.player.posZ, mc.player.onGround));
+            event.setCanceled(true);
+        }
+    }
+
+    @Listener
     public void onUpdate(EventPlayerUpdate event) {
         if (event.getStage() != EventStageable.EventStage.PRE)
             return;
 
-        final Minecraft mc = Minecraft.getMinecraft();
+        //if (!this.mode.getValue().equals(Mode.BYPASS))
+        //   return;
+
         if (mc.player == null || mc.world == null)
             return;
 
