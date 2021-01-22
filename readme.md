@@ -9,7 +9,7 @@
 ![GitHub Language](https://img.shields.io/github/languages/top/seppukudevelopment/seppuku?color=9900ee)
 ![Downloads](https://img.shields.io/github/downloads/seppukudevelopment/seppuku/total?color=9900ee)
 
-Seppuku is a free, open-source and lightweight Minecraft 1.12.2 [_Forge_](https://files.minecraftforge.net/) mod, and soon to be for more recent versions.
+Seppuku is a free, open-source and lightweight Minecraft 1.12.2 [Forge](https://files.minecraftforge.net/) mod, and soon to be for more recent versions.
 
 Originally oriented towards the 9B9T and 2B2T anarchy servers; it is a fully featured client-side mod with an external plugin system, unique exploits, and a [solid Discord community](https://discord.gg/UzWBZPe).
 
