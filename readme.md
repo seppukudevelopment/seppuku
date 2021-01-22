@@ -17,7 +17,7 @@ Checkout the [guide](https://seppuku.pw/guide.html) for help.
 
 # Requirements
 - **JDK 8** ([AdoptOpenJDK](https://adoptopenjdk.net/) or [Corretto](https://aws.amazon.com/corretto/) is recommended)
-- __(optional)__ **[Git](https://git-scm.com)**
+- **[Git](https://git-scm.com)** (optional)
 
 # Building
 
