@@ -50,9 +50,9 @@ public final class CommandsModule extends Module {
 
                 for (String cmd : this.predictedCommands) {
                     final HudComponent predictionComponent = new HudComponent(2, event.getScaledResolution().getScaledHeight() - 24 - height, 4 + mc.fontRenderer.getStringWidth(cmd), mc.fontRenderer.FONT_HEIGHT);
-                    RenderUtil.drawRect(predictionComponent.getX(), predictionComponent.getY(), predictionComponent.getX() + predictionComponent.getW(), predictionComponent.getY() + predictionComponent.getH(), 0xFF101010);
+                    RenderUtil.drawRect(predictionComponent.getX(), predictionComponent.getY(), predictionComponent.getX() + predictionComponent.getW(), predictionComponent.getY() + predictionComponent.getH(), 0xDD101010);
                     mc.fontRenderer.drawStringWithShadow(cmd, predictionComponent.getX() + 2, predictionComponent.getY(), 0xFF9900EE);
-                    height += mc.fontRenderer.FONT_HEIGHT + 1;
+                    height += mc.fontRenderer.FONT_HEIGHT;
                 }
             } else {
                 this.predictedCommands.clear();
