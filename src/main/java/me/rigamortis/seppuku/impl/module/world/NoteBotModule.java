@@ -4,19 +4,23 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
+import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.module.notebot.Note;
 import me.rigamortis.seppuku.api.module.notebot.NotePlayer;
 import me.rigamortis.seppuku.api.task.rotation.RotationTask;
 import me.rigamortis.seppuku.api.util.MathUtil;
+import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.network.play.client.CPacketPlayerDigging;
 import net.minecraft.network.play.server.SPacketBlockAction;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -245,6 +249,36 @@ public final class NoteBotModule extends Module {
         }
     }
 
+    @Listener
+    public void onRender3D(EventRender3D event) {
+        if (mc.player != null && mc.world != null && mc.getRenderViewEntity() != null) {
+            RenderUtil.begin3D();
+            for (int note = 0; note < BLOCK_AREA; note++) {
+                int[] area = this.blockArea(note);
+                final BlockPos pos = new BlockPos(area[0], area[1], area[2]);
+
+                float[] color = new float[]{128.0f, 128.0f, 128.0f};
+
+                if (this.tunedBlocks.contains(pos)) {
+                    float mappedColor = (float) MathUtil.map(note, 0.0D, BLOCK_AREA, 0.0D, 255.0D);
+                    color = new float[]{255.0F - mappedColor, mappedColor, 0.0F};
+                } else if (this.discoveredBlocks.containsKey(pos)) {
+                    float mappedColor = (float) MathUtil.map(this.discoveredBlocks.get(pos).getPitch(), 0.0D, BLOCK_AREA, 0.0D, 255.0D);
+                    color = new float[]{255.0F - mappedColor, mappedColor, 0.0F};
+                }
+
+                final AxisAlignedBB bb = new AxisAlignedBB(
+                        pos.getX() - mc.getRenderManager().viewerPosX, pos.getY() - mc.getRenderManager().viewerPosY, pos.getZ() - mc.getRenderManager().viewerPosZ,
+                        pos.getX() + 1.0f - mc.getRenderManager().viewerPosX, pos.getY() + 1.0f - mc.getRenderManager().viewerPosY, pos.getZ() + 1.0f - mc.getRenderManager().viewerPosZ);
+                GlStateManager.color(color[0] / 255.0F, color[1] / 255.0F, color[2] / 255.0F, 0.2F);
+                RenderUtil.drawFilledBox(bb);
+                GlStateManager.color(color[0] / 255.0F, color[1] / 255.0F, color[2] / 255.0F, 0.6F);
+                RenderUtil.drawBoundingBox(bb, 1.0f);
+            }
+            RenderUtil.end3D();
+        }
+    }
+
     private int[] blockArea(int index) {
         int[] positions = {(int) Math.floor(mc.player.posX) - this.positionOffsets[0], (int) Math.floor(mc.player.posY) - this.positionOffsets[1], (int) Math.floor(mc.player.posZ) - this.positionOffsets[2]};
         return new int[]{positions[0] + index % 5, positions[1], positions[2] + index / 5};
@@ -318,8 +352,9 @@ public final class NoteBotModule extends Module {
                     int note = key > 12 ? key % 24 : key % 12;
                     int velocity = shortMessage.getData2();
                     if (velocity > 0) {
-                        mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, getPosition(note), EnumFacing.UP));
-                        mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.ABORT_DESTROY_BLOCK, getPosition(note), EnumFacing.UP));
+                        NoteBotModule.this.setCurrentNoteBlock(new BlockPos(getPosition(note)));
+                        //mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, playPos, EnumFacing.UP));
+                        //mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.ABORT_DESTROY_BLOCK, playPos, EnumFacing.UP));
                     }
                 }
             }

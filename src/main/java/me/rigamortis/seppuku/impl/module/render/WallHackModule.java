@@ -116,7 +116,7 @@ public final class WallHackModule extends Module {
     private final List<FootstepData> footstepDataList = new CopyOnWriteArrayList<>();
 
     public WallHackModule() {
-        super("WallHack", new String[]{"ESP"}, "Highlights entities", "NONE", -1, ModuleType.RENDER);
+        super("WallHack", new String[]{"ESP", "Wall-Hack", "Walls", "NameTags", "NameTag", "Name-Tag", "Name-Tags", "ExtraSensoryPerception"}, "Highlights entities", "NONE", -1, ModuleType.RENDER);
     }
 
     @Listener
