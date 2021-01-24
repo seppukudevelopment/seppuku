@@ -28,9 +28,18 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class BurrowModule extends Module {
 
+    public enum Mode {
+        JUMP, GLITCH, TP
+    }
+
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"m"}, "The current mode to use.", Mode.JUMP);
+    public final Value<Float> glitchY = new Value<>("ModeGlitchY", new String[]{"mgy", "glitchy"}, "Using GLITCH mode, this will be your player's motionY.", 0.5f, 0.1f, 1.5f, 0.1f);
+    public final Value<Integer> tpHeight = new Value<>("ModeTPHeight", new String[]{"mtph", "mth", "tpheight", "tpy"}, "Using TP mode, this will be how many blocks above the player to TP.", 5, 1, 10, 1);
+
     public final Value<Float> delay = new Value<>("Delay", new String[]{"del", "d"}, "Delay(ms) to wait for placing obsidian after the initial jump.", 200.0f, 1.0f, 500.0f, 1.0f);
     public final Value<Boolean> rotate = new Value<>("Rotate", new String[]{"rot", "r"}, "Rotate the players head to place the block.", true);
     public final Value<Boolean> center = new Value<Boolean>("Center", new String[]{"centered", "c", "cen"}, "Centers the player on their current block when beginning to place.", false);
+    public final Value<Boolean> offGround = new Value<Boolean>("OffGround", new String[]{"offg", "og", "o"}, "Forces player onGround to false when enabled.", true);
 
     private final Timer timer = new Timer();
     private final RotationTask rotationTask = new RotationTask("BurrowTask", 9); // 9 == high priority
@@ -99,8 +108,21 @@ public final class BurrowModule extends Module {
                             // get our block pos to place at
                             final BlockPos positionToPlaceAt = new BlockPos(mc.player.getPositionVector()).down();
                             if (this.place(positionToPlaceAt, mc)) { // we've attempted to place the block
-                                mc.player.onGround = false; // set onground to false
-                                mc.player.jump(); // attempt another jump to flag ncp
+                                if (this.offGround.getValue()) {
+                                    mc.player.onGround = false; // set onground to false
+                                }
+
+                                switch (this.mode.getValue()) {
+                                    case JUMP:
+                                        mc.player.jump(); // attempt another jump to flag ncp
+                                        break;
+                                    case GLITCH:
+                                        mc.player.motionY = this.glitchY.getValue();
+                                        break;
+                                    case TP:
+                                        mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY - this.tpHeight.getValue(), mc.player.posZ, mc.player.onGround));
+                                        break;
+                                }
                             }
 
                             // swap back to original

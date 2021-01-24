@@ -69,7 +69,12 @@ public final class SliderComponent extends HudComponent {
                 this.sliderBar.render(mouseX, mouseY, partialTicks);
             }
 
-            Minecraft.getMinecraft().fontRenderer.drawString(this.getName(), (int) this.getX() + 1, (int) this.getY() + 1, 0xFFAAAAAA);
+            // draw text
+            String renderName = this.getName();
+            if (this.getDisplayName() != null) {
+                renderName = this.getDisplayName();
+            }
+            Minecraft.getMinecraft().fontRenderer.drawString(renderName, (int) this.getX() + 1, (int) this.getY() + 1, 0xFFAAAAAA);
 
             String displayedValue = this.decimalFormat.format(this.value.getValue());
             if (this.sliding) {

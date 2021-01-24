@@ -14,6 +14,7 @@ public abstract class Command {
     private String[] alias;
     private String desc;
     private String usage;
+    private String[] arguments;
 
     private TextComponentString textComponentUsage;
 
@@ -26,6 +27,14 @@ public abstract class Command {
         this.alias = alias;
         this.desc = desc;
         this.usage = usage;
+    }
+
+    public Command(String displayName, String[] alias, String desc, String usage, String[] arguments) {
+        this.displayName = displayName;
+        this.alias = alias;
+        this.desc = desc;
+        this.usage = usage;
+        this.arguments = arguments;
     }
 
     public Command(String displayName, String[] alias, String desc, TextComponentString textComponentUsage) {
@@ -79,6 +88,10 @@ public abstract class Command {
         }
     }
 
+    public String tabComplete(String input) {
+        return null;
+    }
+
     public String getDisplayName() {
         return displayName;
     }
@@ -109,6 +122,14 @@ public abstract class Command {
 
     public void setUsage(String usage) {
         this.usage = usage;
+    }
+
+    public String[] getArguments() {
+        return arguments;
+    }
+
+    public void setArguments(String[] arguments) {
+        this.arguments = arguments;
     }
 
     public TextComponentString getTextComponentUsage() {

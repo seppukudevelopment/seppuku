@@ -19,9 +19,14 @@ public class HudComponent {
     private float emptyH;
 
     private String name;
+    private String displayName;
     private String tooltipText = "";
 
     private boolean visible;
+
+    public ComponentListener mouseClickListener, rightClickListener;
+    public boolean rightClickEnabled;
+    public int subComponents = 0;
 
     private List<Value> valueList = new ArrayList<Value>();
 
@@ -76,7 +81,17 @@ public class HudComponent {
     }
 
     public void mouseRelease(int mouseX, int mouseY, int button) {
+        if (this.isMouseInside(mouseX, mouseY)) {
+            if (button == 0) {
+                if (this.mouseClickListener != null)
+                    this.mouseClickListener.onComponentEvent();
+            } else if (button == 1) {
+                if (this.rightClickListener != null)
+                    this.rightClickListener.onComponentEvent();
 
+                this.rightClickEnabled = !this.rightClickEnabled;
+            }
+        }
     }
 
     public void keyTyped(char typedChar, int keyCode) {
@@ -163,6 +178,18 @@ public class HudComponent {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    /***
+     * Nullable, use getName if this is not set.
+     * @return
+     */
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public String getTooltipText() {

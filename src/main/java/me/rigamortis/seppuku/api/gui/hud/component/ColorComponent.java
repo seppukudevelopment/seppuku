@@ -60,6 +60,8 @@ public class ColorComponent extends TextComponent {
             displayedName = this.displayValue;
         } else if (customDisplayValue != null) {
             displayedName = customDisplayValue;
+        } else if (this.getDisplayName() != null) {
+            displayedName = this.getDisplayName();
         }
         Minecraft.getMinecraft().fontRenderer.drawString(displayedName, (int) this.getX() + BORDER + COLOR_SIZE + BORDER, (int) this.getY() + BORDER, this.focused ? 0xFFFFFFFF : 0xFFAAAAAA);
 

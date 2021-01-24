@@ -34,6 +34,14 @@ public final class CarouselComponent extends HudComponent {
         final String displayValueText = this.getName() + ": " + this.displayValue;
         Minecraft.getMinecraft().fontRenderer.drawString(displayValueText, (int) this.getX() + 1, (int) this.getY() + 1, this.focused ? 0xFFFFFFFF : 0xFFAAAAAA);
 
+        if (this.subComponents > 0) {
+            final int dotColor = this.rightClickEnabled ? 0xFF6D55FF : (this.focused ? 0x75FFFFFF : 0x75909090);
+            RenderUtil.drawRect(this.getX() + this.getW() - 27, this.getY(), this.getX() + this.getW() - 18, this.getY() + this.getH(), 0xFF101010);
+            RenderUtil.drawRect(this.getX() + this.getW() - 21, this.getY() + this.getH() - 2, this.getX() + this.getW() - 20, this.getY() + this.getH() - 1, dotColor);
+            RenderUtil.drawRect(this.getX() + this.getW() - 23, this.getY() + this.getH() - 2, this.getX() + this.getW() - 22, this.getY() + this.getH() - 1, dotColor);
+            RenderUtil.drawRect(this.getX() + this.getW() - 25, this.getY() + this.getH() - 2, this.getX() + this.getW() - 24, this.getY() + this.getH() - 1, dotColor);
+        }
+
         RenderUtil.drawRect(this.getX() + this.getW() - 18, this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0xFF101010);
         RenderUtil.drawTriangle(this.getX() + this.getW() - 14, this.getY() + 4, 3, -90, this.focused ? 0x75FFFFFF : 0x75909090);
         RenderUtil.drawTriangle(this.getX() + this.getW() - 4, this.getY() + 4, 3, 90, this.focused ? 0x75FFFFFF : 0x75909090);
@@ -58,6 +66,13 @@ public final class CarouselComponent extends HudComponent {
     protected boolean onLeftButtonPress(int mouseX) {
         if (mouseX >= this.getX() + this.getW() - 18 && mouseX <= this.getX() + this.getW() - 10) {
             this.declineOption();
+            return true;
+        } else if (mouseX >= this.getX() + this.getW() - 25 && mouseX <= this.getX() + this.getW() - 20) {
+            this.rightClickEnabled = !this.rightClickEnabled;
+
+            if (!this.rightClickEnabled) {
+                this.focused = false;
+            }
             return true;
         }
         return false;

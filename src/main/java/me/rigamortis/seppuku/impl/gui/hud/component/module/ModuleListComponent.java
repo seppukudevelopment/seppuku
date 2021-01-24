@@ -624,16 +624,14 @@ public final class ModuleListComponent extends ResizableHudComponent {
                     if (otherComponent == component || otherComponent.getName().equals(component.getName()))
                         continue;
 
-                    if (otherComponent instanceof ButtonComponent) {
                         boolean isChildComponent = component.getName().toLowerCase().startsWith(otherComponent.getName().toLowerCase());
                         if (isChildComponent) {
-                            if (!((ButtonComponent) otherComponent).rightClickEnabled) {
+                            if (!otherComponent.rightClickEnabled) {
                                 skipRendering = true;
                             }
 
                             offsetX += 4;
                         }
-                    }
                 }
 
                 if (skipRendering)
@@ -646,8 +644,8 @@ public final class ModuleListComponent extends ResizableHudComponent {
                 component.render(mouseX, mouseY, partialTicks);
 
                 if (offsetX > 0) {
-                    RenderUtil.drawLine(component.getX() - offsetX + 1, component.getY(), component.getX() - offsetX + 1, component.getY() + component.getH(), 2.0f, 0xFF202020);
-                    RenderUtil.drawLine(component.getX() - offsetX + 1, component.getY() + component.getH() / 2, component.getX(), component.getY() + component.getH() / 2, 2.0f, 0xFF202020);
+                    RenderUtil.drawLine(component.getX() - offsetX + 1, component.getY(), component.getX() - offsetX + 1, component.getY() + component.getH(), 2.0f, 0x90707070);
+                    RenderUtil.drawLine(component.getX() - offsetX + 1.5f, component.getY() + component.getH() / 2, component.getX() - 0.5f, component.getY() + component.getH() / 2, 2.0f, 0x90707070);
                 }
 
                 offsetY += component.getH() + 1;
@@ -688,18 +686,13 @@ public final class ModuleListComponent extends ResizableHudComponent {
 
         private void addComponentToButtons(HudComponent hudComponent) {
             for (HudComponent component : this.components) {
-                if (component instanceof ButtonComponent) {
-                    boolean similarName = hudComponent.getName().toLowerCase().startsWith(component.getName().toLowerCase());
-                    if (similarName) {
-                        if (((ButtonComponent) component).rightClickListener == null) {
-                            ((ButtonComponent) component).rightClickListener = new ComponentListener() {
-                                @Override
-                                public void onComponentEvent() {
-                                    ((ButtonComponent) component).rightClickEnabled = !((ButtonComponent) component).rightClickEnabled;
-                                }
-                            };
-                        }
-                    }
+                if (component == hudComponent)
+                    continue;
+
+                boolean similarName = hudComponent.getName().toLowerCase().startsWith(component.getName().toLowerCase());
+                if (similarName) {
+                    component.subComponents++;
+                    hudComponent.setDisplayName(hudComponent.getName().substring(component.getName().length()));
                 }
             }
         }

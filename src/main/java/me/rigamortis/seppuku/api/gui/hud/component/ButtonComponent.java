@@ -8,13 +8,11 @@ import net.minecraft.client.Minecraft;
  */
 public class ButtonComponent extends HudComponent {
 
-    public boolean enabled, rightClickEnabled;
-    public ComponentListener mouseClickListener, rightClickListener;
+    public boolean enabled;
 
     public ButtonComponent(String name) {
         super(name);
         this.enabled = false;
-        this.rightClickEnabled = false;
     }
 
     @Override
@@ -27,7 +25,7 @@ public class ButtonComponent extends HudComponent {
         // draw bg
         RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + (this.rightClickListener != null ? this.getW() - 8 : this.getW()), this.getY() + this.getH(), this.enabled ? 0x45002E00 : 0x452E0000);
 
-        if (this.rightClickListener != null) {
+        if (this.subComponents > 0) {
             final boolean isMousingHoveringDropdown = mouseX >= this.getX() + this.getW() - 8 && mouseX <= this.getX() + this.getW() && mouseY >= this.getY() && mouseY <= this.getY() + this.getH();
 
             // draw bg behind triangles
@@ -46,7 +44,11 @@ public class ButtonComponent extends HudComponent {
         }
 
         // draw text
-        Minecraft.getMinecraft().fontRenderer.drawString(this.getName(), (int) this.getX() + 1, (int) this.getY() + 1, this.enabled ? 0xFF55FF55 : 0xFFFF5555);
+        String renderName = this.getName();
+        if (this.getDisplayName() != null) {
+            renderName = this.getDisplayName();
+        }
+        Minecraft.getMinecraft().fontRenderer.drawString(renderName, (int) this.getX() + 1, (int) this.getY() + 1, this.enabled ? 0xFF55FF55 : 0xFFFF5555);
     }
 
     @Override
@@ -58,10 +60,10 @@ public class ButtonComponent extends HudComponent {
 
         if (button == 0) {
             // handle clicking the right click button
-            if (this.rightClickListener != null) {
+            if (this.subComponents > 0) {
                 // is inside button
                 if (mouseX >= this.getX() + this.getW() - 8 && mouseX <= this.getX() + this.getW() && mouseY >= this.getY() && mouseY <= this.getY() + this.getH()) {
-                    this.rightClickListener.onComponentEvent();
+                    this.rightClickEnabled = !this.rightClickEnabled;
                     return; // cancel normal action
                 }
             }
@@ -69,13 +71,6 @@ public class ButtonComponent extends HudComponent {
             // enable / disable normally
 
             this.enabled = !this.enabled;
-
-            if (this.mouseClickListener != null)
-                this.mouseClickListener.onComponentEvent();
-
-        } else if (button == 1) {
-            if (this.rightClickListener != null)
-                this.rightClickListener.onComponentEvent();
         }
     }
 }

@@ -47,15 +47,20 @@ public class TextComponent extends HudComponent {
 
         RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x45303030);
 
-        final String displayValueText = this.getName() + ": " + this.displayValue;
+        String renderName = this.getName();
+        if (this.getDisplayName() != null) {
+            renderName = this.getDisplayName();
+        }
+
+        final String displayValueText = renderName + ": " + this.displayValue;
         Minecraft.getMinecraft().fontRenderer.drawString(displayValueText, (int) this.getX() + 1, (int) this.getY() + 1, this.focused ? 0xFFFFFFFF : 0xFFAAAAAA);
 
         if (this.focused) {
             if (!this.selectedText.equals("")) {
-                RenderUtil.drawRect(this.getX() + Minecraft.getMinecraft().fontRenderer.getStringWidth(this.getName() + ": "), this.getY(), this.getX() + Minecraft.getMinecraft().fontRenderer.getStringWidth(displayValueText), this.getY() + this.getH(), 0x45FFFFFF);
+                RenderUtil.drawRect(this.getX() + Minecraft.getMinecraft().fontRenderer.getStringWidth(renderName + ": "), this.getY(), this.getX() + Minecraft.getMinecraft().fontRenderer.getStringWidth(displayValueText), this.getY() + this.getH(), 0x45FFFFFF);
             }
 
-            float blockX = this.getX() + Minecraft.getMinecraft().fontRenderer.getStringWidth(this.getName() + ": " + this.displayValue) + 1;
+            float blockX = this.getX() + Minecraft.getMinecraft().fontRenderer.getStringWidth(renderName + ": " + this.displayValue) + 1;
             float blockY = this.getY() + 1;
             int blockWidth = 2;
             int blockHeight = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - 2;

@@ -15,10 +15,10 @@ import net.minecraft.util.text.event.HoverEvent;
  */
 public final class FriendCommand extends Command {
 
-    private String[] addAlias = new String[]{"Add", "A"};
-    private String[] removeAlias = new String[]{"Remove", "R", "Rem", "Delete", "Del"};
-    private String[] listAlias = new String[]{"List", "L"};
-    private String[] clearAlias = new String[]{"Clear", "C"};
+    private final String[] addAlias = new String[]{"Add", "A"};
+    private final String[] removeAlias = new String[]{"Remove", "R", "Rem", "Delete", "Del"};
+    private final String[] listAlias = new String[]{"List", "L"};
+    private final String[] clearAlias = new String[]{"Clear", "C"};
 
     public FriendCommand() {
         super("Friend", new String[]{"F"}, "Allows you to add or remove friends", "Friend Add <Username>\n" +
@@ -26,6 +26,13 @@ public final class FriendCommand extends Command {
                 "Friend Remove <Username>\n" +
                 "Friend List\n" +
                 "Friend Clear");
+
+        this.setArguments(new String[]{"add", "remove", "list", "clear"});
+    }
+
+    @Override
+    public String tabComplete(String input) {
+        return super.tabComplete(input);
     }
 
     @Override
