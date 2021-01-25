@@ -9,7 +9,6 @@ import me.rigamortis.seppuku.api.gui.hud.component.ResizableHudComponent;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.ColorUtil;
-import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.config.HudConfig;
@@ -191,18 +190,17 @@ public final class ColorsComponent extends ResizableHudComponent {
             RenderUtil.drawLine(this.getX() + this.getW() / 4 + this.getW() / 16, this.getY() + this.getH() / 2 + 10, this.getX() + this.getW() / 4 + this.getW() / 16, this.getY() + this.getH() - 8, 1.0f, 0xFF000000);
 
             // draw selection rects
-            int gradientSelectionColorInt = -1;
             if (this.lastGradientMouseX != -1 && this.lastGradientMouseY != -1) {
-                gradientSelectionColorInt = (int) MathUtil.map(lastGradientMouseY, this.getY() + this.getH() / 2 + 10, this.getY() + this.getH() - 8, 0x00, 0xFF);
-                final Color gradientSelectionColor = new Color(gradientSelectionColorInt, gradientSelectionColorInt, gradientSelectionColorInt);
-                RenderUtil.drawLine(this.lastGradientMouseX - 1, this.lastGradientMouseY - 1, this.lastGradientMouseX + 1, this.lastGradientMouseY + 1, 1f, gradientSelectionColor.getRGB());
-                RenderUtil.drawLine(this.lastGradientMouseX - 1, this.lastGradientMouseY + 1, this.lastGradientMouseX + 1, this.lastGradientMouseY - 1, 1f, gradientSelectionColor.getRGB());
+                if (this.lastGradientMouseY - 4 > this.getY() + this.getH() / 2 + 10)
+                    RenderUtil.drawLine(this.getX() + this.getW() / 4, this.lastGradientMouseY - 4, this.getX() + this.getW() / 4 + this.getW() / 16, this.lastGradientMouseY - 4, 1f, 0xFF000000);
+
+                if (this.lastGradientMouseY + 2 < this.getY() + this.getH() - 8)
+                    RenderUtil.drawLine(this.getX() + this.getW() / 4, this.lastGradientMouseY + 2, this.getX() + this.getW() / 4 + this.getW() / 16, this.lastGradientMouseY + 2, 1f, 0xFF000000);
             }
             if (this.lastSpectrumMouseX != -1 && this.lastSpectrumMouseY != -1) {
-                final int spectrumSelectionColorInt = (gradientSelectionColorInt != -1) ? gradientSelectionColorInt : 0x00;
-                final Color spectrumSelectionColor = new Color(spectrumSelectionColorInt, spectrumSelectionColorInt, spectrumSelectionColorInt);
-                RenderUtil.drawLine(this.lastSpectrumMouseX - 1, this.lastSpectrumMouseY - 1, this.lastSpectrumMouseX + 1, this.lastSpectrumMouseY + 1, 1f, spectrumSelectionColor.getRGB());
-                RenderUtil.drawLine(this.lastSpectrumMouseX - 1, this.lastSpectrumMouseY + 1, this.lastSpectrumMouseX + 1, this.lastSpectrumMouseY - 1, 1f, spectrumSelectionColor.getRGB());
+                final Color color = new Color(this.selectedColor).darker();
+                RenderUtil.drawLine(this.lastSpectrumMouseX - 1, this.lastSpectrumMouseY - 1, this.lastSpectrumMouseX + 1, this.lastSpectrumMouseY + 1, 1f, color.getRGB());
+                RenderUtil.drawLine(this.lastSpectrumMouseX - 1, this.lastSpectrumMouseY + 1, this.lastSpectrumMouseX + 1, this.lastSpectrumMouseY - 1, 1f, color.getRGB());
             }
 
             // draw color data
@@ -353,6 +351,10 @@ public final class ColorsComponent extends ResizableHudComponent {
                             mouseX <= this.getX() + this.getW() / 4 + this.getW() / 16 &&
                             mouseY <= this.getY() + this.getH() - 8;
             if (insideGradient || insideSpectrum) {
+
+                if (insideGradient)
+                    this.removeSelections();
+
                 Robot robot = null;
                 try {
                     robot = new Robot();
