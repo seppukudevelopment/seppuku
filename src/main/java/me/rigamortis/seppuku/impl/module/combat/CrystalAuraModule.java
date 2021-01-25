@@ -50,8 +50,8 @@ public final class CrystalAuraModule extends Module {
     public final Value<Boolean> place = new Value<Boolean>("Place", new String[]{"AutoPlace"}, "Automatically place crystals.", true);
     public final Value<Float> placeDelay = new Value<Float>("PlaceDelay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay to place crystals.", 50.0f, 0.0f, 500.0f, 1.0f);
     public final Value<Float> placeRadius = new Value<Float>("PlaceRadius", new String[]{"Radius", "PR", "PlaceRange", "Range"}, "The radius in blocks around the player to process placing in.", 5.0f, 1.0f, 20.0f, 0.5f);
-    public final Value<Float> placeLocalDistance = new Value<Float>("PlaceLocalDistance", new String[]{"LocalDistance", "PLD", "LD"}, "The (max)distance away the entity must be from the local player to begin placing.", 6.0f, 1.0f, 10.0f, 0.5f);
-    public final Value<Float> placeMaxBlockDistance = new Value<Float>("PlaceMaxBlockDistance", new String[]{"BlockDistance", "MaxBlockDistance", "PMBD", "MBD", "PBD", "BD"}, "The (max)distance an entity must be to the new crystal to begin placing.", 14.0f, 1.0f, 20.0f, 1.0f);
+    public final Value<Float> placeMaxDistance = new Value<Float>("PlaceMaxDistance", new String[]{"BlockDistance", "MaxBlockDistance", "PMBD", "MBD", "PBD", "BD"}, "The (max)distance an entity must be to the new crystal to begin placing.", 14.0f, 1.0f, 20.0f, 1.0f);
+    public final Value<Float> placeLocalDistance = new Value<Float>("PlaceLocalDistance", new String[]{"LocalDistance", "PLD", "LD"}, "The (max)distance away the entity must be from the local player to begin placing.", 6.0f, 1.0f, 20.0f, 0.5f);
     public final Value<Float> minDamage = new Value<Float>("MinDamage", new String[]{"MinDamage", "Min", "MinDmg"}, "The minimum explosion damage calculated to place down a crystal.", 1.5f, 0.0f, 20.0f, 0.5f);
     public final Value<Boolean> ignore = new Value<Boolean>("Ignore", new String[]{"Ig"}, "Ignore self damage checks.", false);
     public final Value<Boolean> render = new Value<Boolean>("Render", new String[]{"R"}, "Draws information about recently placed crystals from your player.", true);
@@ -113,7 +113,7 @@ public final class CrystalAuraModule extends Module {
                                                     if (player != mc.player && !player.getName().equals(mc.player.getName()) && player.getHealth() > 0 && Seppuku.INSTANCE.getFriendManager().isFriend(player) == null) {
                                                         final double distToBlock = entity.getDistance(blockPos.getX() + 0.5f, blockPos.getY() + 1, blockPos.getZ() + 0.5f);
                                                         final double distToLocal = entity.getDistance(mc.player.posX, mc.player.posY, mc.player.posZ);
-                                                        if (distToBlock <= this.placeMaxBlockDistance.getValue() && distToLocal <= maxDistanceToLocal) {
+                                                        if (distToBlock <= this.placeMaxDistance.getValue() && distToLocal <= maxDistanceToLocal) {
                                                             targetPlayer = player;
                                                             maxDistanceToLocal = distToLocal;
                                                         }
