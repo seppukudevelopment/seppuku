@@ -69,6 +69,10 @@ public final class PhaseModule extends Module {
         event.setCanceled(true);
     }
 
+    /**
+     * Replace this somehow, it's deprecated with how we handle block patches now
+     * @param event
+     */
     @Listener
     public void collideWithBlock(EventAddCollisionBox event) {
         final Minecraft mc = Minecraft.getMinecraft();

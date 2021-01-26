@@ -23,7 +23,8 @@ public final class BlockStairsPatch extends ClassPatch {
     }
 
     @MethodPatch(
-            mcpName = "addCollisionBoxToList",
+            mcpName = "" +
+                    "addCollisionBoxToList",
             notchName = "a",
             mcpDesc = "(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/AxisAlignedBB;Ljava/util/List;Lnet/minecraft/entity/Entity;Z)V",
             notchDesc = "(Lawt;Lamu;Let;Lbhb;Ljava/util/List;Lvg;Z)V")

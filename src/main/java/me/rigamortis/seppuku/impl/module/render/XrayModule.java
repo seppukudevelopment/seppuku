@@ -57,12 +57,16 @@ public final class XrayModule extends Module {
         Minecraft.getMinecraft().renderGlobal.loadRenderers();
     }
 
+    /**
+     * Deprecated
+     * @param event
+     */
     @Listener
     public void shouldSideBeRendered(EventRenderBlockSide event) {
-        if (this.contains(Block.getIdFromBlock(event.getBlock()))) {
+        /*if (this.contains(Block.getIdFromBlock(event.getBlock()))) {
             event.setRenderable(true);
         }
-        event.setCanceled(true);
+        event.setCanceled(true);*/
     }
 
     @Listener

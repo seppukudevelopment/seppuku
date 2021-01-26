@@ -41,7 +41,7 @@ public final class PatchManager {
         this.patchList.add(new EntityPigPatch());
         this.patchList.add(new EntityLlamaPatch());
         this.patchList.add(new AbstractHorsePatch());
-        this.patchList.add(new BlockPatch());
+        //this.patchList.add(new BlockPatch());
         this.patchList.add(new BlockSoulSandPatch());
         this.patchList.add(new KeyBindingPatch());
         this.patchList.add(new BlockModelRendererPatch());
@@ -49,9 +49,9 @@ public final class PatchManager {
         this.patchList.add(new ActiveRenderInfoPatch());
         this.patchList.add(new BlockSlimePatch());
         this.patchList.add(new BlockLiquidPatch());
-        this.patchList.add(new BlockStairsPatch());
-        this.patchList.add(new BlockPanePatch());
-        this.patchList.add(new BlockFencePatch());
+        //this.patchList.add(new BlockStairsPatch());
+        //this.patchList.add(new BlockPanePatch());
+        //this.patchList.add(new BlockFencePatch());
         this.patchList.add(new EntityPatch());
         this.patchList.add(new AbstractClientPlayerPatch());
         this.patchList.add(new BiomeColorHelperPatch());
