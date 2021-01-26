@@ -53,8 +53,6 @@ public class ButtonComponent extends HudComponent {
 
     @Override
     public void mouseRelease(int mouseX, int mouseY, int button) {
-        super.mouseRelease(mouseX, mouseY, button);
-
         if (!this.isMouseInside(mouseX, mouseY))
             return;
 
@@ -69,8 +67,9 @@ public class ButtonComponent extends HudComponent {
             }
 
             // enable / disable normally
-
             this.enabled = !this.enabled;
         }
+
+        super.mouseRelease(mouseX, mouseY, button);
     }
 }

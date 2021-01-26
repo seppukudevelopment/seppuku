@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.module.combat;
 import com.google.common.collect.Lists;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
+import me.rigamortis.seppuku.api.event.network.EventSendPacket;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
 import me.rigamortis.seppuku.api.module.Module;
@@ -17,10 +18,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
-import net.minecraft.network.play.client.CPacketAnimation;
-import net.minecraft.network.play.client.CPacketEntityAction;
-import net.minecraft.network.play.client.CPacketPlayer;
-import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
+import net.minecraft.item.ItemChorusFruit;
+import net.minecraft.network.play.client.*;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -48,18 +47,35 @@ public final class NoCrystalModule extends Module {
     public final Value<Float> placeDelay = new Value<Float>("Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay(ms) between obsidian blocks being placed.", 100.0f, 0.0f, 500.0f, 1.0f);
 
     private final Timer placeTimer = new Timer();
+    private final Timer chorusTpTimer = new Timer();
     private final RotationTask rotationTask = new RotationTask("NoCrystalTask", 8);
 
     private FreeCamModule freeCamModule = null;
 
     public NoCrystalModule() {
         super("NoCrystal", new String[]{"AntiCrystal", "FeetPlace", "Surround"}, "Automatically places obsidian around you to avoid crystal damage", "NONE", -1, ModuleType.COMBAT);
+        this.placeTimer.reset();
+        this.chorusTpTimer.reset();
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
         Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
+    }
+
+    @Listener
+    public void onPacketSend(EventSendPacket event) {
+        if (event.getStage().equals(EventStageable.EventStage.PRE)) {
+            if (event.getPacket() instanceof CPacketPlayerTryUseItem) {
+                final CPacketPlayerTryUseItem packetPlayerTryUseItem = (CPacketPlayerTryUseItem) event.getPacket();
+                if (packetPlayerTryUseItem.hand == EnumHand.MAIN_HAND) {
+                    if (mc.player.getHeldItemMainhand().getItem() instanceof ItemChorusFruit) {
+                        this.chorusTpTimer.reset();
+                    }
+                }
+            }
+        }
     }
 
     @Listener
@@ -131,7 +147,7 @@ public final class NoCrystalModule extends Module {
                 // swap to obby
                 handSwapContext.handleHandSwap(false, mc);
 
-                if (this.center.getValue()) {
+                if (this.center.getValue() && this.chorusTpTimer.passed(1000)) {
                     final double[] newPos = {Math.floor(mc.player.posX) + 0.5d, mc.player.posY, Math.floor(mc.player.posZ) + 0.5d};
                     final CPacketPlayer.Position middleOfPos = new CPacketPlayer.Position(newPos[0], newPos[1], newPos[2], mc.player.onGround);
                     if (!mc.world.isAirBlock(new BlockPos(newPos[0], newPos[1], newPos[2]).down())) {

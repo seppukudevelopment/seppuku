@@ -32,16 +32,15 @@ public final class AutoTotemModule extends Module {
 
     @Listener
     public void onUpdate(EventPlayerUpdate event) {
+        final Minecraft mc = Minecraft.getMinecraft();
+        if (this.checkScreen.getValue()) {
+            if (mc.currentScreen != null)
+                return;
+        }
+
+        final ItemStack offHand = mc.player.getHeldItemOffhand();
+
         if (event.getStage() == EventStageable.EventStage.PRE) {
-            final Minecraft mc = Minecraft.getMinecraft();
-
-            if (this.checkScreen.getValue()) {
-                if (mc.currentScreen != null)
-                    return;
-            }
-
-            final ItemStack offHand = mc.player.getHeldItemOffhand();
-
             if (mc.player.getHealth() <= this.health.getValue()) {
                 if (offHand.getItem() == Items.TOTEM_OF_UNDYING) {
                     return;
@@ -55,7 +54,9 @@ public final class AutoTotemModule extends Module {
                     mc.playerController.windowClick(mc.player.inventoryContainer.windowId, totemSlot, 0, ClickType.PICKUP, mc.player);
                     mc.playerController.updateController();
                 }
-            } else if (this.crystals.getValue()) {
+            }
+        } else {
+            if (mc.player.getHealth() > this.health.getValue() && this.crystals.getValue()) {
                 if (offHand.getItem() == Items.END_CRYSTAL) {
                     return;
                 }
