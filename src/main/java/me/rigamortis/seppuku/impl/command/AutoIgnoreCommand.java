@@ -50,7 +50,7 @@ public final class AutoIgnoreCommand extends Command {
 
             for (int i = 2; i < split.length; i++) {
                 final String s = split[i];
-                sb.append(s + (i == split.length - 1 ? "" : " "));
+                sb.append(s).append(i == split.length - 1 ? "" : " ");
             }
 
             final String phrase = sb.toString();
@@ -71,7 +71,7 @@ public final class AutoIgnoreCommand extends Command {
 
             for (int i = 2; i < split.length; i++) {
                 final String s = split[i];
-                sb.append(s + (i == split.length - 1 ? "" : " "));
+                sb.append(s).append(i == split.length - 1 ? "" : " ");
             }
 
             final String phrase = sb.toString();
