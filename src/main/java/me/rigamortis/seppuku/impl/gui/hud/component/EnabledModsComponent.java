@@ -88,8 +88,6 @@ public final class EnabledModsComponent extends DraggableHudComponent {
                     return firstName.compareToIgnoreCase(secondName);
                 };
                 mods.sort(alphabeticalComparator);
-            } else if (SORTING_MODE.equals(UNSORTED)) {
-
             }
 
             for (Module mod : mods) {
