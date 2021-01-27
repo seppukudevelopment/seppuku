@@ -72,7 +72,7 @@ public final class GiveCommand extends Command {
                 }
             }
 
-            final int slot = this.findEmptyhotbar();
+            final int slot = this.findEmptyHotbarSlot();
             mc.player.connection.sendPacket(new CPacketCreativeInventoryAction(36 + (slot != -1 ? slot : mc.player.inventory.currentItem), itemStack));
             Seppuku.INSTANCE.logChat("Gave you " + amount + " " + itemStack.getDisplayName());
         } else {
@@ -121,7 +121,7 @@ public final class GiveCommand extends Command {
         return Item.REGISTRY.getObject(res);
     }
 
-    private int findEmptyhotbar() {
+    private int findEmptyHotbarSlot() {
         for (int i = 0; i < 9; i++) {
             final ItemStack stack = Minecraft.getMinecraft().player.inventory.getStackInSlot(i);
 
