@@ -13,10 +13,10 @@ import net.minecraft.util.text.TextComponentString;
  */
 public final class IgnoreCommand extends Command {
 
-    private String[] addAlias = new String[]{"Add", "A"};
-    private String[] removeAlias = new String[]{"Remove", "R", "Rem", "Delete", "Del"};
-    private String[] listAlias = new String[]{"List", "L"};
-    private String[] clearAlias = new String[]{"Clear", "C"};
+    private final String[] addAlias = new String[]{"Add", "A"};
+    private final String[] removeAlias = new String[]{"Remove", "R", "Rem", "Delete", "Del"};
+    private final String[] listAlias = new String[]{"List", "L"};
+    private final String[] clearAlias = new String[]{"Clear", "C"};
 
     public IgnoreCommand() {
         super("Ignore", new String[]{"Ignor"}, "Allows you to ignore other players", "Ignore Add <Username>\n" +

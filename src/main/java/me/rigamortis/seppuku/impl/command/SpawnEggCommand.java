@@ -21,8 +21,8 @@ import java.util.Iterator;
  */
 public final class SpawnEggCommand extends Command {
 
-    private String[] listAlias = new String[]{"List", "L"};
-    private String[] giveAlias = new String[]{"Give", "G"};
+    private final String[] listAlias = new String[]{"List", "L"};
+    private final String[] giveAlias = new String[]{"Give", "G"};
 
     public SpawnEggCommand() {
         super("SpawnEgg", new String[]{"SEgg"}, "Allows you to spawn in any spawn egg while in creative mode", "SpawnEgg Give <Entity>\n" +

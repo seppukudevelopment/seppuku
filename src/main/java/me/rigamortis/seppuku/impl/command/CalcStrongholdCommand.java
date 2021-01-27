@@ -31,7 +31,7 @@ public final class CalcStrongholdCommand extends Command {
     private Vec3d secondStart;
     private Vec3d secondEnd;
 
-    private String[] resetAlias = new String[]{"Reset", "Res", "R"};
+    private final String[] resetAlias = new String[]{"Reset", "Res", "R"};
 
     public CalcStrongholdCommand() {
         super("CalcStronghold", new String[]{"CS", "FindStronghold", "cstrong"}, "Calculates where the nearest stronghold is.", "CalcStronghold\n" +

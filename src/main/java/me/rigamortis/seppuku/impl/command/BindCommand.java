@@ -12,7 +12,7 @@ import org.lwjgl.input.Keyboard;
  */
 public final class BindCommand extends Command {
 
-    private String[] clearAlias = new String[]{"Clear", "C"};
+    private final String[] clearAlias = new String[]{"Clear", "C"};
 
     public BindCommand() {
         super("Bind", new String[]{"B"}, "Allows you to change keybinds for modules", "Bind <Module> <Key>\nBind Clear");

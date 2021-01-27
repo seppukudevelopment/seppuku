@@ -21,11 +21,11 @@ import java.text.DecimalFormat;
  */
 public final class WaypointsCommand extends Command {
 
-    private String[] addAlias = new String[]{"Add", "A"};
-    private String[] removeAlias = new String[]{"Remove", "R", "Rem", "Delete", "Del"};
-    private String[] listAlias = new String[]{"List", "L"};
-    private String[] angleAlias = new String[]{"Angle", "Ang"};
-    private String[] clearAlias = new String[]{"Clear", "C"};
+    private final String[] addAlias = new String[]{"Add", "A"};
+    private final String[] removeAlias = new String[]{"Remove", "R", "Rem", "Delete", "Del"};
+    private final String[] listAlias = new String[]{"List", "L"};
+    private final String[] angleAlias = new String[]{"Angle", "Ang"};
+    private final String[] clearAlias = new String[]{"Clear", "C"};
 
     public WaypointsCommand() {
         super("Waypoints", new String[]{"Wp", "Waypoint"}, "Allows you to add waypoints", "Waypoints Add <Name>\n" +
