@@ -1,11 +1,13 @@
 package me.rigamortis.seppuku.impl.patch;
 
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.event.world.*;
+import me.rigamortis.seppuku.api.event.world.EventAddEntity;
+import me.rigamortis.seppuku.api.event.world.EventRainStrength;
+import me.rigamortis.seppuku.api.event.world.EventRemoveEntity;
+import me.rigamortis.seppuku.api.event.world.EventSpawnParticle;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
 import me.rigamortis.seppuku.impl.management.PatchManager;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
@@ -30,6 +32,7 @@ public final class WorldPatch extends ClassPatch {
      * @param methodNode
      * @param env
      */
+     /*
     @MethodPatch(
             mcpName = "checkLightFor",
             notchName = "c",
@@ -64,6 +67,7 @@ public final class WorldPatch extends ClassPatch {
 
         return event.isCanceled();
     }
+    */
 
     @MethodPatch(
             mcpName = "getRainStrength",
