@@ -122,7 +122,7 @@ public final class TpsGraphComponent extends ResizableHudComponent {
         }
     }
 
-    private class TpsNode {
+    private static class TpsNode {
 
         public float size = 1.0f;
         public float tps = 0.0f;
