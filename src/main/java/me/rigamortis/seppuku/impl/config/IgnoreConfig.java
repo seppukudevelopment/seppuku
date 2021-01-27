@@ -34,9 +34,7 @@ public final class IgnoreConfig extends Configurable {
     public void onSave() {
         JsonObject save = new JsonObject();
         JsonArray ignoredJsonArray = new JsonArray();
-        Seppuku.INSTANCE.getIgnoredManager().getIgnoredList().forEach(ignored -> {
-            ignoredJsonArray.add(ignored.getName());
-        });
+        Seppuku.INSTANCE.getIgnoredManager().getIgnoredList().forEach(ignored -> ignoredJsonArray.add(ignored.getName()));
         save.add("Ignored", ignoredJsonArray);
         this.saveJsonObjectToFile(save);
     }
