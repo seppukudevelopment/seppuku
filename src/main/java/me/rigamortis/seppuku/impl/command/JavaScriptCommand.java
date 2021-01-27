@@ -35,7 +35,7 @@ public final class JavaScriptCommand extends Command {
 
         for (int i = 1; i < split.length; i++) {
             final String s = split[i];
-            sb.append(s + (i == split.length - 1 ? "" : " "));
+            sb.append(s).append(i == split.length - 1 ? "" : " ");
         }
 
         final String syntax = sb.toString();
