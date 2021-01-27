@@ -13,7 +13,6 @@ import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.module.player.NoHungerModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiShulkerBox;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;

@@ -2,7 +2,6 @@ package me.rigamortis.seppuku.impl.module.world;
 
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
-import me.rigamortis.seppuku.api.event.client.EventLoad;
 import me.rigamortis.seppuku.api.event.minecraft.EventDisplayGui;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.network.EventSendPacket;

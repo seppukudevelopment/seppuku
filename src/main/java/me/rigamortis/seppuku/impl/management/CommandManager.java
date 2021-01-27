@@ -13,7 +13,6 @@ import net.minecraft.util.text.TextComponentString;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
