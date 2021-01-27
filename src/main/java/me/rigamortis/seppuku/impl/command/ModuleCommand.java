@@ -35,7 +35,7 @@ public final class ModuleCommand extends Command {
 
         for (int i = 0; i < size; i++) {
             final Module mod = Seppuku.INSTANCE.getModuleManager().getModuleList().get(i);
-            if (mod != null) {
+            if (mod != null && commandsModule != null) {
                 msg.appendSibling(new TextComponentString((mod.isEnabled() ? "\247a" : "\247c") + mod.getDisplayName() + "\2477" + ((i == size - 1) ? "" : ", "))
                         .setStyle(new Style()
                                 .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("\2476" + (mod.getDesc() == null ? "There is no description for this module" : mod.getDesc()) + "\247f").appendSibling(new TextComponentString((mod.toUsageTextComponent() == null ? "" : "\n" + mod.toUsageTextComponent().getText()) + "\247f"))))
