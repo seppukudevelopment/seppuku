@@ -35,6 +35,15 @@ public final class PhaseModule extends Module {
     }
 
     @Override
+    public void onDisable() {
+        super.onDisable();
+
+        if (Minecraft.getMinecraft().player != null) {
+            Minecraft.getMinecraft().player.noClip = false;
+        }
+    }
+
+    @Override
     public String getMetaData() {
         return this.mode.getValue().name();
     }
@@ -69,50 +78,52 @@ public final class PhaseModule extends Module {
         event.setCanceled(true);
     }
 
-    /**
-     * Replace this somehow, it's deprecated with how we handle block patches now
-     * @param event
-     */
     @Listener
-    public void collideWithBlock(EventAddCollisionBox event) {
+    public void onMove(EventMove event) {
         final Minecraft mc = Minecraft.getMinecraft();
 
         if (mc.player != null) {
+            Minecraft.getMinecraft().player.noClip = true;
 
-            final boolean floor = this.floor.getValue() ? event.getPos().getY() >= 1 : true;
+            final boolean floor = this.floor.getValue() || mc.player.posY >= 1;
 
             if (this.mode.getValue() == Mode.SAND) {
-                if (mc.player.getRidingEntity() != null && event.getEntity() == mc.player.getRidingEntity()) {
+                if (mc.player.getRidingEntity() != null) {
                     if (mc.gameSettings.keyBindSprint.isKeyDown() && floor) {
-                        event.setCanceled(true);
+                        Minecraft.getMinecraft().player.motionY = 0;
                     } else {
-                        if (mc.gameSettings.keyBindJump.isKeyDown() && event.getPos().getY() >= mc.player.getRidingEntity().posY) {
-                            event.setCanceled(true);
+                        if (!mc.gameSettings.keyBindJump.isKeyDown() && mc.player.posY < mc.player.getRidingEntity().posY) {
+                            Minecraft.getMinecraft().player.motionY = 0;
                         }
-                        if (event.getPos().getY() >= mc.player.getRidingEntity().posY) {
-                            event.setCanceled(true);
+                        if (mc.player.posY < mc.player.getRidingEntity().posY) {
+                            Minecraft.getMinecraft().player.motionY = 0;
                         }
                     }
-                } else if (event.getEntity() == mc.player) {
-                    if (mc.gameSettings.keyBindSneak.isKeyDown() && floor) {
-                        event.setCanceled(true);
-                    } else {
-                        if (mc.gameSettings.keyBindJump.isKeyDown() && event.getPos().getY() >= mc.player.posY) {
-                            event.setCanceled(true);
-                        }
-                        if (event.getPos().getY() >= mc.player.posY) {
-                            event.setCanceled(true);
-                        }
+                } else {
+                    if (!mc.gameSettings.keyBindJump.isKeyDown()) {
+                        Minecraft.getMinecraft().player.motionY = 0;
+                    }
+
+                    if (!mc.gameSettings.keyBindSneak.isKeyDown() && floor) {
+                        Minecraft.getMinecraft().player.motionY = 0;
                     }
                 }
             }
         }
 
         if (this.mode.getValue() == Mode.NOCLIP) {
-            if (event.getEntity() == mc.player || mc.player.getRidingEntity() != null && event.getEntity() == mc.player.getRidingEntity()) {
-                event.setCanceled(true);
-            }
+            Minecraft.getMinecraft().player.noClip = true;
         }
+    }
+
+    /**
+     * Replace this somehow, it's deprecated with how we handle block patches now
+     *
+     * @param event
+     */
+    @Listener
+    public void collideWithBlock(EventAddCollisionBox event) {
+
     }
 
     @Listener
