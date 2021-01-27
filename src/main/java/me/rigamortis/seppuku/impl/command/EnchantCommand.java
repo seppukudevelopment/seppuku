@@ -79,7 +79,7 @@ public final class EnchantCommand extends Command {
                     if (levelToApply.toLowerCase().startsWith("max")) {
                         enchantmentCompound.setShort("lvl", Short.MAX_VALUE); // set the level to the max short value
                     } else {
-                        enchantmentCompound.setShort("lvl", Short.valueOf(levelToApply)); // set the level
+                        enchantmentCompound.setShort("lvl", Short.parseShort(levelToApply)); // set the level
                     }
                     enchantments.appendTag(enchantmentCompound); // add our new enchantment tag to the enchantment tag list
                 }
