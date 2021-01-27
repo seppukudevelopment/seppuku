@@ -38,7 +38,7 @@ public final class ColorsComponent extends ResizableHudComponent {
     private final int TITLE_BAR_HEIGHT = mc.fontRenderer.FONT_HEIGHT + 1;
 
     private ColorComponent currentColorComponent = null;
-    private Texture spectrum;
+    private final Texture spectrum;
 
     private int lastGradientMouseX = -1;
     private int lastGradientMouseY = -1;
