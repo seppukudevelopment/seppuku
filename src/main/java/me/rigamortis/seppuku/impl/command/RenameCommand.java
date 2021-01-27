@@ -46,7 +46,7 @@ public final class RenameCommand extends Command {
 
         for (int i = 1; i < size; i++) {
             final String arg = split[i];
-            sb.append(arg + ((i == size - 1) ? "" : " "));
+            sb.append(arg).append((i == size - 1) ? "" : " ");
         }
 
         final String name = sb.toString().replace("&", "\247");
