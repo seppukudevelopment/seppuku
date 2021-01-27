@@ -29,7 +29,7 @@ import java.util.List;
  */
 public final class ModuleListComponent extends ResizableHudComponent {
 
-    private Module.ModuleType type;
+    private final Module.ModuleType type;
 
     private int scroll = 0;
     private int oldScroll = 0;
