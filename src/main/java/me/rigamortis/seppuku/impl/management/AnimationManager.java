@@ -22,7 +22,7 @@ public final class AnimationManager {
     }
 
     private void update() {
-        while (true) {
+        while (Thread.currentThread().isAlive()) {
             long beforeAnimation = System.nanoTime();
 
             if (this.animations.size() > 0)
