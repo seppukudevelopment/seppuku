@@ -178,7 +178,7 @@ public final class MovementGraphComponent extends ResizableHudComponent {
         return totalSpeed / 10;
     }
 
-    private class MovementNode {
+    private static class MovementNode {
 
         public float size = 0.5f;
         public float speed = 0.0f;
