@@ -14,11 +14,7 @@ public final class AnimationManager {
     private final List<Animation> animations = new CopyOnWriteArrayList<>();
 
     public AnimationManager() {
-        (new Thread() {
-            public void run() {
-                AnimationManager.this.update();
-            }
-        }).start();
+        (new Thread(AnimationManager.this::update)).start();
     }
 
     private void update() {
