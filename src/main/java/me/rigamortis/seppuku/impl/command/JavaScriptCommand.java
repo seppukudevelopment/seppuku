@@ -45,10 +45,7 @@ public final class JavaScriptCommand extends Command {
         } catch (TimeoutException e) {
             Seppuku.INSTANCE.errorChat("Took too long to execute");
             Executors.newCachedThreadPool().shutdown();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            Seppuku.INSTANCE.errorChat(e.getMessage());
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             Seppuku.INSTANCE.errorChat(e.getMessage());
         }
