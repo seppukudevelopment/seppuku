@@ -15,7 +15,7 @@ import java.io.File;
  */
 public final class AutoIgnoreConfig extends Configurable {
 
-    private AutoIgnoreModule autoIgnoreModule;
+    private final AutoIgnoreModule autoIgnoreModule;
 
     public AutoIgnoreConfig(File dir) {
         super(FileUtil.createJsonFile(dir, "AutoIgnored"));
