@@ -52,7 +52,7 @@ public final class JavaScriptCommand extends Command {
     }
 
     public static class ScriptRunnable implements Runnable {
-        private String syntax;
+        private final String syntax;
 
         public ScriptRunnable(String syntax) {
             this.syntax = syntax;
