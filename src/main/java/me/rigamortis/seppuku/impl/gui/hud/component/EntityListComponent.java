@@ -230,7 +230,7 @@ public final class EntityListComponent extends DraggableHudComponent {
         return name;
     }
 
-    private class EntityGroup {
+    private static class EntityGroup {
         private final Entity entity;
         private final String entityName;
         private int count;
@@ -302,7 +302,7 @@ public final class EntityListComponent extends DraggableHudComponent {
                                 Seppuku.INSTANCE.errorChat("This shulker box is empty");
                             }
                         } else if (itemStack.isItemEnchanted()) {
-                            final StringBuilder enchantStringBuilder = new StringBuilder("");
+                            final StringBuilder enchantStringBuilder = new StringBuilder();
 
                             final NBTTagCompound tagCompound = itemStack.getTagCompound();
                             if (tagCompound != null && !tagCompound.isEmpty()) {
