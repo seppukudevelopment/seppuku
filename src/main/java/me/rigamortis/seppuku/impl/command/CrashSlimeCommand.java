@@ -42,13 +42,13 @@ public final class CrashSlimeCommand extends Command {
         entityTag.setInteger("Size", Integer.MAX_VALUE);
         itemStack.setTagCompound(tagCompound);
 
-        final int slot = this.findEmptyhotbar();
+        final int slot = this.findEmptyHotbarSlot();
 
         mc.player.connection.sendPacket(new CPacketCreativeInventoryAction(36 + (slot != -1 ? slot : mc.player.inventory.currentItem), itemStack));
         Seppuku.INSTANCE.logChat("Gave you a crash slime spawn egg");
     }
 
-    private int findEmptyhotbar() {
+    private int findEmptyHotbarSlot() {
         for (int i = 0; i < 9; i++) {
             final ItemStack stack = Minecraft.getMinecraft().player.inventory.getStackInSlot(i);
 
