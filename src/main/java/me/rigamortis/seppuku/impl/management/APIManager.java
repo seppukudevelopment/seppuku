@@ -11,6 +11,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -33,7 +34,7 @@ public final class APIManager {
 
         final String url = "https://api.mojang.com/user/profiles/" + uuid + "/names";
         try {
-            final String nameJson = IOUtils.toString(new URL(url));
+            final String nameJson = IOUtils.toString(new URL(url), StandardCharsets.UTF_8);
             if (nameJson != null && nameJson.length() > 0) {
                 final JSONArray jsonArray = (JSONArray) JSONValue.parseWithException(nameJson);
                 if (jsonArray != null) {
