@@ -31,15 +31,13 @@ public final class SeedCommand extends Command {
             final ServerData serverData = Minecraft.getMinecraft().getCurrentServerData();
             if (serverData != null) {
                 final WorldManager.WorldData worldData = Seppuku.INSTANCE.getWorldManager().find(serverData.serverIP);
+                final long seed = Long.parseLong(split[1]);
                 if (worldData != null) {
-                    final long seed = Long.parseLong(split[1]);
                     worldData.setSeed(seed);
-                    Seppuku.INSTANCE.logChat("Set " + serverData.serverIP + "'s seed to " + seed);
                 } else {
-                    final long seed = Long.parseLong(split[1]);
                     Seppuku.INSTANCE.getWorldManager().getWorldDataList().add(new WorldManager.WorldData(serverData.serverIP, seed));
-                    Seppuku.INSTANCE.logChat("Set " + serverData.serverIP + "'s seed to " + seed);
                 }
+                Seppuku.INSTANCE.logChat("Set " + serverData.serverIP + "'s seed to " + seed);
                 Seppuku.INSTANCE.getConfigManager().save(WorldConfig.class);
             } else {
                 Seppuku.INSTANCE.errorChat("Cannot set seed for localhost");
