@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public final class HudConfig extends Configurable {
 
-    private HudComponent hudComponent;
+    private final HudComponent hudComponent;
 
     public HudConfig(File dir, HudComponent hudComponent) {
         super(FileUtil.createJsonFile(dir, hudComponent.getName()));
