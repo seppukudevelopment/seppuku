@@ -7,6 +7,7 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.config.Configurable;
 import me.rigamortis.seppuku.api.util.FileUtil;
 import me.rigamortis.seppuku.impl.module.render.XrayModule;
+import net.minecraft.block.Block;
 
 import java.io.File;
 import java.util.Objects;
@@ -51,8 +52,8 @@ public final class XrayConfig extends Configurable {
         JsonObject save = new JsonObject();
 
         JsonArray xrayIdsJsonArray = new JsonArray();
-        for (Integer i : this.xrayModule.getIds())
-            xrayIdsJsonArray.add(i);
+        for (Block block : this.xrayModule.getBlocks().getValue())
+            xrayIdsJsonArray.add(Block.getIdFromBlock(block));
 
         save.add("XrayBlockIds", xrayIdsJsonArray);
 

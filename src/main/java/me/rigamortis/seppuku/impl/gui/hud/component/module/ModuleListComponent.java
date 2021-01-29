@@ -11,9 +11,11 @@ import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.config.ModuleConfig;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import me.rigamortis.seppuku.impl.module.ui.HudEditorModule;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.item.Item;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
@@ -49,7 +51,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
     private final Texture gearTexture;
 
     private ToolTipComponent currentToolTip;
-    private ModuleSettingsComponent currentSettings;
+    public ModuleSettingsComponent currentSettings;
 
     public ModuleListComponent(Module.ModuleType type) {
         super(StringUtils.capitalize(type.name().toLowerCase()), 100, 100, 150, 400);
@@ -397,7 +399,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
     }
 
     public static class BackButtonComponent extends HudComponent {
-        private final ModuleListComponent parentModuleList;
+        public final ModuleListComponent parentModuleList;
 
         public BackButtonComponent(ModuleListComponent parentModuleList) {
             super("Back", "Go back.");
@@ -607,6 +609,19 @@ public final class ModuleListComponent extends ResizableHudComponent {
                     };
                     components.add(valueColor);
                     this.addComponentToButtons(valueColor);
+                } else if (value.getValue() instanceof List) {
+                    final List<?> valueList = ((List<?>) value.getValue());
+                    if (!valueList.isEmpty()) {
+                        if (valueList.get(0) instanceof Item) { // Items
+                            ItemsComponent itemsComponent = new ItemsComponent(value);
+                            components.add(itemsComponent);
+                            this.addComponentToButtons(itemsComponent);
+                        } else if (valueList.get(0) instanceof Block) { // Blocks
+                            BlocksComponent blocksComponent = new BlocksComponent(value);
+                            components.add(blocksComponent);
+                            this.addComponentToButtons(blocksComponent);
+                        }
+                    }
                 }
             }
         }

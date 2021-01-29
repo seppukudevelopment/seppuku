@@ -56,19 +56,15 @@ public final class XrayCommand extends Command {
                     if (id > 0) {
                         final Block block = Block.getBlockById(id);
 
-                        if (block != null) {
-                            if (xray.contains(Block.getIdFromBlock(block))) {
-                                Seppuku.INSTANCE.logChat("Xray already contains " + block.getLocalizedName());
-                            } else {
-                                xray.add(Block.getIdFromBlock(block));
-                                if (xray.isEnabled()) {
-                                    xray.updateRenders();
-                                }
-                                Seppuku.INSTANCE.getConfigManager().save(XrayConfig.class);
-                                Seppuku.INSTANCE.logChat("Added " + block.getLocalizedName() + " to xray");
-                            }
+                        if (xray.contains(block)) {
+                            Seppuku.INSTANCE.logChat("Xray already contains " + block.getLocalizedName());
                         } else {
-                            Seppuku.INSTANCE.logChat("\247c" + split[2] + "\247f is not a valid block");
+                            xray.add(Block.getIdFromBlock(block));
+                            if (xray.isEnabled()) {
+                                xray.updateRenders();
+                            }
+                            Seppuku.INSTANCE.getConfigManager().save(XrayConfig.class);
+                            Seppuku.INSTANCE.logChat("Added " + block.getLocalizedName() + " to xray");
                         }
                     } else {
                         Seppuku.INSTANCE.errorChat("Cannot add Air to xray");
@@ -80,7 +76,7 @@ public final class XrayCommand extends Command {
                         if (block == Blocks.AIR) {
                             Seppuku.INSTANCE.errorChat("Cannot add Air to xray");
                         } else {
-                            if (xray.contains(Block.getIdFromBlock(block))) {
+                            if (xray.contains(block)) {
                                 Seppuku.INSTANCE.logChat("Xray already contains " + block.getLocalizedName());
                             } else {
                                 xray.add(Block.getIdFromBlock(block));
@@ -107,19 +103,15 @@ public final class XrayCommand extends Command {
                     if (id > 0) {
                         final Block block = Block.getBlockById(id);
 
-                        if (block != null) {
-                            if (xray.contains(Block.getIdFromBlock(block))) {
-                                xray.remove(Block.getIdFromBlock(block));
-                                if (xray.isEnabled()) {
-                                    xray.updateRenders();
-                                }
-                                Seppuku.INSTANCE.getConfigManager().save(XrayConfig.class);
-                                Seppuku.INSTANCE.logChat("Removed " + block.getLocalizedName() + " from xray");
-                            } else {
-                                Seppuku.INSTANCE.logChat("Xray doesn't contain " + block.getLocalizedName());
+                        if (xray.contains(block)) {
+                            xray.remove(Block.getIdFromBlock(block));
+                            if (xray.isEnabled()) {
+                                xray.updateRenders();
                             }
+                            Seppuku.INSTANCE.getConfigManager().save(XrayConfig.class);
+                            Seppuku.INSTANCE.logChat("Removed " + block.getLocalizedName() + " from xray");
                         } else {
-                            Seppuku.INSTANCE.logChat("\247c" + split[2] + "\247f is not a valid block");
+                            Seppuku.INSTANCE.logChat("Xray doesn't contain " + block.getLocalizedName());
                         }
                     } else {
                         Seppuku.INSTANCE.errorChat("Cannot remove Air from xray");
@@ -131,7 +123,7 @@ public final class XrayCommand extends Command {
                         if (block == Blocks.AIR) {
                             Seppuku.INSTANCE.errorChat("Cannot remove Air from xray");
                         } else {
-                            if (xray.contains(Block.getIdFromBlock(block))) {
+                            if (xray.contains(block)) {
                                 xray.remove(Block.getIdFromBlock(block));
                                 if (xray.isEnabled()) {
                                     xray.updateRenders();
@@ -152,13 +144,13 @@ public final class XrayCommand extends Command {
                     return;
                 }
 
-                if (xray.getIds().size() > 0) {
+                if (xray.getBlocks().getValue().size() > 0) {
                     final TextComponentString msg = new TextComponentString("\2477Xray IDs: ");
 
-                    for (int i : xray.getIds()) {
-                        msg.appendSibling(new TextComponentString("\2477[\247a" + i + "\2477] ")
+                    for (Block block : xray.getBlocks().getValue()) {
+                        msg.appendSibling(new TextComponentString("\2477[\247a" + Block.getIdFromBlock(block) + "\2477] ")
                                 .setStyle(new Style()
-                                        .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(Block.getBlockById(i).getLocalizedName())))));
+                                        .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(block.getLocalizedName())))));
                     }
 
                     Seppuku.INSTANCE.logcChat(msg);

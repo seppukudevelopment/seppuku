@@ -5,8 +5,11 @@ import me.rigamortis.seppuku.api.event.render.EventRenderBlockModel;
 import me.rigamortis.seppuku.api.event.render.EventRenderBlockSide;
 import me.rigamortis.seppuku.api.event.world.EventSetOpaqueCube;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.util.ArrayList;
@@ -18,13 +21,19 @@ import java.util.List;
  */
 public final class XrayModule extends Module {
 
-    private List<Integer> ids = new ArrayList<>();
+    public final Value<List<Block>> blocks = new Value<List<Block>>("Ids", new String[]{"id", "i"}, "Testing");
+    public final Value<List<Item>> items = new Value<List<Item>>("Items", new String[]{"item"}, "Testing");
 
     private float lastGamma;
     private int lastAO;
 
     public XrayModule() {
         super("Xray", new String[]{"JadeVision", "Jade"}, "Allows you to filter what the world renders", "NONE", -1, ModuleType.RENDER);
+
+        this.blocks.setValue(new ArrayList<>());
+        this.items.setValue(new ArrayList<>());
+
+        this.items.getValue().add(Items.WHEAT);
 
         if (Seppuku.INSTANCE.getConfigManager().isFirstLaunch())
             this.add("diamond_ore");
@@ -72,7 +81,7 @@ public final class XrayModule extends Module {
     @Listener
     public void renderBlockModel(EventRenderBlockModel event) {
         final Block block = event.getBlockState().getBlock();
-        if (this.contains(Block.getIdFromBlock(block))) {
+        if (this.contains(block)) {
             if (Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelFlat(event.getBlockAccess(), event.getBakedModel(), event.getBlockState(), event.getBlockPos(), event.getBufferBuilder(), event.isCheckSides(), event.getRand())) {
                 event.setRenderable(true);
             }
@@ -97,30 +106,31 @@ public final class XrayModule extends Module {
                 (int) mc.player.posZ + 256);
     }
 
-    public boolean contains(int id) {
-        return this.ids.contains(id);
+    public boolean contains(Block block) {
+        return this.blocks.getValue().contains(block);
     }
 
     public void add(int id) {
-        if (!contains(id)) {
-            this.ids.add(id);
+        final Block blockFromID = Block.getBlockById(id);
+        if (!contains(blockFromID)) {
+            this.blocks.getValue().add(blockFromID);
         }
     }
 
     public void add(String name) {
         final Block blockFromName = Block.getBlockFromName(name);
         if (blockFromName != null) {
-            final int id = Block.getIdFromBlock(blockFromName);
-            if (!contains(id)) {
-                this.ids.add(id);
+            if (!contains(blockFromName)) {
+                this.blocks.getValue().add(blockFromName);
             }
         }
     }
 
     public void remove(int id) {
-        for (Integer i : this.ids) {
-            if (id == i) {
-                this.ids.remove(i);
+        for (Block block : this.blocks.getValue()) {
+            final int blockID = Block.getIdFromBlock(block);
+            if (blockID == id) {
+                this.blocks.getValue().remove(block);
                 break;
             }
         }
@@ -129,24 +139,19 @@ public final class XrayModule extends Module {
     public void remove(String name) {
         final Block blockFromName = Block.getBlockFromName(name);
         if (blockFromName != null) {
-            final int id = Block.getIdFromBlock(blockFromName);
-            if (contains(id)) {
-                this.ids.remove(id);
+            if (contains(blockFromName)) {
+                this.blocks.getValue().remove(blockFromName);
             }
         }
     }
 
     public int clear() {
-        final int count = this.ids.size();
-        this.ids.clear();
+        final int count = this.blocks.getValue().size();
+        this.blocks.getValue().clear();
         return count;
     }
 
-    public List<Integer> getIds() {
-        return ids;
-    }
-
-    public void setIds(List<Integer> ids) {
-        this.ids = ids;
+    public Value<List<Block>> getBlocks() {
+        return blocks;
     }
 }
