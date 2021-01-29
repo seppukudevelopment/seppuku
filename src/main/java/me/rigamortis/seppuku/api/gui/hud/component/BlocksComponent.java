@@ -1,5 +1,7 @@
 package me.rigamortis.seppuku.api.gui.hud.component;
 
+import me.rigamortis.seppuku.Seppuku;
+import me.rigamortis.seppuku.api.event.gui.hud.modulelist.EventUIListValueChanged;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
@@ -143,6 +145,8 @@ public final class BlocksComponent extends HudComponent {
                                 this.value.getValue().remove(block);
                             else
                                 this.value.getValue().add(block);
+
+                            Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventUIListValueChanged());
                         }
                     }
 

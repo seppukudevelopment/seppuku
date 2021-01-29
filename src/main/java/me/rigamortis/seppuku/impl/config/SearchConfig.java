@@ -7,6 +7,8 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.config.Configurable;
 import me.rigamortis.seppuku.api.util.FileUtil;
 import me.rigamortis.seppuku.impl.module.render.SearchModule;
+import me.rigamortis.seppuku.impl.module.render.XrayModule;
+import net.minecraft.block.Block;
 
 import java.io.File;
 import java.util.Objects;
@@ -36,9 +38,15 @@ public final class SearchConfig extends Configurable {
         if (blockIds != null)
             searchIdsJsonArray = blockIds.getAsJsonArray();
 
-        if (searchIdsJsonArray != null) {
-            for (JsonElement jsonElement : searchIdsJsonArray) {
-                ((SearchModule) Objects.requireNonNull(Seppuku.INSTANCE.getModuleManager().find("Search"))).add(jsonElement.getAsInt());
+        final SearchModule searchModule = (SearchModule) Seppuku.INSTANCE.getModuleManager().find("Search");
+        if (searchModule != null) {
+            if (searchIdsJsonArray != null) {
+                for (JsonElement jsonElement : searchIdsJsonArray) {
+                    searchModule.add(jsonElement.getAsInt());
+                }
+            }
+            if (searchModule.getBlockIds().getValue().isEmpty()) {
+                searchModule.add("furnace");
             }
         }
     }
@@ -51,8 +59,8 @@ public final class SearchConfig extends Configurable {
         JsonObject save = new JsonObject();
 
         JsonArray searchIdsJsonArray = new JsonArray();
-        for (Integer i : this.searchModule.getIds())
-            searchIdsJsonArray.add(i);
+        for (Block block : this.searchModule.getBlockIds().getValue())
+            searchIdsJsonArray.add(Block.getIdFromBlock(block));
 
         save.add("SearchBlockIds", searchIdsJsonArray);
 

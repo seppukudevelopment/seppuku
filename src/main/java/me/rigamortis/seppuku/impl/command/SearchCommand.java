@@ -55,7 +55,7 @@ public final class SearchCommand extends Command {
                     if (id > 0) {
                         final Block block = Block.getBlockById(id);
 
-                        if (searchModule.contains(Block.getIdFromBlock(block))) {
+                        if (searchModule.contains(block)) {
                             Seppuku.INSTANCE.logChat("Search already contains " + block.getLocalizedName());
                         } else {
                             searchModule.add(Block.getIdFromBlock(block));
@@ -76,7 +76,7 @@ public final class SearchCommand extends Command {
                         if (block == Blocks.AIR) {
                             Seppuku.INSTANCE.errorChat("Cannot add Air to search");
                         } else {
-                            if (searchModule.contains(Block.getIdFromBlock(block))) {
+                            if (searchModule.contains(block)) {
                                 Seppuku.INSTANCE.logChat("Search already contains " + block.getLocalizedName());
                             } else {
                                 searchModule.add(Block.getIdFromBlock(block));
@@ -104,7 +104,7 @@ public final class SearchCommand extends Command {
                     if (id > 0) {
                         final Block block = Block.getBlockById(id);
 
-                        if (searchModule.contains(Block.getIdFromBlock(block))) {
+                        if (searchModule.contains(block)) {
                             searchModule.remove(Block.getIdFromBlock(block));
                             if (searchModule.isEnabled()) {
                                 searchModule.clearBlocks();
@@ -125,7 +125,7 @@ public final class SearchCommand extends Command {
                         if (block == Blocks.AIR) {
                             Seppuku.INSTANCE.errorChat("Cannot remove Air from search");
                         } else {
-                            if (searchModule.contains(Block.getIdFromBlock(block))) {
+                            if (searchModule.contains(block)) {
                                 searchModule.remove(Block.getIdFromBlock(block));
                                 if (searchModule.isEnabled()) {
                                     searchModule.clearBlocks();
@@ -147,13 +147,13 @@ public final class SearchCommand extends Command {
                     return;
                 }
 
-                if (searchModule.getIds().size() > 0) {
+                if (searchModule.getBlockIds().getValue().size() > 0) {
                     final TextComponentString msg = new TextComponentString("\2477Search IDs: ");
 
-                    for (int i : searchModule.getIds()) {
-                        msg.appendSibling(new TextComponentString("\2477[\247a" + i + "\2477] ")
+                    for (Block block : searchModule.getBlockIds().getValue()) {
+                        msg.appendSibling(new TextComponentString("\2477[\247a" + Block.getIdFromBlock(block) + "\2477] ")
                                 .setStyle(new Style()
-                                        .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(Block.getBlockById(i).getLocalizedName())))));
+                                        .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(block.getLocalizedName())))));
                     }
 
                     Seppuku.INSTANCE.logcChat(msg);

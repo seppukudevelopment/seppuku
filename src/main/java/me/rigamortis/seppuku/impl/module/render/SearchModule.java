@@ -1,6 +1,7 @@
 package me.rigamortis.seppuku.impl.module.render;
 
 import me.rigamortis.seppuku.Seppuku;
+import me.rigamortis.seppuku.api.event.gui.hud.modulelist.EventUIListValueChanged;
 import me.rigamortis.seppuku.api.event.player.EventDestroyBlock;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.event.render.EventRenderBlockModel;
@@ -44,15 +45,29 @@ public final class SearchModule extends Module {
         BOX, OUTLINE, OUTLINE_BOX, PLANE
     }
 
-    private List<Integer> ids = new ArrayList<>();
+    private final Value<List<Block>> blockIds = new Value<>("Ids", new String[]{"id", "i", "blocks"}, "Blocks to search for.");
     private final List<Vec3d> blocks = new ArrayList<>(512);
     private final ICamera frustum = new Frustum();
 
     public SearchModule() {
         super("Search", new String[]{"srch", "find", "locate"}, "Search for different types of blocks. Enter the \"search\" command.", "NONE", -1, ModuleType.RENDER);
 
+        this.blockIds.setValue(new ArrayList<>());
+
         if (Seppuku.INSTANCE.getConfigManager().isFirstLaunch())
             this.add("furnace");
+    }
+
+    @Override
+    public void onEnable() {
+        this.blocks.clear();
+        super.onEnable();
+    }
+
+    @Override
+    public void onToggle() {
+        super.onToggle();
+        Minecraft.getMinecraft().renderGlobal.loadRenderers();
     }
 
     @Listener
@@ -145,21 +160,16 @@ public final class SearchModule extends Module {
     public void onRenderBlock(EventRenderBlockModel event) {
         final BlockPos pos = event.getBlockPos();
         final IBlockState blockState = event.getBlockState();
-        if (this.contains(Block.getIdFromBlock(blockState.getBlock())) && !this.isPosCached(pos.getX(), pos.getY(), pos.getZ()) && this.blocks.size() < this.limit.getValue()) {
+        if (this.contains(blockState.getBlock()) && !this.isPosCached(pos.getX(), pos.getY(), pos.getZ()) && this.blocks.size() < this.limit.getValue()) {
             this.blocks.add(new Vec3d(pos));
+        } else if (!this.contains(blockState.getBlock()) && this.isPosCached(pos.getX(), pos.getY(), pos.getZ())) {
+            this.blocks.remove(new Vec3d(pos));
         }
     }
 
-    @Override
-    public void onEnable() {
-        this.blocks.clear();
-        super.onEnable();
-    }
-
-    @Override
-    public void onToggle() {
-        super.onToggle();
-        Minecraft.getMinecraft().renderGlobal.loadRenderers();
+    @Listener
+    public void onUIListValueChanged(EventUIListValueChanged event) {
+        this.updateRenders();
     }
 
     private void removeBlock(BlockPos pos) {
@@ -213,38 +223,31 @@ public final class SearchModule extends Module {
                 (int) mc.player.posZ + 256);
     }
 
-    public boolean contains(int id) {
-        return this.ids.contains(id);
-    }
-
-    public boolean contains(String localizedName) {
-        final Block blockFromName = Block.getBlockFromName(localizedName);
-        if (blockFromName != null) {
-            return contains(Block.getIdFromBlock(blockFromName));
-        }
-        return false;
+    public boolean contains(Block block) {
+        return this.blockIds.getValue().contains(block);
     }
 
     public void add(int id) {
-        if (!contains(id)) {
-            this.ids.add(id);
+        final Block blockFromID = Block.getBlockById(id);
+        if (!contains(blockFromID)) {
+            this.blockIds.getValue().add(blockFromID);
         }
     }
 
     public void add(String name) {
         final Block blockFromName = Block.getBlockFromName(name);
         if (blockFromName != null) {
-            final int id = Block.getIdFromBlock(blockFromName);
-            if (!contains(id)) {
-                this.ids.add(id);
+            if (!contains(blockFromName)) {
+                this.blockIds.getValue().add(blockFromName);
             }
         }
     }
 
     public void remove(int id) {
-        for (Integer i : this.ids) {
-            if (id == i) {
-                this.ids.remove(i);
+        for (Block block : this.blockIds.getValue()) {
+            final int blockID = Block.getIdFromBlock(block);
+            if (blockID == id) {
+                this.blockIds.getValue().remove(block);
                 break;
             }
         }
@@ -253,16 +256,15 @@ public final class SearchModule extends Module {
     public void remove(String name) {
         final Block blockFromName = Block.getBlockFromName(name);
         if (blockFromName != null) {
-            final int id = Block.getIdFromBlock(blockFromName);
-            if (contains(id)) {
-                this.ids.remove(id);
+            if (contains(blockFromName)) {
+                this.blockIds.getValue().remove(blockFromName);
             }
         }
     }
 
     public int clear() {
-        final int count = this.ids.size();
-        this.ids.clear();
+        final int count = this.blockIds.getValue().size();
+        this.blockIds.getValue().clear();
         return count;
     }
 
@@ -291,11 +293,7 @@ public final class SearchModule extends Module {
         return 0xFFFFFFFF;
     }
 
-    public List<Integer> getIds() {
-        return ids;
-    }
-
-    public void setIds(List<Integer> ids) {
-        this.ids = ids;
+    public Value<List<Block>> getBlockIds() {
+        return blockIds;
     }
 }

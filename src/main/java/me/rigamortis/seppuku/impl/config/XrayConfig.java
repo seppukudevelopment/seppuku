@@ -10,7 +10,6 @@ import me.rigamortis.seppuku.impl.module.render.XrayModule;
 import net.minecraft.block.Block;
 
 import java.io.File;
-import java.util.Objects;
 
 /**
  * @author noil
@@ -37,9 +36,15 @@ public final class XrayConfig extends Configurable {
         if (blockIds != null)
             xrayIdsJsonArray = blockIds.getAsJsonArray();
 
-        if (xrayIdsJsonArray != null) {
-            for (JsonElement jsonElement : xrayIdsJsonArray) {
-                ((XrayModule) Objects.requireNonNull(Seppuku.INSTANCE.getModuleManager().find("Xray"))).add(jsonElement.getAsInt());
+        final XrayModule xrayModule = (XrayModule) Seppuku.INSTANCE.getModuleManager().find("Xray");
+        if (xrayModule != null) {
+            if (xrayIdsJsonArray != null) {
+                for (JsonElement jsonElement : xrayIdsJsonArray) {
+                    xrayModule.add(jsonElement.getAsInt());
+                }
+            }
+            if (xrayModule.getBlocks().getValue().isEmpty()) {
+                xrayModule.add("diamond_ore");
             }
         }
     }

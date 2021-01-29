@@ -1,6 +1,7 @@
 package me.rigamortis.seppuku.impl.module.render;
 
 import me.rigamortis.seppuku.Seppuku;
+import me.rigamortis.seppuku.api.event.gui.hud.modulelist.EventUIListValueChanged;
 import me.rigamortis.seppuku.api.event.render.EventRenderBlockModel;
 import me.rigamortis.seppuku.api.event.render.EventRenderBlockSide;
 import me.rigamortis.seppuku.api.event.world.EventSetOpaqueCube;
@@ -8,8 +9,6 @@ import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.util.ArrayList;
@@ -21,8 +20,7 @@ import java.util.List;
  */
 public final class XrayModule extends Module {
 
-    public final Value<List<Block>> blocks = new Value<List<Block>>("Ids", new String[]{"id", "i"}, "Testing");
-    public final Value<List<Item>> items = new Value<List<Item>>("Items", new String[]{"item"}, "Testing");
+    public final Value<List<Block>> blocks = new Value<List<Block>>("Ids", new String[]{"id", "i"}, "Blocks to xray for.");
 
     private float lastGamma;
     private int lastAO;
@@ -31,9 +29,6 @@ public final class XrayModule extends Module {
         super("Xray", new String[]{"JadeVision", "Jade"}, "Allows you to filter what the world renders", "NONE", -1, ModuleType.RENDER);
 
         this.blocks.setValue(new ArrayList<>());
-        this.items.setValue(new ArrayList<>());
-
-        this.items.getValue().add(Items.WHEAT);
 
         if (Seppuku.INSTANCE.getConfigManager().isFirstLaunch())
             this.add("diamond_ore");
@@ -92,6 +87,11 @@ public final class XrayModule extends Module {
     @Listener
     public void setOpaqueCube(EventSetOpaqueCube event) {
         event.setCanceled(true);
+    }
+
+    @Listener
+    public void onUIListValueChanged(EventUIListValueChanged event) {
+        this.updateRenders();
     }
 
     public void updateRenders() {
