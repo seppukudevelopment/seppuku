@@ -39,7 +39,7 @@ public final class ModuleManager {
         add(new NoPushModule());
         add(new GodModeModule());
         add(new BlinkModule());
-        add(new XrayModule());
+        //add(new XrayModule()); disabled until we can find a better performance patch, use search for now
         add(new NoSlowDownModule());
         add(new NoHurtCamModule());
         add(new JesusModule());

@@ -50,7 +50,7 @@ public final class SearchModule extends Module {
     private final ICamera frustum = new Frustum();
 
     public SearchModule() {
-        super("Search", new String[]{"srch", "find", "locate"}, "Search for different types of blocks. Enter the \"search\" command.", "NONE", -1, ModuleType.RENDER);
+        super("Search", new String[]{"srch", "xray"}, "Search for different types of blocks. Enter the \"search\" command.", "NONE", -1, ModuleType.RENDER);
 
         this.blockIds.setValue(new ArrayList<>());
 

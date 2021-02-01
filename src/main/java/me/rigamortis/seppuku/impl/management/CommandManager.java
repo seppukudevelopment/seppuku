@@ -33,7 +33,7 @@ public final class CommandManager {
         this.commandList.add(new HideCommand());
         this.commandList.add(new ColorCommand());
         this.commandList.add(new BindCommand());
-        this.commandList.add(new XrayCommand());
+        //this.commandList.add(new XrayCommand()); //TODO: Change when xray is updated
         this.commandList.add(new FriendCommand());
         this.commandList.add(new PeekCommand());
         this.commandList.add(new SpectateCommand());

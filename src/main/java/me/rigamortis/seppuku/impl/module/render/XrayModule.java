@@ -67,10 +67,12 @@ public final class XrayModule extends Module {
      */
     @Listener
     public void shouldSideBeRendered(EventRenderBlockSide event) {
-        /*if (this.contains(Block.getIdFromBlock(event.getBlock()))) {
+        /*
+        if (this.contains(event.getBlock())) {
             event.setRenderable(true);
         }
-        event.setCanceled(true);*/
+        event.setCanceled(true);
+         */
     }
 
     @Listener
