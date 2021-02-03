@@ -132,43 +132,25 @@ public final class ChamsModule extends Module {
     private boolean checkFilter(Entity entity) {
         boolean ret = false;
 
-        if (entity == Minecraft.getMinecraft().player) {
-            ret = false;
-        }
-
-        final Entity riding = Minecraft.getMinecraft().player.getRidingEntity();
-
-        if (riding != null && entity == riding) {
-            ret = false;
-        }
-
         if (this.players.getValue() && entity instanceof EntityPlayer && entity != Minecraft.getMinecraft().player) {
             ret = true;
-        }
-
-        if (this.animals.getValue() && entity instanceof IAnimals) {
+        } else if (this.animals.getValue() && entity instanceof IAnimals && !(entity instanceof IMob)) {
+            ret = true;
+        } else if (this.mobs.getValue() && entity instanceof IMob) {
+            ret = true;
+        } else if (this.items.getValue() && entity instanceof EntityItem) {
+            ret = true;
+        } else if (this.crystals.getValue() && entity instanceof EntityEnderCrystal) {
+            ret = true;
+        } else if (this.vehicles.getValue() && (entity instanceof EntityBoat || entity instanceof EntityMinecart)) {
             ret = true;
         }
 
-        if (this.mobs.getValue() && entity instanceof IMob) {
-            ret = true;
+        if (Minecraft.getMinecraft().player.getRidingEntity() != null && entity == Minecraft.getMinecraft().player.getRidingEntity()) {
+            ret = false;
         }
-
-        if (this.vehicles.getValue() && (entity instanceof EntityBoat || entity instanceof EntityMinecart)) {
-            ret = true;
-        }
-
-        if (this.crystals.getValue() && entity instanceof EntityEnderCrystal) {
-            ret = true;
-        }
-
-        if (this.items.getValue() && entity instanceof EntityItem) {
-            ret = true;
-        }
-
         if (entity instanceof EntityLivingBase) {
             final EntityLivingBase entityLiving = (EntityLivingBase) entity;
-
             if (entityLiving.ticksExisted <= 0) {
                 ret = false;
             }

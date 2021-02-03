@@ -512,30 +512,21 @@ public final class WallHackModule extends Module {
 
         if (this.local.getValue() && (entity == Minecraft.getMinecraft().player) && (Minecraft.getMinecraft().gameSettings.thirdPersonView != 0)) {
             ret = true;
-        }
-        if (this.players.getValue() && entity instanceof EntityPlayer && entity != Minecraft.getMinecraft().player) {
+        } else if (this.players.getValue() && entity instanceof EntityPlayer && entity != Minecraft.getMinecraft().player) {
             ret = true;
-        }
-        if (this.mobs.getValue() && entity instanceof IMob) {
+        } else if (this.animals.getValue() && entity instanceof IAnimals && !(entity instanceof IMob)) {
             ret = true;
-        }
-        if (this.animals.getValue() && entity instanceof IAnimals && !(entity instanceof IMob)) {
+        } else if (this.mobs.getValue() && entity instanceof IMob) {
             ret = true;
-        }
-        if (this.items.getValue() && entity instanceof EntityItem) {
+        } else if (this.items.getValue() && entity instanceof EntityItem) {
             ret = true;
-        }
-        if (this.crystals.getValue() && entity instanceof EntityEnderCrystal) {
+        } else if (this.crystals.getValue() && entity instanceof EntityEnderCrystal) {
             ret = true;
-        }
-        if (this.vehicles.getValue() && (entity instanceof EntityBoat || entity instanceof EntityMinecart)) {
+        } else if (this.vehicles.getValue() && (entity instanceof EntityBoat || entity instanceof EntityMinecart)) {
             ret = true;
-        }
-        if (this.armorStand.getValue() && entity instanceof EntityArmorStand) {
+        } else if (this.armorStand.getValue() && entity instanceof EntityArmorStand) {
             ret = true;
-        }
-
-        if (this.pearls.getValue() && entity instanceof EntityEnderPearl) {
+        } else if (this.pearls.getValue() && entity instanceof EntityEnderPearl) {
             ret = true;
         }
 
