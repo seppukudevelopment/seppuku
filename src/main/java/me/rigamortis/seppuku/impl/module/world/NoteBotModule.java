@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.module.world;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
+import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
@@ -41,8 +42,8 @@ public final class NoteBotModule extends Module {
 
     private final Value<BotState> state = new Value<BotState>("State", new String[]{"State", "s"}, "Current state of the note-bot.", BotState.IDLE);
     private final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"mod", "m"}, "Current mode of the note-bot.", Mode.NORMAL);
-    private final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"rot", "r"}, "Rotate the player's head & body for each note-bot function.", true);
-    private final Value<Boolean> swing = new Value<Boolean>("Swing", new String[]{"swingarm", "armswing", "sa"}, "Swing the player's hand for each note-bot function.", true);
+    private final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"rot", "r"}, "Rotate the player's head & body for each note-bot function.", false);
+    private final Value<Boolean> swing = new Value<Boolean>("Swing", new String[]{"swingarm", "armswing", "sa"}, "Swing the player's hand for each note-bot function.", false);
     private final Value<Float> discoverDelay = new Value<Float>("DiscoverDelay", new String[]{"Discover Delay", "discover-delay", "ddelay", "ddel", "dd", "d"}, "Delay(ms) to wait between left clicks.", 50.0f, 0.0f, 1000.0f, 1.0f);
     private final Value<Float> tuneDelay = new Value<Float>("TuneDelay", new String[]{"Tune Delay", "tune-delay", "tdelay", "tdel", "td"}, "Delay(ms) to wait between right clicks.", 200.0f, 0.0f, 1000.0f, 1.0f);
 
@@ -147,7 +148,7 @@ public final class NoteBotModule extends Module {
     }
 
     @Listener
-    public void onMotionUpdate(EventUpdateWalkingPlayer event) {
+    public void onUpdate(EventPlayerUpdate event) {
         if (mc.world == null || mc.player == null)
             return;
 

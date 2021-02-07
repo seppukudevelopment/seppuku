@@ -148,7 +148,7 @@ public final class ItemsComponent extends HudComponent {
                             else
                                 this.value.getValue().add(item);
 
-                            Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventUIListValueChanged());
+                            Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventUIListValueChanged(this.value));
                         }
                     }
 

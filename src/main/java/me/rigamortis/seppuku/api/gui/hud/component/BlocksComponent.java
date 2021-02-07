@@ -146,7 +146,7 @@ public final class BlocksComponent extends HudComponent {
                             else
                                 this.value.getValue().add(block);
 
-                            Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventUIListValueChanged());
+                            Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventUIListValueChanged(this.value));
                         }
                     }
 

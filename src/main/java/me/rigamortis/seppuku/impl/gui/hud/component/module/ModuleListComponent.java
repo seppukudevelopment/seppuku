@@ -2,6 +2,7 @@ package me.rigamortis.seppuku.impl.gui.hud.component.module;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
+import me.rigamortis.seppuku.api.event.gui.hud.EventUIValueChanged;
 import me.rigamortis.seppuku.api.gui.hud.component.TextComponent;
 import me.rigamortis.seppuku.api.gui.hud.component.*;
 import me.rigamortis.seppuku.api.module.Module;
@@ -517,6 +518,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         @Override
                         public void onComponentEvent() {
                             value.setValue(valueButton.enabled);
+                            Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventUIValueChanged(value));
                         }
                     };
                     components.add(valueButton);
@@ -569,6 +571,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                             if (value.getEnum(valueText.displayValue) != -1) {
                                 value.setEnumValue(valueText.displayValue);
                                 Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class); // save configs
+                                Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventUIValueChanged(value));
                             } else {
                                 Seppuku.INSTANCE.logfChat("%s - %s: Invalid entry.", module.getDisplayName(), value.getName());
                             }
@@ -590,6 +593,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                             if (valueText.displayValue.length() > 0) {
                                 value.setValue(valueText.displayValue);
                                 Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class); // save configs
+                                Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventUIValueChanged(value));
                             } else {
                                 Seppuku.INSTANCE.logfChat("%s - %s: Not enough input.", module.getDisplayName(), value.getName());
                             }
@@ -605,6 +609,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         public void onComponentEvent() {
                             value.setValue(valueColor.getCurrentColor());
                             Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class);
+                            Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventUIValueChanged(value));
                         }
                     };
                     components.add(valueColor);

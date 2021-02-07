@@ -18,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,12 +29,13 @@ import static org.lwjgl.opengl.GL11.glLineWidth;
  */
 public final class HolesModule extends Module {
 
+    public final Value<Color> color = new Value<Color>("Color", new String[]{"col", "c"}, "Change the color of holes.", new Color(153, 0, 238));
     public final Value<Integer> radius = new Value<Integer>("Radius", new String[]{"Radius", "Range", "Distance"}, "Radius in blocks to scan for holes.", 8, 0, 32, 1);
     public final Value<Boolean> fade = new Value<Boolean>("Fade", new String[]{"f"}, "Fades the opacity of the hole the closer your player is to it when enabled.", true);
 
     public final List<Hole> holes = new ArrayList<>();
 
-    private ICamera camera = new Frustum();
+    private final ICamera camera = new Frustum();
 
     public HolesModule() {
         super("Holes", new String[]{"Hole", "HoleESP"}, "Shows areas the player could fall into, holes.", "NONE", -1, ModuleType.RENDER);
@@ -99,8 +101,8 @@ public final class HolesModule extends Module {
                 glLineWidth(1.5f);
                 final double dist = mc.player.getDistance(hole.getX() + 0.5f, hole.getY() + 0.5f, hole.getZ() + 0.5f) * 0.75f;
                 float alpha = MathUtil.clamp((float) (dist * 255.0f / (this.radius.getValue()) / 255.0f), 0.0f, 0.3f);
-                RenderGlobal.renderFilledBox(bb, 0, 1, 0, this.fade.getValue() ? alpha : 0.25f);
-                RenderGlobal.drawBoundingBox(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ, 0, 1, 0, this.fade.getValue() ? alpha : 0.25f);
+                RenderGlobal.renderFilledBox(bb, this.color.getValue().getRed() / 255.0f, this.color.getValue().getGreen() / 255.0f, this.color.getValue().getRed() / 255.0f, this.fade.getValue() ? alpha : this.color.getValue().getAlpha() / 255.0f);
+                RenderGlobal.drawBoundingBox(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ, this.color.getValue().getRed() / 255.0f, this.color.getValue().getGreen() / 255.0f, this.color.getValue().getRed() / 255.0f, this.fade.getValue() ? alpha : this.color.getValue().getAlpha() / 255.0f);
                 GlStateManager.popMatrix();
             }
         }
@@ -108,8 +110,10 @@ public final class HolesModule extends Module {
     }
 
     private boolean isBlockValid(IBlockState blockState, BlockPos blockPos) {
-        if (this.holes.contains(blockPos))
-            return false;
+        for (Hole hole : this.holes) {
+            if (hole.getX() == blockPos.getX() && hole.getY() == blockPos.getY() && hole.getZ() == blockPos.getZ())
+                return false;
+        }
 
         if (blockState.getBlock() != Blocks.AIR)
             return false;

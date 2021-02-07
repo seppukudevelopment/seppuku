@@ -45,8 +45,10 @@ public final class BlockPatch extends ClassPatch {
         insnList.add(new InsnNode(DUP));
         //add ALOAD 0 to pass "this" into the event
         insnList.add(new VarInsnNode(ALOAD, 0));
+        //add ALOAD 3 to pass "BlockPos" into the event
+        insnList.add(new VarInsnNode(ALOAD, 3));
         //call "EventRenderBlockSide" constructor
-        insnList.add(new MethodInsnNode(INVOKESPECIAL, Type.getInternalName(EventRenderBlockSide.class), "<init>", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/block/Block;)V" : "(Laow;)V", false));
+        insnList.add(new MethodInsnNode(INVOKESPECIAL, Type.getInternalName(EventRenderBlockSide.class), "<init>", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/block/Block;Lnet/minecraft/util/math/BlockPos;)V" : "(Laow;Let;)V", false));
         //store our event in the local vars
         insnList.add(new VarInsnNode(ASTORE, 6));
         //Seppuku.INSTANCE
@@ -78,6 +80,7 @@ public final class BlockPatch extends ClassPatch {
         //add our instructions at the top of the function
         methodNode.instructions.insert(insnList);
     }
+
 
     @MethodPatch(
             mcpName = "getBlockLayer",

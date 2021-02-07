@@ -75,16 +75,16 @@ public final class XrayModule extends Module {
          */
     }
 
-    @Listener
-    public void renderBlockModel(EventRenderBlockModel event) {
-        final Block block = event.getBlockState().getBlock();
-        if (this.contains(block)) {
-            if (Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelFlat(event.getBlockAccess(), event.getBakedModel(), event.getBlockState(), event.getBlockPos(), event.getBufferBuilder(), event.isCheckSides(), event.getRand())) {
-                event.setRenderable(true);
-            }
-        }
-        event.setCanceled(true);
-    }
+//    @Listener
+//    public void renderBlockModel(EventRenderBlockModel event) {
+//        final Block block = event.getBlockState().getBlock();
+//        if (this.contains(block)) {
+//            if (Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelFlat(event.getBlockAccess(), event.getBakedModel(), event.getBlockState(), event.getBlockPos(), event.getBufferBuilder(), event.isCheckSides(), event.getRand())) {
+//                event.setRenderable(true);
+//            }
+//        }
+//        event.setCanceled(true);
+//    }
 
     @Listener
     public void setOpaqueCube(EventSetOpaqueCube event) {

@@ -392,4 +392,55 @@ public final class PlayerControllerMPPatch extends ClassPatch {
         Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
         return event.isCanceled();
     }
+
+    @MethodPatch(
+            mcpName = "getBlockReachDistance",
+            notchName = "d",
+            mcpDesc = "()F")
+    public void getBlockReachDistance(MethodNode methodNode, PatchManager.Environment env) {
+        final InsnList insnList = new InsnList();
+        insnList.add(new TypeInsnNode(NEW, Type.getInternalName(EventPlayerReach.class)));
+        insnList.add(new InsnNode(DUP));
+        insnList.add(new MethodInsnNode(INVOKESPECIAL, Type.getInternalName(EventPlayerReach.class), "<init>", "()V", false));
+        insnList.add(new VarInsnNode(ASTORE, 2));
+        insnList.add(new FieldInsnNode(GETSTATIC, Type.getInternalName(Seppuku.class), "INSTANCE", "Lme/rigamortis/seppuku/Seppuku;"));
+        insnList.add(new MethodInsnNode(INVOKEVIRTUAL, Type.getInternalName(Seppuku.class), "getEventManager", "()Lteam/stiff/pomelo/EventManager;", false));
+        insnList.add(new VarInsnNode(ALOAD, 2));
+        insnList.add(new MethodInsnNode(INVOKEINTERFACE, Type.getInternalName(EventManager.class), "dispatchEvent", "(Ljava/lang/Object;)Ljava/lang/Object;", true));
+        insnList.add(new InsnNode(POP));
+        insnList.add(new VarInsnNode(ALOAD, 2));
+        insnList.add(new MethodInsnNode(INVOKEVIRTUAL, Type.getInternalName(EventPlayerReach.class), "isCanceled", "()Z", false));
+        final LabelNode jmp = new LabelNode();
+        insnList.add(new JumpInsnNode(IFEQ, jmp));
+        insnList.add(new VarInsnNode(ALOAD, 2));
+        insnList.add(new MethodInsnNode(INVOKEVIRTUAL, Type.getInternalName(EventPlayerReach.class), "getReach", "()F", false));
+        insnList.add(new InsnNode(FRETURN));
+        insnList.add(jmp);
+        methodNode.instructions.insert(insnList);
+    }
+
+    @MethodPatch(
+            mcpName = "extendedReach",
+            notchName = "i",
+            mcpDesc = "()Z")
+    public void extendedReach(MethodNode methodNode, PatchManager.Environment env) {
+        final InsnList insnList = new InsnList();
+        insnList.add(new TypeInsnNode(NEW, Type.getInternalName(EventExtendPlayerReach.class)));
+        insnList.add(new InsnNode(DUP));
+        insnList.add(new MethodInsnNode(INVOKESPECIAL, Type.getInternalName(EventExtendPlayerReach.class), "<init>", "()V", false));
+        insnList.add(new VarInsnNode(ASTORE, 2));
+        insnList.add(new FieldInsnNode(GETSTATIC, Type.getInternalName(Seppuku.class), "INSTANCE", "Lme/rigamortis/seppuku/Seppuku;"));
+        insnList.add(new MethodInsnNode(INVOKEVIRTUAL, Type.getInternalName(Seppuku.class), "getEventManager", "()Lteam/stiff/pomelo/EventManager;", false));
+        insnList.add(new VarInsnNode(ALOAD, 2));
+        insnList.add(new MethodInsnNode(INVOKEINTERFACE, Type.getInternalName(EventManager.class), "dispatchEvent", "(Ljava/lang/Object;)Ljava/lang/Object;", true));
+        insnList.add(new InsnNode(POP));
+        insnList.add(new VarInsnNode(ALOAD, 2));
+        insnList.add(new MethodInsnNode(INVOKEVIRTUAL, Type.getInternalName(EventExtendPlayerReach.class), "isCanceled", "()Z", false));
+        final LabelNode jmp = new LabelNode();
+        insnList.add(new JumpInsnNode(IFEQ, jmp));
+        insnList.add(new InsnNode(ICONST_1));
+        insnList.add(new InsnNode(IRETURN));
+        insnList.add(jmp);
+        methodNode.instructions.insert(insnList);
+    }
 }

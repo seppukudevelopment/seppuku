@@ -2,6 +2,7 @@ package me.rigamortis.seppuku.api.gui.hud.component;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
+import me.rigamortis.seppuku.api.event.gui.hud.EventUIValueChanged;
 import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
@@ -189,6 +190,9 @@ public final class SliderComponent extends HudComponent {
                 }
                 break;
         }
+
+        // dispatch event
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventUIValueChanged(this.value));
 
         this.sliding = false;
     }

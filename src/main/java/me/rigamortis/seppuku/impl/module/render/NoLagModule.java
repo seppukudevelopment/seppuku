@@ -8,8 +8,10 @@ import me.rigamortis.seppuku.api.event.world.EventSpawnParticle;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockPistonExtension;
 import net.minecraft.block.BlockPistonMoving;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityEnderCrystal;
@@ -22,6 +24,8 @@ import net.minecraft.network.play.server.SPacketSpawnMob;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -85,16 +89,16 @@ public final class NoLagModule extends Module {
         }*/
     }
 
-    @Listener
-    public void renderBlockModel(EventRenderBlockModel event) {
-        if (this.pistons.getValue()) {
-            final Block block = event.getBlockState().getBlock();
-            if (block instanceof BlockPistonMoving || block instanceof BlockPistonExtension) {
-                event.setRenderable(false);
-                event.setCanceled(true);
-            }
-        }
-    }
+//    @Listener
+//    public void renderBlockModel(EventRenderBlockModel event) {
+//        if (this.pistons.getValue()) {
+//            final Block block = event.getBlockState().getBlock();
+//            if (block instanceof BlockPistonMoving || block instanceof BlockPistonExtension) {
+//                event.setRenderable(false);
+//                event.setCanceled(true);
+//            }
+//        }
+//    }
 
     @Listener
     public void renderWorld(EventRender3D event) {
@@ -115,6 +119,14 @@ public final class NoLagModule extends Module {
             event.setCanceled(true);
         }
     }
+
+//    @Listener
+//    public void onRenderBlock(EventRenderBlock event) {
+//        final IBlockState blockState = Minecraft.getMinecraft().world.getBlockState(event.getPos());
+//        if (blockState.getBlock() instanceof BlockLiquid) {
+//            event.setCanceled(true);
+//        }
+//    }
 
     @Listener
     public void onRenderFluid(EventRenderFluid event) {

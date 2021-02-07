@@ -133,7 +133,13 @@ public final class MathUtil {
         final double deltaX = pos.x - x;
         final double deltaY = pos.y - y;
         final double deltaZ = pos.z - z;
-        return (double) MathHelper.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+        return MathHelper.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+    }
+
+    public static double getDistance(double x1, double z1, double x2, double z2) {
+        double d0 = x1 - x2;
+        double d1 = z1 - z2;
+        return MathHelper.sqrt(d0 * d0 + d1 * d1);
     }
 
     public static double[] calcIntersection(double[] line, double[] line2) {
