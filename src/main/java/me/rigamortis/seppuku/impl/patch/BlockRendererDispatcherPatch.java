@@ -5,15 +5,14 @@ import me.rigamortis.seppuku.api.event.render.EventRenderBlock;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
 import me.rigamortis.seppuku.impl.management.PatchManager;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.*;
 
-import static org.objectweb.asm.Opcodes.ALOAD;
-import static org.objectweb.asm.Opcodes.INVOKESTATIC;
+import static org.objectweb.asm.Opcodes.*;
 
 /**
  * @author noil
@@ -34,16 +33,29 @@ public final class BlockRendererDispatcherPatch extends ClassPatch {
     public void renderBlock(MethodNode methodNode, PatchManager.Environment env) {
         //create a list of instructions
         final InsnList insnList = new InsnList();
-        //aload the BlockPos
+        //aload the parameters
+        insnList.add(new VarInsnNode(ALOAD, 1));
         insnList.add(new VarInsnNode(ALOAD, 2));
+        insnList.add(new VarInsnNode(ALOAD, 3));
+        insnList.add(new VarInsnNode(ALOAD, 4));
         //call our hook function
-        insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "renderBlockHook", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/util/math/BlockPos;)V" : "(Let;)V", false));
+        insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "renderBlockHook", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/client/renderer/BufferBuilder;)Z" : "(Lawt;Let;Lamy;Lbuk;)Z", false));
+        //add a label to jump to
+        final LabelNode jmp = new LabelNode();
+        //add if equals and pass the label
+        insnList.add(new JumpInsnNode(IFEQ, jmp));
+        //add return so the rest of the function doesn't get called
+        insnList.add(new InsnNode(ICONST_1));
+        insnList.add(new InsnNode(IRETURN));
+        //add our label
+        insnList.add(jmp);
         //insert instructions
         methodNode.instructions.insert(insnList);
     }
 
-    public static void renderBlockHook(BlockPos pos) {
-        final EventRenderBlock event = new EventRenderBlock(pos);
+    public static boolean renderBlockHook(IBlockState state, BlockPos pos, IBlockAccess access, BufferBuilder bufferBuilder) {
+        final EventRenderBlock event = new EventRenderBlock(state, pos, access, bufferBuilder);
         Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
     }
 }

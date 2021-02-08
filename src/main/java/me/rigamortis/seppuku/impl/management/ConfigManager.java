@@ -57,7 +57,7 @@ public final class ConfigManager {
         });
 
         this.configurableList.add(new FriendConfig(configDir));
-        //this.configurableList.add(new XrayConfig(configDir)); //TODO: Change when xray is updated
+        this.configurableList.add(new XrayConfig(configDir));
         this.configurableList.add(new SearchConfig(configDir));
         this.configurableList.add(new MacroConfig(configDir));
         this.configurableList.add(new WaypointsConfig(configDir));

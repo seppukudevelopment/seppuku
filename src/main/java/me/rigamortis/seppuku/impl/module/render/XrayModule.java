@@ -2,13 +2,15 @@ package me.rigamortis.seppuku.impl.module.render;
 
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.gui.hud.modulelist.EventUIListValueChanged;
-import me.rigamortis.seppuku.api.event.render.EventRenderBlockModel;
-import me.rigamortis.seppuku.api.event.render.EventRenderBlockSide;
+import me.rigamortis.seppuku.api.event.render.EventRenderBlock;
 import me.rigamortis.seppuku.api.event.world.EventSetOpaqueCube;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.util.math.BlockPos;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.util.ArrayList;
@@ -61,30 +63,21 @@ public final class XrayModule extends Module {
         Minecraft.getMinecraft().renderGlobal.loadRenderers();
     }
 
-    /**
-     * Deprecated
-     * @param event
-     */
     @Listener
-    public void shouldSideBeRendered(EventRenderBlockSide event) {
-        /*
-        if (this.contains(event.getBlock())) {
-            event.setRenderable(true);
-        }
-        event.setCanceled(true);
-         */
-    }
+    public void onRenderBlock(EventRenderBlock event) {
+        final BlockPos pos = event.getPos();
+        IBlockState state = event.getState();
 
-//    @Listener
-//    public void renderBlockModel(EventRenderBlockModel event) {
-//        final Block block = event.getBlockState().getBlock();
-//        if (this.contains(block)) {
-//            if (Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelFlat(event.getBlockAccess(), event.getBakedModel(), event.getBlockState(), event.getBlockPos(), event.getBufferBuilder(), event.isCheckSides(), event.getRand())) {
-//                event.setRenderable(true);
-//            }
-//        }
-//        event.setCanceled(true);
-//    }
+        if (!this.contains(state.getBlock())) {
+            event.setCanceled(true);
+            return;
+        }
+
+        // re-render the block
+        final IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(state);
+        state = state.getBlock().getExtendedState(state, event.getAccess(), pos);
+        Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(event.getAccess(), model, state, pos, event.getBufferBuilder(), false);
+    }
 
     @Listener
     public void setOpaqueCube(EventSetOpaqueCube event) {

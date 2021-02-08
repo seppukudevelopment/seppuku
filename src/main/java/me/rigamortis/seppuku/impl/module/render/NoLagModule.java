@@ -11,13 +11,13 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockPistonExtension;
 import net.minecraft.block.BlockPistonMoving;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.projectile.EntityWitherSkull;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.network.play.server.SPacketSpawnMob;
@@ -25,7 +25,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -78,30 +77,8 @@ public final class NoLagModule extends Module {
         }
     }
 
-    /**
-     * We need to find a new optimized method to do this.
-     * @param event
-     */
     @Listener
-    public void updateLighting(EventLightUpdate event) {
-        /*if (this.light.getValue()) {
-            event.setCanceled(true);
-        }*/
-    }
-
-//    @Listener
-//    public void renderBlockModel(EventRenderBlockModel event) {
-//        if (this.pistons.getValue()) {
-//            final Block block = event.getBlockState().getBlock();
-//            if (block instanceof BlockPistonMoving || block instanceof BlockPistonExtension) {
-//                event.setRenderable(false);
-//                event.setCanceled(true);
-//            }
-//        }
-//    }
-
-    @Listener
-    public void renderWorld(EventRender3D event) {
+    public void onRenderWorld(EventRender3D event) {
         final Minecraft mc = Minecraft.getMinecraft();
         if (this.signs.getValue()) {
             for (TileEntity te : mc.world.loadedTileEntityList) {
@@ -120,21 +97,53 @@ public final class NoLagModule extends Module {
         }
     }
 
+    @Listener
+    public void onRenderBlock(EventRenderBlock event) {
+        final BlockPos pos = event.getPos();
+        final Block block = Minecraft.getMinecraft().world.getBlockState(pos).getBlock();
+        if (block != Blocks.AIR) {
+            if (this.fluids.getValue()) {
+                if (block instanceof BlockLiquid) {
+                    event.setCanceled(true);
+                }
+            }
+            if (this.pistons.getValue()) {
+                if (block instanceof BlockPistonMoving || block instanceof BlockPistonExtension) {
+                    event.setCanceled(true);
+                }
+            }
+        }
+    }
+
+    /**
+     * We need to find a new optimized method to do this.
+     * @param event
+     */
 //    @Listener
-//    public void onRenderBlock(EventRenderBlock event) {
-//        final IBlockState blockState = Minecraft.getMinecraft().world.getBlockState(event.getPos());
-//        if (blockState.getBlock() instanceof BlockLiquid) {
+//    public void onUpdateLighting(EventLightUpdate event) {
+//        if (this.light.getValue()) {
 //            event.setCanceled(true);
 //        }
 //    }
 
-    @Listener
-    public void onRenderFluid(EventRenderFluid event) {
-        if (this.fluids.getValue()) {
-            event.setRenderable(false);
-            event.setCanceled(true);
-        }
-    }
+//    @Listener
+//    public void onRenderBlockModel(EventRenderBlockModel event) {
+//        if (this.pistons.getValue()) {
+//            final Block block = event.getBlockState().getBlock();
+//            if (block instanceof BlockPistonMoving || block instanceof BlockPistonExtension) {
+//                event.setRenderable(false);
+//                event.setCanceled(true);
+//            }
+//        }
+//    }
+
+//    @Listener
+//    public void onRenderFluid(EventRenderFluid event) {
+//        if (this.fluids.getValue()) {
+//            event.setRenderable(false);
+//            event.setCanceled(true);
+//        }
+//    }
 
     @Listener
     public void onRenderEntity(EventRenderEntity event) {

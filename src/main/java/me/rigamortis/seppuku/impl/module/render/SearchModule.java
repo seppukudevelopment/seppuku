@@ -61,7 +61,7 @@ public final class SearchModule extends Module {
     private final ICamera frustum = new Frustum();
 
     public SearchModule() {
-        super("Search", new String[]{"srch", "xray"}, "Search for different types of blocks. Enter the \"search\" command.", "NONE", -1, ModuleType.RENDER);
+        super("Search", new String[]{"srch", "src"}, "Search for different types of blocks. Enter the \"search\" command.", "NONE", -1, ModuleType.RENDER);
 
         this.blockIds.setValue(new ArrayList<>());
 
@@ -175,7 +175,7 @@ public final class SearchModule extends Module {
     @Listener
     public void onRenderBlock(EventRenderBlock event) {
         final BlockPos pos = event.getPos();
-        final IBlockState blockState = Minecraft.getMinecraft().world.getBlockState(pos);
+        final IBlockState blockState = event.getState();
         if (this.contains(blockState.getBlock())) {
             final Vec3i vec3i = new Vec3i(pos.getX(), pos.getY(), pos.getZ());
             final double dist = MathUtil.getDistance(Minecraft.getMinecraft().player.posX, Minecraft.getMinecraft().player.posZ, pos.getX(), pos.getZ());
