@@ -7,6 +7,7 @@ import me.rigamortis.seppuku.api.event.world.EventSetOpaqueCube;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -74,9 +75,14 @@ public final class XrayModule extends Module {
         }
 
         // re-render the block
-        final IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(state);
         state = state.getBlock().getExtendedState(state, event.getAccess(), pos);
-        Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(event.getAccess(), model, state, pos, event.getBufferBuilder(), false);
+
+        if (state.getBlock() instanceof BlockLiquid) {
+            Minecraft.getMinecraft().getBlockRendererDispatcher().fluidRenderer.renderFluid(event.getAccess(), state, pos, event.getBufferBuilder());
+        } else {
+            final IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(state);
+            Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(event.getAccess(), model, state, pos, event.getBufferBuilder(), false);
+        }
     }
 
     @Listener

@@ -115,16 +115,12 @@ public final class NoLagModule extends Module {
         }
     }
 
-    /**
-     * We need to find a new optimized method to do this.
-     * @param event
-     */
-//    @Listener
-//    public void onUpdateLighting(EventLightUpdate event) {
-//        if (this.light.getValue()) {
-//            event.setCanceled(true);
-//        }
-//    }
+    @Listener
+    public void onUpdateLighting(EventLightUpdate event) {
+        if (this.light.getValue()) {
+            event.setCanceled(true);
+        }
+    }
 
 //    @Listener
 //    public void onRenderBlockModel(EventRenderBlockModel event) {

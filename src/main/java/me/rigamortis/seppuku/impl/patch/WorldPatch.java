@@ -1,10 +1,7 @@
 package me.rigamortis.seppuku.impl.patch;
 
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.event.world.EventAddEntity;
-import me.rigamortis.seppuku.api.event.world.EventRainStrength;
-import me.rigamortis.seppuku.api.event.world.EventRemoveEntity;
-import me.rigamortis.seppuku.api.event.world.EventSpawnParticle;
+import me.rigamortis.seppuku.api.event.world.*;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
 import me.rigamortis.seppuku.impl.management.PatchManager;
@@ -32,7 +29,6 @@ public final class WorldPatch extends ClassPatch {
      * @param methodNode
      * @param env
      */
-     /*
     @MethodPatch(
             mcpName = "checkLightFor",
             notchName = "c",
@@ -60,14 +56,31 @@ public final class WorldPatch extends ClassPatch {
     public static boolean checkLightForHook() {
         final EventLightUpdate event = new EventLightUpdate();
         Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        if (Minecraft.getMinecraft().isSingleplayer()) {
-            return false;
-        }
-
         return event.isCanceled();
     }
-    */
+
+   /* @MethodPatch(
+            mcpName = "checkLight",
+            notchName = "w",
+            mcpDesc = "(Lnet/minecraft/util/math/BlockPos;)Z",
+            notchDesc = "(Let;)Z")
+    public void checkLight(MethodNode methodNode, PatchManager.Environment env) {
+        final InsnList list = new InsnList();
+        list.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "checkLightHook", "()Z", false));
+        final LabelNode jmp = new LabelNode();
+        list.add(new JumpInsnNode(IFEQ, jmp));
+        // by default, this function will return false if the area is not loaded or checked for light
+        list.add(new InsnNode(ICONST_0));
+        list.add(new InsnNode(IRETURN));
+        list.add(jmp);
+        methodNode.instructions.insert(list);
+    }
+
+    public static boolean checkLightHook() {
+        final EventLightUpdate event = new EventLightUpdate();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }*/
 
     @MethodPatch(
             mcpName = "getRainStrength",
