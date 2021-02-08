@@ -1,8 +1,10 @@
 package me.rigamortis.seppuku.impl.module.render;
 
+import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.render.EventRenderEntity;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -19,6 +21,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.opengl.GL11;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
+import java.awt.*;
+
 import static org.lwjgl.opengl.GL11.*;
 
 /**
@@ -27,14 +31,28 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public final class ChamsModule extends Module {
 
-    public final Value<Boolean> players = new Value<Boolean>("Players", new String[]{"Player"}, "Choose to enable on players.", true);
-    public final Value<Boolean> mobs = new Value<Boolean>("Mobs", new String[]{"Mob"}, "Choose to enable on mobs.", true);
-    public final Value<Boolean> animals = new Value<Boolean>("Animals", new String[]{"Animal"}, "Choose to enable on animals.", true);
-    public final Value<Boolean> vehicles = new Value<Boolean>("Vehicles", new String[]{"Vehic", "Vehicle"}, "Choose to enable on vehicles.", true);
-    public final Value<Boolean> crystals = new Value<Boolean>("Crystals", new String[]{"crystal", "crystals", "endcrystal", "endcrystals"}, "Choose to enable on end crystals.", true);
-    public final Value<Boolean> items = new Value<Boolean>("Items", new String[]{"Item", "i"}, "Choose to enable on items.", false);
-
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode"}, "The chams mode to use.", Mode.NORMAL);
+
+    public final Value<Boolean> players = new Value<Boolean>("Players", new String[]{"Player"}, "Choose to enable on players.", true);
+    public final Value<Color> playersColor = new Value<Color>("PlayersColor", new String[]{"playerscolor", "pc"}, "Change the color of players on chams.", new Color(255, 68, 68));
+
+    public final Value<Boolean> mobs = new Value<Boolean>("Mobs", new String[]{"Mob"}, "Choose to enable on mobs.", true);
+    public final Value<Color> mobsColor = new Value<Color>("MobsColor", new String[]{"mobscolor", "mc"}, "Change the color of mobs on chams.", new Color(255, 170, 0));
+
+    public final Value<Boolean> animals = new Value<Boolean>("Animals", new String[]{"Animal"}, "Choose to enable on animals.", true);
+    public final Value<Color> animalsColor = new Value<Color>("AnimalsColor", new String[]{"animalscolor", "ac"}, "Change the color of animals on chams.", new Color(0, 255, 68));
+
+    public final Value<Boolean> vehicles = new Value<Boolean>("Vehicles", new String[]{"Vehic", "Vehicle"}, "Choose to enable on vehicles.", true);
+    public final Value<Color> vehiclesColor = new Value<Color>("VehiclesColor", new String[]{"vehiclescolor", "vc"}, "Change the color of vehicles on chams.", new Color(213, 255, 0));
+
+    public final Value<Boolean> items = new Value<Boolean>("Items", new String[]{"Item", "i"}, "Choose to enable on items.", false);
+    public final Value<Color> itemsColor = new Value<Color>("ItemsColor", new String[]{"itemscolor", "ic"}, "Change the color of items on chams.", new Color(0, 255, 170));
+
+    public final Value<Boolean> crystals = new Value<Boolean>("Crystals", new String[]{"crystal", "crystals", "endcrystal", "endcrystals"}, "Choose to enable on end crystals.", true);
+    public final Value<Color> crystalsColor = new Value<Color>("CrystalsColor", new String[]{"endercrystalscolor", "endercrystalcolor", "crystalscolor", "crystalcolor", "ecc"}, "Change the color of ender crystals on chams.", new Color(205, 0, 205));
+
+    public final Value<Color> friendsColor = new Value<Color>("FriendsColor", new String[]{"friendscolor", "friendcolor", "fc"}, "Change the color of friendly players on esp.", new Color(153, 0, 238));
+    public final Value<Color> sneakingColor = new Value<Color>("SneakingColor", new String[]{"sneakingcolor", "sneakcolor", "sc"}, "Change the color of sneaking players on esp.", new Color(238, 153, 0));
 
     private enum Mode {
         NORMAL, TEXTURE, FLAT, WIREFRAME
@@ -71,14 +89,14 @@ public final class ChamsModule extends Module {
                         glEnable(GL11.GL_POLYGON_OFFSET_FILL);
                         glPolygonOffset(1.0f, -1100000.0f);
                         glDisable(GL11.GL_TEXTURE_2D);
-                        GlStateManager.color(1, 1, 1);
+                        RenderUtil.glColor(this.getColor(event.getEntity()));
                         break;
                     case "flat":
                         glEnable(GL11.GL_POLYGON_OFFSET_FILL);
                         glPolygonOffset(1.0f, -1100000.0f);
                         glDisable(GL11.GL_TEXTURE_2D);
                         glDisable(GL11.GL_LIGHTING);
-                        GlStateManager.color(1, 1, 1);
+                        RenderUtil.glColor(this.getColor(event.getEntity()));
                         break;
                     case "wireframe":
                         glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
@@ -89,7 +107,7 @@ public final class ChamsModule extends Module {
                         glEnable(GL_LINE_SMOOTH);
                         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
                         glLineWidth(1);
-                        GlStateManager.color(1, 1, 1);
+                        RenderUtil.glColor(this.getColor(event.getEntity()));
                         break;
                 }
                 GlStateManager.popMatrix();
@@ -127,6 +145,42 @@ public final class ChamsModule extends Module {
                 GlStateManager.popMatrix();
             }
         }
+    }
+
+    private int getColor(Entity entity) {
+        int ret = 0xFFFFFFFF;
+
+        if (entity instanceof IAnimals && !(entity instanceof IMob)) {
+            ret = this.animalsColor.getValue().getRGB();
+        }
+        if (entity instanceof IMob) {
+            ret = this.mobsColor.getValue().getRGB();
+        }
+        if (entity instanceof EntityBoat || entity instanceof EntityMinecart) {
+            ret = this.vehiclesColor.getValue().getRGB();
+        }
+        if (entity instanceof EntityItem) {
+            ret = this.itemsColor.getValue().getRGB();
+        }
+        if (entity instanceof EntityEnderCrystal) {
+            ret = this.crystalsColor.getValue().getRGB();
+        }
+        if (entity instanceof EntityPlayer) {
+            ret = this.playersColor.getValue().getRGB();
+
+            if (entity == Minecraft.getMinecraft().player) {
+                ret = -1;
+            }
+
+            if (entity.isSneaking()) {
+                ret = this.sneakingColor.getValue().getRGB();
+            }
+
+            if (Seppuku.INSTANCE.getFriendManager().isFriend(entity) != null) {
+                ret = this.friendsColor.getValue().getRGB();
+            }
+        }
+        return ret;
     }
 
     private boolean checkFilter(Entity entity) {
