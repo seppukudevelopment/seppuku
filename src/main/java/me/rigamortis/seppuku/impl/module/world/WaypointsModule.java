@@ -15,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.network.play.client.CPacketClientStatus;
 import net.minecraft.util.math.AxisAlignedBB;
+import org.lwjgl.util.glu.Sphere;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.sql.Timestamp;
@@ -35,12 +36,19 @@ public final class WaypointsModule extends Module {
     public final Value<Integer> tracersAlpha = new Value<Integer>("TracersAlpha", new String[]{"talpha", "ta", "topacity", "top"}, "Alpha value for each drawn line.", 255, 1, 255, 1);
 
     public final Value<Boolean> box = new Value<Boolean>("Box", new String[]{"b"}, "Renders a 3D object at each waypoint.", true);
+    public final Value<Shape> shape = new Value<Shape>("Shape", new String[]{"s"}, "Selects what shape should be rendered.", Shape.CUBE);
     public final Value<Boolean> boxRotate = new Value<Boolean>("BoxRotate", new String[]{"brotate", "rotate", "br"}, "Rotates each 3D object around in a circle.", true);
     public final Value<Float> boxRotateSpeed = new Value<Float>("BoxRotateSpeed", new String[]{"brotatespeed", "rotatespeed", "spinspeed", "brs"}, "The speed at which the 3D object rotates around.", 0.5f, 0.1f, 2.0f, 0.1f);
     public final Value<Float> boxWidth = new Value<Float>("BoxWidth", new String[]{"width", "w"}, "Pixel width of the 3D objects lines.", 1f, 0.1f, 5.0f, 0.1f);
     public final Value<Integer> boxAlpha = new Value<Integer>("BoxAlpha", new String[]{"balpha", "ba", "bopacity", "bop"}, "Alpha value for the 3D rendered object.", 127, 1, 255, 1);
     public final Value<Float> boxSize = new Value<Float>("BoxSize", new String[]{"size", "scale", "s"}, "Size of the 3D rendered object.", 0.5f, 0.1f, 3.0f, 0.1f);
     public final Value<Float> boxYOffset = new Value<Float>("BoxYOffset", new String[]{"byoffset", "byoff", "byo"}, "Y-level offset of the 3D rendered object.", 0.0f, -1.0f, 1.0f, 0.1f);
+    public final Value<Float> diamondYIncrease = new Value<Float>("DiamondExtraY", new String[]{"de", "dextray", "diamondy"}, "Extra height added to the top of the diamond object.", 0.5f, 0.1f, 3.0f, 0.1f);
+
+    public enum Shape {
+        CUBE, PYRAMID, DIAMOND, SPHERE
+    }
+
 
     private final Minecraft mc = Minecraft.getMinecraft();
     private String host = "";
@@ -107,8 +115,25 @@ public final class WaypointsModule extends Module {
                                 this.boxSize.getValue(),
                                 this.boxSize.getValue() + this.boxYOffset.getValue(),
                                 this.boxSize.getValue());
-                        RenderUtil.drawFilledBox(bb, color);
-                        RenderUtil.drawBoundingBox(bb, this.boxWidth.getValue(), color);
+
+                        switch (shape.getValue()) {
+                            case CUBE:
+                                RenderUtil.drawFilledBox(bb, color);
+                                RenderUtil.drawBoundingBox(bb, this.boxWidth.getValue(), color);
+                                break;
+                            case PYRAMID:
+                                RenderUtil.drawFilledPyramid(bb, color);
+                                RenderUtil.drawBoundingBoxPyramid(bb, this.boxWidth.getValue(), color);
+                                break;
+                            case DIAMOND:
+                                RenderUtil.drawFilledDiamond(bb, this.boxYOffset.getValue(), this.diamondYIncrease.getValue(), color);
+                                RenderUtil.drawBoundingBoxDiamond(bb, this.boxWidth.getValue(), this.boxYOffset.getValue(), this.diamondYIncrease.getValue(), color);
+                                break;
+                            case SPHERE:
+                                RenderUtil.drawSphere(boxSize.getValue(), 32, 32, color);
+                                break;
+                        }
+
                         GlStateManager.popMatrix();
                     }
                 }
