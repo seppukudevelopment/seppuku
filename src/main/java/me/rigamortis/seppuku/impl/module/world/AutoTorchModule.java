@@ -11,6 +11,7 @@ import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -151,7 +152,7 @@ public final class AutoTorchModule extends Module {
                     final Block block = BlockUtil.getBlock(blockPos);
                     final IBlockState state = mc.world.getBlockState(blockPos);
 
-                    if (block == Blocks.AIR || !state.isFullBlock())
+                    if (block == Blocks.AIR || !state.isFullBlock() || block instanceof BlockLiquid)
                         continue;
 
                     final BlockPos aboveBlockPos = blockPos.up();
@@ -195,7 +196,7 @@ public final class AutoTorchModule extends Module {
                     final Block block = BlockUtil.getBlock(blockPos);
                     final IBlockState state = mc.world.getBlockState(blockPos);
 
-                    if (block == Blocks.AIR || !state.isFullBlock())
+                    if (block == Blocks.AIR || !state.isFullBlock() || block instanceof BlockLiquid)
                         continue;
 
                     final BlockPos aboveBlockPos = blockPos.up();
