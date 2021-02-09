@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL32;
+import org.lwjgl.util.glu.Sphere;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -441,6 +442,208 @@ public final class RenderUtil {
         bufferbuilder.pos(bb.minX, bb.maxY, bb.maxZ).endVertex();
         bufferbuilder.pos(bb.minX, bb.maxY, bb.minZ).endVertex();
         tessellator.draw();
+    }
+
+    public static void drawFilledPyramid(AxisAlignedBB bb, int color) {
+        final float alpha = (color >> 24 & 0xFF) / 255.0F;
+        final float red = (color >> 16 & 0xFF) / 255.0F;
+        final float green = (color >> 8 & 0xFF) / 255.0F;
+        final float blue = (color & 0xFF) / 255.0F;
+
+        final Tessellator tessellator = Tessellator.getInstance();
+
+        GlStateManager.disableCull();
+
+        final BufferBuilder bufferbuilder = tessellator.getBuffer();
+
+        bufferbuilder.begin(GL_TRIANGLES, DefaultVertexFormats.POSITION_COLOR);
+
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex(); // 1
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex(); // 2
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex(); // 3
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(0, bb.maxY, 0).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex(); // 4
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(0, bb.maxY, 0).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex(); // 5
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(0, bb.maxY, 0).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex(); // 6
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(0, bb.maxY, 0).color(red, green, blue, alpha).endVertex();
+
+        tessellator.draw();
+    }
+
+    public static void drawBoundingBoxPyramid(AxisAlignedBB bb, float width, int color) {
+        final float alpha = (color >> 24 & 0xFF) / 255.0F;
+        final float red = (color >> 16 & 0xFF) / 255.0F;
+        final float green = (color >> 8 & 0xFF) / 255.0F;
+        final float blue = (color & 0xFF) / 255.0F;
+
+        glLineWidth(width);
+
+        final Tessellator tessellator = Tessellator.getInstance();
+        final BufferBuilder bufferbuilder = tessellator.getBuffer();
+
+        bufferbuilder.begin(GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, 0.0F).endVertex();
+
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(0, bb.maxY, 0).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(0, bb.maxY, 0).color(red, green, blue, 0.0F).endVertex();
+
+        bufferbuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(0, bb.maxY, 0).color(red, green, blue, 0.0F).endVertex();
+
+        bufferbuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(0, bb.maxY, 0).color(red, green, blue, 0.0F).endVertex();
+
+        tessellator.draw();
+    }
+
+    public static void drawFilledDiamond(AxisAlignedBB bb, float yOffset, float extraY, int color) {
+        final float alpha = (color >> 24 & 0xFF) / 255.0F;
+        final float red = (color >> 16 & 0xFF) / 255.0F;
+        final float green = (color >> 8 & 0xFF) / 255.0F;
+        final float blue = (color & 0xFF) / 255.0F;
+
+        final Tessellator tessellator = Tessellator.getInstance();
+
+        GlStateManager.disableCull();
+
+        final BufferBuilder bufferbuilder = tessellator.getBuffer();
+
+        bufferbuilder.begin(GL_TRIANGLES, DefaultVertexFormats.POSITION_COLOR);
+
+        // Top Half
+
+        bufferbuilder.pos(bb.minX, yOffset, bb.minZ).color(red, green, blue, alpha).endVertex(); // 1
+        bufferbuilder.pos(bb.minX, yOffset, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(0, bb.maxY + extraY, 0).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.minX, yOffset, bb.maxZ).color(red, green, blue, alpha).endVertex(); // 2
+        bufferbuilder.pos(bb.maxX, yOffset, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(0, bb.maxY + extraY, 0).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.maxX, yOffset, bb.maxZ).color(red, green, blue, alpha).endVertex(); // 3
+        bufferbuilder.pos(bb.maxX, yOffset, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(0, bb.maxY + extraY, 0).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.maxX, yOffset, bb.minZ).color(red, green, blue, alpha).endVertex(); // 4
+        bufferbuilder.pos(bb.minX, yOffset, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(0, bb.maxY + extraY, 0).color(red, green, blue, alpha).endVertex();
+
+        // Bottom Half
+
+        bufferbuilder.pos(bb.minX, yOffset, bb.minZ).color(red, green, blue, alpha).endVertex(); // 5
+        bufferbuilder.pos(bb.minX, yOffset, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(0, bb.minY - extraY, 0).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.minX, yOffset, bb.maxZ).color(red, green, blue, alpha).endVertex(); // 6
+        bufferbuilder.pos(bb.maxX, yOffset, bb.maxZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(0, bb.minY - extraY, 0).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.maxX, yOffset, bb.maxZ).color(red, green, blue, alpha).endVertex(); // 7
+        bufferbuilder.pos(bb.maxX, yOffset, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(0, bb.minY - extraY, 0).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.maxX, yOffset, bb.minZ).color(red, green, blue, alpha).endVertex(); // 8
+        bufferbuilder.pos(bb.minX, yOffset, bb.minZ).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(0, bb.minY - extraY, 0).color(red, green, blue, alpha).endVertex();
+
+        tessellator.draw();
+    }
+
+    public static void drawBoundingBoxDiamond(AxisAlignedBB bb, float width, float yOffset, float extraY, int color) {
+        final float alpha = (color >> 24 & 0xFF) / 255.0F;
+        final float red = (color >> 16 & 0xFF) / 255.0F;
+        final float green = (color >> 8 & 0xFF) / 255.0F;
+        final float blue = (color & 0xFF) / 255.0F;
+
+        glLineWidth(width);
+
+        final Tessellator tessellator = Tessellator.getInstance();
+        final BufferBuilder bufferbuilder = tessellator.getBuffer();
+
+        bufferbuilder.begin(GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+
+        // Top Half
+
+        bufferbuilder.pos(bb.minX, yOffset, bb.minZ).color(red, green, blue, 0).endVertex();
+
+        bufferbuilder.pos(bb.minX, yOffset, bb.minZ).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.maxX, yOffset, bb.minZ).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.maxX, yOffset, bb.maxZ).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.minX, yOffset, bb.maxZ).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.minX, yOffset, bb.minZ).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(0, bb.maxY + extraY, 0).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.maxX, yOffset, bb.minZ).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(0, bb.maxY + extraY, 0).color(red, green, blue, 0).endVertex();
+
+        bufferbuilder.pos(bb.maxX, yOffset, bb.maxZ).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(0, bb.maxY + extraY, 0).color(red, green, blue, 0).endVertex();
+
+        bufferbuilder.pos(bb.minX, yOffset, bb.maxZ).color(red, green, blue, alpha).endVertex();
+
+        // Bottom Half
+
+        bufferbuilder.pos(0, bb.minY - extraY, 0).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(bb.minX, yOffset, bb.minZ).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(0, bb.minY - extraY, 0).color(red, green, blue, 0).endVertex();
+
+        bufferbuilder.pos(bb.maxX, yOffset, bb.minZ).color(red, green, blue, alpha).endVertex();
+
+        bufferbuilder.pos(0, bb.minY - extraY, 0).color(red, green, blue, 0).endVertex();
+
+        bufferbuilder.pos(bb.maxX, yOffset, bb.maxZ).color(red, green, blue, alpha).endVertex();
+
+        tessellator.draw();
+    }
+
+    public static void drawSphere(float radius, int slices, int stacks, int color) {
+        final float alpha = (color >> 24 & 0xFF) / 255.0F;
+        final float red = (color >> 16 & 0xFF) / 255.0F;
+        final float green = (color >> 8 & 0xFF) / 255.0F;
+        final float blue = (color & 0xFF) / 255.0F;
+
+        glColor4f(red, green, blue, alpha);
+
+        new Sphere().draw(radius, slices, stacks);
     }
 
     public static void drawCrosses(AxisAlignedBB bb, float width, int color) {
