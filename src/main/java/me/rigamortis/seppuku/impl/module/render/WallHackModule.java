@@ -1,15 +1,18 @@
 package me.rigamortis.seppuku.impl.module.render;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.render.EventRender2D;
 import me.rigamortis.seppuku.api.event.render.EventRenderName;
+import me.rigamortis.seppuku.api.event.world.EventAddEntity;
 import me.rigamortis.seppuku.api.friend.Friend;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.*;
+import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -38,14 +41,18 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
+import org.apache.commons.io.IOUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+import org.lwjgl.Sys;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.awt.*;
+import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -98,6 +105,9 @@ public final class WallHackModule extends Module {
 
     public final Value<Color> friendsColor = new Value<Color>("FriendsColor", new String[]{"friendscolor", "friendcolor", "fc"}, "Change the color of friendly players on esp.", new Color(153, 0, 238));
     public final Value<Color> sneakingColor = new Value<Color>("SneakingColor", new String[]{"sneakingcolor", "sneakcolor", "sc"}, "Change the color of sneaking players on esp.", new Color(238, 153, 0));
+
+    private final Map<UUID, String> cachedMobOwners = Maps.newHashMap();
+    private final Timer uuidTimer = new Timer();
 
     private enum PotionsMode {
         NONE, ICON, TEXT
@@ -245,14 +255,18 @@ public final class WallHackModule extends Module {
                                     if (e instanceof EntityTameable) {
                                         final EntityTameable tameable = (EntityTameable) e;
                                         if (tameable.isTamed() && tameable.getOwnerId() != null) {
-                                            ownerName = tameable.getOwnerId().toString();
+                                            final UUID uuid = tameable.getOwnerId();
+                                            this.cacheOwnerNameFromUUID(uuid);
+                                            ownerName = this.cachedMobOwners.get(uuid);
                                         }
                                     }
 
                                     if (e instanceof AbstractHorse) {
                                         final AbstractHorse horse = (AbstractHorse) e;
                                         if (horse.isTame() && horse.getOwnerUniqueId() != null) {
-                                            ownerName = horse.getOwnerUniqueId().toString();
+                                            final UUID uuid = horse.getOwnerUniqueId();
+                                            this.cacheOwnerNameFromUUID(uuid);
+                                            ownerName = this.cachedMobOwners.get(uuid);
                                         }
                                     }
 
@@ -475,6 +489,35 @@ public final class WallHackModule extends Module {
     public void renderName(EventRenderName event) {
         if (event.getEntity() instanceof EntityPlayer) {
             event.setCanceled(true);
+        }
+    }
+
+    private void cacheOwnerNameFromUUID(UUID uuid) {
+        if (this.cachedMobOwners.containsKey(uuid)) {
+            return;
+        }
+
+        if (this.uuidTimer.passed(500)) { // 500 ms delays
+            try {
+                new Thread(() -> {
+                    final String url = "https://api.mojang.com/user/profiles/" + uuid.toString() + "/names";
+                    try {
+                        final String json = IOUtils.toString(new URL(url));
+                        if (json.isEmpty()) {
+                            return;
+                        }
+                        final JSONArray array = (JSONArray) JSONValue.parseWithException(json);
+                        final JSONObject nameArray = (JSONObject) array.get(array.size() - 1);
+                        final String name = (String) nameArray.get("name");
+                        this.cachedMobOwners.put(uuid, name);
+                    } catch (Exception exception) {
+                        this.cachedMobOwners.put(uuid, uuid.toString());
+                    }
+                }).start();
+            } catch (Exception exception) {
+                this.cachedMobOwners.put(uuid, uuid.toString());
+            }
+            this.uuidTimer.reset();
         }
     }
 
