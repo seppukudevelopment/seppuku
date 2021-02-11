@@ -31,8 +31,11 @@ public final class BlockRendererDispatcherPatch extends ClassPatch {
             mcpDesc = "(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/client/renderer/BufferBuilder;)Z",
             notchDesc = "(Lawt;Let;Lamy;Lbuk;)Z")
     public void renderBlock(MethodNode methodNode, PatchManager.Environment env) {
-        //create a list of instructions
         final InsnList insnList = new InsnList();
+//        insnList.add(new FieldInsnNode(GETSTATIC, Type.getInternalName(Seppuku.class), "INSTANCE", "Lme/rigamortis/seppuku/Seppuku;"));
+//        insnList.add(new MethodInsnNode(INVOKEVIRTUAL, Type.getInternalName(Seppuku.class), "getCameraManager", "()Lme/rigamortis/seppuku/impl/management/CameraManager;", false));
+//        insnList.add(new MethodInsnNode(INVOKEVIRTUAL, Type.getInternalName(CameraManager.class), "isCameraRecording", "()Z", false));
+//        insnList.add(new JumpInsnNode(IFNE, jmp));
         //aload the parameters
         insnList.add(new VarInsnNode(ALOAD, 1));
         insnList.add(new VarInsnNode(ALOAD, 2));
@@ -40,7 +43,7 @@ public final class BlockRendererDispatcherPatch extends ClassPatch {
         insnList.add(new VarInsnNode(ALOAD, 4));
         //call our hook function
         insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "renderBlockHook", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/client/renderer/BufferBuilder;)Z" : "(Lawt;Let;Lamy;Lbuk;)Z", false));
-        //add a label to jump to
+        //create label
         final LabelNode jmp = new LabelNode();
         //add if equals and pass the label
         insnList.add(new JumpInsnNode(IFEQ, jmp));

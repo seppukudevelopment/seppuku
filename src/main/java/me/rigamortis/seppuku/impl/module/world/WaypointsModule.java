@@ -15,7 +15,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.network.play.client.CPacketClientStatus;
 import net.minecraft.util.math.AxisAlignedBB;
-import org.lwjgl.util.glu.Sphere;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.sql.Timestamp;
@@ -35,15 +34,15 @@ public final class WaypointsModule extends Module {
     public final Value<Float> tracersWidth = new Value<Float>("TracersWidth", new String[]{"twidth", "tw"}, "Pixel width of each tracer line.", 1.0f, 0.1f, 5.0f, 0.1f);
     public final Value<Integer> tracersAlpha = new Value<Integer>("TracersAlpha", new String[]{"talpha", "ta", "topacity", "top"}, "Alpha value for each drawn line.", 255, 1, 255, 1);
 
-    public final Value<Boolean> box = new Value<Boolean>("Box", new String[]{"b"}, "Renders a 3D object at each waypoint.", true);
-    public final Value<Shape> shape = new Value<Shape>("Shape", new String[]{"s"}, "Selects what shape should be rendered.", Shape.CUBE);
-    public final Value<Boolean> boxRotate = new Value<Boolean>("BoxRotate", new String[]{"brotate", "rotate", "br"}, "Rotates each 3D object around in a circle.", true);
-    public final Value<Float> boxRotateSpeed = new Value<Float>("BoxRotateSpeed", new String[]{"brotatespeed", "rotatespeed", "spinspeed", "brs"}, "The speed at which the 3D object rotates around.", 0.5f, 0.1f, 2.0f, 0.1f);
-    public final Value<Float> boxWidth = new Value<Float>("BoxWidth", new String[]{"width", "w"}, "Pixel width of the 3D objects lines.", 1f, 0.1f, 5.0f, 0.1f);
-    public final Value<Integer> boxAlpha = new Value<Integer>("BoxAlpha", new String[]{"balpha", "ba", "bopacity", "bop"}, "Alpha value for the 3D rendered object.", 127, 1, 255, 1);
-    public final Value<Float> boxSize = new Value<Float>("BoxSize", new String[]{"size", "scale", "s"}, "Size of the 3D rendered object.", 0.5f, 0.1f, 3.0f, 0.1f);
-    public final Value<Float> boxYOffset = new Value<Float>("BoxYOffset", new String[]{"byoffset", "byoff", "byo"}, "Y-level offset of the 3D rendered object.", 0.0f, -1.0f, 1.0f, 0.1f);
-    public final Value<Float> diamondYIncrease = new Value<Float>("DiamondExtraY", new String[]{"de", "dextray", "diamondy"}, "Extra height added to the top of the diamond object.", 0.5f, 0.1f, 3.0f, 0.1f);
+    public final Value<Boolean> point = new Value<Boolean>("Point", new String[]{"p", "waypoint", "object", "o"}, "Renders a 3D object at each waypoint.", true);
+    public final Value<Shape> pointShape = new Value<Shape>("PointShape", new String[]{"wps", "ps", "shape"}, "Selects what shape should be rendered.", Shape.CUBE);
+    public final Value<Boolean> pointRotate = new Value<Boolean>("PointRotate", new String[]{"protate", "rotate", "wpr"}, "Rotates each 3D object around in a circle.", true);
+    public final Value<Float> pointRotateSpeed = new Value<Float>("PointRotateSpeed", new String[]{"protatespeed", "rotatespeed", "pspinspeed", "prs"}, "The speed at which the 3D object rotates around.", 0.5f, 0.1f, 2.0f, 0.1f);
+    public final Value<Float> pointWidth = new Value<Float>("PointWidth", new String[]{"pwidth", "pw"}, "Pixel width of the 3D objects lines.", 1f, 0.1f, 5.0f, 0.1f);
+    public final Value<Integer> pointAlpha = new Value<Integer>("PointAlpha", new String[]{"palpha", "pa", "popacity", "pop"}, "Alpha value for the 3D rendered object.", 127, 1, 255, 1);
+    public final Value<Float> pointSize = new Value<Float>("PointSize", new String[]{"psize", "pscale", "ps", "size", "scale", "s"}, "Size of the 3D rendered object.", 0.5f, 0.1f, 3.0f, 0.1f);
+    public final Value<Float> pointYOffset = new Value<Float>("PointYOffset", new String[]{"pyoffset", "pyoff", "pyo"}, "Y-level offset of the 3D rendered object.", 0.0f, -1.0f, 1.0f, 0.1f);
+    public final Value<Float> pointDiamondHeight = new Value<Float>("PointDiamondHeight", new String[]{"diamondheight", "diamondh", "pdh", "dh"}, "Extra height added to the top of the diamond object.", 0.5f, 0.1f, 3.0f, 0.1f);
 
     public enum Shape {
         CUBE, PYRAMID, DIAMOND, SPHERE
@@ -85,14 +84,14 @@ public final class WaypointsModule extends Module {
 
     @Listener
     public void onRender3D(EventRender3D event) {
-        if (!this.box.getValue()) // doesn't want to render the 3D object
+        if (!this.point.getValue()) // doesn't want to render the 3D object
             return;
 
-        if (this.boxRotate.getValue()) {
+        if (this.pointRotate.getValue()) {
             if (this.angle > 360.0f)
                 this.angle = 0.0f;
             else
-                this.angle += this.boxRotateSpeed.getValue();
+                this.angle += this.pointRotateSpeed.getValue();
         }
 
 
@@ -102,35 +101,35 @@ public final class WaypointsModule extends Module {
                 if (host.equalsIgnoreCase(waypointData.getHost()) && mc.player.dimension == waypointData.dimension) {
                     final double dist = mc.player.getDistance(waypointData.getX(), waypointData.getY(), waypointData.getZ());
                     if (dist >= this.hideDistance.getValue()) {
-                        final int color = ColorUtil.changeAlpha(waypointData.color, this.boxAlpha.getValue());
+                        final int color = ColorUtil.changeAlpha(waypointData.color, this.pointAlpha.getValue());
                         GlStateManager.pushMatrix();
                         GlStateManager.translate(waypointData.x - mc.getRenderManager().viewerPosX, waypointData.y - mc.getRenderManager().viewerPosY, waypointData.z - mc.getRenderManager().viewerPosZ);
-                        if (this.boxRotate.getValue()) {
+                        if (this.pointRotate.getValue()) {
                             GlStateManager.rotate(this.angle, 0, 1, 0);
                         }
                         final AxisAlignedBB bb = new AxisAlignedBB(
-                                -this.boxSize.getValue(),
-                                -this.boxSize.getValue() + this.boxYOffset.getValue(),
-                                -this.boxSize.getValue(),
-                                this.boxSize.getValue(),
-                                this.boxSize.getValue() + this.boxYOffset.getValue(),
-                                this.boxSize.getValue());
+                                -this.pointSize.getValue(),
+                                -this.pointSize.getValue() + this.pointYOffset.getValue(),
+                                -this.pointSize.getValue(),
+                                this.pointSize.getValue(),
+                                this.pointSize.getValue() + this.pointYOffset.getValue(),
+                                this.pointSize.getValue());
 
-                        switch (shape.getValue()) {
+                        switch (this.pointShape.getValue()) {
                             case CUBE:
                                 RenderUtil.drawFilledBox(bb, color);
-                                RenderUtil.drawBoundingBox(bb, this.boxWidth.getValue(), color);
+                                RenderUtil.drawBoundingBox(bb, this.pointWidth.getValue(), color);
                                 break;
                             case PYRAMID:
                                 RenderUtil.drawFilledPyramid(bb, color);
-                                RenderUtil.drawBoundingBoxPyramid(bb, this.boxWidth.getValue(), color);
+                                RenderUtil.drawBoundingBoxPyramid(bb, this.pointWidth.getValue(), color);
                                 break;
                             case DIAMOND:
-                                RenderUtil.drawFilledDiamond(bb, this.boxYOffset.getValue(), this.diamondYIncrease.getValue(), color);
-                                RenderUtil.drawBoundingBoxDiamond(bb, this.boxWidth.getValue(), this.boxYOffset.getValue(), this.diamondYIncrease.getValue(), color);
+                                RenderUtil.drawFilledDiamond(bb, this.pointYOffset.getValue(), this.pointDiamondHeight.getValue(), color);
+                                RenderUtil.drawBoundingBoxDiamond(bb, this.pointWidth.getValue(), this.pointYOffset.getValue(), this.pointDiamondHeight.getValue(), color);
                                 break;
                             case SPHERE:
-                                RenderUtil.drawSphere(boxSize.getValue(), 32, 32, color);
+                                RenderUtil.drawSphere(this.pointSize.getValue(), 32, 32, color);
                                 break;
                         }
 

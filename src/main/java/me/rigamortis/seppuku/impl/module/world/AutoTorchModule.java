@@ -11,6 +11,7 @@ import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -152,11 +153,14 @@ public final class AutoTorchModule extends Module {
                     final Block block = BlockUtil.getBlock(blockPos);
                     final IBlockState state = mc.world.getBlockState(blockPos);
 
-                    if (block == Blocks.AIR || !state.isFullBlock() || block instanceof BlockLiquid)
+                    if (block == Blocks.AIR || !state.isFullBlock() || !block.canPlaceTorchOnTop(state, mc.world, blockPos) || block instanceof BlockLiquid || block instanceof BlockLeaves)
                         continue;
 
                     final BlockPos aboveBlockPos = blockPos.up();
                     final Block aboveBlock = BlockUtil.getBlock(aboveBlockPos);
+                    if (aboveBlock instanceof BlockLiquid)
+                        continue;
+
                     if (aboveBlock == Blocks.AIR || aboveBlock.isReplaceable(mc.world, aboveBlockPos)) {
                         final int light = mc.world.getChunk(aboveBlockPos).getLightFor(EnumSkyBlock.BLOCK, aboveBlockPos);
                         if (light < 15) {
@@ -196,11 +200,14 @@ public final class AutoTorchModule extends Module {
                     final Block block = BlockUtil.getBlock(blockPos);
                     final IBlockState state = mc.world.getBlockState(blockPos);
 
-                    if (block == Blocks.AIR || !state.isFullBlock() || block instanceof BlockLiquid)
+                    if (block == Blocks.AIR || !state.isFullBlock() || !block.canPlaceTorchOnTop(state, mc.world, blockPos) || block instanceof BlockLiquid || block instanceof BlockLeaves)
                         continue;
 
                     final BlockPos aboveBlockPos = blockPos.up();
                     final Block aboveBlock = BlockUtil.getBlock(aboveBlockPos);
+                    if (aboveBlock instanceof BlockLiquid)
+                        continue;
+
                     if (aboveBlock == Blocks.AIR || aboveBlock.isReplaceable(mc.world, aboveBlockPos)) {
                         final int light = mc.world.getChunk(blockPos).getLightFor(EnumSkyBlock.BLOCK, aboveBlockPos);
                         final double curDist = mc.player.getDistance(blockPos.getX(), blockPos.getY(), blockPos.getZ());
