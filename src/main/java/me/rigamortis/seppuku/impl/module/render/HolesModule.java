@@ -101,8 +101,8 @@ public final class HolesModule extends Module {
                 glLineWidth(1.5f);
                 final double dist = mc.player.getDistance(hole.getX() + 0.5f, hole.getY() + 0.5f, hole.getZ() + 0.5f) * 0.75f;
                 float alpha = MathUtil.clamp((float) (dist * 255.0f / (this.radius.getValue()) / 255.0f), 0.0f, 0.3f);
-                RenderGlobal.renderFilledBox(bb, this.color.getValue().getRed() / 255.0f, this.color.getValue().getGreen() / 255.0f, this.color.getValue().getRed() / 255.0f, this.fade.getValue() ? alpha : this.color.getValue().getAlpha() / 255.0f);
-                RenderGlobal.drawBoundingBox(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ, this.color.getValue().getRed() / 255.0f, this.color.getValue().getGreen() / 255.0f, this.color.getValue().getRed() / 255.0f, this.fade.getValue() ? alpha : this.color.getValue().getAlpha() / 255.0f);
+                RenderGlobal.renderFilledBox(bb, this.color.getValue().getRed() / 255.0f, this.color.getValue().getGreen() / 255.0f, this.color.getValue().getRed() / 255.0f, this.fade.getValue() ? alpha : 0.5f);
+                RenderGlobal.drawBoundingBox(bb.minX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ, this.color.getValue().getRed() / 255.0f, this.color.getValue().getGreen() / 255.0f, this.color.getValue().getRed() / 255.0f, this.fade.getValue() ? alpha : 0.5f);
                 GlStateManager.popMatrix();
             }
         }
