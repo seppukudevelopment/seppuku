@@ -61,6 +61,8 @@ public class ModuleConfig extends Configurable {
                         } else if (val.getValue().getClass() == Integer.class) {
                             val.setValue(entry.getValue().getAsInt());
                         }
+                    } else if (val.getValue() instanceof String && !(val.getValue() instanceof Enum)) {
+                        val.setValue(entry.getValue().getAsString());
                     } else if (val.getValue() instanceof Enum) {
                         val.setEnumValue(entry.getValue().getAsString());
                     } else if (val.getValue() instanceof Color) {
@@ -91,6 +93,8 @@ public class ModuleConfig extends Configurable {
                     } else if (value.getValue().getClass() == Integer.class) {
                         moduleJsonObject.addProperty(value.getName(), (Integer) value.getValue());
                     }
+                } else if (value.getValue() instanceof String && !(value.getValue() instanceof Enum)) {
+                    moduleJsonObject.addProperty(value.getName(), (String) value.getValue());
                 } else if (value.getValue() instanceof Enum) {
                     moduleJsonObject.addProperty(value.getName(), ((Enum) value.getValue()).name());
                 } else if (value.getValue() instanceof Color) {
