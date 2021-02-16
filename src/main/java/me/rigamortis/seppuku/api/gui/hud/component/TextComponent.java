@@ -1,7 +1,6 @@
 package me.rigamortis.seppuku.api.gui.hud.component;
 
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.event.gui.hud.EventUIValueChanged;
 import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.util.Timer;
@@ -27,6 +26,11 @@ public class TextComponent extends HudComponent {
 
     protected Timer backspaceTimer = new Timer(), backspaceWaitTimer = new Timer();
     protected boolean doBackspacing = false;
+
+    private int shiftLength = 0;
+
+    private static final int CHECK_WIDTH = 10;
+    private static final int BLOCK_WIDTH = 2;
 
     public TextComponent(String name, String displayValue, boolean digitOnly) {
         super(name);
@@ -54,21 +58,26 @@ public class TextComponent extends HudComponent {
         }
 
         final String displayValueText = renderName + ": " + this.displayValue;
-        Minecraft.getMinecraft().fontRenderer.drawString(displayValueText, (int) this.getX() + 1, (int) this.getY() + 1, this.focused ? 0xFFFFFFFF : 0xFFAAAAAA);
+        this.shiftLength = 0;
+        if (this.focused) {
+            if (Minecraft.getMinecraft().fontRenderer.getStringWidth(displayValueText) > (this.getW() - CHECK_WIDTH - BLOCK_WIDTH - 2))
+                this.shiftLength += Math.abs(Minecraft.getMinecraft().fontRenderer.getStringWidth(displayValueText) - (this.getW() - CHECK_WIDTH - BLOCK_WIDTH - 2));
+        }
+
+        Minecraft.getMinecraft().fontRenderer.drawString(displayValueText, (int) this.getX() + 1 - this.shiftLength, (int) this.getY() + 1, this.focused ? 0xFFFFFFFF : 0xFFAAAAAA);
 
         if (this.focused) {
             if (!this.selectedText.equals("")) {
-                RenderUtil.drawRect(this.getX() + Minecraft.getMinecraft().fontRenderer.getStringWidth(renderName + ": "), this.getY(), this.getX() + Minecraft.getMinecraft().fontRenderer.getStringWidth(displayValueText), this.getY() + this.getH(), 0x45FFFFFF);
+                RenderUtil.drawRect(this.getX() + Minecraft.getMinecraft().fontRenderer.getStringWidth(renderName + ": ") - this.shiftLength, this.getY(), this.getX() + Minecraft.getMinecraft().fontRenderer.getStringWidth(displayValueText), this.getY() + this.getH(), 0x45FFFFFF);
             }
 
-            float blockX = this.getX() + Minecraft.getMinecraft().fontRenderer.getStringWidth(renderName + ": " + this.displayValue) + 1;
+            float blockX = this.getX() + 1 - this.shiftLength + Minecraft.getMinecraft().fontRenderer.getStringWidth(renderName + ": " + this.displayValue);
             float blockY = this.getY() + 1;
-            int blockWidth = 2;
-            int blockHeight = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - 2;
-            RenderUtil.drawRect(blockX, blockY, blockX + blockWidth, blockY + blockHeight, 0xFFFFFFFF);
+            final int blockHeight = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - 2;
+            RenderUtil.drawRect(blockX, blockY, blockX + BLOCK_WIDTH, blockY + blockHeight, 0xFFFFFFFF);
 
             // check
-            RenderUtil.drawRect(this.getX() + this.getW() - 10, this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0xFF101010);
+            RenderUtil.drawRect(this.getX() + this.getW() - CHECK_WIDTH, this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0xFF101010);
             this.checkTexture.bind();
             this.checkTexture.render(this.getX() + this.getW() - 9, this.getY() + 0.5f, 8, 8);
 
@@ -189,11 +198,12 @@ public class TextComponent extends HudComponent {
         if (returnListener != null)
             returnListener.onComponentEvent();
 
+        this.shiftLength = 0;
         this.focused = false;
     }
 
     protected boolean onCheckButtonPress(int mouseX, int mouseY) {
-        if (mouseX >= this.getX() + this.getW() - 10 && mouseX <= this.getX() + this.getW() && mouseY >= this.getY() && mouseY <= this.getY() + this.getH()) {
+        if (mouseX >= this.getX() + this.getW() - CHECK_WIDTH && mouseX <= this.getX() + this.getW() && mouseY >= this.getY() && mouseY <= this.getY() + this.getH()) {
             this.enterPressed();
             return true;
         }
