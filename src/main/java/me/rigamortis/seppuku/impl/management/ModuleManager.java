@@ -168,6 +168,7 @@ public final class ModuleManager {
         add(new NoteBotModule());
         add(new BurrowModule());
         add(new AutoTorchModule());
+        add(new AutoClickerModule());
 
         // p2w experience
         if (Seppuku.INSTANCE.getCapeManager().hasCape())

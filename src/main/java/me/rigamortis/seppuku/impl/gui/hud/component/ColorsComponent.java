@@ -340,6 +340,8 @@ public final class ColorsComponent extends ResizableHudComponent {
         }
 
         if (this.isMouseInside(mouseX, mouseY) && this.currentColorComponent != null) {
+            this.currentColorComponent.mouseClick(mouseX, mouseY, button);
+
             final boolean insideSpectrum =
                     mouseX >= this.getX() + this.getW() / 4 + this.getW() / 16 &&
                             mouseY >= this.getY() + this.getH() / 2 + 10 &&
@@ -426,5 +428,13 @@ public final class ColorsComponent extends ResizableHudComponent {
 
     public int getTotalHeight() {
         return totalHeight;
+    }
+
+    public ColorComponent getCurrentColorComponent() {
+        return currentColorComponent;
+    }
+
+    public void setCurrentColorComponent(ColorComponent currentColorComponent) {
+        this.currentColorComponent = currentColorComponent;
     }
 }

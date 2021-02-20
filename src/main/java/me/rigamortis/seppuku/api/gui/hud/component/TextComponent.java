@@ -4,6 +4,8 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.util.Timer;
+import me.rigamortis.seppuku.impl.gui.hud.component.ColorsComponent;
+import me.rigamortis.seppuku.impl.gui.hud.component.module.ModuleListComponent;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Keyboard;
 
@@ -83,6 +85,32 @@ public class TextComponent extends HudComponent {
 
             // handle holding backspace
             this.handleBackspacing();
+        }
+    }
+
+    @Override
+    public void mouseClick(int mouseX, int mouseY, int button) {
+        super.mouseClick(mouseX, mouseY, button);
+        if (this.isMouseInside(mouseX, mouseY)) {
+            for (HudComponent hudComponent : Seppuku.INSTANCE.getHudManager().getComponentList()) {
+                if (hudComponent instanceof ModuleListComponent) {
+                    final ModuleListComponent moduleListComponent = (ModuleListComponent) hudComponent;
+                    if (moduleListComponent.getCurrentSettings() != null) {
+                        for (HudComponent moduleComponent : moduleListComponent.getCurrentSettings().components) {
+                            if (moduleComponent instanceof TextComponent && !this.getName().equals(moduleComponent.getName())) {
+                                ((TextComponent) moduleComponent).focused = false;
+                            }
+                        }
+                    }
+                } else if (hudComponent instanceof ColorsComponent) {
+                    final ColorsComponent colorsComponent = (ColorsComponent) hudComponent;
+                    if (colorsComponent.getCurrentColorComponent() != null) {
+                        if (!this.getName().equals(colorsComponent.getName())) {
+                            colorsComponent.getCurrentColorComponent().focused = false;
+                        }
+                    }
+                }
+            }
         }
     }
 
