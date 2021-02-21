@@ -3,8 +3,10 @@ package me.rigamortis.seppuku.impl.module.movement;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.inventory.GuiEditSign;
 import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -16,6 +18,8 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class GuiMoveModule extends Module {
 
+    public final Value<Boolean> allowSignMove = new Value<Boolean>("AllowSignMove", new String[]{"sign", "allowsign", "as"}, "If enabled you will be able to move while in a sign GUI.", false);
+
     public GuiMoveModule() {
         super("GUIMove", new String[]{"InvMove", "InventoryMove", "GUIM"}, "Allows you to move while guis are open", "NONE", -1, ModuleType.MOVEMENT);
     }
@@ -25,7 +29,7 @@ public final class GuiMoveModule extends Module {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             final Minecraft mc = Minecraft.getMinecraft();
 
-            if (mc.currentScreen instanceof GuiChat || mc.currentScreen == null) {
+            if (mc.currentScreen instanceof GuiChat || (!allowSignMove.getValue() && mc.currentScreen instanceof GuiEditSign) || mc.currentScreen == null) {
                 return;
             }
 
