@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.module.misc;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
+import me.rigamortis.seppuku.api.friend.Friend;
 import me.rigamortis.seppuku.api.ignore.Ignored;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.Value;
@@ -18,14 +19,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Author Seth
- * 7/1/2019 @ 10:22 PM.
+ * @author Seth
+ * @author noil
  */
 public final class AutoIgnoreModule extends Module {
 
-    private final String REGEX_NAME = "<(\\S+)\\s*(\\S+?)?>\\s(.*)";
+    private static final String REGEX_NAME = "<(\\S+)\\s*(\\S+?)?>\\s(.*)";
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The auto ignore mode to use.", Mode.CLIENT);
+    public final Value<Boolean> allowFriends = new Value<Boolean>("AllowFriends", new String[]{"AllowF", "Friends", "AF", "F"}, "If enabled, any friend's message will not be auto-ignored.", true);
 
     private List<String> blacklist = new ArrayList<>();
 
@@ -48,7 +50,7 @@ public final class AutoIgnoreModule extends Module {
     }
 
     @Listener
-    public void recievePacket(EventReceivePacket event) {
+    public void receivePacket(EventReceivePacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             if (event.getPacket() instanceof SPacketChat) {
                 final SPacketChat packet = (SPacketChat) event.getPacket();
@@ -61,6 +63,15 @@ public final class AutoIgnoreModule extends Module {
                         Matcher chatUsernameMatcher = chatUsernamePattern.matcher(message);
                         if (chatUsernameMatcher.find()) {
                             String username = chatUsernameMatcher.group(1).replaceAll(">", "").toLowerCase();
+
+                            // Check if the user is a friend
+                            if (this.allowFriends.getValue()) {
+                                final Friend friend = Seppuku.INSTANCE.getFriendManager().find(username);
+                                if (friend != null) {
+                                    return;
+                                }
+                            }
+
                             final Ignored ignored = Seppuku.INSTANCE.getIgnoredManager().find(username);
                             if (ignored == null && !username.equalsIgnoreCase(Minecraft.getMinecraft().session.getUsername())) {
                                 switch (this.mode.getValue()) {
