@@ -37,7 +37,11 @@ public final class ElytraFlyModule extends Module {
         VANILLA, PACKET, CONTROL
     }
 
-    public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd", "amount", "s"}, "Speed multiplier for elytra flight, higher values equals more speed.", 1.0f, 0.0f, 5.0f, 0.01f);
+    public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd", "amount", "s"}, "Speed multiplier for elytra flight, higher values equals more speed.", 1.0f, 0.0f, 5.0f, 0.1f);
+    public final Value<Float> speedX = new Value<Float>("SpeedX", new String[]{"SpdX", "amountX", "sX"}, "The X speed factor (speed * this).", 1.0f, 0.1f, 5.0f, 0.1f);
+    public final Value<Float> speedYUp = new Value<Float>("SpeedYUp", new String[]{"SpdYUp", "amountYUp", "sYU"}, "The upwards Y speed factor (speed * this).", 1.0f, 0.1f, 5.0f, 0.1f);
+    public final Value<Float> speedYDown = new Value<Float>("SpeedYDown", new String[]{"SpdYDown", "amountYDown", "sYD"}, "The downwards Y speed factor (speed * this).", 1.0f, 0.1f, 5.0f, 0.1f);
+    public final Value<Float> speedZ = new Value<Float>("SpeedZ", new String[]{"SpdZ", "amountZ", "sZ"}, "The Z speed factor (speed * this).", 1.0f, 0.1f, 5.0f, 0.1f);
 
     public final Value<Boolean> autoStart = new Value<Boolean>("AutoStart", new String[]{"AutoStart", "Auto-Start", "start", "autojump", "as"}, "Hold down the jump key to have an easy automated lift off.", true);
     public final Value<Float> autoStartDelay = new Value<Float>("StartDelay", new String[]{"AutoStartDelay", "startdelay", "autojumpdelay", "asd"}, "Delay(ms) between auto-start attempts.", 20.0f, 0.0f, 200.0f, 5.0f);
@@ -176,16 +180,16 @@ public final class ElytraFlyModule extends Module {
                         final double[] directionSpeedPacket = MathUtil.directionSpeed(this.speed.getValue());
 
                         if (mc.player.movementInput.jump) {
-                            mc.player.motionY = this.speed.getValue();
+                            mc.player.motionY = this.speed.getValue() * this.speedYUp.getValue();
                         }
 
                         if (mc.player.movementInput.sneak) {
-                            mc.player.motionY = -this.speed.getValue();
+                            mc.player.motionY = -this.speed.getValue() * this.speedYDown.getValue();
                         }
 
                         if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
-                            mc.player.motionX = directionSpeedPacket[0];
-                            mc.player.motionZ = directionSpeedPacket[1];
+                            mc.player.motionX = directionSpeedPacket[0] * this.speedX.getValue();
+                            mc.player.motionZ = directionSpeedPacket[1] * this.speedZ.getValue();
                         }
 
                         mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
@@ -194,15 +198,15 @@ public final class ElytraFlyModule extends Module {
                         final float speedScaled = this.speed.getValue() * 0.05f; // 5/100 of original value
                         final double[] directionSpeedVanilla = MathUtil.directionSpeed(speedScaled);
                         if (mc.player.movementInput.jump) {
-                            mc.player.motionY = this.speed.getValue();
+                            mc.player.motionY = this.speed.getValue() * this.speedYUp.getValue();
                         }
 
                         if (mc.player.movementInput.sneak) {
-                            mc.player.motionY = -this.speed.getValue();
+                            mc.player.motionY = -this.speed.getValue() * this.speedYDown.getValue();
                         }
                         if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
-                            mc.player.motionX += directionSpeedVanilla[0];
-                            mc.player.motionZ += directionSpeedVanilla[1];
+                            mc.player.motionX += directionSpeedVanilla[0] * this.speedX.getValue();
+                            mc.player.motionZ += directionSpeedVanilla[1] * this.speedZ.getValue();
                         }
                     }
                 }
@@ -231,13 +235,13 @@ public final class ElytraFlyModule extends Module {
                 mc.player.motionX = 0;
                 mc.player.motionZ = 0;
                 if (mc.player.movementInput.jump) {
-                    mc.player.motionY = this.speed.getValue() / 2;
+                    mc.player.motionY = (this.speed.getValue() / 2) * this.speedYUp.getValue();
                 } else if (mc.player.movementInput.sneak) {
-                    mc.player.motionY = -this.speed.getValue() / 2;
+                    mc.player.motionY = -(this.speed.getValue() / 2) * this.speedYDown.getValue();
                 }
                 if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
-                    mc.player.motionX = directionSpeedControl[0];
-                    mc.player.motionZ = directionSpeedControl[1];
+                    mc.player.motionX = directionSpeedControl[0] * this.speedX.getValue();
+                    mc.player.motionZ = directionSpeedControl[1] * this.speedZ.getValue();
                 }
 
                 event.setX(mc.player.motionX);

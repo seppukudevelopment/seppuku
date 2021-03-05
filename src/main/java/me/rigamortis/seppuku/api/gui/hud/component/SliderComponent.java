@@ -45,9 +45,14 @@ public final class SliderComponent extends HudComponent {
 
         if (this.textComponent == null) {
             if (this.sliderBar != null) {
+                int offsetWidth = 0;
+                if (this.subComponents > 0) {
+                    offsetWidth = 8;
+                }
+
                 this.sliderBar.parent.setX(this.getX());
                 this.sliderBar.parent.setY(this.getY());
-                this.sliderBar.parent.setW(this.getW());
+                this.sliderBar.parent.setW(this.getW() - offsetWidth);
                 this.sliderBar.parent.setH(this.getH());
 
                 if (!this.sliding) {
@@ -78,13 +83,32 @@ public final class SliderComponent extends HudComponent {
             Minecraft.getMinecraft().fontRenderer.drawString(renderName, (int) this.getX() + 1, (int) this.getY() + 1, 0xFFAAAAAA);
 
             String displayedValue = this.decimalFormat.format(this.value.getValue());
-            if (this.sliding) {
+            if (this.sliding && this.sliderBar != null) {
                 final String draggedValue = this.sliderBar.getValueFromPosition();
                 if (draggedValue != null)
                     displayedValue = draggedValue;
             }
 
-            Minecraft.getMinecraft().fontRenderer.drawString(displayedValue, (int) (this.getX() + this.getW()) - Minecraft.getMinecraft().fontRenderer.getStringWidth(displayedValue) - 1, (int) this.getY() + 1, 0xFFAAAAAA);
+            if (this.subComponents > 0) {
+                final boolean isMousingHoveringDropdown = mouseX >= this.getX() + this.getW() && mouseX <= this.getX() + this.getW() + 8 && mouseY >= this.getY() && mouseY <= this.getY() + this.getH();
+
+                // draw bg behind triangles
+                RenderUtil.drawRect(this.getX() + this.getW(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x45202020);
+
+                // draw right click box
+                if (this.rightClickEnabled) {
+                    RenderUtil.drawTriangle(this.getX() + this.getW() + 4, this.getY() + 4, 3, 180, 0xFF6D55FF);
+                    if (isMousingHoveringDropdown)
+                        RenderUtil.drawTriangle(this.getX() + this.getW() + 4, this.getY() + 4, 3, 180, 0x50FFFFFF);
+                } else {
+                    RenderUtil.drawTriangle(this.getX() + this.getW() + 4, this.getY() + 4, 3, -90, 0x75909090);
+                    if (isMousingHoveringDropdown)
+                        RenderUtil.drawTriangle(this.getX() + this.getW() + 4, this.getY() + 4, 3, -90, 0x50FFFFFF);
+                }
+            }
+
+            final int displayedTextX = (int) (this.getX() + this.getW()) - Minecraft.getMinecraft().fontRenderer.getStringWidth(displayedValue) - 1;
+            Minecraft.getMinecraft().fontRenderer.drawString(displayedValue, displayedTextX, (int) this.getY() + 1, 0xFFAAAAAA);
         } else {
             this.textComponent.setX(this.getX());
             this.textComponent.setY(this.getY());
@@ -98,10 +122,19 @@ public final class SliderComponent extends HudComponent {
     public void mouseClick(int mouseX, int mouseY, int button) {
         super.mouseClick(mouseX, mouseY, button);
 
-        if (!this.isMouseInside(mouseX, mouseY))
-            return;
-
         if (button == 0) {
+            if (!this.isMouseInside(mouseX, mouseY)) {
+                if (this.subComponents > 0) {
+                    // is inside button
+                    final boolean isMousingHoveringDropdown = mouseX >= this.getX() + this.getW() && mouseX <= this.getX() + this.getW() + 8 && mouseY >= this.getY() && mouseY <= this.getY() + this.getH();
+                    if (isMousingHoveringDropdown) {
+                        return; // cancel normal action
+                    }
+                }
+
+                return;
+            }
+
             if (this.textComponent == null) {
                 this.sliding = true;
                 this.sliderBar.mouseClick(mouseX, mouseY, button);
@@ -115,10 +148,19 @@ public final class SliderComponent extends HudComponent {
     public void mouseClickMove(int mouseX, int mouseY, int button) {
         super.mouseClickMove(mouseX, mouseY, button);
 
-        if (!this.isMouseInside(mouseX, mouseY))
-            return;
-
         if (button == 0) {
+            if (!this.isMouseInside(mouseX, mouseY)) {
+                if (this.subComponents > 0) {
+                    // is inside button
+                    final boolean isMousingHoveringDropdown = mouseX >= this.getX() + this.getW() && mouseX <= this.getX() + this.getW() + 8 && mouseY >= this.getY() && mouseY <= this.getY() + this.getH();
+                    if (isMousingHoveringDropdown) {
+                        return; // cancel normal action
+                    }
+                }
+
+                return;
+            }
+
             if (this.textComponent == null) {
                 this.sliderBar.mouseClickMove(mouseX, mouseY, button);
             } else {
@@ -129,11 +171,21 @@ public final class SliderComponent extends HudComponent {
 
     @Override
     public void mouseRelease(int mouseX, int mouseY, int button) {
-        super.mouseRelease(mouseX, mouseY, button);
+        //super.mouseRelease(mouseX, mouseY, button);
 
         if (!this.isMouseInside(mouseX, mouseY)) {
-            if (this.textComponent != null)
+            if (this.textComponent == null) {
+                if (button == 0 && this.subComponents > 0) {
+                    // is inside button
+                    final boolean isMousingHoveringDropdown = mouseX >= this.getX() + this.getW() && mouseX <= this.getX() + this.getW() + 8 && mouseY >= this.getY() && mouseY <= this.getY() + this.getH();
+                    if (isMousingHoveringDropdown) {
+                        this.rightClickEnabled = !this.rightClickEnabled;
+                        return; // cancel normal action
+                    }
+                }
+            } else {
                 this.textComponent = null;
+            }
 
             this.sliding = false;
             return;
