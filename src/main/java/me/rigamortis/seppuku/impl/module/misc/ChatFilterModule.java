@@ -109,6 +109,7 @@ public final class ChatFilterModule extends Module {
                     for (int i = 0; i < packet.getChatComponent().getFormattedText().length(); i++) {
                         if (Character.UnicodeBlock.of(packet.getChatComponent().getFormattedText().charAt(i)).equals(Character.UnicodeBlock.CYRILLIC)) {
                             event.setCanceled(true);
+                            break;
                         }
                     }
                 }
@@ -116,13 +117,23 @@ public final class ChatFilterModule extends Module {
                 if (this.asian.getValue()) {
                     for (int i = 0; i < packet.getChatComponent().getFormattedText().length(); i++) {
                         final Character.UnicodeBlock block = Character.UnicodeBlock.of(packet.getChatComponent().getFormattedText().charAt(i));
-
                         if (block.equals(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS) ||
+                                block.equals(Character.UnicodeBlock.HIRAGANA) ||
+                                block.equals(Character.UnicodeBlock.KATAKANA) ||
+                                block.equals(Character.UnicodeBlock.HANGUL_JAMO) ||
                                 block.equals(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A) ||
                                 block.equals(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B) ||
                                 block.equals(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_C) ||
-                                block.equals(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_D)) {
+                                block.equals(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_D) ||
+                                block.equals(Character.UnicodeBlock.CJK_RADICALS_SUPPLEMENT) ||
+                                block.equals(Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION) ||
+                                block.equals(Character.UnicodeBlock.CJK_COMPATIBILITY_FORMS) ||
+                                block.equals(Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS) ||
+                                block.equals(Character.UnicodeBlock.HANGUL_COMPATIBILITY_JAMO) ||
+                                block.equals(Character.UnicodeBlock.HANGUL_SYLLABLES) ||
+                                block.equals(Character.UnicodeBlock.ENCLOSED_CJK_LETTERS_AND_MONTHS)) {
                             event.setCanceled(true);
+                            break;
                         }
                     }
                 }
