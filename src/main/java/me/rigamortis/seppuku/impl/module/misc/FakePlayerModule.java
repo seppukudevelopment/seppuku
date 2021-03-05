@@ -24,7 +24,7 @@ public final class FakePlayerModule extends Module {
     @Override
     public void onEnable() {
         super.onEnable();
-        if (mc.world != null) {
+        if (mc.player != null && mc.world != null) {
             entity = new EntityOtherPlayerMP(mc.world, new GameProfile(mc.player.getUniqueID(), username.getValue()));
             entity.copyLocationAndAnglesFrom(mc.player);
             entity.inventory.copyInventory(mc.player.inventory);
