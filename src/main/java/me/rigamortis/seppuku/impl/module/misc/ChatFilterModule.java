@@ -23,6 +23,7 @@ public final class ChatFilterModule extends Module {
     public final Value<Boolean> unicode = new Value<>("Unicode", new String[]{"uc"}, "Reverts \"Fancy Chat\" characters back into normal ones. ", true);
     public final Value<Boolean> broadcasts = new Value<>("Broadcasts", new String[]{"broadcast", "broad", "bc"}, "Prevents displaying chat messages that begin with [SERVER].", false);
     public final Value<Boolean> russian = new Value<>("Russian", new String[]{"russiantext", "rus", "r"}, "Prevents displaying russian-character containing messages.", false);
+    public final Value<Boolean> asian = new Value<>("Asian", new String[]{"asiantext", "asia", "chinese", "japanese", "korean"}, "Prevents displaying \"CJK Unified Ideograph\"-character containing messages (chinese, korean, jap...).", false);
     public final Value<Boolean> spam = new Value<>("Spam", new String[]{"sp", "s"}, "Attempts to prevent spam by checking recent chat messages for duplicates.", true);
     public final Value<Boolean> death = new Value<>("Death", new String[]{"dead", "d"}, "Attempts to prevent death messages.", false);
     public final Value<Boolean> blue = new Value<>("BlueText", new String[]{"Blue", "b"}, "Cancels blue-text containing messages.", false);
@@ -107,6 +108,20 @@ public final class ChatFilterModule extends Module {
                 if (this.russian.getValue()) {
                     for (int i = 0; i < packet.getChatComponent().getFormattedText().length(); i++) {
                         if (Character.UnicodeBlock.of(packet.getChatComponent().getFormattedText().charAt(i)).equals(Character.UnicodeBlock.CYRILLIC)) {
+                            event.setCanceled(true);
+                        }
+                    }
+                }
+
+                if (this.asian.getValue()) {
+                    for (int i = 0; i < packet.getChatComponent().getFormattedText().length(); i++) {
+                        final Character.UnicodeBlock block = Character.UnicodeBlock.of(packet.getChatComponent().getFormattedText().charAt(i));
+
+                        if (block.equals(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS) ||
+                                block.equals(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A) ||
+                                block.equals(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B) ||
+                                block.equals(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_C) ||
+                                block.equals(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_D)) {
                             event.setCanceled(true);
                         }
                     }
