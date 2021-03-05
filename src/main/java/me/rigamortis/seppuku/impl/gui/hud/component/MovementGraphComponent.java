@@ -36,7 +36,7 @@ public final class MovementGraphComponent extends ResizableHudComponent {
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
 
-        if (mc.player != null && mc.world != null && mc.getCurrentServerData() != null) {
+        if (mc.player != null && mc.world != null) {
             final ScaledResolution sr = new ScaledResolution(mc);
             final DecimalFormat decimalFormat = new DecimalFormat("###.##");
 
