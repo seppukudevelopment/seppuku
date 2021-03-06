@@ -164,7 +164,7 @@ public final class ElytraFlyModule extends Module {
                 // automatic jump start
                 if (this.autoStart.getValue()) {
                     if (!mc.player.isElytraFlying()) {
-                        if (mc.player.onGround) {
+                        if (mc.player.onGround && this.disableNoHunger.getValue()) {
                             this.startDelayTimer.reset();
                         }
 
