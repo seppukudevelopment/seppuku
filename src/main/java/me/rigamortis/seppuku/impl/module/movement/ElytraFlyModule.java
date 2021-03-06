@@ -79,6 +79,7 @@ public final class ElytraFlyModule extends Module {
     @Override
     public void onDisable() {
         super.onDisable();
+
         if (Minecraft.getMinecraft().player != null) {
             Minecraft.getMinecraft().player.capabilities.isFlying = false;
         }
