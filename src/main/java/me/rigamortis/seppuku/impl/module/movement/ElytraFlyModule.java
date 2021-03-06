@@ -51,6 +51,7 @@ public final class ElytraFlyModule extends Module {
     public final Value<Boolean> stayAirborneDisable = new Value<Boolean>("StayAirborneDisable", new String[]{"AutoDisableStayAirborne", "StayAirborneAutoDisable", "Stay-Airborne-Disable", "DisableStayInAir", "adsa", "dsa", "sad"}, "Automatically disables StayAirborne when touching the ground.", true);
     public final Value<Float> stayAirborneDelay = new Value<Float>("StayAirborneDelay", new String[]{"StayAirborneWait", "Stay-Airborne-Delay", "sadelay"}, "Delay(ms) between stay-airborne attempts.", 100.0f, 0.0f, 400.0f, 5.0f);
     public final Value<Boolean> disableInLiquid = new Value<Boolean>("DisableInLiquid", new String[]{"DisableInWater", "DisableInLava", "disableliquid", "liquidoff", "noliquid", "dil"}, "Disables all elytra flight when the player is in contact with liquid.", false);
+    public final Value<Boolean> disableNoHunger = new Value<Boolean>("DisableNoHunger", new String[]{"NoHunger", "Hunger", "DNH"}, "Automatically disables the 'NoHunger' module.", true);
     public final Value<Boolean> infiniteDurability = new Value<Boolean>("InfiniteDurability", new String[]{"InfiniteDura", "dura", "inf", "infdura"}, "Enables an old exploit that sends the start elytra-flying packet each tick.", false);
     public final Value<Boolean> noKick = new Value<Boolean>("NoKick", new String[]{"AntiKick", "Kick", "nk"}, "Bypass the server kicking you for flying while in elytra flight (Only works for Packet mode!).", true);
 
@@ -65,10 +66,13 @@ public final class ElytraFlyModule extends Module {
     @Override
     public void onEnable() {
         super.onEnable();
-        final NoHungerModule nohunger = (NoHungerModule) Seppuku.INSTANCE.getModuleManager().find(NoHungerModule.class);
-        if (nohunger != null && nohunger.isEnabled()) {
-            nohunger.toggle();
-            Seppuku.INSTANCE.logChat("Toggled \247c" + nohunger.getDisplayName() + "\247r as it conflicts with \2477" + this.getDisplayName());
+
+        if (this.disableNoHunger.getValue()) {
+            final NoHungerModule nohunger = (NoHungerModule) Seppuku.INSTANCE.getModuleManager().find(NoHungerModule.class);
+            if (nohunger != null && nohunger.isEnabled()) {
+                nohunger.toggle();
+                Seppuku.INSTANCE.logChat("Toggled \247c" + nohunger.getDisplayName() + "\247r as it conflicts with \2477" + this.getDisplayName());
+            }
         }
     }
 
