@@ -69,7 +69,7 @@ public final class WaypointsModule extends Module {
 
                         if (projection.getType() == GLUProjection.Projection.Type.INSIDE) {
                             final String name = "\247f" + waypointData.getName() + " \247r(\2477" + new DecimalFormat("#.#").format(dist) + "m\247r)";
-                            mc.fontRenderer.drawStringWithShadow(name, (float) projection.getX() - mc.fontRenderer.getStringWidth(name) / 2.0f, (float) projection.getY() - mc.fontRenderer.FONT_HEIGHT / 2.0f, color);
+                            mc.fontRenderer.drawStringWithShadow(name, (float) projection.getX() - mc.fontRenderer.getStringWidth(name) / 2.0f, (float) projection.getY() - mc.fontRenderer.FONT_HEIGHT / 2.0f, ColorUtil.changeAlpha(color, 255));
                         }
 
                         if (this.tracers.getValue()) {

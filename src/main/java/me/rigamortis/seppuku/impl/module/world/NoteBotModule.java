@@ -273,8 +273,8 @@ public final class NoteBotModule extends Module {
                         pos.getX() + 1.0f - mc.getRenderManager().viewerPosX, pos.getY() + 1.0f - mc.getRenderManager().viewerPosY, pos.getZ() + 1.0f - mc.getRenderManager().viewerPosZ);
                 GlStateManager.color(color[0] / 255.0F, color[1] / 255.0F, color[2] / 255.0F, 0.2F);
                 RenderUtil.drawFilledBox(bb);
-                GlStateManager.color(color[0] / 255.0F, color[1] / 255.0F, color[2] / 255.0F, 0.6F);
-                RenderUtil.drawBoundingBox(bb, 1.0f);
+                //GlStateManager.color(color[0] / 255.0F, color[1] / 255.0F, color[2] / 255.0F, 0.6F);
+                //RenderUtil.drawBoundingBox(bb, 1.0f);
             }
             RenderUtil.end3D();
         }
