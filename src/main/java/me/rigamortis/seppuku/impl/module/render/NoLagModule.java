@@ -7,13 +7,12 @@ import me.rigamortis.seppuku.api.event.world.EventLightUpdate;
 import me.rigamortis.seppuku.api.event.world.EventSpawnParticle;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.Value;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.BlockPistonExtension;
-import net.minecraft.block.BlockPistonMoving;
+import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.ParticleFirework;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityEnderCrystal;
+import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.projectile.EntityWitherSkull;
@@ -23,6 +22,7 @@ import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.network.play.server.SPacketSpawnMob;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -47,8 +47,13 @@ public final class NoLagModule extends Module {
     public final Value<Boolean> names = new Value<Boolean>("Names", new String[]{"Name", "n"}, "Disables the rendering of vanilla name-tags.", false);
     public final Value<Boolean> withers = new Value<Boolean>("Withers", new String[]{"Wither", "w"}, "Disables the rendering of withers.", false);
     public final Value<Boolean> skulls = new Value<Boolean>("Skulls", new String[]{"WitherSkull", "skulls", "skull", "ws"}, "Disables the rendering of flying wither skulls.", false);
-    public final Value<Boolean> crystals = new Value<Boolean>("Crystals", new String[]{"Wither", "w"}, "Disables the rendering of crystals.", false);
-    public final Value<Boolean> tnt = new Value<Boolean>("TNT", new String[]{"Wither", "w"}, "Disables the rendering of (primed) TNT.", false);
+    public final Value<Boolean> crystals = new Value<Boolean>("Crystals", new String[]{"Crystal", "cr", "c"}, "Disables the rendering of crystals.", false);
+    public final Value<Boolean> tnt = new Value<Boolean>("TNT", new String[]{"Dynamite", "explosives", "tn"}, "Disables the rendering of (primed) TNT.", false);
+    public final Value<Boolean> torches = new Value<Boolean>("Torches", new String[]{"Torch", "t"}, "Disables the rendering of torches.", false);
+    public final Value<Boolean> fireworks = new Value<Boolean>("Fireworks", new String[]{"FireW", "Fworks", "fw"}, "Disables the rendering of fireworks.", false);
+    public final Value<Boolean> redstone = new Value<Boolean>("Redstone", new String[]{"Red", "r"}, "Disables the rendering of redstone dust.", false);
+    public final Value<Boolean> redstoneTorch = new Value<Boolean>("RedstoneTorch", new String[]{"RedTorch", "rt"}, "Disables the rendering of redstone torches.", false);
+    public final Value<Boolean> redstoneLogic = new Value<Boolean>("RedstoneLogic", new String[]{"RedLogic", "rl"}, "Disables the rendering of redstone logic blocks.", false);
 
     public NoLagModule() {
         super("NoLag", new String[]{"AntiLag", "NoRender"}, "Fixes malicious lag exploits and bugs that cause lag.", "NONE", -1, ModuleType.RENDER);
@@ -107,8 +112,33 @@ public final class NoLagModule extends Module {
                     event.setCanceled(true);
                 }
             }
+
             if (this.pistons.getValue()) {
                 if (block instanceof BlockPistonMoving || block instanceof BlockPistonExtension) {
+                    event.setCanceled(true);
+                }
+            }
+
+            if (this.redstone.getValue()) {
+                if (block instanceof BlockRedstoneDiode || block instanceof BlockRedstoneWire) {
+                    event.setCanceled(true);
+                }
+            }
+
+            if (this.redstoneTorch.getValue()) {
+                if (block instanceof BlockRedstoneTorch) {
+                    event.setCanceled(true);
+                }
+            }
+
+            if (this.redstoneLogic.getValue()) {
+                if (block instanceof BlockRedstoneComparator || block instanceof BlockRedstoneRepeater) {
+                    event.setCanceled(true);
+                }
+            }
+
+            if (this.torches.getValue()) {
+                if (block instanceof BlockTorch) {
                     event.setCanceled(true);
                 }
             }
@@ -167,6 +197,34 @@ public final class NoLagModule extends Module {
             if (this.tnt.getValue()) {
                 if (event.getEntity() instanceof EntityTNTPrimed)
                     event.setCanceled(true);
+            }
+
+            if (this.fireworks.getValue()) {
+                if (event.getEntity() instanceof EntityFireworkRocket)
+                    event.setCanceled(true);
+            }
+        }
+    }
+
+    @Listener
+    public void onSpawnEffectParticle(EventSpawnEffect event) {
+        if (this.fireworks.getValue()) {
+            if (event.getParticleID() == EnumParticleTypes.FIREWORKS_SPARK.getParticleID() ||
+                    event.getParticleID() == EnumParticleTypes.EXPLOSION_HUGE.getParticleID() ||
+                    event.getParticleID() == EnumParticleTypes.EXPLOSION_LARGE.getParticleID() ||
+                    event.getParticleID() == EnumParticleTypes.EXPLOSION_NORMAL.getParticleID()) {
+                event.setCanceled(true);
+            }
+        }
+    }
+
+    @Listener
+    public void onAddEffect(EventAddEffect event) {
+        if (this.fireworks.getValue()) {
+            if (event.getParticle() instanceof ParticleFirework.Starter ||
+                    event.getParticle() instanceof ParticleFirework.Spark ||
+                    event.getParticle() instanceof ParticleFirework.Overlay) {
+                event.setCanceled(true);
             }
         }
     }

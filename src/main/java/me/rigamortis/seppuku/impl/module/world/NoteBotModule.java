@@ -269,7 +269,7 @@ public final class NoteBotModule extends Module {
                 }
 
                 final AxisAlignedBB bb = new AxisAlignedBB(
-                        pos.getX() - mc.getRenderManager().viewerPosX, pos.getY() - mc.getRenderManager().viewerPosY, pos.getZ() - mc.getRenderManager().viewerPosZ,
+                        pos.getX() - mc.getRenderManager().viewerPosX, pos.getY() + 1.0f - mc.getRenderManager().viewerPosY, pos.getZ() - mc.getRenderManager().viewerPosZ,
                         pos.getX() + 1.0f - mc.getRenderManager().viewerPosX, pos.getY() + 1.0f - mc.getRenderManager().viewerPosY, pos.getZ() + 1.0f - mc.getRenderManager().viewerPosZ);
                 GlStateManager.color(color[0] / 255.0F, color[1] / 255.0F, color[2] / 255.0F, 0.2F);
                 RenderUtil.drawFilledBox(bb);

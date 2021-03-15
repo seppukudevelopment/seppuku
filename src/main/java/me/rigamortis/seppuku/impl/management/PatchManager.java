@@ -60,6 +60,7 @@ public final class PatchManager {
         this.patchList.add(new GuiScreenPatch());
         this.patchList.add(new RenderGlobalPatch());
         this.patchList.add(new GuiChatPatch());
+        this.patchList.add(new ParticleManagerPatch());
 
         //load custom external patches
         //TODO this needs more testing
