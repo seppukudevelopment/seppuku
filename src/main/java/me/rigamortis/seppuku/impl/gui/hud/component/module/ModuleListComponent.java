@@ -522,6 +522,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         }
                     };
                     components.add(valueButton);
+                    this.addComponentToButtons(valueButton);
                 } else if (value.getValue() instanceof Number) {
                     /*TextComponent valueNumberText = new TextComponent(value.getName(), value.getValue().toString(), true);
                     valueNumberText.setTooltipText(value.getDesc() + " " + ChatFormatting.GRAY + "(" + value.getMin() + " - " + value.getMax() + ")");

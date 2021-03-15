@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.module.render;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.render.*;
+import me.rigamortis.seppuku.api.event.world.EventAddEntity;
 import me.rigamortis.seppuku.api.event.world.EventLightUpdate;
 import me.rigamortis.seppuku.api.event.world.EventSpawnParticle;
 import me.rigamortis.seppuku.api.module.Module;
@@ -51,6 +52,7 @@ public final class NoLagModule extends Module {
     public final Value<Boolean> tnt = new Value<Boolean>("TNT", new String[]{"Dynamite", "explosives", "tn"}, "Disables the rendering of (primed) TNT.", false);
     public final Value<Boolean> torches = new Value<Boolean>("Torches", new String[]{"Torch", "t"}, "Disables the rendering of torches.", false);
     public final Value<Boolean> fireworks = new Value<Boolean>("Fireworks", new String[]{"FireW", "Fworks", "fw"}, "Disables the rendering of fireworks.", false);
+    public final Value<Boolean> fireworksEffects = new Value<Boolean>("FireworksEffects", new String[]{"FireWE", "Fworkfx", "fwe"}, "Disables the rendering of firework effects.", false);
     public final Value<Boolean> redstone = new Value<Boolean>("Redstone", new String[]{"Red", "r"}, "Disables the rendering of redstone dust.", false);
     public final Value<Boolean> redstoneTorch = new Value<Boolean>("RedstoneTorch", new String[]{"RedTorch", "rt"}, "Disables the rendering of redstone torches.", false);
     public final Value<Boolean> redstoneLogic = new Value<Boolean>("RedstoneLogic", new String[]{"RedLogic", "rl"}, "Disables the rendering of redstone logic blocks.", false);
@@ -208,7 +210,7 @@ public final class NoLagModule extends Module {
 
     @Listener
     public void onSpawnEffectParticle(EventSpawnEffect event) {
-        if (this.fireworks.getValue()) {
+        if (this.fireworksEffects.getValue()) {
             if (event.getParticleID() == EnumParticleTypes.FIREWORKS_SPARK.getParticleID() ||
                     event.getParticleID() == EnumParticleTypes.EXPLOSION_HUGE.getParticleID() ||
                     event.getParticleID() == EnumParticleTypes.EXPLOSION_LARGE.getParticleID() ||
@@ -220,7 +222,7 @@ public final class NoLagModule extends Module {
 
     @Listener
     public void onAddEffect(EventAddEffect event) {
-        if (this.fireworks.getValue()) {
+        if (this.fireworksEffects.getValue()) {
             if (event.getParticle() instanceof ParticleFirework.Starter ||
                     event.getParticle() instanceof ParticleFirework.Spark ||
                     event.getParticle() instanceof ParticleFirework.Overlay) {
@@ -240,6 +242,15 @@ public final class NoLagModule extends Module {
     public void onRenderName(EventRenderName event) {
         if (this.names.getValue()) {
             event.setCanceled(true);
+        }
+    }
+
+    @Listener
+    public void onEntityAdd(EventAddEntity event) {
+        if (this.fireworks.getValue()) {
+            if (event.getEntity() instanceof EntityFireworkRocket) {
+                event.setCanceled(true);
+            }
         }
     }
 }

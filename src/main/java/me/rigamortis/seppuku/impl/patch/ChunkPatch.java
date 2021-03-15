@@ -1,11 +1,13 @@
 package me.rigamortis.seppuku.impl.patch;
 
 import me.rigamortis.seppuku.Seppuku;
+import me.rigamortis.seppuku.api.event.world.EventAddEntity;
 import me.rigamortis.seppuku.api.event.world.EventChunk;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
 import me.rigamortis.seppuku.api.util.ASMUtil;
 import me.rigamortis.seppuku.impl.management.PatchManager;
+import net.minecraft.entity.Entity;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 import team.stiff.pomelo.EventManager;
@@ -42,6 +44,31 @@ public final class ChunkPatch extends ClassPatch {
         insnList.add(new InsnNode(POP));
 
         methodNode.instructions.insertBefore(ASMUtil.bottom(methodNode), insnList);
+    }
+
+    //    public void addEntity(Entity entityIn) {
+    //    public addEntity(Lnet/minecraft/entity/Entity;)V
+    //    public void a(vg) {
+    @MethodPatch(
+            mcpName = "addEntity",
+            notchName = "a",
+            mcpDesc = "(Lnet/minecraft/entity/Entity;)V",
+            notchDesc = "(Lvg;)V")
+    public void addEntity(MethodNode methodNode, PatchManager.Environment env) {
+        final InsnList insnList = new InsnList();
+        insnList.add(new VarInsnNode(ALOAD, 1));
+        insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "onEntityAddedHook", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/entity/Entity;)Z" : "(Lvg;)Z", false));
+        final LabelNode jmp = new LabelNode();
+        insnList.add(new JumpInsnNode(IFEQ, jmp));
+        insnList.add(new InsnNode(RETURN));
+        insnList.add(jmp);
+        methodNode.instructions.insert(insnList);
+    }
+
+    public static boolean onEntityAddedHook(Entity entity) {
+        final EventAddEntity eventAddEntity = new EventAddEntity(entity);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(eventAddEntity);
+        return eventAddEntity.isCanceled();
     }
 
     /**

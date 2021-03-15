@@ -8,6 +8,7 @@ import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
 import me.rigamortis.seppuku.impl.management.PatchManager;
 import net.minecraft.client.particle.Particle;
+import net.minecraft.util.EnumParticleTypes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
@@ -56,6 +57,62 @@ public class ParticleManagerPatch extends ClassPatch {
         Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
         return event.isCanceled();
     }
+
+    /*
+    // access flags 0x1
+    public emitParticleAtEntity(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/EnumParticleTypes;)V
+
+    // access flags 0x1
+    public emitParticleAtEntity(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/EnumParticleTypes;I)V
+    */
+
+//    @MethodPatch(
+//            mcpName = "emitParticleAtEntity",
+//            notchName = "a",
+//            mcpDesc = "(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/EnumParticleTypes;)V",
+//            notchDesc = "(Lvg;Lfj;)V")
+//    public void emitParticleAtEntity1(MethodNode methodNode, PatchManager.Environment env) {
+//        //create a list of instructions
+//        final InsnList insnList = new InsnList();
+//        //aload in our Particle effect
+//        insnList.add(new VarInsnNode(ALOAD, 2));
+//        //call our hook function
+//        insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "emitParticleAtEntityHook", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/util/EnumParticleTypes;)Z" : "(Lfj;)Z", false));
+//        //create a label to jump to
+//        final LabelNode jmp = new LabelNode();
+//        //add "if equals"
+//        insnList.add(new JumpInsnNode(IFEQ, jmp));
+//        //return so the rest of the function doesn't get called
+//        insnList.add(new InsnNode(RETURN));
+//        //add our label
+//        insnList.add(jmp);
+//        //insert the list of instructs at the top of the function
+//        methodNode.instructions.insert(insnList);
+//    }
+//
+//    @MethodPatch(
+//            mcpName = "emitParticleAtEntity",
+//            notchName = "a",
+//            mcpDesc = "(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/EnumParticleTypes;I)V",
+//            notchDesc = "(Lvg;Lfj;I)V")
+//    public void emitParticleAtEntity2(MethodNode methodNode, PatchManager.Environment env) {
+//        //create a list of instructions
+//        final InsnList insnList = new InsnList();
+//        //aload in our Particle effect
+//        insnList.add(new VarInsnNode(ALOAD, 2));
+//        //call our hook function
+//        insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "emitParticleAtEntityHook", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/util/EnumParticleTypes;)Z" : "(Lfj;)Z", false));
+//        //create a label to jump to
+//        final LabelNode jmp = new LabelNode();
+//        //add "if equals"
+//        insnList.add(new JumpInsnNode(IFEQ, jmp));
+//        //return so the rest of the function doesn't get called
+//        insnList.add(new InsnNode(RETURN));
+//        //add our label
+//        insnList.add(jmp);
+//        //insert the list of instructs at the top of the function
+//        methodNode.instructions.insert(insnList);
+//    }
 
     // public Particle spawnEffectParticle(int particleId, double xCoord, double yCoord, double zCoord, double xSpeed, double ySpeed, double zSpeed, int... parameters) {
     // public btf a(int , double d1, double d2, double d3, double d4, double d5, double d6, int... arrayOfInt)

@@ -112,12 +112,18 @@ public final class WorldPatch extends ClassPatch {
     public void onEntityAdded(MethodNode methodNode, PatchManager.Environment env) {
         final InsnList list = new InsnList();
         list.add(new VarInsnNode(ALOAD, 1));
-        list.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "onEntityAddedHook", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/entity/Entity;)V" : "(Lvg;)V", false));
+        list.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "onEntityAddedHook", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/entity/Entity;)Z" : "(Lvg;)Z", false));
+        final LabelNode jmp = new LabelNode();
+        list.add(new JumpInsnNode(IFEQ, jmp));
+        list.add(new InsnNode(RETURN));
+        list.add(jmp);
         methodNode.instructions.insert(list);
     }
 
-    public static void onEntityAddedHook(Entity entity) {
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventAddEntity(entity));
+    public static boolean onEntityAddedHook(Entity entity) {
+        final EventAddEntity eventAddEntity = new EventAddEntity(entity);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(eventAddEntity);
+        return eventAddEntity.isCanceled();
     }
 
     @MethodPatch(
