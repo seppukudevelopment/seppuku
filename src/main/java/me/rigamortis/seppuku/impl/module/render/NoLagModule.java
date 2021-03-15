@@ -74,6 +74,15 @@ public final class NoLagModule extends Module {
                 }
             }
 
+            if (this.withersForce.getValue()) {
+                if (event.getPacket() instanceof SPacketSpawnMob) {
+                    final SPacketSpawnMob packet = (SPacketSpawnMob) event.getPacket();
+                    if (packet.getEntityType() == 64) {
+                        event.setCanceled(true);
+                    }
+                }
+            }
+
             if (this.sounds.getValue()) {
                 if (event.getPacket() instanceof SPacketSoundEffect) {
                     final SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
