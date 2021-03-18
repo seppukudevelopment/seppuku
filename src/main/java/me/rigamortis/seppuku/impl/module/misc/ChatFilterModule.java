@@ -107,7 +107,11 @@ public final class ChatFilterModule extends Module {
 
                 if (this.russian.getValue()) {
                     for (int i = 0; i < packet.getChatComponent().getFormattedText().length(); i++) {
-                        if (Character.UnicodeBlock.of(packet.getChatComponent().getFormattedText().charAt(i)).equals(Character.UnicodeBlock.CYRILLIC)) {
+                        final Character.UnicodeBlock block = Character.UnicodeBlock.of(packet.getChatComponent().getFormattedText().charAt(i));
+                        if (block == null)
+                            continue;
+
+                        if (block.equals(Character.UnicodeBlock.CYRILLIC)) {
                             event.setCanceled(true);
                             break;
                         }
@@ -117,6 +121,9 @@ public final class ChatFilterModule extends Module {
                 if (this.asian.getValue()) {
                     for (int i = 0; i < packet.getChatComponent().getFormattedText().length(); i++) {
                         final Character.UnicodeBlock block = Character.UnicodeBlock.of(packet.getChatComponent().getFormattedText().charAt(i));
+                        if (block == null)
+                            continue;
+
                         if (block.equals(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS) ||
                                 block.equals(Character.UnicodeBlock.HIRAGANA) ||
                                 block.equals(Character.UnicodeBlock.KATAKANA) ||
