@@ -1,5 +1,6 @@
 package me.rigamortis.seppuku.impl.gui.hud.component;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.gui.hud.EventHubComponentClick;
 import me.rigamortis.seppuku.api.gui.hud.component.HudComponent;
@@ -79,6 +80,8 @@ public final class HubComponent extends ResizableHudComponent {
         texture.bind();
         texture.render(this.getX() + BORDER, this.getY() + BORDER, TEXTURE_SIZE, TEXTURE_SIZE);
         mc.fontRenderer.drawStringWithShadow(this.getName(), this.getX() + BORDER + /* texture width */ TEXTURE_SIZE + BORDER, this.getY() + BORDER, 0xFFFFFFFF);
+        final String components = ChatFormatting.DARK_GRAY + "" + (Seppuku.INSTANCE.getHudManager().getComponentList().size() - 1);
+        mc.fontRenderer.drawStringWithShadow(components, this.getX() + this.getW() - BORDER - mc.fontRenderer.getStringWidth(components), this.getY() + BORDER, 0xFFFFFFFF);
         offsetY += mc.fontRenderer.FONT_HEIGHT + 1;
 
         // Behind list

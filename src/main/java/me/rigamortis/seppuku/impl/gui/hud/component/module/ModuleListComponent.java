@@ -112,6 +112,10 @@ public final class ModuleListComponent extends ResizableHudComponent {
         texture.render(this.getX() + BORDER, this.getY() + BORDER, TEXTURE_SIZE, TEXTURE_SIZE);
         GlStateManager.disableBlend();
         mc.fontRenderer.drawStringWithShadow(this.title, this.getX() + BORDER + /* texture width */ TEXTURE_SIZE + BORDER, this.getY() + BORDER, 0xFFFFFFFF);
+        if (this.currentSettings == null) {
+            final String modulesAmount = ChatFormatting.DARK_GRAY + "" + Seppuku.INSTANCE.getModuleManager().getModuleList(this.type).size();
+            mc.fontRenderer.drawStringWithShadow(modulesAmount, this.getX() + this.getW() - BORDER - mc.fontRenderer.getStringWidth(modulesAmount), this.getY() + BORDER, 0xFFFFFFFF);
+        }
         offsetY += mc.fontRenderer.FONT_HEIGHT + 1;
 
         // Behind list
