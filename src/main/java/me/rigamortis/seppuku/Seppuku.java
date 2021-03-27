@@ -195,6 +195,7 @@ public final class Seppuku {
 
         this.configManager.getConfigurableList().clear();
         this.configManager = new ConfigManager();
+        this.configManager.init();
 
         this.getEventManager().dispatchEvent(new EventReload());
     }
