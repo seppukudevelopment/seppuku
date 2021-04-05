@@ -18,7 +18,7 @@ import java.util.List;
  */
 public final class CameraManager {
 
-    private List<Camera> cameraList = new ArrayList();
+    private List<Camera> cameraList = new ArrayList<>();
 
     public CameraManager() {
         Seppuku.INSTANCE.getEventManager().addEventListener(this);

@@ -267,7 +267,7 @@ public final class SearchModule extends Module {
     public void updateRenders(Chunk chunk) {
         //mc.renderGlobal.loadRenderers();
         final Minecraft mc = Minecraft.getMinecraft();
-        System.out.println(chunk.x * 16);
+        //System.out.println(chunk.x * 16);
         mc.renderGlobal.markBlockRangeForRenderUpdate(
                 chunk.x * 16,
                 0,
