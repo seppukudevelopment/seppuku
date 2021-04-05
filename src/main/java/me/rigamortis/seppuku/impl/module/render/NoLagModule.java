@@ -65,19 +65,23 @@ public final class NoLagModule extends Module {
     @Listener
     public void onReceivePacket(EventReceivePacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
-            if (this.slimes.getValue()) {
-                if (event.getPacket() instanceof SPacketSpawnMob) {
-                    final SPacketSpawnMob packet = (SPacketSpawnMob) event.getPacket();
+            if (event.getPacket() instanceof SPacketSpawnMob) {
+                final SPacketSpawnMob packet = (SPacketSpawnMob) event.getPacket();
+
+                if (this.slimes.getValue()) {
                     if (packet.getEntityType() == 55) {
                         event.setCanceled(true);
                     }
                 }
-            }
 
-            if (this.withersForce.getValue()) {
-                if (event.getPacket() instanceof SPacketSpawnMob) {
-                    final SPacketSpawnMob packet = (SPacketSpawnMob) event.getPacket();
+                if (this.withersForce.getValue()) {
                     if (packet.getEntityType() == 64) {
+                        event.setCanceled(true);
+                    }
+                }
+
+                if (this.skulls.getValue()) {
+                    if (packet.getEntityType() == 19) {
                         event.setCanceled(true);
                     }
                 }
