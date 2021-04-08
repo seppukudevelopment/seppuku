@@ -3,7 +3,7 @@ buildscript {
         jcenter()
 
         maven {
-            url = "http://files.minecraftforge.net/maven"
+            url = "https://files.minecraftforge.net/maven"
         }
     }
 
