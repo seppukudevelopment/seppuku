@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.module.combat;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.notification.Notification;
 import me.rigamortis.seppuku.api.task.hand.HandSwapContext;
 import me.rigamortis.seppuku.api.task.rotation.RotationTask;
 import me.rigamortis.seppuku.api.util.InventoryUtil;
@@ -70,7 +71,7 @@ public final class BurrowModule extends Module {
                 mc.player.jump(); // jump
                 this.timer.reset(); // start timer
             } else {
-                Seppuku.INSTANCE.getNotificationManager().addNotification("", "You don't have any obsidian to use " + this.getDisplayName());
+                Seppuku.INSTANCE.getNotificationManager().addNotification("", "You don't have any obsidian to use " + this.getDisplayName(), Notification.Type.WARNING, 3000);
                 this.toggle(); // toggle off
             }
         }

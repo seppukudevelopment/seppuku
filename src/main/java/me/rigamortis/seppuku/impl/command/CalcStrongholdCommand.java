@@ -6,6 +6,7 @@ import me.rigamortis.seppuku.api.command.Command;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
+import me.rigamortis.seppuku.api.notification.Notification;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.impl.module.hidden.CommandsModule;
 import net.minecraft.client.Minecraft;
@@ -89,7 +90,7 @@ public final class CalcStrongholdCommand extends Command {
                 }
 
                 Seppuku.INSTANCE.logcChat(component);
-                Seppuku.INSTANCE.getNotificationManager().addNotification("", "Stronghold found " + ChatFormatting.GRAY + (int) dist + "m away");
+                Seppuku.INSTANCE.getNotificationManager().addNotification("", "Stronghold found " + ChatFormatting.GRAY + (int) dist + "m away", Notification.Type.SUCCESS, 3000);
                 this.firstStart = null;
                 this.firstEnd = null;
                 this.secondStart = null;

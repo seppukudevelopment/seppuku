@@ -1,6 +1,7 @@
 package me.rigamortis.seppuku.api.notification;
 
 import me.rigamortis.seppuku.Seppuku;
+import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.impl.gui.hud.component.NotificationsComponent;
@@ -46,6 +47,10 @@ public final class Notification {
 
     public Notification(String title, String text) {
         this(title, text, Type.INFO, 3000);
+    }
+
+    public Notification(String title, String text, Type type) {
+        this(title, text, type, 3000);
     }
 
     public void update() {
@@ -130,16 +135,28 @@ public final class Notification {
     }
 
     public enum Type {
-        INFO(0xFF909090), SUCCESS(0xFF10FF10), WARNING(0xFFFFFF10), ERROR(0xFFFF1010), QUESTION(0xFF10FFFF), MISC(0xFFFFFFFF);
+        INFO(0xFF909090, new Texture("info.png")),
+        SUCCESS(0xFF10FF10, new Texture("success.png")),
+        WARNING(0xFFFFFF10, new Texture("warning.png")),
+        ERROR(0xFFFF1010, new Texture("error.png")),
+        QUESTION(0xFF10FFFF, new Texture("question.png")),
+        MISC(0xFFFFFFFF, new Texture("module-misc.png"));
 
-        private int color;
+        private final int color;
 
-        Type(int color) {
+        private final Texture texture;
+
+        Type(int color, Texture texture) {
             this.color = color;
+            this.texture = texture;
         }
 
         public int getColor() {
             return color;
+        }
+
+        public Texture getTexture() {
+            return texture;
         }
     }
 }

@@ -5,6 +5,7 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.minecraft.EventRunTick;
 import me.rigamortis.seppuku.api.event.world.EventRemoveEntity;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.notification.Notification;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -46,7 +47,7 @@ public class TotemNotifierModule extends Module {
                             }
                         } else if (offhandItem == Items.AIR) {
                             if (entitiesWithTotems.contains(entity.getEntityId())) {
-                                Seppuku.INSTANCE.getNotificationManager().addNotification("", entity.getName() + " just popped a totem.");
+                                Seppuku.INSTANCE.getNotificationManager().addNotification("", entity.getName() + " just popped a totem.", Notification.Type.INFO, 2000);
                                 entitiesWithTotems.removeIf(i -> i.equals(entity.getEntityId()));
                             }
                         }

@@ -6,6 +6,7 @@ import me.rigamortis.seppuku.api.event.world.EventAddEntity;
 import me.rigamortis.seppuku.api.event.world.EventRemoveEntity;
 import me.rigamortis.seppuku.api.friend.Friend;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.notification.Notification;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,7 +40,7 @@ public final class VisualRangeModule extends Module {
             final String msg = (friend != null ? ChatFormatting.DARK_PURPLE : ChatFormatting.RED) + (friend != null ? friend.getAlias() : event.getEntity().getName()) + ChatFormatting.WHITE + " has entered your visual range.";
 
             if (this.mode.getValue() == Mode.NOTIFICATION || this.mode.getValue() == Mode.BOTH) {
-                Seppuku.INSTANCE.getNotificationManager().addNotification("", msg);
+                Seppuku.INSTANCE.getNotificationManager().addNotification("", msg, Notification.Type.INFO, 3000);
             }
 
             if (this.mode.getValue() == Mode.CHAT || this.mode.getValue() == Mode.BOTH) {
@@ -64,7 +65,7 @@ public final class VisualRangeModule extends Module {
                 final String msg = (friend != null ? ChatFormatting.DARK_PURPLE : ChatFormatting.RED) + (friend != null ? friend.getAlias() : event.getEntity().getName()) + ChatFormatting.WHITE + " has left your visual range.";
 
                 if (this.mode.getValue() == Mode.NOTIFICATION || this.mode.getValue() == Mode.BOTH) {
-                    Seppuku.INSTANCE.getNotificationManager().addNotification("", msg);
+                    Seppuku.INSTANCE.getNotificationManager().addNotification("", msg, Notification.Type.INFO, 3000);
                 }
 
                 if (this.mode.getValue() == Mode.CHAT || this.mode.getValue() == Mode.BOTH) {

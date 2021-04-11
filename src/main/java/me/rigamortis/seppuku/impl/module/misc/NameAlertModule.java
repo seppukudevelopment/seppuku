@@ -5,6 +5,7 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.notification.Notification;
 import me.rigamortis.seppuku.api.util.FileUtil;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
@@ -56,7 +57,7 @@ public final class NameAlertModule extends Module {
 
                 if ((text.contains(":") && text.toLowerCase().contains(ChatFormatting.LIGHT_PURPLE + "from")) ||
                         (text.toLowerCase().contains(ChatFormatting.GRAY + "") && StringUtils.stripControlCodes(text).contains("whispers to you"))) {
-                    Seppuku.INSTANCE.getNotificationManager().addNotification("Whisper", "Someone whispered to you.");
+                    Seppuku.INSTANCE.getNotificationManager().addNotification("Whisper", "Someone whispered to you.", Notification.Type.MISC, 3000);
                     if (this.saveToFile.getValue()) {
                         this.saveMessageToFile("Whisper", StringUtils.stripControlCodes(text));
                     }
@@ -72,7 +73,7 @@ public final class NameAlertModule extends Module {
                     if (chatUsernameMatcher.find()) {
                         String username = chatUsernameMatcher.group(1).replaceAll(">", "");
                         if (!username.equals(localUsername)) {
-                            Seppuku.INSTANCE.getNotificationManager().addNotification("Public Chat", String.format("Someone mentioned you in chat. <%s>", username));
+                            Seppuku.INSTANCE.getNotificationManager().addNotification("Public Chat", String.format("Someone mentioned you in chat. <%s>", username), Notification.Type.MISC, 3000);
                             if (this.saveToFile.getValue()) {
                                 this.saveMessageToFile(username, text);
                             }

@@ -38,7 +38,7 @@ public final class NotificationsComponent extends DraggableHudComponent {
                 switch (this.getAnchorPoint().getPoint()) {
                     case TOP_CENTER:
                     case BOTTOM_CENTER:
-                        offsetX = (this.getW() - mc.fontRenderer.getStringWidth(notification.getText())) / 2;
+                        offsetX = (this.getW() - 16 - mc.fontRenderer.getStringWidth(notification.getText())) / 2;
                         break;
                     case TOP_LEFT:
                     case BOTTOM_LEFT:
@@ -46,19 +46,24 @@ public final class NotificationsComponent extends DraggableHudComponent {
                         break;
                     case TOP_RIGHT:
                     case BOTTOM_RIGHT:
-                        offsetX = this.getW() - mc.fontRenderer.getStringWidth(notification.getText());
+                        offsetX = this.getW() - 16 - mc.fontRenderer.getStringWidth(notification.getText());
                         break;
                 }
             }
 
             notification.setX(this.getX() + offsetX);
             notification.setY(this.getY() + offsetY);
-            notification.setWidth(mc.fontRenderer.getStringWidth(notification.getText()));
+            notification.setWidth(16 + mc.fontRenderer.getStringWidth(notification.getText()));
             notification.setHeight(mc.fontRenderer.FONT_HEIGHT + 5);
 
+            //rect bg
             RenderUtil.drawRect(notification.getTransitionX() - 1, notification.getTransitionY(), notification.getTransitionX() + notification.getWidth() + 1, notification.getTransitionY() + notification.getHeight(), 0x75101010);
-            RenderUtil.drawRect(notification.getTransitionX() - 1, notification.getTransitionY(), notification.getTransitionX() + notification.getWidth() + 1, (notification.getTransitionY() + 1), notification.getType().getColor());
-            mc.fontRenderer.drawStringWithShadow(notification.getText(), notification.getTransitionX(), notification.getTransitionY() + 4.0F, 0xFFFFFFFF);
+            //rect bar
+            RenderUtil.drawRect(notification.getTransitionX() + 16 - 1, notification.getTransitionY(), notification.getTransitionX() + notification.getWidth() + 1, (notification.getTransitionY() + 1), notification.getType().getColor());
+            //icon
+            notification.getType().getTexture().render(notification.getTransitionX() - 1, notification.getTransitionY() - 1, 16, 16);
+            //text
+            mc.fontRenderer.drawStringWithShadow(notification.getText(), notification.getTransitionX() + 16, notification.getTransitionY() + 4.0F, 0xFFFFFFFF);
 
             final float width = notification.getWidth();
             if (width >= maxWidth) {

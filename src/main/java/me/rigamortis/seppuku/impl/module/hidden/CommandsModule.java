@@ -8,6 +8,7 @@ import me.rigamortis.seppuku.api.event.player.EventSendChatMessage;
 import me.rigamortis.seppuku.api.event.render.EventRender2D;
 import me.rigamortis.seppuku.api.gui.hud.component.HudComponent;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.notification.Notification;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
@@ -164,7 +165,7 @@ public final class CommandsModule extends Module {
                 continue;
 
             if (cmd.getArguments() == null) {
-                Seppuku.INSTANCE.getNotificationManager().addNotification("Command Error", "Command has no arguments to tab complete.");
+                Seppuku.INSTANCE.getNotificationManager().addNotification("Command Error", "Command has no arguments to tab complete.", Notification.Type.ERROR, 3000);
                 continue;
             }
 

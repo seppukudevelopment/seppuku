@@ -4,6 +4,7 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.world.EventAddEntity;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.notification.Notification;
 import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
@@ -61,7 +62,7 @@ public final class DonkeyAlertModule extends Module {
                 alertText += " " + ChatFormatting.GRAY + distance;
 
                 if (this.mode.getValue() == Mode.NOTIFICATION || this.mode.getValue() == Mode.BOTH) {
-                    Seppuku.INSTANCE.getNotificationManager().addNotification("", alertText);
+                    Seppuku.INSTANCE.getNotificationManager().addNotification("", alertText, Notification.Type.INFO, 3000);
                 }
 
                 if (this.mode.getValue() == Mode.CHAT || this.mode.getValue() == Mode.BOTH) {

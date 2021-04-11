@@ -6,6 +6,7 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.notification.Notification;
 import me.rigamortis.seppuku.api.util.FileUtil;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.module.hidden.CommandsModule;
@@ -110,7 +111,7 @@ public final class StorageAlertModule extends Module {
                         }
                     }
                     if (this.mode.getValue() == Mode.NOTIFICATION || this.mode.getValue() == Mode.BOTH) {
-                        Seppuku.INSTANCE.getNotificationManager().addNotification("", message);
+                        Seppuku.INSTANCE.getNotificationManager().addNotification("", message, Notification.Type.INFO, 3000);
                     }
 
                     if (this.saveToFile.getValue()) {
