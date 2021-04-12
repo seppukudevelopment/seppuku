@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.gui.hud.component;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.notification.Notification;
+import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
@@ -12,15 +13,28 @@ import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
  */
 public final class NotificationsComponent extends DraggableHudComponent {
 
+    private final Texture[] textures = new Texture[6];
+
     public NotificationsComponent(AnchorPoint anchorPoint) {
         super("Notifications");
         this.setAnchorPoint(anchorPoint); // by default anchors in the top center
         this.setVisible(true);
+        this.init();
     }
 
     public NotificationsComponent() {
         super("Notifications");
         this.setVisible(true);
+        this.init();
+    }
+
+    private void init() {
+        this.textures[0] = new Texture("info.png");
+        this.textures[1] = new Texture("success.png");
+        this.textures[2] = new Texture("warning.png");
+        this.textures[3] = new Texture("error.png");
+        this.textures[4] = new Texture("question.png");
+        this.textures[5] = new Texture("module-misc.png");
     }
 
     @Override
@@ -61,7 +75,7 @@ public final class NotificationsComponent extends DraggableHudComponent {
             //rect bar
             RenderUtil.drawRect(notification.getTransitionX() + 16 - 1, notification.getTransitionY(), notification.getTransitionX() + notification.getWidth() + 1, (notification.getTransitionY() + 1), notification.getType().getColor());
             //icon
-            notification.getType().getTexture().render(notification.getTransitionX() - 1, notification.getTransitionY() - 1, 16, 16);
+            this.textures[notification.getType().getTextureID()].render(notification.getTransitionX() - 1, notification.getTransitionY() - 1, 16, 16);
             //text
             mc.fontRenderer.drawStringWithShadow(notification.getText(), notification.getTransitionX() + 16, notification.getTransitionY() + 4.0F, 0xFFFFFFFF);
 

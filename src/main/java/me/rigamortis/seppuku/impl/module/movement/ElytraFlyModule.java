@@ -31,10 +31,10 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class ElytraFlyModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Mode to use for elytra flight.", Mode.VANILLA);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Mode to use for elytra flight.", Mode.LOOK);
 
     private enum Mode {
-        VANILLA, PACKET, CONTROL
+        VANILLA, PACKET, CONTROL, LOOK
     }
 
     public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd", "amount", "s"}, "Speed multiplier for elytra flight, higher values equals more speed.", 1.0f, 0.0f, 5.0f, 0.1f);
@@ -44,7 +44,7 @@ public final class ElytraFlyModule extends Module {
     public final Value<Float> speedZ = new Value<Float>("SpeedZ", new String[]{"SpdZ", "amountZ", "sZ"}, "The Z speed factor (speed * this).", 1.0f, 0.1f, 5.0f, 0.1f);
 
     public final Value<Boolean> autoStart = new Value<Boolean>("AutoStart", new String[]{"AutoStart", "Auto-Start", "start", "autojump", "as"}, "Hold down the jump key to have an easy automated lift off.", true);
-    public final Value<Float> autoStartDelay = new Value<Float>("StartDelay", new String[]{"AutoStartDelay", "startdelay", "autojumpdelay", "asd"}, "Delay(ms) between auto-start attempts.", 10.0f, 0.0f, 300.0f, 10.0f);
+    public final Value<Float> autoStartDelay = new Value<Float>("StartDelay", new String[]{"AutoStartDelay", "startdelay", "autojumpdelay", "asd"}, "Delay(ms) between auto-start attempts.", 150.0f, 0.0f, 300.0f, 10.0f);
     public final Value<Boolean> autoEquip = new Value<Boolean>("AutoEquip", new String[]{"AutoEquipt", "AutoElytra", "Equip", "Equipt", "ae"}, "Automatically equips a durable elytra before or during flight. (inventory only, not hotbar!)", false);
     public final Value<Float> autoEquipDelay = new Value<Float>("EquipDelay", new String[]{"AutoEquipDelay", "AutoEquiptDelay", "equipdelay", "aed"}, "Delay(ms) between elytra equip swap attempts.", 200.0f, 0.0f, 1000.0f, 10.0f);
     public final Value<Boolean> stayAirborne = new Value<Boolean>("StayAirborne", new String[]{"Airborne", "StayInAir", "Stay-Airborne", "air", "sa"}, "Attempts to always keep the player airborne (only use when AutoEquip is enabled).", false);
@@ -239,22 +239,42 @@ public final class ElytraFlyModule extends Module {
         Minecraft mc = Minecraft.getMinecraft();
 
         if (mc.player.isElytraFlying()) {
+            final double[] directionSpeed = MathUtil.directionSpeed(this.speed.getValue());
+
             if (this.mode.getValue() == Mode.CONTROL) {
                 mc.player.motionY = 0; // Prevent the player from slowly falling down
-
-                final double[] directionSpeedControl = MathUtil.directionSpeed(this.speed.getValue());
                 mc.player.motionX = 0;
                 mc.player.motionZ = 0;
+
                 if (mc.player.movementInput.jump) {
                     mc.player.motionY = (this.speed.getValue() / 2) * this.speedYUp.getValue();
                 } else if (mc.player.movementInput.sneak) {
                     mc.player.motionY = -(this.speed.getValue() / 2) * this.speedYDown.getValue();
                 }
                 if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
-                    mc.player.motionX = directionSpeedControl[0] * this.speedX.getValue();
-                    mc.player.motionZ = directionSpeedControl[1] * this.speedZ.getValue();
+                    mc.player.motionX = directionSpeed[0] * this.speedX.getValue();
+                    mc.player.motionZ = directionSpeed[1] * this.speedZ.getValue();
                 }
 
+                event.setX(mc.player.motionX);
+                event.setY(mc.player.motionY);
+                event.setZ(mc.player.motionZ);
+            } else if (this.mode.getValue() == Mode.LOOK) {
+                mc.player.motionX = 0;
+                mc.player.motionY = 0;
+                mc.player.motionZ = 0;
+                if (mc.gameSettings.keyBindForward.isKeyDown() || mc.gameSettings.keyBindBack.isKeyDown()) {
+                    mc.player.motionY = (this.speed.getValue() * (-MathUtil.degToRad(mc.player.rotationPitch))) * mc.player.movementInput.moveForward;
+                }
+                if (mc.player.movementInput.jump) {
+                    mc.player.motionY = (this.speed.getValue() / 2) * this.speedYUp.getValue();
+                } else if (mc.player.movementInput.sneak) {
+                    mc.player.motionY = -(this.speed.getValue() / 2) * this.speedYDown.getValue();
+                }
+                if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
+                    mc.player.motionX = directionSpeed[0] * this.speedX.getValue();
+                    mc.player.motionZ = directionSpeed[1] * this.speedZ.getValue();
+                }
                 event.setX(mc.player.motionX);
                 event.setY(mc.player.motionY);
                 event.setZ(mc.player.motionZ);

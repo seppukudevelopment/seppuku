@@ -5,9 +5,11 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
+import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.notification.Notification;
 import me.rigamortis.seppuku.api.util.FileUtil;
+import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.module.hidden.CommandsModule;
 import net.minecraft.client.Minecraft;
@@ -45,6 +47,7 @@ public final class StorageAlertModule extends Module {
     public final Value<Boolean> dispensers = new Value<Boolean>("Dispensers", new String[]{"Dispensers", "disp"}, "Count dispensers.", false);
     public final Value<Boolean> stands = new Value<Boolean>("BrewingStands", new String[]{"BrewingStands", "brew"}, "Count brewing stands.", false);
 
+    private final Timer loadWorldTimer = new Timer();
     private final File locationsFile;
     private CommandsModule commandsModule;
 
@@ -65,57 +68,66 @@ public final class StorageAlertModule extends Module {
     }
 
     @Listener
-    public void recievePacket(EventReceivePacket event) {
+    public void onLoadWorld(EventLoadWorld event) {
+        if (event.getWorld() != null) {
+            this.loadWorldTimer.reset();
+        }
+    }
+
+    @Listener
+    public void onReceivePacket(EventReceivePacket event) {
         if (event.getStage() == EventStageable.EventStage.POST) {
-            if (event.getPacket() instanceof SPacketChunkData) {
-                final SPacketChunkData packet = (SPacketChunkData) event.getPacket();
-                final Vec2f position = new Vec2f(packet.getChunkX() * 16, packet.getChunkZ() * 16);
-                final Map<String, Vec2f> foundStorage = Maps.newLinkedHashMap();
+            if (this.loadWorldTimer.passed(2000)) { // wait 2000 ms on world load
+                if (event.getPacket() instanceof SPacketChunkData) {
+                    final SPacketChunkData packet = (SPacketChunkData) event.getPacket();
+                    final Vec2f position = new Vec2f(packet.getChunkX() * 16, packet.getChunkZ() * 16);
+                    final Map<String, Vec2f> foundStorage = Maps.newLinkedHashMap();
 
-                for (NBTTagCompound tag : packet.getTileEntityTags()) {
-                    final String id = tag.getString("id");
-                    if (
-                            (this.chests.getValue() && (id.equals("minecraft:chest") || id.equals("minecraft:trapped_chest"))) ||
-                                    (this.echests.getValue() && id.equals("minecraft:ender_chest")) ||
-                                    (this.shulkers.getValue() && id.equals("minecraft:shulker_box")) ||
-                                    (this.hoppers.getValue() && id.equals("minecraft:hopper")) ||
-                                    (this.droppers.getValue() && id.equals("minecraft:dropper")) ||
-                                    (this.dispensers.getValue() && id.equals("minecraft:dispenser")) ||
-                                    (this.stands.getValue() && id.equals("minecraft:brewing_stand"))
-                    ) {
-                        foundStorage.put(id, position);
-                    }
-                }
-
-                if (foundStorage.size() > 0) {
-                    String id = "storage block" + (foundStorage.size() == 1 ? "" : "s");
-
-                    for (String type : foundStorage.keySet()) {
-                        final Vec2f otherPosition = foundStorage.get(type);
-                        if (position.equals(otherPosition)) {
-                            id = type.replaceAll("minecraft:", "");
+                    for (NBTTagCompound tag : packet.getTileEntityTags()) {
+                        final String id = tag.getString("id");
+                        if (
+                                (this.chests.getValue() && (id.equals("minecraft:chest") || id.equals("minecraft:trapped_chest"))) ||
+                                        (this.echests.getValue() && id.equals("minecraft:ender_chest")) ||
+                                        (this.shulkers.getValue() && id.equals("minecraft:shulker_box")) ||
+                                        (this.hoppers.getValue() && id.equals("minecraft:hopper")) ||
+                                        (this.droppers.getValue() && id.equals("minecraft:dropper")) ||
+                                        (this.dispensers.getValue() && id.equals("minecraft:dispenser")) ||
+                                        (this.stands.getValue() && id.equals("minecraft:brewing_stand"))
+                        ) {
+                            foundStorage.put(id, position);
                         }
                     }
 
-                    final String message = foundStorage.size() + " " + id + " located";
-                    if (this.mode.getValue() == Mode.CHAT || this.mode.getValue() == Mode.BOTH) {
-                        if (this.commandsModule == null) {
-                            this.commandsModule = (CommandsModule) Seppuku.INSTANCE.getModuleManager().find(CommandsModule.class);
-                        } else {
-                            final TextComponentString textComponent = new TextComponentString(ChatFormatting.YELLOW + message);
-                            textComponent.appendSibling(new TextComponentString("(*)")
-                                    .setStyle(new Style()
-                                            .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("\2476" + "Create a waypoint for this position" + "\n" + ChatFormatting.WHITE + "X: " + position.x + ", Z: " + position.y)))
-                                            .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, commandsModule.getPrefix().getValue() + "waypoint add " + String.format("x%s_z%s", position.x, position.y) + " " + position.x + " 120 " + position.y))));
-                            Seppuku.INSTANCE.logcChat(textComponent);
-                        }
-                    }
-                    if (this.mode.getValue() == Mode.NOTIFICATION || this.mode.getValue() == Mode.BOTH) {
-                        Seppuku.INSTANCE.getNotificationManager().addNotification("", message, Notification.Type.INFO, 3000);
-                    }
+                    if (foundStorage.size() > 0) {
+                        String id = "storage block" + (foundStorage.size() == 1 ? "" : "s");
 
-                    if (this.saveToFile.getValue()) {
-                        this.saveStorageToFile(foundStorage);
+                        for (String type : foundStorage.keySet()) {
+                            final Vec2f otherPosition = foundStorage.get(type);
+                            if (position.equals(otherPosition)) {
+                                id = type.replaceAll("minecraft:", "");
+                            }
+                        }
+
+                        final String message = foundStorage.size() + " " + id + " located";
+                        if (this.mode.getValue() == Mode.CHAT || this.mode.getValue() == Mode.BOTH) {
+                            if (this.commandsModule == null) {
+                                this.commandsModule = (CommandsModule) Seppuku.INSTANCE.getModuleManager().find(CommandsModule.class);
+                            } else {
+                                final TextComponentString textComponent = new TextComponentString(ChatFormatting.YELLOW + message);
+                                textComponent.appendSibling(new TextComponentString("(*)")
+                                        .setStyle(new Style()
+                                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("\2476" + "Create a waypoint for this position" + "\n" + ChatFormatting.WHITE + "X: " + position.x + ", Z: " + position.y)))
+                                                .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, commandsModule.getPrefix().getValue() + "waypoint add " + String.format("x%s_z%s", position.x, position.y) + " " + position.x + " 120 " + position.y))));
+                                Seppuku.INSTANCE.logcChat(textComponent);
+                            }
+                        }
+                        if (this.mode.getValue() == Mode.NOTIFICATION || this.mode.getValue() == Mode.BOTH) {
+                            Seppuku.INSTANCE.getNotificationManager().addNotification("", message, Notification.Type.INFO, 3000);
+                        }
+
+                        if (this.saveToFile.getValue()) {
+                            this.saveStorageToFile(foundStorage);
+                        }
                     }
                 }
             }

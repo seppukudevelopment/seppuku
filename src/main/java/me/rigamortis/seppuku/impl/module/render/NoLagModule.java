@@ -93,6 +93,9 @@ public final class NoLagModule extends Module {
                     if (packet.getCategory() == SoundCategory.PLAYERS && packet.getSound() == SoundEvents.ITEM_ARMOR_EQUIP_GENERIC) {
                         event.setCanceled(true);
                     }
+                    if (packet.getSound() == SoundEvents.ENTITY_FIREWORK_LAUNCH) {
+                        event.setCanceled(true);
+                    }
                 }
             }
         }
