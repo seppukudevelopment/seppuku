@@ -34,7 +34,7 @@ public final class NotificationsComponent extends DraggableHudComponent {
         this.textures[2] = new Texture("warning.png");
         this.textures[3] = new Texture("error.png");
         this.textures[4] = new Texture("question.png");
-        this.textures[5] = new Texture("module-misc.png");
+        this.textures[5] = new Texture("misc.png");
     }
 
     @Override
