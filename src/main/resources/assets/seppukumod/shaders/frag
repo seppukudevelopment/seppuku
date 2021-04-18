@@ -2,14 +2,14 @@
 #version 120
 
 // Sampler, contains the texture of the Entity FBO
-uniform sampler2D DiffuseSamper;
+uniform sampler2D DiffuseSampler;
 
 // Contains the size of one texel
 uniform vec2 TexelSize;
 
 void main() {
   // Color of the texel at this fragment
-  vec4 centerCol = texture2D(DiffuseSamper, gl_TexCoord[0].st);
+  vec4 centerCol = texture2D(DiffuseSampler, gl_TexCoord[0].st);
 
   // Holds the average color (for blur/glow)
   vec4 colAvg = vec4(0, 0, 0, 0);
@@ -17,7 +17,7 @@ void main() {
   for(int xo = -7; xo < 7; xo++) {
     for(int yo = -7; yo < 7; yo++) {
       // Get surrounding texel color
-      vec4 currCol = texture2D(DiffuseSamper, gl_TexCoord[0].st + vec2(xo * TexelSize.x, yo * TexelSize.y));
+      vec4 currCol = texture2D(DiffuseSampler, gl_TexCoord[0].st + vec2(xo * TexelSize.x, yo * TexelSize.y));
 
       // If color has been changed (!= 0), add to average color. Alpha depends on distance to center texel
       if(currCol.r != 0.0F || currCol.g != 0.0F || currCol.b != 0.0F) {
