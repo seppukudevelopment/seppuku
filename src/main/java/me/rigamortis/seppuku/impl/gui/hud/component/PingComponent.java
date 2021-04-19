@@ -1,5 +1,6 @@
 package me.rigamortis.seppuku.impl.gui.hud.component;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import net.minecraft.client.network.NetworkPlayerInfo;
 
@@ -32,7 +33,7 @@ public final class PingComponent extends DraggableHudComponent {
         final NetworkPlayerInfo playerInfo = mc.player.connection.getPlayerInfo(mc.player.getUniqueID());
         if (Objects.nonNull(playerInfo)) {
             final String ms = playerInfo.getResponseTime() != 0 ? playerInfo.getResponseTime() + "ms" : "?";
-            final String ping = "Ping: " + ms;
+            final String ping = ChatFormatting.GRAY + "Ping " + ChatFormatting.RESET + ms;
 
             this.setW(mc.fontRenderer.getStringWidth(ping));
             mc.fontRenderer.drawStringWithShadow(ping, this.getX(), this.getY(), -1);

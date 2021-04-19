@@ -20,7 +20,7 @@ public final class TpsComponent extends DraggableHudComponent {
         super.render(mouseX, mouseY, partialTicks);
 
         if (mc.world != null && mc.getCurrentServerData() != null) {
-            final String tps = String.format(ChatFormatting.WHITE + "TPS: %.2f", Seppuku.INSTANCE.getTickRateManager().getTickRate());
+            final String tps = String.format(ChatFormatting.GRAY + "TPS " + ChatFormatting.RESET + "%.2f", Seppuku.INSTANCE.getTickRateManager().getTickRate());
             this.setW(mc.fontRenderer.getStringWidth(tps));
             mc.fontRenderer.drawStringWithShadow(tps, this.getX(), this.getY(), -1);
         } else {

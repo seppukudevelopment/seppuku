@@ -1,5 +1,6 @@
 package me.rigamortis.seppuku.impl.gui.hud.component;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 
 /**
@@ -17,7 +18,7 @@ public final class PlayerCountComponent extends DraggableHudComponent {
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
         if (mc.player != null) {
-            final String playerCount = "Online: " + mc.player.connection.getPlayerInfoMap().size();
+            final String playerCount = ChatFormatting.GRAY + "Online " + ChatFormatting.RESET + mc.player.connection.getPlayerInfoMap().size();
 
             this.setW(mc.fontRenderer.getStringWidth(playerCount));
             mc.fontRenderer.drawStringWithShadow(playerCount, this.getX(), this.getY(), -1);
