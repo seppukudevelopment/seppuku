@@ -1,5 +1,6 @@
 package me.rigamortis.seppuku.impl.gui.hud.component;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 
 import java.text.SimpleDateFormat;
@@ -19,7 +20,9 @@ public final class TimeComponent extends DraggableHudComponent {
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
 
-        final String time = new SimpleDateFormat("h:mm a").format(new Date());
+        final String hourMinute = new SimpleDateFormat("h:mm").format(new Date());
+        final String amPm = new SimpleDateFormat("a").format(new Date());
+        final String time = ChatFormatting.RESET + hourMinute + " " + ChatFormatting.GRAY + amPm;
 
         this.setW(mc.fontRenderer.getStringWidth(time));
         mc.fontRenderer.drawStringWithShadow(time, this.getX(), this.getY(), -1);

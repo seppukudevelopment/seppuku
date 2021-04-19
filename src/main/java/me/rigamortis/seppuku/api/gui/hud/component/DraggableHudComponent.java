@@ -37,7 +37,7 @@ public class DraggableHudComponent extends HudComponent {
         this.setVisible(false);
         this.setSnappable(true);
         this.setLocked(false);
-        this.setRclicked(true);
+        this.setRclicked(false);
         this.setX(Minecraft.getMinecraft().displayWidth / 2.0f);
         this.setY(Minecraft.getMinecraft().displayHeight / 2.0f);
     }
