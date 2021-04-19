@@ -51,6 +51,12 @@ public final class HudConfig extends Configurable {
                     case "Locked":
                         draggableHudComponent.setLocked(entry.getValue().getAsBoolean());
                         break;
+                    case "Snappable":
+                        draggableHudComponent.setSnappable(entry.getValue().getAsBoolean());
+                        break;
+                    case "Rclicked":
+                        draggableHudComponent.setRclicked(entry.getValue().getAsBoolean());
+                        break;
                     case "Anchor":
                         if (!entry.getValue().getAsString().equals("NONE")) {
                             for (AnchorPoint anchorPoint : Seppuku.INSTANCE.getHudManager().getAnchorPoints()) {
@@ -119,6 +125,8 @@ public final class HudConfig extends Configurable {
         if (hudComponent instanceof DraggableHudComponent) {
             DraggableHudComponent draggableHudComponent = (DraggableHudComponent) hudComponent;
             componentsListJsonObject.addProperty("Locked", draggableHudComponent.isLocked());
+            componentsListJsonObject.addProperty("Snappable", draggableHudComponent.isSnappable());
+            componentsListJsonObject.addProperty("Rclicked", draggableHudComponent.isRclicked());
             componentsListJsonObject.addProperty("Anchor", draggableHudComponent.getAnchorPoint() == null ? "NONE" : draggableHudComponent.getAnchorPoint().getPoint().name());
             componentsListJsonObject.addProperty("Glue", draggableHudComponent.getGlued() == null ? "NONE" : draggableHudComponent.getGlued().getName());
             componentsListJsonObject.addProperty("GlueSide", draggableHudComponent.getGlued() == null ? "NONE" : ((DraggableHudComponent) hudComponent).getGlueSide().name());

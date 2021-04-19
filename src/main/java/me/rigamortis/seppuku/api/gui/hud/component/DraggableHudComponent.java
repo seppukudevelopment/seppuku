@@ -15,6 +15,7 @@ import org.lwjgl.input.Keyboard;
  */
 public class DraggableHudComponent extends HudComponent {
 
+    private boolean rclicked;
     private boolean snappable;
     private boolean dragging;
     private boolean locked;
@@ -36,6 +37,7 @@ public class DraggableHudComponent extends HudComponent {
         this.setVisible(false);
         this.setSnappable(true);
         this.setLocked(false);
+        this.setRclicked(true);
         this.setX(Minecraft.getMinecraft().displayWidth / 2.0f);
         this.setY(Minecraft.getMinecraft().displayHeight / 2.0f);
     }
@@ -228,6 +230,11 @@ public class DraggableHudComponent extends HudComponent {
         } else if (button == 2) {
             if (this.isMouseInside(mouseX, mouseY)) {
                 this.setLocked(!this.isLocked());
+                this.setSnappable(!this.isSnappable());
+            }
+        } else if (button == 1) {
+            if (this.isMouseInside(mouseX, mouseY)) {
+                this.setRclicked(!this.isRclicked());
             }
         }
     }
@@ -280,6 +287,10 @@ public class DraggableHudComponent extends HudComponent {
             this.setY(sr.getScaledHeight() - 2 - this.getH());
         }
     }
+
+    public boolean isRclicked() { return rclicked; }
+
+    public void setRclicked(boolean rclicked) { this.rclicked = rclicked; }
 
     public boolean isSnappable() {
         return snappable;

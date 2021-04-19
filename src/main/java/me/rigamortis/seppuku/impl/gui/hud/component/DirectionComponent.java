@@ -25,7 +25,7 @@ public final class DirectionComponent extends DraggableHudComponent {
 
         if (mc.world != null) {
             if (this.directionTimer.passed(250)) { // 250ms
-                direction = String.format("%s" + " " + ChatFormatting.GRAY + "%s", this.getFacing(), this.getTowards());
+                direction = String.format(ChatFormatting.GRAY + "%s" + " " + ChatFormatting.RESET + "%s", this.getFacing(), this.getTowards());
                 this.directionTimer.reset();
             }
 

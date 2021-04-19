@@ -1,5 +1,6 @@
 package me.rigamortis.seppuku.impl.gui.hud.component;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
@@ -39,7 +40,7 @@ public final class PacketTimeComponent extends DraggableHudComponent {
 
         if (mc.player != null && mc.world != null) {
             final float seconds = ((System.currentTimeMillis() - this.timer.getTime()) / 1000.0f) % 60.0f;
-            final String delay = "Packet: " + (seconds >= 3.0f ? "\2474" : "\247f") + new DecimalFormat("#.#").format(seconds);
+            final String delay = ChatFormatting.GRAY + "Packet " + ChatFormatting.RESET + (seconds >= 3.0f ? "\2474" : "\247f") + new DecimalFormat("0.0").format(seconds);
 
             this.setW(mc.fontRenderer.getStringWidth(delay));
             mc.fontRenderer.drawStringWithShadow(delay, this.getX(), this.getY(), -1);

@@ -1,5 +1,6 @@
 package me.rigamortis.seppuku.impl.gui.hud.component;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import net.minecraft.client.Minecraft;
 
@@ -19,7 +20,7 @@ public final class FpsComponent extends DraggableHudComponent {
         super.render(mouseX, mouseY, partialTicks);
 
         if (mc.world != null) {
-            final String fps = "FPS: " + Minecraft.getDebugFPS();
+            final String fps = ChatFormatting.GRAY + "FPS " + ChatFormatting.RESET + Minecraft.getDebugFPS();
             this.setW(mc.fontRenderer.getStringWidth(fps));
             mc.fontRenderer.drawStringWithShadow(fps, this.getX(), this.getY(), -1);
         } else {

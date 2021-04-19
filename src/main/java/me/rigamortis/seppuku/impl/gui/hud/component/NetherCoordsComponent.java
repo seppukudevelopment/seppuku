@@ -21,17 +21,13 @@ public final class NetherCoordsComponent extends DraggableHudComponent {
         super.render(mouseX, mouseY, partialTicks);
 
         if (mc.player != null && mc.world != null) {
-            final DecimalFormat df = new DecimalFormat("#.#");
+            final DecimalFormat df = new DecimalFormat("0.0");
 
-            final String coords = ChatFormatting.GRAY + "x " + ChatFormatting.DARK_GREEN +
-                    df.format(mc.player.posX * 8) + ChatFormatting.DARK_GREEN + "," +
-                    ChatFormatting.GRAY + " y " + ChatFormatting.DARK_GREEN + df.format(mc.player.posY) + ChatFormatting.DARK_GREEN + "," +
-                    ChatFormatting.GRAY + " z " + ChatFormatting.DARK_GREEN + df.format(mc.player.posZ * 8) + ChatFormatting.RESET;
+            final String coords = ChatFormatting.GRAY + "Coords [" + ChatFormatting.DARK_GREEN +
+                    df.format(mc.player.posX * 8) + ", " + df.format(mc.player.posZ * 8) + ChatFormatting.GRAY + "]";
 
-            final String nether = ChatFormatting.GRAY + "x " + ChatFormatting.RED +
-                    df.format(mc.player.posX / 8) + ChatFormatting.RED + "," +
-                    ChatFormatting.GRAY + " y " + ChatFormatting.RED + df.format(mc.player.posY) + ChatFormatting.RED + "," +
-                    ChatFormatting.GRAY + " z " + ChatFormatting.RED + df.format(mc.player.posZ / 8) + ChatFormatting.RESET;
+            final String nether = ChatFormatting.GRAY + "Nether [" + ChatFormatting.RED +
+                    df.format(mc.player.posX / 8) + ", " + df.format(mc.player.posZ / 8) + ChatFormatting.GRAY + "]";
 
             this.setW(mc.fontRenderer.getStringWidth(mc.player.dimension == -1 ? coords : nether));
             mc.fontRenderer.drawStringWithShadow(mc.player.dimension == -1 ? coords : nether, this.getX(), this.getY(), -1);
