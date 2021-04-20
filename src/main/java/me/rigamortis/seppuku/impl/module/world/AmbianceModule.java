@@ -15,6 +15,9 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.awt.*;
 
+/**
+ * @author noil
+ */
 public class AmbianceModule extends Module {
 
     public enum SkyMode {
@@ -45,6 +48,9 @@ public class AmbianceModule extends Module {
         }
     }
 
+    /**
+     * Similar GL code to the minecraft function #renderSkyEnd()
+     */
     private void renderSky() {
         GlStateManager.disableFog();
         GlStateManager.disableAlpha();
