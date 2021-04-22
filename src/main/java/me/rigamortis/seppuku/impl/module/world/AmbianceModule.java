@@ -125,7 +125,7 @@ public class AmbianceModule extends Module {
             tessellator.draw();
             GlStateManager.popMatrix();
         }
-
+        GlStateManager.disableBlend();
         GlStateManager.depthMask(true);
         GlStateManager.enableTexture2D();
         GlStateManager.enableAlpha();
