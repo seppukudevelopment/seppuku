@@ -264,16 +264,19 @@ public final class ElytraFlyModule extends Module {
                 mc.player.motionY = 0;
                 mc.player.motionZ = 0;
                 if (mc.gameSettings.keyBindForward.isKeyDown() || mc.gameSettings.keyBindBack.isKeyDown()) {
-                    mc.player.motionY = (this.speed.getValue() * (-MathUtil.degToRad(mc.player.rotationPitch))) * mc.player.movementInput.moveForward;
+                    mc.player.motionY = (this.speed.getValue() * (-1 * (Math.sin(MathUtil.degToRad(mc.player.rotationPitch))))) * mc.player.movementInput.moveForward;
                 }
                 if (mc.player.movementInput.jump) {
                     mc.player.motionY = (this.speed.getValue() / 2) * this.speedYUp.getValue();
                 } else if (mc.player.movementInput.sneak) {
                     mc.player.motionY = -(this.speed.getValue() / 2) * this.speedYDown.getValue();
                 }
-                if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
+                if (mc.player.movementInput.moveStrafe != 0 && mc.player.movementInput.moveForward == 0) {
                     mc.player.motionX = directionSpeed[0] * this.speedX.getValue();
                     mc.player.motionZ = directionSpeed[1] * this.speedZ.getValue();
+                } else if (mc.player.movementInput.moveStrafe != 0 || mc.player.movementInput.moveForward != 0) {
+                    mc.player.motionX = directionSpeed[0] * (Math.cos(Math.abs(MathUtil.degToRad(mc.player.rotationPitch)))) * this.speedX.getValue();
+                    mc.player.motionZ = directionSpeed[1] * (Math.cos(Math.abs(MathUtil.degToRad(mc.player.rotationPitch)))) * this.speedZ.getValue();
                 }
                 event.setX(mc.player.motionX);
                 event.setY(mc.player.motionY);
