@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static me.rigamortis.seppuku.impl.module.hidden.ArrayListModule.Mode.*;
+import static me.rigamortis.seppuku.impl.module.hidden.ArrayListModule.Mode.ALPHABET;
+import static me.rigamortis.seppuku.impl.module.hidden.ArrayListModule.Mode.LENGTH;
 
 /**
  * @author seth  * 7/25/2019 @ 7:24 AM

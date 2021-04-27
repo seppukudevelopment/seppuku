@@ -1,7 +1,6 @@
 package me.rigamortis.seppuku.impl.patch;
 
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.event.render.EventRenderBlockSide;
 import me.rigamortis.seppuku.api.event.world.EventCanCollide;
 import me.rigamortis.seppuku.api.event.world.EventLiquidCollisionBB;
 import me.rigamortis.seppuku.api.patch.ClassPatch;

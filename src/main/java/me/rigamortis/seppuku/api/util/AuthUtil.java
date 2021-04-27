@@ -38,7 +38,7 @@ public final class AuthUtil {
         if (username == null || username.length() <= 0 || password == null || password.length() <= 0)
             return "Error";
         YggdrasilAuthenticationService a = new YggdrasilAuthenticationService(Proxy.NO_PROXY, "");
-        YggdrasilUserAuthentication b = (YggdrasilUserAuthentication)a.createUserAuthentication(Agent.MINECRAFT);
+        YggdrasilUserAuthentication b = (YggdrasilUserAuthentication) a.createUserAuthentication(Agent.MINECRAFT);
         b.setUsername(username);
         b.setPassword(password);
         try {

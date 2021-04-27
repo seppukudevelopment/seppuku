@@ -190,6 +190,7 @@ public final class FreeCamModule extends Module {
 
     /**
      * Deprecated
+     *
      * @param event
      */
     @Listener

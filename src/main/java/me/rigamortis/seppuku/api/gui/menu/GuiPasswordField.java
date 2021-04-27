@@ -183,23 +183,23 @@ public class GuiPasswordField extends Gui {
         boolean flag = n < 0;
         int j = Math.abs(n);
 
-        for(int k = 0; k < j; ++k) {
+        for (int k = 0; k < j; ++k) {
             if (!flag) {
                 int l = this.text.length();
                 i = this.text.indexOf(32, i);
                 if (i == -1) {
                     i = l;
                 } else {
-                    while(skipWs && i < l && this.text.charAt(i) == ' ') {
+                    while (skipWs && i < l && this.text.charAt(i) == ' ') {
                         ++i;
                     }
                 }
             } else {
-                while(skipWs && i > 0 && this.text.charAt(i - 1) == ' ') {
+                while (skipWs && i > 0 && this.text.charAt(i - 1) == ' ') {
                     --i;
                 }
 
-                while(i > 0 && this.text.charAt(i - 1) != ' ') {
+                while (i > 0 && this.text.charAt(i - 1) != ' ') {
                     --i;
                 }
             }
@@ -251,7 +251,7 @@ public class GuiPasswordField extends Gui {
 
             return true;
         } else {
-            switch(keyCode) {
+            switch (keyCode) {
                 case 14:
                     if (GuiScreen.isCtrlKeyDown()) {
                         if (this.isEnabled) {
@@ -372,7 +372,7 @@ public class GuiPasswordField extends Gui {
 
             if (!s.isEmpty()) {
                 String s1 = flag ? s.substring(0, j) : s;
-                j1 = this.fontRenderer.drawStringWithShadow(s1.replaceAll("(?s).", "*"), (float)l, (float)i1, i);
+                j1 = this.fontRenderer.drawStringWithShadow(s1.replaceAll("(?s).", "*"), (float) l, (float) i1, i);
             }
 
             boolean flag2 = this.cursorPosition < this.text.length() || this.text.length() >= this.getMaxStringLength();
@@ -385,14 +385,14 @@ public class GuiPasswordField extends Gui {
             }
 
             if (!s.isEmpty() && flag && j < s.length()) {
-                j1 = this.fontRenderer.drawStringWithShadow(s.substring(j), (float)j1, (float)i1, i);
+                j1 = this.fontRenderer.drawStringWithShadow(s.substring(j), (float) j1, (float) i1, i);
             }
 
             if (flag1) {
                 if (flag2) {
                     Gui.drawRect(k1, i1 - 1, k1 + 1, i1 + 1 + this.fontRenderer.FONT_HEIGHT, -3092272);
                 } else {
-                    this.fontRenderer.drawStringWithShadow("_", (float)k1, (float)i1, i);
+                    this.fontRenderer.drawStringWithShadow("_", (float) k1, (float) i1, i);
                 }
             }
 
@@ -433,10 +433,10 @@ public class GuiPasswordField extends Gui {
         GlStateManager.enableColorLogic();
         GlStateManager.colorLogicOp(LogicOp.OR_REVERSE);
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION);
-        bufferbuilder.pos((double)startX, (double)endY, 0.0D).endVertex();
-        bufferbuilder.pos((double)endX, (double)endY, 0.0D).endVertex();
-        bufferbuilder.pos((double)endX, (double)startY, 0.0D).endVertex();
-        bufferbuilder.pos((double)startX, (double)startY, 0.0D).endVertex();
+        bufferbuilder.pos((double) startX, (double) endY, 0.0D).endVertex();
+        bufferbuilder.pos((double) endX, (double) endY, 0.0D).endVertex();
+        bufferbuilder.pos((double) endX, (double) startY, 0.0D).endVertex();
+        bufferbuilder.pos((double) startX, (double) startY, 0.0D).endVertex();
         tessellator.draw();
         GlStateManager.disableColorLogic();
         GlStateManager.enableTexture2D();

@@ -1,12 +1,9 @@
 package me.rigamortis.seppuku.impl.module.misc;
 
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.gui.EventGetGuiTabName;
-import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.friend.Friend;
 import me.rigamortis.seppuku.api.module.Module;
-import net.minecraft.network.play.server.SPacketPlayerListHeaderFooter;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**

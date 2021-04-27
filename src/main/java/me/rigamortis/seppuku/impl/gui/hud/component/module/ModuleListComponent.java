@@ -649,14 +649,14 @@ public final class ModuleListComponent extends ResizableHudComponent {
                     if (otherComponent == component || otherComponent.getName().equals(component.getName()))
                         continue;
 
-                        boolean isChildComponent = component.getName().toLowerCase().startsWith(otherComponent.getName().toLowerCase());
-                        if (isChildComponent) {
-                            if (!otherComponent.rightClickEnabled) {
-                                skipRendering = true;
-                            }
-
-                            offsetX += 4;
+                    boolean isChildComponent = component.getName().toLowerCase().startsWith(otherComponent.getName().toLowerCase());
+                    if (isChildComponent) {
+                        if (!otherComponent.rightClickEnabled) {
+                            skipRendering = true;
                         }
+
+                        offsetX += 4;
+                    }
                 }
 
                 if (skipRendering)

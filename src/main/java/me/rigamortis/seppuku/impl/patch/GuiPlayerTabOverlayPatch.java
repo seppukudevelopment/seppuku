@@ -5,9 +5,7 @@ import me.rigamortis.seppuku.api.event.gui.EventGetGuiTabName;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
 import me.rigamortis.seppuku.impl.management.PatchManager;
-import net.minecraft.client.gui.GuiPlayerTabOverlay;
 import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.scoreboard.ScorePlayerTeam;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
@@ -31,7 +29,7 @@ public final class GuiPlayerTabOverlayPatch extends ClassPatch {
     public void getPlayerName(MethodNode methodNode, PatchManager.Environment env) {
         final InsnList insnList = new InsnList();
         insnList.add(new VarInsnNode(ALOAD, 1));
-        insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "getPlayerNameHook",  env == PatchManager.Environment.IDE ? "(Lnet/minecraft/client/network/NetworkPlayerInfo;)Ljava/lang/String;" : "(Lbsc;)Ljava/lang/String;", false));
+        insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "getPlayerNameHook", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/client/network/NetworkPlayerInfo;)Ljava/lang/String;" : "(Lbsc;)Ljava/lang/String;", false));
         insnList.add(new InsnNode(ARETURN));
         methodNode.instructions.insert(insnList);
     }
@@ -42,7 +40,6 @@ public final class GuiPlayerTabOverlayPatch extends ClassPatch {
 
         return event.getName();
     }
-
 
 
 }

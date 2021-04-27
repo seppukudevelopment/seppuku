@@ -7,11 +7,9 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.config.Configurable;
 import me.rigamortis.seppuku.api.util.FileUtil;
 import me.rigamortis.seppuku.impl.module.render.SearchModule;
-import me.rigamortis.seppuku.impl.module.render.XrayModule;
 import net.minecraft.block.Block;
 
 import java.io.File;
-import java.util.Objects;
 
 /**
  * @author noil

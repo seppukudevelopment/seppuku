@@ -25,7 +25,7 @@ public class AmbianceModule extends Module {
     }
 
     public final Value<SkyMode> skyMode = new Value<SkyMode>("SkyMode", new String[]{"Sky", "Sm", "SkieMode", "Skie", "Skies"}, "Edit the skybox.", SkyMode.SEPPUKU);
-    public final Value<Color> skyColor = new Value<Color>("SkyColor", new String[]{"SkyCol", "Sc", "SkieColor", "SkieCol", "Color", "C"}, "Edit the skybox color (COLOR mode only).",  new Color(0, 127, 255));
+    public final Value<Color> skyColor = new Value<Color>("SkyColor", new String[]{"SkyCol", "Sc", "SkieColor", "SkieCol", "Color", "C"}, "Edit the skybox color (COLOR mode only).", new Color(0, 127, 255));
     public final Value<Integer> skyGamma = new Value<Integer>("SkyGamma", new String[]{"SkyGam", "SkyG", "Sg", "Gamma", "G"}, "Edit the skybox gamma.", 128, 1, 255, 1);
     public final Value<Integer> skyGammaEnd = new Value<Integer>("SkyGammaEnd", new String[]{"SkyGamEnd", "SkyGe", "Sge", "GammaEnd", "GamEnd", "Ge"}, "Edit the skybox gamma (END mode only).", 40, 1, 255, 1);
 

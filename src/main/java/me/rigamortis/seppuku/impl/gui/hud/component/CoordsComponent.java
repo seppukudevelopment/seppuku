@@ -1,9 +1,7 @@
 package me.rigamortis.seppuku.impl.gui.hud.component;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
-import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
-import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import net.minecraft.client.Minecraft;
 
 import java.text.DecimalFormat;

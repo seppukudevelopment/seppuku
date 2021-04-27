@@ -288,9 +288,13 @@ public class DraggableHudComponent extends HudComponent {
         }
     }
 
-    public boolean isRclicked() { return rclicked; }
+    public boolean isRclicked() {
+        return rclicked;
+    }
 
-    public void setRclicked(boolean rclicked) { this.rclicked = rclicked; }
+    public void setRclicked(boolean rclicked) {
+        this.rclicked = rclicked;
+    }
 
     public boolean isSnappable() {
         return snappable;
