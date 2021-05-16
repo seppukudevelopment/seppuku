@@ -1,11 +1,16 @@
 package me.rigamortis.seppuku.impl.module.world;
 
+import java.awt.*;
+import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventClickBlock;
 import me.rigamortis.seppuku.api.event.player.EventPlayerDamageBlock;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.event.player.EventResetBlockRemoving;
+import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.util.ColorUtil;
+import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -14,6 +19,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.network.play.client.CPacketPlayerDigging;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
@@ -30,11 +36,15 @@ public final class SpeedMineModule extends Module {
     }
 
     public BlockPos seqPos;
+    public static BlockPos autoPos;
     public EnumFacing seqDir;
     final Minecraft mc = Minecraft.getMinecraft();
 
     public final Value<Boolean> reset = new Value<Boolean>("Reset", new String[]{"Res"}, "Stops current block destroy damage from resetting if enabled.", true);
     public final Value<Boolean> doubleBreak = new Value<Boolean>("DoubleBreak", new String[]{"DoubleBreak", "Double", "DB"}, "Mining a block will also mine the block above it, if enabled.", false);
+    public final Value<Boolean> auto = new Value<Boolean>("Auto", new String[]{"Res"}, "Auto sets the current mode to allow for multimining", true);
+
+
 
     public SpeedMineModule() {
         super("SpeedMine", new String[]{"FastMine"}, "Allows you to break blocks faster", "NONE", -1, ModuleType.WORLD);
@@ -77,6 +87,25 @@ public final class SpeedMineModule extends Module {
     }
 
     @Listener
+    public void onRender(EventRender3D event) {
+        if (!auto.getValue()) return;
+        if (autoPos != null && mc.world.getBlockState(autoPos).getBlock() != Blocks.AIR) {
+            RenderUtil.begin3D();
+            final AxisAlignedBB bb = new AxisAlignedBB(
+                autoPos.getX() - mc.getRenderManager().viewerPosX,
+                autoPos.getY() - mc.getRenderManager().viewerPosY,
+                autoPos.getZ() - mc.getRenderManager().viewerPosZ,
+                autoPos.getX() + 1 - mc.getRenderManager().viewerPosX,
+                autoPos.getY() + 1 - mc.getRenderManager().viewerPosY,
+                autoPos.getZ() + 1 - mc.getRenderManager().viewerPosZ
+            );
+            RenderUtil.drawBoundingBox(bb, 2f, new Color(255,255,255).getRGB());
+            RenderUtil.end3D();
+        }
+    }
+
+    
+    @Listener
     public void damageBlock(EventPlayerDamageBlock event) {
         if (canBreak(event.getPos())) {
 
@@ -94,6 +123,9 @@ public final class SpeedMineModule extends Module {
                 case DAMAGE:
                     if (mc.playerController.curBlockDamageMP >= 0.7f) {
                         mc.playerController.curBlockDamageMP = 1.0f;
+                        if (auto.getValue()) {
+                            mode.setValue(Mode.INSTANT);
+                        }
                     }
                     break;
                 case INSTANT:
@@ -102,6 +134,10 @@ public final class SpeedMineModule extends Module {
                     mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, event.getPos(), event.getFace()));
                     mc.playerController.onPlayerDestroyBlock(event.getPos());
                     mc.world.setBlockToAir(event.getPos());
+                    if (auto.getValue()) {
+                        autoPos = event.getPos();
+                        mode.setValue(Mode.DAMAGE);
+                    }
                     break;
                 case SEQUENTIAL:
                     mc.player.swingArm(EnumHand.MAIN_HAND);
