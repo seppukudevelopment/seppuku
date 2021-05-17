@@ -43,7 +43,7 @@ public final class SpeedMineModule extends Module {
 
     public final Value<Boolean> reset = new Value<Boolean>("Reset", new String[]{"Res"}, "Stops current block destroy damage from resetting if enabled.", true);
     public final Value<Boolean> doubleBreak = new Value<Boolean>("DoubleBreak", new String[]{"DoubleBreak", "Double", "DB"}, "Mining a block will also mine the block above it, if enabled.", false);
-    public final Value<Boolean> auto = new Value<Boolean>("Auto", new String[]{"Res"}, "When enabled, allows for multi-mining blocks.", false);
+    public final Value<Boolean> auto = new Value<Boolean>("Auto", new String[]{}, "When enabled, allows for multi-mining blocks.", false);
 
     public SpeedMineModule() {
         super("SpeedMine", new String[]{"FastMine"}, "Allows you to break blocks faster", "NONE", -1, ModuleType.WORLD);
@@ -134,7 +134,13 @@ public final class SpeedMineModule extends Module {
                     mc.playerController.onPlayerDestroyBlock(event.getPos());
                     mc.world.setBlockToAir(event.getPos());
                     if (auto.getValue()) {
-                        autoPos = event.getPos();
+                        if (autoPos == null) {
+                            autoPos = event.getPos();
+                        }
+                        else if (mc.world.getBlockState(autoPos).getBlock() == Blocks.AIR) {
+                            autoPos = event.getPos();
+                        }
+
                         mode.setValue(Mode.DAMAGE);
                     }
                     break;
