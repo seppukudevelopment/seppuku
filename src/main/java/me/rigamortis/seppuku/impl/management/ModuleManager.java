@@ -172,6 +172,7 @@ public final class ModuleManager {
         add(new FakePlayerModule());
         add(new FriendTabModule());
         add(new AmbianceModule());
+        add(new NoToast());
 
         // p2w experience
         if (Seppuku.INSTANCE.getCapeManager().hasCape())
