@@ -30,20 +30,24 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class BurrowModule extends Module {
 
     public enum Mode {
-        JUMP, GLITCH, TP
+        JUMP, GLITCH, TP, INSTA
     }
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"m"}, "The current mode to use.", Mode.JUMP);
+    public final Value<Mode> mode = new Value<>("Mode", new String[]{"m"}, "The current mode to use.", Mode.JUMP);
     public final Value<Float> glitchY = new Value<>("ModeGlitchY", new String[]{"mgy", "glitchy"}, "Using GLITCH mode, this will be your player's motionY.", 0.5f, 0.1f, 1.5f, 0.1f);
-    public final Value<Integer> tpHeight = new Value<>("ModeTPHeight", new String[]{"mtph", "mth", "tpheight", "tpy"}, "Using TP mode, this will be how many blocks above the player to TP.", 5, 1, 10, 1);
+    public final Value<Integer> tpHeight = new Value<>("ModeTPHeight", new String[]{"mtph", "mth", "tpheight", "tpy"}, "Using TP mode, this will be how many blocks above the player to TP.", 20, -30, 30, 1);
+    public final Value<Float> delay = new Value<>("ModeDelay", new String[]{"del", "d"}, "Delay(ms) to wait for placing obsidian after the initial jump. Not used in INSTA mode.", 200.0f, 1.0f, 500.0f, 1.0f);
+    public final Value<Boolean> smartTp = new Value<>("ModeSmartTp", new String[]{"smart", "adaptivetp", "a", "atp"}, "Searches for an air block to tp to for INSTA mode.", false);
+    public final Value<Boolean> noVoid = new Value<>("ModeNoVoid", new String[]{"nonegative", "nv"}, "Doesn't tp you under Y 0", true);
 
-    public final Value<Float> delay = new Value<>("Delay", new String[]{"del", "d"}, "Delay(ms) to wait for placing obsidian after the initial jump.", 200.0f, 1.0f, 500.0f, 1.0f);
     public final Value<Boolean> rotate = new Value<>("Rotate", new String[]{"rot", "r"}, "Rotate the players head to place the block.", true);
-    public final Value<Boolean> center = new Value<Boolean>("Center", new String[]{"centered", "c", "cen"}, "Centers the player on their current block when beginning to place.", false);
-    public final Value<Boolean> offGround = new Value<Boolean>("OffGround", new String[]{"offg", "og", "o"}, "Forces player onGround to false when enabled.", true);
+    public final Value<Boolean> center = new Value<>("Center", new String[]{"centered", "c", "cen"}, "Centers the player on their current block when beginning to place.", false);
+    public final Value<Boolean> offGround = new Value<>("OffGround", new String[]{"offg", "og", "o"}, "Forces player onGround to false when enabled.", true);
+    public final Value<Boolean> sneaking = new Value<>("Sneaking", new String[]{"sneak", "s", "sneaking"}, "Makes player sneak when enabled.", false);
 
     private final Timer timer = new Timer();
     private final RotationTask rotationTask = new RotationTask("BurrowTask", 9); // 9 == high priority
+    private BlockPos originalPos;
 
     public BurrowModule() {
         super("Burrow", new String[]{"burow", "burro", "brrw"}, "Places obsidian on yourself.", "NONE", -1, ModuleType.COMBAT);
@@ -54,22 +58,37 @@ public final class BurrowModule extends Module {
         super.onEnable();
 
         final Minecraft mc = Minecraft.getMinecraft();
+        originalPos = new BlockPos(mc.player.posX, mc.player.posY, mc.player.posZ);
         if (mc.player != null) {
             if (InventoryUtil.getBlockCount(Blocks.OBSIDIAN) > 0) {
-                // attempt to center
-                if (this.center.getValue()) {
-                    final double[] newPos = {Math.floor(mc.player.posX) + 0.5d, mc.player.posY, Math.floor(mc.player.posZ) + 0.5d};
-                    final CPacketPlayer.Position middleOfPos = new CPacketPlayer.Position(newPos[0], newPos[1], newPos[2], mc.player.onGround);
-                    if (!mc.world.isAirBlock(new BlockPos(newPos[0], newPos[1], newPos[2]).down())) {
-                        if (mc.player.posX != middleOfPos.x && mc.player.posZ != middleOfPos.z) {
-                            mc.player.connection.sendPacket(middleOfPos);
-                            mc.player.setPosition(newPos[0], newPos[1], newPos[2]);
+                if (adaptiveTpHeight() != 69420) { // this is really stupid but it works
+                    // attempt to center
+                    if (this.center.getValue()) {
+                        final double[] newPos = {Math.floor(mc.player.posX) + 0.5d, mc.player.posY, Math.floor(mc.player.posZ) + 0.5d};
+                        final CPacketPlayer.Position middleOfPos = new CPacketPlayer.Position(newPos[0], newPos[1], newPos[2], mc.player.onGround);
+                        if (!mc.world.isAirBlock(new BlockPos(newPos[0], newPos[1], newPos[2]).down())) {
+                            if (mc.player.posX != middleOfPos.x && mc.player.posZ != middleOfPos.z) {
+                                mc.player.connection.sendPacket(middleOfPos);
+                                mc.player.setPosition(newPos[0], newPos[1], newPos[2]);
+                            }
                         }
                     }
+
+                    if (this.mode.getValue() == Mode.INSTA) { // these 4 lines aren't mine, they're from https://github.com/ciruu1/InstantBurrow
+                        mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.41999998688698D, mc.player.posZ, true));
+                        mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.7531999805211997D, mc.player.posZ, true));
+                        mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 1.00133597911214D, mc.player.posZ, true));
+                        mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 1.16610926093821D, mc.player.posZ, true));
+                    } else {
+                        mc.player.jump(); // jump
+                        this.timer.reset(); // start timer
+                    }
+
+                } else {
+                    Seppuku.INSTANCE.getNotificationManager().addNotification("", "Not enough space to burrow", Notification.Type.WARNING, 3000);
+                    this.toggle();
                 }
 
-                mc.player.jump(); // jump
-                this.timer.reset(); // start timer
             } else {
                 Seppuku.INSTANCE.getNotificationManager().addNotification("", "You don't have any obsidian to use " + this.getDisplayName(), Notification.Type.WARNING, 3000);
                 this.toggle(); // toggle off
@@ -91,7 +110,7 @@ public final class BurrowModule extends Module {
 
         switch (event.getStage()) {
             case PRE:
-                if (this.timer.passed(this.delay.getValue())) {
+                if (this.timer.passed(this.delay.getValue()) || this.mode.getValue() == Mode.INSTA) {
                     if (InventoryUtil.getBlockCount(Blocks.OBSIDIAN) > 0) {
                         // get our hand swap context and ensure we have obsidian
                         final HandSwapContext handSwapContext = new HandSwapContext(
@@ -106,9 +125,7 @@ public final class BurrowModule extends Module {
                             // swap to obby
                             handSwapContext.handleHandSwap(false, mc);
 
-                            // get our block pos to place at
-                            final BlockPos positionToPlaceAt = new BlockPos(mc.player.getPositionVector()).down();
-                            if (this.place(positionToPlaceAt, mc)) { // we've attempted to place the block
+                            if (this.place(originalPos, mc)) { // we've attempted to place the block
                                 if (this.offGround.getValue()) {
                                     mc.player.onGround = false; // set onground to false
                                 }
@@ -120,8 +137,8 @@ public final class BurrowModule extends Module {
                                     case GLITCH:
                                         mc.player.motionY = this.glitchY.getValue();
                                         break;
-                                    case TP:
-                                        mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY - this.tpHeight.getValue(), mc.player.posZ, mc.player.onGround));
+                                    default: // tp and insta mode are the same
+                                        mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, (this.smartTp.getValue() ? adaptiveTpHeight() : mc.player.posY + this.tpHeight.getValue()), mc.player.posZ, mc.player.onGround));
                                         break;
                                 }
                             }
@@ -149,6 +166,25 @@ public final class BurrowModule extends Module {
         return null;
     }
 
+    private int adaptiveTpHeight() {
+        final Minecraft mc = Minecraft.getMinecraft();
+
+        int airblock = (-1 * Math.abs(tpHeight.getValue()));
+        if (noVoid.getValue() && airblock + mc.player.posY - 1 < 0) {
+            airblock = 3;
+        } // set start search height
+
+        while (airblock < Math.abs(tpHeight.getValue())) {
+            if (Math.abs(airblock) < 3 || !mc.world.isAirBlock(originalPos.offset(EnumFacing.UP, airblock)) || !mc.world.isAirBlock(originalPos.offset(EnumFacing.UP, airblock + 1))) {
+                airblock++;
+            } else {
+                return originalPos.getY() + airblock;
+            }
+        }
+
+        return 69420; // if there isn't any room
+    }
+
     private boolean place(final BlockPos pos, final Minecraft mc) {
         final Block block = mc.world.getBlockState(pos).getBlock();
 
@@ -158,7 +194,7 @@ public final class BurrowModule extends Module {
 
         final boolean activated = block.onBlockActivated(mc.world, pos, mc.world.getBlockState(pos), mc.player, EnumHand.MAIN_HAND, direction, 0, 0, 0);
 
-        if (activated)
+        if (activated && sneaking.getValue())
             mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
 
         final EnumFacing otherSide = direction.getOpposite();
@@ -172,7 +208,7 @@ public final class BurrowModule extends Module {
         mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(sideOffset, otherSide, EnumHand.MAIN_HAND, 0.5F, 0.5F, 0.5F));
         mc.player.connection.sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
 
-        if (activated)
+        if (activated && sneaking.getValue())
             mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
 
         return true;
