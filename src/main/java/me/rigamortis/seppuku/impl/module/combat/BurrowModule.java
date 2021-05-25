@@ -62,7 +62,7 @@ public final class BurrowModule extends Module {
 
         final Minecraft mc = Minecraft.getMinecraft();
         burrowPos = new BlockPos(mc.player.posX, Math.ceil(mc.player.posY), mc.player.posZ);
-        // ceil so you can burrow ontop of echests, path blocks etc (minor detail)
+        // ceil so you can burrow while standing on an echest
 
         if (doChecks()) {
             // attempt to center
@@ -194,6 +194,11 @@ public final class BurrowModule extends Module {
             }
 
             if (mc.world.getBlockState(burrowPos).getBlock().equals(Blocks.OBSIDIAN)) { // is the player already burrowed
+                return false;
+            }
+
+            if (!mc.world.isAirBlock(burrowPos.offset(EnumFacing.UP, 2))) { // is the player trapped
+                Seppuku.INSTANCE.getNotificationManager().addNotification("", "Not enough space to use " + this.getDisplayName(), Notification.Type.WARNING, 3000);
                 return false;
             }
 
