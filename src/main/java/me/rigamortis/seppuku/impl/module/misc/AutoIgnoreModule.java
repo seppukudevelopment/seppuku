@@ -10,7 +10,10 @@ import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.server.SPacketChat;
 import net.minecraft.util.StringUtils;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.event.HoverEvent;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.util.ArrayList;
@@ -77,15 +80,36 @@ public final class AutoIgnoreModule extends Module {
                                 switch (this.mode.getValue()) {
                                     case CLIENT:
                                         Seppuku.INSTANCE.getIgnoredManager().add(username);
-                                        Seppuku.INSTANCE.logChat("Added \247c" + username + "\247f to your ignore list");
+
+                                        ITextComponent ignoreMessage = (new TextComponentString("Added ")).appendSibling(
+                                                new TextComponentString("\247c" + username)
+                                                        .setStyle(new Style()
+                                                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, packet.chatComponent)))
+                                        ).appendSibling(new TextComponentString("\247f to your ignore list"));
+
+                                        Seppuku.INSTANCE.logcChat(ignoreMessage);
                                         break;
                                     case SERVER:
                                         Seppuku.INSTANCE.getChatManager().add("/ignore " + username);
+
+                                        ignoreMessage = (new TextComponentString("Ignored ")).appendSibling(
+                                                new TextComponentString("\247c" + username)
+                                                        .setStyle(new Style()
+                                                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, packet.chatComponent))));
+
+                                        Seppuku.INSTANCE.logcChat(ignoreMessage);
                                         break;
                                     case BOTH:
                                         Seppuku.INSTANCE.getChatManager().add("/ignore " + username);
                                         Seppuku.INSTANCE.getIgnoredManager().add(username);
-                                        Seppuku.INSTANCE.logChat("Added \247c" + username + "\247f to your ignore list");
+
+                                        ignoreMessage = (new TextComponentString("Added ")).appendSibling(
+                                                new TextComponentString("\247c" + username)
+                                                        .setStyle(new Style()
+                                                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, packet.chatComponent)))
+                                        ).appendSibling(new TextComponentString("\247f to your ignore list"));
+
+                                        Seppuku.INSTANCE.logcChat(ignoreMessage);
                                         break;
                                 }
                             }
