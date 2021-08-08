@@ -8,6 +8,7 @@ import me.rigamortis.seppuku.api.gui.hud.component.*;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.RenderUtil;
+import me.rigamortis.seppuku.api.value.Regex;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.config.ModuleConfig;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
@@ -632,6 +633,22 @@ public final class ModuleListComponent extends ResizableHudComponent {
                             this.addComponentToButtons(blocksComponent);
                         }
                     }
+                } else if (value.getValue() instanceof Regex) {
+                    TextComponent valueText = new TextComponent(value.getName(), value.getValue().toString(), false);
+                    valueText.setTooltipText(value.getDesc());
+                    valueText.returnListener = new ComponentListener() {
+                        @Override
+                        public void onComponentEvent() {
+                            final Regex regex = (Regex) value.getValue();
+                            regex.setPatternString(valueText.displayValue);
+                            if(regex.getPattern() == null)
+                                Seppuku.INSTANCE.logfChat("%s - %s: Invalid or empty regular expression; no input will match with pattern.", module.getDisplayName(), value.getName());
+                            Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class); // save configs
+                            Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventUIValueChanged(value));
+                        }
+                    };
+                    components.add(valueText);
+                    this.addComponentToButtons(valueText);
                 }
             }
         }

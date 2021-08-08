@@ -6,6 +6,7 @@ import me.rigamortis.seppuku.api.event.command.EventCommandLoad;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.ReflectionUtil;
 import me.rigamortis.seppuku.api.util.StringUtil;
+import me.rigamortis.seppuku.api.value.Regex;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.command.*;
 import me.rigamortis.seppuku.impl.config.ModuleConfig;
@@ -223,6 +224,29 @@ public final class CommandManager {
                                     Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class);
                                 } else {
                                     Seppuku.INSTANCE.errorChat("Invalid input " + "\"" + split[2] + "\" expected a string");
+                                }
+                            }
+
+                            if (v.getValue() instanceof Regex) {
+                                if (!this.clamp(input, 2, 3)) {
+                                    this.printUsage();
+                                    return;
+                                }
+
+                                final Regex regex = (Regex) v.getValue();
+                                if (split.length == 2 || split[2] == "") {
+                                    regex.setPatternString("");
+                                    Seppuku.INSTANCE.logChat(module.getDisplayName() + " \2477" + v.getName() + "\247f cleared");
+                                } else {
+                                    final String oldPatternString = regex.getPatternString();
+                                    regex.setPatternString(split[2]);
+                                    if (regex.getPattern() == null) {
+                                        regex.setPatternString(oldPatternString);
+                                        Seppuku.INSTANCE.errorChat("Invalid input " + "\"" + split[2] + "\" expected a valid regular expression or an empty string");
+                                    } else {
+                                        Seppuku.INSTANCE.logChat(module.getDisplayName() + " \2477" + v.getName() + "\247f set to " + split[2]);
+                                        Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class);
+                                    }
                                 }
                             }
                         } else {
