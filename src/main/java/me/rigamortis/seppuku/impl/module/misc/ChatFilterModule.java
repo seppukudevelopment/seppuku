@@ -5,6 +5,7 @@ import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.StringUtil;
+import me.rigamortis.seppuku.api.value.Regex;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.server.SPacketChat;
@@ -13,6 +14,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Author Seth
@@ -28,6 +30,7 @@ public final class ChatFilterModule extends Module {
     public final Value<Boolean> death = new Value<>("Death", new String[]{"dead", "d"}, "Attempts to prevent death messages.", false);
     public final Value<Boolean> blue = new Value<>("BlueText", new String[]{"Blue", "b"}, "Cancels blue-text containing messages.", false);
     public final Value<Boolean> green = new Value<>("GreenText", new String[]{"Green", "g"}, "Cancels green-text containing messages.", false);
+    public final Value<Regex> regex = new Value<>("Regex", new String[]{"re"}, "Messages matching this regular expression will be hidden. Leave it blank to disable.", new Regex());
 
     private final List<String> cache = new ArrayList<>();
 
@@ -168,6 +171,13 @@ public final class ChatFilterModule extends Module {
                         if (containsUnicode) {
                             packet.chatComponent = new TextComponentString(sb.toString());
                         }
+                    }
+                }
+
+                final Pattern regexPattern = this.regex.getValue().getPattern();
+                if (regexPattern != null) {
+                    if (regexPattern.matcher(packet.getChatComponent().getUnformattedText()).matches()) {
+                        event.setCanceled(true);
                     }
                 }
             }

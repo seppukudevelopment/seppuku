@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import me.rigamortis.seppuku.api.config.Configurable;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.FileUtil;
+import me.rigamortis.seppuku.api.value.Regex;
 import me.rigamortis.seppuku.api.value.Value;
 
 import java.awt.*;
@@ -67,6 +68,8 @@ public class ModuleConfig extends Configurable {
                         val.setEnumValue(entry.getValue().getAsString());
                     } else if (val.getValue() instanceof Color) {
                         val.setValue(new Color((int) Long.parseLong(entry.getValue().getAsString(), 16)));
+                    } else if (val.getValue() instanceof Regex) {
+                        val.setValue(new Regex(entry.getValue().getAsString()));
                     }
                 }
             }
@@ -99,6 +102,8 @@ public class ModuleConfig extends Configurable {
                     moduleJsonObject.addProperty(value.getName(), ((Enum) value.getValue()).name());
                 } else if (value.getValue() instanceof Color) {
                     moduleJsonObject.addProperty(value.getName(), Integer.toHexString(((Color) value.getValue()).getRGB()).toUpperCase());
+                } else if (value.getValue() instanceof Regex) {
+                    moduleJsonObject.addProperty(value.getName(), ((Regex) value.getValue()).getPatternString());
                 }
             });
         }
