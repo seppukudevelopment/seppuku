@@ -23,7 +23,7 @@ import java.lang.reflect.Field;
 public final class LocateFeatureCommand extends Command {
 
     public LocateFeatureCommand() {
-        super("LocateFeature", new String[]{"LocFeature", "LocateFeat", "LF"}, "Like /locate, but client-side and with an option to override the origin for calculating the nearest feature", "LocateFeature <Feature name>\nLocate <Feature name> <X> <Z>");
+        super("LocateFeature", new String[]{"LocFeature", "LocateFeat", "LF"}, "Like /locate, but client-side and with an option to override the origin for calculating the nearest feature", "LocateFeature <Feature name>\nLocateFeature <Feature name> <X> <Z>");
     }
 
     @Override
