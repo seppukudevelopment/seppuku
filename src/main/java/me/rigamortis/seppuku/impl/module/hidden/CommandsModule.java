@@ -69,10 +69,6 @@ public final class CommandsModule extends Module {
         final Minecraft mc = Minecraft.getMinecraft();
         if (mc.player != null) {
             if (mc.currentScreen instanceof GuiChat) {
-                if (event.getKeyCode() == 15) { // tab
-                    event.setCanceled(true);
-                }
-
                 final int prefixLength = this.prefix.getValue().length();
                 String input = ((GuiChat) mc.currentScreen).inputField.getText();
 
@@ -81,6 +77,10 @@ public final class CommandsModule extends Module {
                 }
 
                 if (input.startsWith(this.prefix.getValue())) {
+                    if (event.getKeyCode() == 15) { // tab
+                        event.setCanceled(true);
+                    }
+
                     if (input.length() > prefixLength) {
                         input = input.substring(prefixLength);
                     }
