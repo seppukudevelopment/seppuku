@@ -25,8 +25,10 @@ public final class AutoWalkModule extends Module {
     public final Value<String> baritoneCommand = new Value<>("Command", new String[]{"Com", "C", "Text"}, "The message you want to send to communicate with baritone. (include prefix!)", "#explore");
     public final Value<String> baritoneCancelCommand = new Value<>("Cancel", new String[]{"BaritoneCancel", "Cancel", "Stop", "Text"}, "The cancel baritone command to send when disabled. (include prefix!)", "#cancel");
     public final Value<Float> waitTime = new Value<Float>("MsgDelay", new String[]{"MessageDelay", "CommandDelay", "Delay", "Wait", "Time", "md", "d"}, "Delay(ms) between sending baritone commands when standing.", 3000.0f, 0.0f, 8000.0f, 100.0f);
+    public final Value<Float> standingTime = new Value<Float>("StandingTime", new String[]{"SDelay", "StandingT", "StandingWait", "StandingW", "SWait", "st"}, "Time(ms) needed to count as standing still. Prevents re-pathing when rubberbanding", 250.0f, 0.0f, 4000.0f, 50.0f);
 
     private final Timer sendCommandTimer = new Timer();
+    private final Timer movementTimer = new Timer();
 
     public AutoWalkModule() {
         super("AutoWalk", new String[]{"AutomaticWalk"}, "Automatically presses the forward key or sends commands to baritone.", "NONE", -1, ModuleType.MOVEMENT);
@@ -95,8 +97,13 @@ public final class AutoWalkModule extends Module {
             }
 
             if (this.useBaritone.getValue()) {
-                boolean isStanding = Minecraft.getMinecraft().player.motionX == 0 && Minecraft.getMinecraft().player.motionZ == 0;
-                if (isStanding && this.sendCommandTimer.passed(this.waitTime.getValue())) {
+                boolean isStanding = true; // you could probably remove this flag now that there's a standing time check
+                if (Minecraft.getMinecraft().player.motionX != 0 || Minecraft.getMinecraft().player.motionZ != 0) {
+                    this.movementTimer.reset();
+                    isStanding = false;
+                }
+
+                if (isStanding && this.movementTimer.passed(this.standingTime.getValue()) && this.sendCommandTimer.passed(this.waitTime.getValue())) {
                     this.sendCommandTimer.reset();
                     this.sendBaritoneCommand();
                 }
