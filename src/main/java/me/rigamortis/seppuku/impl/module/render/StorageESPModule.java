@@ -16,6 +16,8 @@ import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
+import java.awt.*;
+
 /**
  * Author Seth
  * 5/17/2019 @ 8:45 PM.
@@ -30,6 +32,11 @@ public final class StorageESPModule extends Module {
 
     public final Value<Boolean> nametag = new Value<Boolean>("Nametag", new String[]{"Nametag", "Tag", "Tags", "Ntag", "name", "names"}, "Renders the name of the drawn storage object.", false);
     public final Value<Integer> opacity = new Value<Integer>("Opacity", new String[]{"Opacity", "Transparency", "Alpha"}, "Opacity of the rendered esp.", 128, 0, 255, 1);
+    public final Value<Boolean> tracer = new Value<Boolean>("Tracer", new String[]{"TracerLine", "trace", "line"}, "Display a tracer line to each storage object.", false);
+    public final Value<Color> tracerColor = new Value<Color>("TracerColor", new String[]{"TracerColor", "TColor", "TC"}, "Edit the storage object tracer color.", new Color(0, 0, 255));
+    public final Value<Boolean> tracerStorageColor = new Value<Boolean>("TracerStorageColor", new String[]{"TracerStorageColor", "TStorageColor", "TSColor", "TStorageC", "TSC"}, "Use the storage object's color as the tracer color.", false);
+    public final Value<Float> tracerWidth = new Value<Float>("TracerWidth", new String[]{"TracerWidth", "TWidth", "TW"}, "Pixel width of each tracer-line.", 0.5f, 0.1f, 5.0f, 0.1f);
+    public final Value<Integer> tracerAlpha = new Value<Integer>("TracerAlpha", new String[]{"TracerAlpha", "TAlpha", "TA", "TracerOpacity", "TOpacity", "TO"}, "Alpha value for each drawn line.", 255, 1, 255, 1);
 
     private final ICamera camera = new Frustum();
 
@@ -51,8 +58,15 @@ public final class StorageESPModule extends Module {
                         final float[] bounds = this.convertBounds(bb, event.getScaledResolution().getScaledWidth(), event.getScaledResolution().getScaledHeight());
                         if (bounds != null) {
                             if (this.mode.getValue() == Mode.TWO_D) { // 2D
+                                // Box
                                 RenderUtil.drawOutlineRect(bounds[0], bounds[1], bounds[2], bounds[3], 1.5f, ColorUtil.changeAlpha(0xAA000000, this.opacity.getValue()));
-                                RenderUtil.drawOutlineRect(bounds[0] - 0.5f, bounds[1] - 0.5f, bounds[2] + 0.5f, bounds[3] + 0.5f, 0.5f, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
+                                RenderUtil.drawOutlineRect(bounds[0] - 0.5f, bounds[1] - 0.5f, bounds[2] + 0.5f, bounds[3] + 0.5f, 0.5f, this.getBoxColor(te));
+
+                                // Line
+                                if (this.tracer.getValue()) {
+                                    final GLUProjection.Projection projection = GLUProjection.getInstance().project((bb.minX + bb.maxX) / 2, (bb.minY + bb.maxY) / 2, (bb.minZ + bb.maxZ) / 2, GLUProjection.ClampMode.NONE, true);
+                                    RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), event.getScaledResolution().getScaledWidth() / 2.0f, event.getScaledResolution().getScaledHeight() / 2.0f, this.tracerWidth.getValue(), this.getTracerColor(te));
+                                }
                             }
 
                             if (this.nametag.getValue()) {
@@ -81,8 +95,18 @@ public final class StorageESPModule extends Module {
                     if (this.isTileStorage(te)) {
                         final AxisAlignedBB bb = this.boundingBoxForEnt(te);
                         if (bb != null) {
-                            //RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
-                            //RenderUtil.drawBoundingBox(bb, 1.5f, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
+                            // Line
+                            if (this.tracer.getValue()) {
+                                // need to update modelview matrix or it freaks out when rendering another tracer, not sure why though
+                                // XXX this is done in other places, ctrl+shift+f to other files
+                                RenderUtil.updateModelViewProjectionMatrix();
+                                final GLUProjection.Vector3D forward = GLUProjection.getInstance().getLookVector().sadd(GLUProjection.getInstance().getCamPos());
+                                RenderUtil.drawLine3D(forward.x, forward.y, forward.z, (bb.minX + bb.maxX) / 2, (bb.minY + bb.maxY) / 2, (bb.minZ + bb.maxZ) / 2, this.tracerWidth.getValue(), this.getTracerColor(te));
+                            }
+
+                            // Box
+                            //RenderUtil.drawFilledBox(bb, this.getBoxColor(te));
+                            //RenderUtil.drawBoundingBox(bb, 1.5f, this.getBoxColor(te));
                             camera.setPosition(mc.getRenderViewEntity().posX, mc.getRenderViewEntity().posY, mc.getRenderViewEntity().posZ);
 
                             if (camera.isBoundingBoxInFrustum(new AxisAlignedBB(bb.minX + mc.getRenderManager().viewerPosX,
@@ -91,8 +115,9 @@ public final class StorageESPModule extends Module {
                                     bb.maxX + mc.getRenderManager().viewerPosX,
                                     bb.maxY + mc.getRenderManager().viewerPosY,
                                     bb.maxZ + mc.getRenderManager().viewerPosZ))) {
-                                RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
-                                RenderUtil.drawBoundingBox(bb, 1.5f, ColorUtil.changeAlpha(this.getColor(te), this.opacity.getValue()));
+                                final int colorWithAlpha = this.getBoxColor(te);
+                                RenderUtil.drawFilledBox(bb, colorWithAlpha);
+                                RenderUtil.drawBoundingBox(bb, 1.5f, colorWithAlpha);
                             }
                         }
                     }
@@ -189,7 +214,7 @@ public final class StorageESPModule extends Module {
     }
 
 
-    private int getColor(TileEntity te) {
+    private int getBaseColor(TileEntity te) {
         if (te instanceof TileEntityChest) {
             return 0xFFFFC417;
         }
@@ -216,6 +241,22 @@ public final class StorageESPModule extends Module {
             return (255 << 24) | shulkerBox.getColor().getColorValue();
         }
         return 0xFFFFFFFF;
+    }
+
+    private int getBoxColor(TileEntity te) {
+        return ColorUtil.changeAlpha(this.getBaseColor(te), this.opacity.getValue());
+    }
+
+    private int getTracerColor(TileEntity te) {
+        int baseColor;
+        if (this.tracerStorageColor.getValue()) {
+            baseColor = this.getBaseColor(te);
+        }
+        else {
+            baseColor = this.tracerColor.getValue().getRGB();
+        }
+
+        return ColorUtil.changeAlpha(baseColor, this.tracerAlpha.getValue());
     }
 
     private float[] convertBounds(AxisAlignedBB bb, int width, int height) {

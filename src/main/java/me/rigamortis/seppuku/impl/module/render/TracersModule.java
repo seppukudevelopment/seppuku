@@ -4,6 +4,7 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.render.EventRender2D;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.api.util.GLUProjection;
 import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
@@ -51,6 +52,7 @@ public final class TracersModule extends Module {
     }
 
     public final Value<Float> width = new Value<Float>("Width", new String[]{"Wid"}, "Pixel width of each tracer-line.", 0.5f, 0.0f, 5.0f, 0.1f);
+    public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"Alpha", "A", "Opacity", "Op"}, "Alpha value for each drawn line.", 255, 1, 255, 1);
 
     public TracersModule() {
         super("Tracers", new String[]{"Trace", "Tracer", "Snapline", "Snaplines"}, "Draws a line to entities", "NONE", -1, ModuleType.RENDER);
@@ -88,13 +90,11 @@ public final class TracersModule extends Module {
                 if (e != null) {
                     if (this.checkFilter(e)) {
                         final Vec3d pos = MathUtil.interpolateEntity(e, event.getPartialTicks()).subtract(mc.getRenderManager().renderPosX, mc.getRenderManager().renderPosY, mc.getRenderManager().renderPosZ);
-                        final boolean bobbing = mc.gameSettings.viewBobbing;
-                        mc.gameSettings.viewBobbing = false;
-                        mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
-                        final Vec3d forward = new Vec3d(0, 0, 1).rotatePitch(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationPitch)).rotateYaw(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationYaw));
-                        RenderUtil.drawLine3D(forward.x, forward.y + mc.player.getEyeHeight(), forward.z, pos.x, pos.y, pos.z, this.width.getValue(), this.getColor(e));
-                        mc.gameSettings.viewBobbing = bobbing;
-                        mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
+                        // need to update modelview matrix or it freaks out when rendering another tracer, not sure why though
+                        // XXX this is done in other places, ctrl+shift+f to other files
+                        RenderUtil.updateModelViewProjectionMatrix();
+                        final GLUProjection.Vector3D forward = GLUProjection.getInstance().getLookVector().sadd(GLUProjection.getInstance().getCamPos());
+                        RenderUtil.drawLine3D(forward.x, forward.y, forward.z, pos.x, pos.y, pos.z, this.width.getValue(), this.getColor(e));
                     }
                 }
             }
@@ -155,7 +155,7 @@ public final class TracersModule extends Module {
             }
         }
 
-        return ret;
+        return ColorUtil.changeAlpha(ret, this.alpha.getValue());
     }
 
 }
