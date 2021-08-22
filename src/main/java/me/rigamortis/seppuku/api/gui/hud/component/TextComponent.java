@@ -3,13 +3,14 @@ package me.rigamortis.seppuku.api.gui.hud.component;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.RenderUtil;
-import me.rigamortis.seppuku.api.util.Timer;
+import me.rigamortis.seppuku.api.util.StringUtil;
 import me.rigamortis.seppuku.impl.gui.hud.component.ColorsComponent;
 import me.rigamortis.seppuku.impl.gui.hud.component.module.ModuleListComponent;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.DataFlavor;
 import java.util.logging.Level;
 
@@ -18,7 +19,7 @@ import java.util.logging.Level;
  */
 public class TextComponent extends HudComponent {
 
-    public String displayValue, selectedText;
+    private String displayValue;
     public boolean focused;
     public boolean digitOnly;
     public ComponentListener returnListener;
@@ -26,66 +27,110 @@ public class TextComponent extends HudComponent {
 
     protected Texture checkTexture;
 
-    protected Timer backspaceTimer = new Timer(), backspaceWaitTimer = new Timer();
-    protected boolean doBackspacing = false;
-
+    private int textCursor = 0;
+    private int textCursorOffset = 0;
+    private int selectCursor = 0;
+    private int selectCursorOffset = 0;
     private int shiftLength = 0;
+    private boolean dirty = false;
 
-    private static final int CHECK_WIDTH = 10;
-    private static final int BLOCK_WIDTH = 2;
+    // space occupied from left to right: border, text, spacing, check, border
+    protected static final int BORDER = 1;
+    protected static final int SPACING = 1;
+    protected static final int SHIFT_GAP = 8;
+    protected static final int CHECK_WIDTH = 8;
+    protected static final int BLOCK_WIDTH = 2;
+    protected static final float ICON_V_OFFSET = 0.5f;
 
     public TextComponent(String name, String displayValue, boolean digitOnly) {
         super(name);
 
         this.displayValue = displayValue;
-        this.selectedText = "";
         this.focused = false;
         this.digitOnly = digitOnly;
 
         this.checkTexture = new Texture("check.png");
     }
 
+    protected void renderReserved(int mouseX, int mouseY, float partialTicks, String renderName, boolean renderValue, float reservedLeft, float reservedRight) {
+        // calculate dimensions that can be used given reserved left/right
+        final float left = this.getX() + reservedLeft;
+        final float right = this.getX() + this.getW() - reservedRight;
+
+        // draw gradient if component has mouse hovering
+        if (this.isMouseInside(mouseX, mouseY))
+            RenderUtil.drawGradientRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x30909090, 0x00101010);
+
+        // draw background
+        RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x45303030);
+
+        // update text shift and cursor offsets if needed
+        String displayValueText = renderName;
+        if (renderValue) {
+            displayValueText += this.displayValue;
+        }
+
+        if (this.focused && renderValue) {
+            if (this.dirty) {
+                this.dirty = false;
+                final String beforeTextCursor = displayValueText.substring(0, renderName.length() + this.textCursor);
+                this.textCursorOffset = Minecraft.getMinecraft().fontRenderer.getStringWidth(beforeTextCursor);
+
+                if (this.selectCursor == this.textCursor) {
+                    this.selectCursorOffset = this.textCursorOffset;
+                } else {
+                    final String beforeSelectCursor = displayValueText.substring(0, renderName.length() + this.selectCursor);
+                    this.selectCursorOffset = Minecraft.getMinecraft().fontRenderer.getStringWidth(beforeSelectCursor);
+                }
+
+                // shift gap is the minimum amount of space to leave after the
+                // text cursor (block) so the user can see that there is more
+                // text to the right
+                final int shiftStart = Math.round(right - left) - CHECK_WIDTH - SPACING - BLOCK_WIDTH - BORDER * 2 - SHIFT_GAP;
+                if (this.textCursorOffset > shiftStart) {
+                    this.shiftLength = this.textCursorOffset - shiftStart;
+                } else {
+                    this.shiftLength = 0;
+                }
+            }
+        } else {
+            this.shiftLength = 0;
+        }
+
+        // draw text
+        Minecraft.getMinecraft().fontRenderer.drawString(displayValueText, (int) left + BORDER - this.shiftLength, (int) this.getY() + BORDER, this.focused ? 0xFFFFFFFF : 0xFFAAAAAA);
+
+        if (this.focused && renderValue) {
+            // draw text selection background
+            if (this.textCursor != this.selectCursor) {
+                final int start = Math.min(this.textCursorOffset, this.selectCursorOffset);
+                final int end = Math.max(this.textCursorOffset, this.selectCursorOffset);
+                RenderUtil.drawRect(left + start - this.shiftLength, this.getY(), left + end - this.shiftLength, this.getY() + this.getH(), 0x45FFFFFF);
+            }
+
+            // draw text cursor (block)
+            float blockX = left + BORDER + this.textCursorOffset - this.shiftLength;
+            float blockY = this.getY() + BORDER;
+            final int blockHeight = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - BORDER * 2;
+            RenderUtil.drawRect(blockX, blockY, blockX + BLOCK_WIDTH, blockY + blockHeight, 0xFFFFFFFF);
+
+            // draw checkbox
+            RenderUtil.drawRect(right - CHECK_WIDTH - BORDER - SPACING, this.getY(), right, this.getY() + this.getH(), 0xFF101010);
+            this.checkTexture.bind();
+            this.checkTexture.render(right - CHECK_WIDTH - BORDER, this.getY() + ICON_V_OFFSET, CHECK_WIDTH, CHECK_WIDTH);
+        }
+    }
+
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         super.render(mouseX, mouseY, partialTicks);
-
-        if (isMouseInside(mouseX, mouseY))
-            RenderUtil.drawGradientRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x30909090, 0x00101010);
-
-        RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x45303030);
 
         String renderName = this.getName();
         if (this.getDisplayName() != null) {
             renderName = this.getDisplayName();
         }
 
-        final String displayValueText = renderName + ": " + this.displayValue;
-        this.shiftLength = 0;
-        if (this.focused) {
-            if (Minecraft.getMinecraft().fontRenderer.getStringWidth(displayValueText) > (this.getW() - CHECK_WIDTH - BLOCK_WIDTH - 2))
-                this.shiftLength += Math.abs(Minecraft.getMinecraft().fontRenderer.getStringWidth(displayValueText) - (this.getW() - CHECK_WIDTH - BLOCK_WIDTH - 2));
-        }
-
-        Minecraft.getMinecraft().fontRenderer.drawString(displayValueText, (int) this.getX() + 1 - this.shiftLength, (int) this.getY() + 1, this.focused ? 0xFFFFFFFF : 0xFFAAAAAA);
-
-        if (this.focused) {
-            if (!this.selectedText.equals("")) {
-                RenderUtil.drawRect(this.getX() + Minecraft.getMinecraft().fontRenderer.getStringWidth(renderName + ": ") - this.shiftLength, this.getY(), this.getX() + Minecraft.getMinecraft().fontRenderer.getStringWidth(displayValueText), this.getY() + this.getH(), 0x45FFFFFF);
-            }
-
-            float blockX = this.getX() + 1 - this.shiftLength + Minecraft.getMinecraft().fontRenderer.getStringWidth(renderName + ": " + this.displayValue);
-            float blockY = this.getY() + 1;
-            final int blockHeight = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - 2;
-            RenderUtil.drawRect(blockX, blockY, blockX + BLOCK_WIDTH, blockY + blockHeight, 0xFFFFFFFF);
-
-            // check
-            RenderUtil.drawRect(this.getX() + this.getW() - CHECK_WIDTH, this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0xFF101010);
-            this.checkTexture.bind();
-            this.checkTexture.render(this.getX() + this.getW() - 9, this.getY() + 0.5f, 8, 8);
-
-            // handle holding backspace
-            this.handleBackspacing();
-        }
+        this.renderReserved(mouseX, mouseY, partialTicks, renderName + ": ", true, 0, 0);
     }
 
     @Override
@@ -140,24 +185,29 @@ public class TextComponent extends HudComponent {
                 textListener.onKeyTyped(keyCode);
             }
 
-            if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
+            final boolean ctrlDown = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
+            if (ctrlDown) {
                 switch (keyCode) {
                     case Keyboard.KEY_A:
-                        this.selectedText = this.displayValue;
+                        this.selectAll();
                         return;
                     case Keyboard.KEY_V:
-                        if (!this.digitOnly) {
-                            this.displayValue += this.getClipBoard();
-                        } else if (this.getClipBoard().matches("[0-9]+") /* is a number */) {
-                            this.displayValue += this.getClipBoard();
-                        }
+                        this.insertText(this.getClipBoard());
                         return;
                     case Keyboard.KEY_X:
+                        if (this.setClipBoard(this.getSelection())) {
+                            this.onRemoveSelectedText();
+                        }
+                        return;
                     case Keyboard.KEY_C:
+                        this.setClipBoard(this.getSelection());
                         return;
                 }
+
+                return; // dont do anything else or you will get special characters typed
             }
 
+            final boolean shiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
             switch (keyCode) {
                 case Keyboard.KEY_ESCAPE:
                     this.focused = false;
@@ -165,30 +215,28 @@ public class TextComponent extends HudComponent {
                 case Keyboard.KEY_RETURN:
                     this.enterPressed();
                     return;
-                //case Keyboard.KEY_SPACE:
-                //    if (!this.digitOnly) {
-                //        this.displayValue += ' ';
-                //    }
-                //    break;
                 case Keyboard.KEY_BACK:
                 case Keyboard.KEY_DELETE:
-                    this.backspaceWaitTimer.reset();
-                    this.doBackspacing = true;
-                    if (this.displayValue.length() > 0) {
-                        if (!this.onRemoveSelectedText()) {
-                            this.displayValue = this.displayValue.substring(0, this.displayValue.length() - 1);
-                        }
-                    }
+                    final int delta = (keyCode == Keyboard.KEY_DELETE) ? 1 : -1;
+                    this.deleteText(delta);
                     return;
                 case Keyboard.KEY_CLEAR:
-                    if (this.displayValue.length() > 0) {
-                        this.displayValue = "";
-                    }
+                    this.setText("");
                     return;
                 case Keyboard.KEY_LEFT:
+                    this.setTextCursor(this.textCursor - 1, shiftDown);
+                    return;
                 case Keyboard.KEY_RIGHT:
+                    this.setTextCursor(this.textCursor + 1, shiftDown);
+                    return;
                 case Keyboard.KEY_UP:
+                case Keyboard.KEY_HOME:
+                    this.setTextCursor(0, shiftDown);
+                    return;
                 case Keyboard.KEY_DOWN:
+                case Keyboard.KEY_END:
+                    this.setTextCursor(this.displayValue.length(), shiftDown);
+                    return;
                 case Keyboard.KEY_LSHIFT:
                 case Keyboard.KEY_RSHIFT:
                 case Keyboard.KEY_LCONTROL:
@@ -200,24 +248,11 @@ public class TextComponent extends HudComponent {
                 case Keyboard.KEY_RMENU:
                 case Keyboard.KEY_LMETA:
                     return;
-                case Keyboard.KEY_PERIOD:
-                    if (this.digitOnly) {
-                        this.displayValue += typedChar;
-                    }
-                    break;
                 default:
                     break;
             }
 
-            if (digitOnly && !Character.isDigit(typedChar))
-                return;
-
-            this.onRemoveSelectedText();
-
-            //if (!digitOnly && !Character.isLetterOrDigit(typedChar))
-            //    return;
-
-            this.displayValue += typedChar;
+            this.insertText(typedChar);
         }
     }
 
@@ -226,7 +261,6 @@ public class TextComponent extends HudComponent {
         if (returnListener != null)
             returnListener.onComponentEvent();
 
-        this.shiftLength = 0;
         this.focused = false;
     }
 
@@ -239,27 +273,20 @@ public class TextComponent extends HudComponent {
     }
 
     protected boolean onRemoveSelectedText() {
-        if (!this.selectedText.equals("")) {
-            this.displayValue = "";
-            this.selectedText = "";
-            return true;
+        if (this.textCursor == this.selectCursor) {
+            return false;
         }
-        return false;
+
+        this.deleteText(this.textCursor, this.selectCursor);
+        return true;
     }
 
-    protected void handleBackspacing() {
-        if (Keyboard.isKeyDown(Keyboard.KEY_BACK) || Keyboard.isKeyDown(Keyboard.KEY_DELETE)) {
-            if (this.doBackspacing && this.backspaceWaitTimer.passed(600)) {
-                if (this.backspaceTimer.passed(75)) {
-                    if (this.displayValue.length() > 0) {
-                        this.displayValue = this.displayValue.substring(0, this.displayValue.length() - 1);
-                    }
-                    this.backspaceTimer.reset();
-                }
-            }
-        } else {
-            this.doBackspacing = false;
+    @Override
+    public void setW(float w) {
+        if (this.getW() != w) {
+            this.dirty = true;
         }
+        super.setW(w);
     }
 
     public String getClipBoard() {
@@ -271,8 +298,109 @@ public class TextComponent extends HudComponent {
         return "";
     }
 
+    public boolean setClipBoard(String s) {
+        try {
+            final StringSelection sel = new StringSelection(s);
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, sel);
+        } catch (Exception e) {
+            Seppuku.INSTANCE.getLogger().log(Level.WARNING, "Error setting clipboard while using " + this.getName());
+            return false;
+        }
+
+        return true;
+    }
+
+    public String getSelection() {
+        if (!this.focused || this.textCursor == this.selectCursor) {
+            // textCursor or selectCursor may be invalid if not focused
+            return "";
+        }
+
+        if(this.textCursor > this.selectCursor) {
+            return this.displayValue.substring(this.selectCursor, this.textCursor);
+        } else {
+            return this.displayValue.substring(this.textCursor, this.selectCursor);
+        }
+    }
+
     public void focus() {
+        this.textCursor = this.selectCursor = this.displayValue.length();
         this.focused = true;
+        this.dirty = true;
+    }
+
+    public void setTextCursor(int pos, boolean shiftDown) {
+        if (pos <= 0) {
+            pos = 0;
+        } else if(pos > this.displayValue.length()) {
+            pos = this.displayValue.length();
+        }
+
+        final int selectPos = shiftDown ? this.selectCursor : pos;
+        if (this.textCursor != pos || this.selectCursor != selectPos) {
+            this.textCursor = pos;
+            this.selectCursor = selectPos;
+            this.dirty = true;
+        }
+    }
+
+    public void insertText(char character) {
+        this.insertText(String.valueOf(character));
+    }
+
+    public void insertText(String str) {
+        if (this.digitOnly && !str.matches("[0-9.]+") /* is a number */) {
+            return;
+        }
+
+        this.onRemoveSelectedText();
+
+        this.displayValue = StringUtil.insertAt(this.displayValue, str, this.textCursor);
+        this.setTextCursor(this.textCursor + str.length(), false);
+    }
+
+    public void deleteText(int start, int end) {
+        // sanitise range
+        start = Math.min(Math.max(start, 0), this.displayValue.length());
+        end = Math.min(Math.max(end, 0), this.displayValue.length());
+        if (start == end) {
+            return;
+        } else if(start > end) {
+            final int temp = start;
+            start = end;
+            end = temp;
+        }
+
+        this.displayValue = StringUtil.removeRange(this.displayValue, start, end);
+        this.setTextCursor(start, false);
+    }
+
+    public void deleteText(int delta) {
+        if (delta == 0) {
+            return;
+        }
+
+        if (!this.onRemoveSelectedText()) {
+            this.deleteText(this.textCursor, this.textCursor + delta);
+        }
+    }
+
+    public void selectAll() {
+        this.textCursor = this.displayValue.length();
+        this.selectCursor = 0;
+        this.dirty = true;
+    }
+
+    public String getText() {
+        return this.displayValue;
+    }
+
+    public void setText(String text) {
+        this.displayValue = text;
+        this.selectCursor = this.textCursor = text.length();
+        if (this.focused) {
+            this.dirty = true;
+        }
     }
 
     public interface TextComponentListener {

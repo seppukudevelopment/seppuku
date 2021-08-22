@@ -162,8 +162,8 @@ public final class BlocksComponent extends HudComponent {
     public void mouseClick(int mouseX, int mouseY, int button) {
         super.mouseClick(mouseX, mouseY, button);
 
-        if (this.searchBox.displayValue.equals("..."))
-            this.searchBox.displayValue = "";
+        if (this.searchBox.getText().equals("..."))
+            this.searchBox.setText("");
 
         this.searchBox.mouseClick(mouseX, mouseY, button);
     }
@@ -212,7 +212,7 @@ public final class BlocksComponent extends HudComponent {
         super.keyTyped(typedChar, keyCode);
         this.searchBox.keyTyped(typedChar, keyCode);
 
-        if (this.searchBox.displayValue.equals("") && this.displayedBlocks.size() != 0) {
+        if (this.searchBox.getText().equals("") && this.displayedBlocks.size() != 0) {
             this.displayedBlocks.clear();
             this.displayedBlocks.addAll(this.blocks);
         } else {
@@ -220,9 +220,9 @@ public final class BlocksComponent extends HudComponent {
         }
 
         for (Block block : this.blocks) {
-            if (CharUtils.isAsciiNumeric(typedChar) && NumberUtils.isDigits(this.searchBox.displayValue)) {
+            if (CharUtils.isAsciiNumeric(typedChar) && NumberUtils.isDigits(this.searchBox.getText())) {
                 final int blockID = Block.getIdFromBlock(block);
-                if (blockID == Integer.parseInt(this.searchBox.displayValue)) {
+                if (blockID == Integer.parseInt(this.searchBox.getText())) {
                     if (!this.displayedBlocks.contains(block)) {
                         this.displayedBlocks.add(block);
                     }
@@ -230,7 +230,7 @@ public final class BlocksComponent extends HudComponent {
             } else {
                 final ResourceLocation registryName = block.getRegistryName();
                 if (registryName != null) {
-                    if (registryName.toString().contains(this.searchBox.displayValue)) {
+                    if (registryName.toString().contains(this.searchBox.getText())) {
                         if (!this.displayedBlocks.contains(block)) {
                             this.displayedBlocks.add(block);
                         }

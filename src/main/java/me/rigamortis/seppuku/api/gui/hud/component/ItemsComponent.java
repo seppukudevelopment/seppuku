@@ -122,8 +122,8 @@ public final class ItemsComponent extends HudComponent {
     public void mouseClick(int mouseX, int mouseY, int button) {
         super.mouseClick(mouseX, mouseY, button);
 
-        if (this.searchBox.displayValue.equals("..."))
-            this.searchBox.displayValue = "";
+        if (this.searchBox.getText().equals("..."))
+            this.searchBox.setText("");
 
         this.searchBox.mouseClick(mouseX, mouseY, button);
     }
@@ -172,7 +172,7 @@ public final class ItemsComponent extends HudComponent {
         super.keyTyped(typedChar, keyCode);
         this.searchBox.keyTyped(typedChar, keyCode);
 
-        if (this.searchBox.displayValue.equals("") && this.displayedItems.size() != 0) {
+        if (this.searchBox.getText().equals("") && this.displayedItems.size() != 0) {
             this.displayedItems.clear();
             this.displayedItems.addAll(this.items);
         } else {
@@ -180,9 +180,9 @@ public final class ItemsComponent extends HudComponent {
         }
 
         for (Item item : this.items) {
-            if (CharUtils.isAsciiNumeric(typedChar) && NumberUtils.isDigits(this.searchBox.displayValue)) {
+            if (CharUtils.isAsciiNumeric(typedChar) && NumberUtils.isDigits(this.searchBox.getText())) {
                 final int itemID = Item.getIdFromItem(item);
-                if (itemID == Integer.parseInt(this.searchBox.displayValue)) {
+                if (itemID == Integer.parseInt(this.searchBox.getText())) {
                     if (!this.displayedItems.contains(item)) {
                         this.displayedItems.add(item);
                     }
@@ -190,7 +190,7 @@ public final class ItemsComponent extends HudComponent {
             } else {
                 final ResourceLocation registryName = item.getRegistryName();
                 if (registryName != null) {
-                    if (registryName.toString().contains(this.searchBox.displayValue)) {
+                    if (registryName.toString().contains(this.searchBox.getText())) {
                         if (!this.displayedItems.contains(item)) {
                             this.displayedItems.add(item);
                         }

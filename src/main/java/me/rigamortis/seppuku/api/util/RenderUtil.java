@@ -36,7 +36,7 @@ public final class RenderUtil {
         GLUProjection.getInstance().updateMatrices(VIEWPORT, MODELVIEW, PROJECTION, (float) res.getScaledWidth() / (float) Minecraft.getMinecraft().displayWidth, (float) res.getScaledHeight() / (float) Minecraft.getMinecraft().displayHeight);
     }
 
-    public static void drawRect(float x, float y, float w, float h, int color) {
+    public static void drawRect(float left, float top, float right, float bottom, int color) {
         float alpha = (float) (color >> 24 & 255) / 255.0F;
         float red = (float) (color >> 16 & 255) / 255.0F;
         float green = (float) (color >> 8 & 255) / 255.0F;
@@ -47,10 +47,10 @@ public final class RenderUtil {
         GlStateManager.disableTexture2D();
         GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
-        bufferbuilder.pos(x, h, 0.0D).color(red, green, blue, alpha).endVertex();
-        bufferbuilder.pos(w, h, 0.0D).color(red, green, blue, alpha).endVertex();
-        bufferbuilder.pos(w, y, 0.0D).color(red, green, blue, alpha).endVertex();
-        bufferbuilder.pos(x, y, 0.0D).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(left, bottom, 0.0D).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(right, bottom, 0.0D).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(right, top, 0.0D).color(red, green, blue, alpha).endVertex();
+        bufferbuilder.pos(left, top, 0.0D).color(red, green, blue, alpha).endVertex();
         tessellator.draw();
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();

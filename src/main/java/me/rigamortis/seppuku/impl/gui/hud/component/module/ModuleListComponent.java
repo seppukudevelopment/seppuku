@@ -464,7 +464,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                 public void onKeyTyped(int keyCode) {
                     if (keyCode == Keyboard.KEY_ESCAPE) {
                         module.setKey("NONE");
-                        keybindText.displayValue = "none";
+                        keybindText.setText("none");
                         keybindText.focused = false;
                         // re-open the hud editor
                         final HudEditorModule hudEditorModule = (HudEditorModule) Seppuku.INSTANCE.getModuleManager().find(HudEditorModule.class);
@@ -474,7 +474,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                     } else {
                         String newKey = Keyboard.getKeyName(keyCode);
                         module.setKey(newKey);
-                        keybindText.displayValue = newKey.length() == 1 /* is letter */ ? newKey.substring(1) : newKey.toLowerCase();
+                        keybindText.setText(newKey.length() == 1 /* is letter */ ? newKey.substring(1) : newKey.toLowerCase());
                         keybindText.focused = false;
                     }
                 }
@@ -574,8 +574,8 @@ public final class ModuleListComponent extends ResizableHudComponent {
                     valueText.returnListener = new ComponentListener() {
                         @Override
                         public void onComponentEvent() {
-                            if (value.getEnum(valueText.displayValue) != -1) {
-                                value.setEnumValue(valueText.displayValue);
+                            if (value.getEnum(valueText.getText()) != -1) {
+                                value.setEnumValue(valueText.getText());
                                 Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class); // save configs
                                 Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventUIValueChanged(value));
                             } else {
@@ -596,8 +596,8 @@ public final class ModuleListComponent extends ResizableHudComponent {
                     valueText.returnListener = new ComponentListener() {
                         @Override
                         public void onComponentEvent() {
-                            if (valueText.displayValue.length() > 0) {
-                                value.setValue(valueText.displayValue);
+                            if (valueText.getText().length() > 0) {
+                                value.setValue(valueText.getText());
                                 Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class); // save configs
                                 Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventUIValueChanged(value));
                             } else {
@@ -640,7 +640,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         @Override
                         public void onComponentEvent() {
                             final Regex regex = (Regex) value.getValue();
-                            regex.setPatternString(valueText.displayValue);
+                            regex.setPatternString(valueText.getText());
                             if(regex.getPattern() == null)
                                 Seppuku.INSTANCE.logfChat("%s - %s: Invalid or empty regular expression; no input will match with pattern.", module.getDisplayName(), value.getName());
                             Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class); // save configs

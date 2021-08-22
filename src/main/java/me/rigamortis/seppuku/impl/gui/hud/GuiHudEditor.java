@@ -29,6 +29,8 @@ public final class GuiHudEditor extends GuiScreen {
     public void initGui() {
         super.initGui();
 
+        Keyboard.enableRepeatEvents(true);
+
         this.particlesComponent = (ParticlesComponent) Seppuku.INSTANCE.getHudManager().findComponent(ParticlesComponent.class);
         if (particlesComponent != null) {
             if (particlesComponent.isVisible()) {
@@ -185,6 +187,7 @@ public final class GuiHudEditor extends GuiScreen {
     @Override
     public void onGuiClosed() {
         //Seppuku.INSTANCE.getConfigManager().saveAll();
+        Keyboard.enableRepeatEvents(false);
 
         final HudEditorModule hudEditorModule = (HudEditorModule) Seppuku.INSTANCE.getModuleManager().find(HudEditorModule.class);
         if (hudEditorModule != null) {

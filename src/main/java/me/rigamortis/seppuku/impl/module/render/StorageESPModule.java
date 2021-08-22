@@ -251,8 +251,7 @@ public final class StorageESPModule extends Module {
         int baseColor;
         if (this.tracerStorageColor.getValue()) {
             baseColor = this.getBaseColor(te);
-        }
-        else {
+        } else {
             baseColor = this.tracerColor.getValue().getRGB();
         }
 
