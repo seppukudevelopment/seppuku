@@ -12,9 +12,9 @@ public class ColorComponent extends TextComponent {
 
     private Color currentColor;
 
-    private static final int BORDER = 1;
-    private static final int TEXT_BLOCK_PADDING = 1;
+    // space occupied from left to right: border, color box, spacing, text, spacing, check, spacing, gear, border
     private static final int COLOR_SIZE = 7;
+    private static final int GEAR_WIDTH = 8;
 
     private String customDisplayValue;
 
@@ -24,7 +24,7 @@ public class ColorComponent extends TextComponent {
     public ColorComponent(String name, int defaultColor) {
         super(name, String.valueOf(defaultColor), false);
         this.currentColor = new Color(defaultColor);
-        this.displayValue = "#" + Integer.toHexString(this.currentColor.getRGB()).toLowerCase().substring(2);
+        this.setText("#" + Integer.toHexString(this.currentColor.getRGB()).toLowerCase().substring(2));
         this.gearTexture = new Texture("gear_wheel.png");
         this.gearTextureEnabled = new Texture("gear_wheel-enabled.png");
 
@@ -38,63 +38,33 @@ public class ColorComponent extends TextComponent {
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
-        //super.render(mouseX, mouseY, partialTicks);
-        /*if (this.focused) {
-            this.setH(50);
-        } else {
-            this.setH(9);
-        }*/
-
-        if (isMouseInside(mouseX, mouseY))
-            RenderUtil.drawGradientRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x30909090, 0x00101010);
-
-        // draw bg rect
-        RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW() - (this.focused ? 20 : 10), this.getY() + this.getH(), 0x45303030);
-
-        // draw color rect
-        RenderUtil.drawRect(this.getX() + BORDER, this.getY() + BORDER, this.getX() + BORDER + COLOR_SIZE, this.getY() + BORDER + COLOR_SIZE, ColorUtil.changeAlpha(this.currentColor.getRGB(), 0xFF));
-
-        // draw name / display value
-        String displayedName = this.getName();
+        // draw text component, reserving space for gear and color rectangle
+        // only show color hex value if focused, else, show value's name
+        String displayedName = null;
         if (this.focused) {
-            displayedName = this.displayValue;
+            displayedName = "";
         } else if (customDisplayValue != null) {
             displayedName = customDisplayValue;
         } else if (this.getDisplayName() != null) {
             displayedName = this.getDisplayName();
-        }
-        Minecraft.getMinecraft().fontRenderer.drawString(displayedName, (int) this.getX() + BORDER + COLOR_SIZE + BORDER, (int) this.getY() + BORDER, this.focused ? 0xFFFFFFFF : 0xFFAAAAAA);
-
-        // draw bg rect behind right button
-        RenderUtil.drawRect(this.getX() + this.getW() - (this.focused ? 20 : 10), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x45202020);
-
-        if (this.focused) {
-            if (!this.selectedText.equals("")) {
-                RenderUtil.drawRect(this.getX() + BORDER + COLOR_SIZE + BORDER, this.getY(), this.getX() + BORDER + COLOR_SIZE + BORDER + Minecraft.getMinecraft().fontRenderer.getStringWidth(this.displayValue), this.getY() + this.getH(), 0x45FFFFFF);
-            }
-
-            float blockX = this.getX() + BORDER + Minecraft.getMinecraft().fontRenderer.getStringWidth(this.displayValue) + COLOR_SIZE + BORDER + TEXT_BLOCK_PADDING;
-            float blockY = this.getY() + TEXT_BLOCK_PADDING;
-            int blockWidth = 2;
-            int blockHeight = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - 2;
-            RenderUtil.drawRect(blockX, blockY, blockX + blockWidth, blockY + blockHeight, 0xFFFFFFFF);
-
-            // draw gear
-            RenderUtil.drawRect(this.getX() + this.getW() - 10, this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0xFF101010);
-            this.gearTextureEnabled.bind();
-            this.gearTextureEnabled.render(this.getX() + this.getW() - 9, this.getY() + 0.5f, 8, 8);
-
-            // check
-            RenderUtil.drawRect(this.getX() + this.getW() - 20, this.getY(), this.getX() + this.getW() - 10, this.getY() + this.getH(), 0xFF101010);
-            this.checkTexture.bind();
-            this.checkTexture.render(this.getX() + this.getW() - 19, this.getY() + 0.5f, 8, 8);
-
-            // handle holding backspace
-            this.handleBackspacing();
         } else {
-            // draw gear
+            displayedName = this.getName();
+        }
+
+        this.renderReserved(mouseX, mouseY, partialTicks, displayedName, this.focused, SPACING + COLOR_SIZE, SPACING + GEAR_WIDTH + SPACING);
+
+        // draw color rect
+        RenderUtil.drawRect(this.getX() + BORDER, this.getY() + BORDER, this.getX() + BORDER + COLOR_SIZE, this.getY() + BORDER + COLOR_SIZE, ColorUtil.changeAlpha(this.currentColor.getRGB(), 0xFF));
+
+        // draw gear
+        final float gearOffset = this.getX() + this.getW() - BORDER - GEAR_WIDTH;
+        if (this.focused) {
+            RenderUtil.drawRect(gearOffset - SPACING, this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0xFF101010);
+            this.gearTextureEnabled.bind();
+            this.gearTextureEnabled.render(gearOffset, this.getY() + ICON_V_OFFSET, GEAR_WIDTH, GEAR_WIDTH);
+        } else {
             this.gearTexture.bind();
-            this.gearTexture.render(this.getX() + this.getW() - 9, this.getY() + 0.5f, 8, 8);
+            this.gearTexture.render(gearOffset, this.getY() + ICON_V_OFFSET, GEAR_WIDTH, GEAR_WIDTH);
         }
     }
 
@@ -106,8 +76,9 @@ public class ColorComponent extends TextComponent {
             return;
 
         if (button == 0) {
-            // check for clicking check
-            if (mouseX >= this.getX() + this.getW() - 20 && mouseX <= this.getX() + this.getW() - 10 && mouseY >= this.getY() && mouseY <= this.getY() + this.getH()) {
+            // check for clicking check check, spacing, gear, border
+            final float right = this.getX() + this.getW() - BORDER - GEAR_WIDTH - SPACING;
+            if (mouseX >= right - CHECK_WIDTH && mouseX <= right && mouseY >= this.getY() && mouseY <= this.getY() + this.getH()) {
                 this.enterPressed();
             }
         }
@@ -116,7 +87,7 @@ public class ColorComponent extends TextComponent {
     @Override
     protected void enterPressed() {
         try {
-            int newColor = (int) Long.parseLong(this.displayValue.replaceAll("#", ""), 16);
+            int newColor = (int) Long.parseLong(this.getText().replaceAll("#", ""), 16);
             this.currentColor = new Color(newColor);
         } catch (NumberFormatException e) {
             Seppuku.INSTANCE.logChat(this.getName() + ": Invalid color format. Correct format example: \"ff0000\" for red.");

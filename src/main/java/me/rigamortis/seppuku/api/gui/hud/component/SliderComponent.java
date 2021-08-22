@@ -219,15 +219,15 @@ public final class SliderComponent extends HudComponent {
                         public void onComponentEvent() {
                             try {
                                 if (value.getValue() instanceof Integer) {
-                                    value.setValue(Integer.parseInt(valueNumberText.displayValue));
+                                    value.setValue(Integer.parseInt(valueNumberText.getText()));
                                 } else if (value.getValue() instanceof Double) {
-                                    value.setValue(Double.parseDouble(valueNumberText.displayValue));
+                                    value.setValue(Double.parseDouble(valueNumberText.getText()));
                                 } else if (value.getValue() instanceof Float) {
-                                    value.setValue(Float.parseFloat(valueNumberText.displayValue));
+                                    value.setValue(Float.parseFloat(valueNumberText.getText()));
                                 } else if (value.getValue() instanceof Long) {
-                                    value.setValue(Long.parseLong(valueNumberText.displayValue));
+                                    value.setValue(Long.parseLong(valueNumberText.getText()));
                                 } else if (value.getValue() instanceof Byte) {
-                                    value.setValue(Byte.parseByte(valueNumberText.displayValue));
+                                    value.setValue(Byte.parseByte(valueNumberText.getText()));
                                 }
                                 Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class); // save module configs
                             } catch (NumberFormatException e) {

@@ -57,8 +57,6 @@ public final class PortalFinderModule extends Module {
 
     private final List<Vec3d> portals = new CopyOnWriteArrayList<>();
 
-    private static final int COLOR = 0xFFFFFFFF;
-
     public PortalFinderModule() {
         super("PortalFinder", new String[]{"PortalFinder", "PFinder"}, "Highlights nearby portals.", "NONE", -1, Module.ModuleType.RENDER);
     }
@@ -79,7 +77,7 @@ public final class PortalFinderModule extends Module {
 
                 // Line
                 if (this.tracer.getValue()) {
-                    RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), event.getScaledResolution().getScaledWidth() / 2.0f, event.getScaledResolution().getScaledHeight() / 2.0f, this.width.getValue(), ColorUtil.changeAlpha(new Color(this.color.getValue().getRed() / 255.0f, this.color.getValue().getGreen() / 255.0f, this.color.getValue().getBlue() / 255.0f).getRGB(), this.alpha.getValue()));
+                    RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), event.getScaledResolution().getScaledWidth() / 2.0f, event.getScaledResolution().getScaledHeight() / 2.0f, this.width.getValue(), ColorUtil.changeAlpha(this.color.getValue().getRGB(), this.alpha.getValue()));
                 }
 
                 // Info
@@ -103,15 +101,14 @@ public final class PortalFinderModule extends Module {
             RenderUtil.begin3D();
             for (Vec3d portal : this.portals) {
                 GlStateManager.pushMatrix();
-                final boolean bobbing = mc.gameSettings.viewBobbing;
-                mc.gameSettings.viewBobbing = false;
-                mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
-
-                final Vec3d forward = new Vec3d(0, 0, 1).rotatePitch(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationPitch)).rotateYaw(-(float) Math.toRadians(Minecraft.getMinecraft().player.rotationYaw));
 
                 // Line
                 if (this.tracer.getValue()) {
-                    RenderUtil.drawLine3D(forward.x, forward.y + mc.player.getEyeHeight(), forward.z, portal.x - mc.getRenderManager().renderPosX, portal.y - mc.getRenderManager().renderPosY, portal.z - mc.getRenderManager().renderPosZ, this.width.getValue(), ColorUtil.changeAlpha(new Color(this.color.getValue().getRed() / 255.0f, this.color.getValue().getGreen() / 255.0f, this.color.getValue().getBlue() / 255.0f).getRGB(), this.alpha.getValue()));
+                    // need to update modelview matrix or it freaks out when rendering another tracer, not sure why though
+                    // XXX this is done in other places, ctrl+shift+f to other files
+                    RenderUtil.updateModelViewProjectionMatrix();
+                    final GLUProjection.Vector3D forward = GLUProjection.getInstance().getLookVector().sadd(GLUProjection.getInstance().getCamPos());
+                    RenderUtil.drawLine3D(forward.x, forward.y, forward.z, portal.x - mc.getRenderManager().renderPosX, portal.y - mc.getRenderManager().renderPosY, portal.z - mc.getRenderManager().renderPosZ, this.width.getValue(), ColorUtil.changeAlpha(this.color.getValue().getRGB(), this.alpha.getValue()));
                 }
 
                 // Info
@@ -122,8 +119,6 @@ public final class PortalFinderModule extends Module {
                     GlStateManager.enableDepth();
                 }
 
-                mc.gameSettings.viewBobbing = bobbing;
-                mc.entityRenderer.setupCameraTransform(event.getPartialTicks(), 0);
                 GlStateManager.popMatrix();
             }
             RenderUtil.end3D();

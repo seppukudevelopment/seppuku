@@ -374,7 +374,7 @@ public final class ColorsComponent extends ResizableHudComponent {
                         this.selectedColor = colorAtMouseClick.getRGB();
                         this.currentColorComponent.setCurrentColor(colorAtMouseClick);
                         this.currentColorComponent.returnListener.onComponentEvent();
-                        this.currentColorComponent.displayValue = "#" + Integer.toHexString(this.selectedColor).toLowerCase().substring(2);
+                        this.currentColorComponent.setText("#" + Integer.toHexString(this.selectedColor).toLowerCase().substring(2));
                         this.lastSpectrumMouseX = mouseX;
                         this.lastSpectrumMouseY = mouseY;
                     } else {

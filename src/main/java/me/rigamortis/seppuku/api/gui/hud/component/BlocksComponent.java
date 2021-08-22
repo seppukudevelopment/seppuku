@@ -114,23 +114,9 @@ public final class BlocksComponent extends HudComponent {
                             sprite = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluidStill.toString());
                         }
 
-                        final int fluidColor = fluid.getColor();
-                        final float r = (float)(fluidColor >> 16 & 255) / 255.0F;
-                        final float g = (float)(fluidColor >> 8 & 255) / 255.0F;
-                        final float b = (float)(fluidColor & 255) / 255.0F;
-                        GlStateManager.color(r, g, b, 1.0f);
-
-                        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-                        final Tessellator tessellator = Tessellator.getInstance();
-                        final BufferBuilder bufferBuilder = tessellator.getBuffer();
-                        bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
+                        RenderUtil.glColor(fluid.getColor());
                         // Note that fluids are a full quad; extra padding is added so that you can see the background to check whether the block is selected or not
-                        bufferBuilder.pos((double)(rectX + 1), (double)(rectY + 15), 0d).tex((double)sprite.getMinU(), (double)sprite.getMaxV()).endVertex();
-                        bufferBuilder.pos((double)(rectX + 15), (double)(rectY + 15), 0d).tex((double)sprite.getMaxU(), (double)sprite.getMaxV()).endVertex();
-                        bufferBuilder.pos((double)(rectX + 15), (double)(rectY + 1), 0d).tex((double)sprite.getMaxU(), (double)sprite.getMinV()).endVertex();
-                        bufferBuilder.pos((double)(rectX + 1), (double)(rectY + 1), 0d).tex((double)sprite.getMinU(), (double)sprite.getMinV()).endVertex();
-                        tessellator.draw();
-
+                        RenderUtil.drawTexture(rectX + 1, rectY + 1, 14, 14, sprite.getMinU(), sprite.getMinV(), sprite.getMaxU(), sprite.getMaxV());
                     } else {
                         final ItemStack itemStack = new ItemStack(block);
                         Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(itemStack, (int) renderPaddingX + (int) this.getX() + xOffset, (int) renderPaddingY + (int) this.getY() + yOffset);
@@ -162,8 +148,8 @@ public final class BlocksComponent extends HudComponent {
     public void mouseClick(int mouseX, int mouseY, int button) {
         super.mouseClick(mouseX, mouseY, button);
 
-        if (this.searchBox.displayValue.equals("..."))
-            this.searchBox.displayValue = "";
+        if (this.searchBox.getText().equals("..."))
+            this.searchBox.setText("");
 
         this.searchBox.mouseClick(mouseX, mouseY, button);
     }
@@ -212,7 +198,7 @@ public final class BlocksComponent extends HudComponent {
         super.keyTyped(typedChar, keyCode);
         this.searchBox.keyTyped(typedChar, keyCode);
 
-        if (this.searchBox.displayValue.equals("") && this.displayedBlocks.size() != 0) {
+        if (this.searchBox.getText().equals("") && this.displayedBlocks.size() != 0) {
             this.displayedBlocks.clear();
             this.displayedBlocks.addAll(this.blocks);
         } else {
@@ -220,9 +206,9 @@ public final class BlocksComponent extends HudComponent {
         }
 
         for (Block block : this.blocks) {
-            if (CharUtils.isAsciiNumeric(typedChar) && NumberUtils.isDigits(this.searchBox.displayValue)) {
+            if (CharUtils.isAsciiNumeric(typedChar) && NumberUtils.isDigits(this.searchBox.getText())) {
                 final int blockID = Block.getIdFromBlock(block);
-                if (blockID == Integer.parseInt(this.searchBox.displayValue)) {
+                if (blockID == Integer.parseInt(this.searchBox.getText())) {
                     if (!this.displayedBlocks.contains(block)) {
                         this.displayedBlocks.add(block);
                     }
@@ -230,7 +216,7 @@ public final class BlocksComponent extends HudComponent {
             } else {
                 final ResourceLocation registryName = block.getRegistryName();
                 if (registryName != null) {
-                    if (registryName.toString().contains(this.searchBox.displayValue)) {
+                    if (registryName.toString().contains(this.searchBox.getText())) {
                         if (!this.displayedBlocks.contains(block)) {
                             this.displayedBlocks.add(block);
                         }
