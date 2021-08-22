@@ -636,13 +636,7 @@ public final class RenderUtil {
     }
 
     public static void drawSphere(float radius, int slices, int stacks, int color) {
-        final float alpha = (color >> 24 & 0xFF) / 255.0F;
-        final float red = (color >> 16 & 0xFF) / 255.0F;
-        final float green = (color >> 8 & 0xFF) / 255.0F;
-        final float blue = (color & 0xFF) / 255.0F;
-
-        glColor4f(red, green, blue, alpha);
-
+        glColor(color);
         new Sphere().draw(radius, slices, stacks);
     }
 
@@ -718,7 +712,7 @@ public final class RenderUtil {
         float red = (hex >> 16 & 0xFF) / 255.0F;
         float green = (hex >> 8 & 0xFF) / 255.0F;
         float blue = (hex & 0xFF) / 255.0F;
-        GL11.glColor4f(red, green, blue, alpha);
+        GlStateManager.color(red, green, blue, alpha);
     }
 
     public static void glColor(int redRGB, int greenRGB, int blueRGB, int alphaRGB) {
@@ -726,7 +720,7 @@ public final class RenderUtil {
         float green = 0.003921569F * greenRGB;
         float blue = 0.003921569F * blueRGB;
         float alpha = 0.003921569F * alphaRGB;
-        GL11.glColor4f(red, green, blue, alpha);
+        GlStateManager.color(red, green, blue, alpha);
     }
 
     public static void begin2D() {
