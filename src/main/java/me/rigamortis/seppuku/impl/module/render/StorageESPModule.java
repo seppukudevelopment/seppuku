@@ -61,12 +61,6 @@ public final class StorageESPModule extends Module {
                                 // Box
                                 RenderUtil.drawOutlineRect(bounds[0], bounds[1], bounds[2], bounds[3], 1.5f, ColorUtil.changeAlpha(0xAA000000, this.opacity.getValue()));
                                 RenderUtil.drawOutlineRect(bounds[0] - 0.5f, bounds[1] - 0.5f, bounds[2] + 0.5f, bounds[3] + 0.5f, 0.5f, this.getBoxColor(te));
-
-                                // Line
-                                if (this.tracer.getValue()) {
-                                    final GLUProjection.Projection projection = GLUProjection.getInstance().project((bb.minX + bb.maxX) / 2, (bb.minY + bb.maxY) / 2, (bb.minZ + bb.maxZ) / 2, GLUProjection.ClampMode.NONE, true);
-                                    RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), event.getScaledResolution().getScaledWidth() / 2.0f, event.getScaledResolution().getScaledHeight() / 2.0f, this.tracerWidth.getValue(), this.getTracerColor(te));
-                                }
                             }
 
                             if (this.nametag.getValue()) {
@@ -75,6 +69,12 @@ public final class StorageESPModule extends Module {
                                 mc.fontRenderer.drawStringWithShadow(name, bounds[0] + (bounds[2] - bounds[0]) / 2 - mc.fontRenderer.getStringWidth(name) / 2, bounds[1] + (bounds[3] - bounds[1]) - mc.fontRenderer.FONT_HEIGHT - 1, ColorUtil.changeAlpha(0xFFFFFFFF, this.opacity.getValue()));
                                 GL11.glDisable(GL11.GL_BLEND);
                             }
+                        }
+
+                        // Line
+                        if (this.tracer.getValue()) {
+                            final GLUProjection.Projection projection = GLUProjection.getInstance().project((bb.minX + bb.maxX) / 2, (bb.minY + bb.maxY) / 2, (bb.minZ + bb.maxZ) / 2, GLUProjection.ClampMode.NONE, true);
+                            RenderUtil.drawLine((float) projection.getX(), (float) projection.getY(), event.getScaledResolution().getScaledWidth() / 2.0f, event.getScaledResolution().getScaledHeight() / 2.0f, this.tracerWidth.getValue(), this.getTracerColor(te));
                         }
                     }
                 }
