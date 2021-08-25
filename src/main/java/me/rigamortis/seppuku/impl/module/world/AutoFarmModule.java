@@ -26,6 +26,8 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class AutoFarmModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "m"}, "The current farming mode.", Mode.HARVEST);
+    public final Value<Boolean> modeHarvestRClick = new Value<Boolean>("ModeHarvestRClick", new String[]{"HarvestRightClick", "HarvestRClick", "hrc","mhrc"}, "Should we right click instead of breaking when harvesting? (Modpacks)", false);
+
     public final Value<Float> range = new Value<Float>("Range", new String[]{"Range", "Reach", "r"}, "The range in blocks your player should reach to farm.", 4.0f, 1.0f, 9.0f, 0.1f);
     public final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"rot"}, "Should we rotate the player's head when Auto-Farming?", true);
 
@@ -92,10 +94,12 @@ public final class AutoFarmModule extends Module {
     private void doFarming(final Minecraft mc) {
         switch (mode.getValue()) {
             case HARVEST:
-                if (mc.playerController.onPlayerDamageBlock(currentBlockPos, EntityUtil.getFacingDirectionToPosition(currentBlockPos))) {
-                    mc.player.swingArm(EnumHand.MAIN_HAND);
+                if (!this.modeHarvestRClick.getValue()) { // if false: break to harvest (vanilla)
+                    if (mc.playerController.onPlayerDamageBlock(currentBlockPos, EntityUtil.getFacingDirectionToPosition(currentBlockPos))) {
+                        mc.player.swingArm(EnumHand.MAIN_HAND);
+                    }
+                    break;
                 }
-                break;
             case PLANT:
             case HOE:
             case BONEMEAL:
