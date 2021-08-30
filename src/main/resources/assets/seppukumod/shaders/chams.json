@@ -1,0 +1,67 @@
+{
+    "name": "Default chams shader",
+    "files": [
+        "resource:///assets/seppukumod/shaders/func_applyColor_default.frag",
+        "resource:///assets/seppukumod/shaders/func_applyTexture_default.frag",
+        "resource:///assets/seppukumod/shaders/func_applyLighting_default.frag",
+        "resource:///assets/seppukumod/shaders/func_applyEntityBrightness_default.frag",
+        "resource:///assets/seppukumod/shaders/func_applyShading_default.frag",
+        "resource:///assets/seppukumod/shaders/chams.frag"
+    ],
+    "uniforms": {
+        "visibletint": {
+            "displayname": "VisibleTint",
+            "alias": ["vistint", "vist", "vtint", "vt"],
+            "description": "The entity color tint percentage used when an entity is visible",
+            "type": "float",
+            "default": 0.2,
+            "min": 0,
+            "max": 1,
+            "increments": 0.05
+        },
+        "occludedtint": {
+            "displayname": "OccludedTint",
+            "alias": ["occtint", "occt", "otint", "ot", "hiddentint", "hidtint", "hidt", "htint", "ht", "invisibletint", "invistint", "invist", "itint", "it"],
+            "description": "The entity color tint percentage used when an entity is not visible",
+            "type": "float",
+            "default": 0.5,
+            "min": 0,
+            "max": 1,
+            "increments": 0.05
+        },
+        "visibletintvariation": {
+            "displayname": "VisibleTintVariation",
+            "alias": ["visibletvariation", "visibletintv", "visibletintvar", "visibletvar", "visibletv", "vistvariation", "vistintv", "vistintvar", "vistvar", "vistv", "vtvariation", "vtintv", "vtintvar", "vtvar", "vtv"],
+            "description": "How much the tint percentage can vary when an entity is visible",
+            "type": "float",
+            "default": 0.1,
+            "min": 0,
+            "max": 1,
+            "increments": 0.05
+        },
+        "occludedtintvariation": {
+            "displayname": "OccludedTintVariation",
+            "alias": ["occludedtvariation", "occludedtintv", "occludedtintvar", "occludedtvar", "occludedtv", "occtvariation", "occtintv", "occtintvar", "occtvar", "occtv", "otvariation", "otintv", "otintvar", "otvar", "otv", "invisibletvariation", "invisibletintv", "invisibletintvar", "invisibletvar", "invisibletv", "invistvariation", "invistintv", "invistintvar", "invistvar", "invistv", "itvariation", "itintv", "itintvar", "itvar", "itv"],
+            "description": "How much the tint percentage can vary when an entity is not visible",
+            "type": "float",
+            "default": 0.1,
+            "min": 0,
+            "max": 1,
+            "increments": 0.05
+        },
+        "lightvisible": {
+            "displayname": "LightVisible",
+            "alias": ["lvisible", "lightv", "lightvis", "lvis", "lv"],
+            "description": "Should light level be applied when the entity is visible?",
+            "type": "bool",
+            "default": false
+        },
+        "lightoccluded": {
+            "displayname": "LightOccluded",
+            "alias": ["loccluded", "lighto", "lightocc", "locc", "lo"],
+            "description": "Should light level be applied when the entity is not visible?",
+            "type": "bool",
+            "default": false
+        }
+    }
+}

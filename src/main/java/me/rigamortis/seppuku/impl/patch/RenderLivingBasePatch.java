@@ -4,10 +4,16 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.render.EventRenderName;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
+import me.rigamortis.seppuku.api.util.ASMUtil;
+import me.rigamortis.seppuku.api.util.shader.ShaderProgram;
 import me.rigamortis.seppuku.impl.management.PatchManager;
 import net.minecraft.entity.EntityLivingBase;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
+
+import java.nio.Buffer;
+import java.nio.FloatBuffer;
+import java.util.Iterator;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -65,6 +71,77 @@ public final class RenderLivingBasePatch extends ClassPatch {
         Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
 
         return event.isCanceled();
+    }
+
+    /**
+     * Used to keep track of entity brightness colors (like the flash on primed
+     * TNT/creepers and the red color from hurting mobs)
+     *
+     * @param methodNode
+     * @param env
+     */
+    @MethodPatch(
+            mcpName = "setBrightness",
+            notchName = "a",
+            mcpDesc = "(Lnet/minecraft/entity/EntityLivingBase;FZ)Z",
+            notchDesc = "(Lvp;FZ)Z")
+    public void setBrightness(MethodNode methodNode, PatchManager.Environment env) {
+        // find the line where the brightness color floatbuffer is flipped
+        final AbstractInsnNode target = ASMUtil.findMethodInsn(methodNode, INVOKEVIRTUAL, "java/nio/FloatBuffer", "flip", "()Ljava/nio/Buffer;");
+        if (target != null) {
+            //create a list of instructions and add the needed instructions to call our hook function
+            final InsnList insnList = new InsnList();
+            //note that the flipped floatbuffer with the brightness color is currently in the operand stack, so no aload needed (FloatBuffer.flip method returns this)
+            //call our hook function
+            insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "setBrightnessHook", "(Ljava/nio/Buffer;)V", false));
+            //there is a pop instruction after this, add a dummy value to the operand stack so pop doesnt break the stack
+            insnList.add(new InsnNode(ICONST_0));
+            //insert the list of instructions after the floatbuffer flip
+            methodNode.instructions.insert(target, insnList);
+        }
+    }
+
+    /**
+     * This is our setBrightness hook. Used to set custom shader uniforms
+     *
+     * @param buf
+     * @return
+     */
+    public static void setBrightnessHook(Buffer buf) {
+        FloatBuffer brightness = (FloatBuffer)buf;
+        for (Iterator<ShaderProgram> it = ShaderProgram.getProgramsInUse(); it.hasNext();) {
+            it.next().setEntityBrightnessUniform(brightness.get(), brightness.get(), brightness.get(), brightness.get());
+            brightness.position(0);
+        }
+    }
+
+    /**
+     * Used to keep track of entity brightness colors (like the flash on primed
+     * TNT/creepers and the red color from hurting mobs). This one clears the
+     * brightness color
+     *
+     * @param methodNode
+     * @param env
+     */
+    @MethodPatch(
+            mcpName = "unsetBrightness",
+            notchName = "g",
+            mcpDesc = "()V",
+            notchDesc = "()V")
+    public void unsetBrightness(MethodNode methodNode, PatchManager.Environment env) {
+        //insert instruction to call our hook function
+        methodNode.instructions.insert(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "unsetBrightnessHook", "()V", false));
+    }
+
+    /**
+     * This is our unsetBrightness hook. Used to set custom shader uniforms
+     *
+     * @return
+     */
+    public static void unsetBrightnessHook() {
+        for (Iterator<ShaderProgram> it = ShaderProgram.getProgramsInUse(); it.hasNext();) {
+            it.next().setEntityBrightnessUniform(0.0f, 0.0f, 0.0f, 0.0f);
+        }
     }
 
 //    /**

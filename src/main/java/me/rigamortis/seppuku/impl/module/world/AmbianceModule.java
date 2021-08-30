@@ -58,19 +58,29 @@ public class AmbianceModule extends Module {
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         RenderHelper.disableStandardItemLighting();
         GlStateManager.depthMask(false);
+        boolean needsTexture = false;
         switch (this.skyMode.getValue()) {
             case SEPPUKU:
                 this.seppukuSkyTexture.bind();
+                needsTexture = true;
                 break;
             case RAINBOW:
                 this.rainbowSkyTexture.bind();
+                needsTexture = true;
                 break;
             case END:
                 this.mc.getRenderManager().renderEngine.bindTexture(END_SKY_TEXTURES);
+                needsTexture = true;
                 break;
         }
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
+
+        if (needsTexture) {
+            GlStateManager.enableTexture2D();
+        } else {
+            GlStateManager.disableTexture2D();
+        }
 
         for (int k1 = 0; k1 < 6; ++k1) {
             GlStateManager.pushMatrix();
@@ -94,7 +104,12 @@ public class AmbianceModule extends Module {
                 GlStateManager.rotate(-90.0F, 0.0F, 0.0F, 1.0F);
             }
 
-            bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+            if (needsTexture) {
+                bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+            } else {
+                bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
+            }
+
             switch (this.skyMode.getValue()) {
                 case SEPPUKU:
                 case RAINBOW:
@@ -104,10 +119,10 @@ public class AmbianceModule extends Module {
                     bufferbuilder.pos(100.0D, -100.0D, -100.0D).tex(2.0D, 0.0D).color(this.skyGamma.getValue(), this.skyGamma.getValue(), this.skyGamma.getValue(), 255).endVertex();
                     break;
                 case COLOR:
-                    bufferbuilder.pos(-100.0D, -100.0D, -100.0D).tex(0.0D, 0.0D).color(this.skyColor.getValue().getRed(), this.skyColor.getValue().getGreen(), this.skyColor.getValue().getBlue(), 255).endVertex();
-                    bufferbuilder.pos(-100.0D, -100.0D, 100.0D).tex(0.0D, 16.0D).color(this.skyColor.getValue().getRed(), this.skyColor.getValue().getGreen(), this.skyColor.getValue().getBlue(), 255).endVertex();
-                    bufferbuilder.pos(100.0D, -100.0D, 100.0D).tex(16.0D, 16.0D).color(this.skyColor.getValue().getRed(), this.skyColor.getValue().getGreen(), this.skyColor.getValue().getBlue(), 255).endVertex();
-                    bufferbuilder.pos(100.0D, -100.0D, -100.0D).tex(16.0D, 0.0D).color(this.skyColor.getValue().getRed(), this.skyColor.getValue().getGreen(), this.skyColor.getValue().getBlue(), 255).endVertex();
+                    bufferbuilder.pos(-100.0D, -100.0D, -100.0D).color(this.skyColor.getValue().getRed(), this.skyColor.getValue().getGreen(), this.skyColor.getValue().getBlue(), 255).endVertex();
+                    bufferbuilder.pos(-100.0D, -100.0D, 100.0D).color(this.skyColor.getValue().getRed(), this.skyColor.getValue().getGreen(), this.skyColor.getValue().getBlue(), 255).endVertex();
+                    bufferbuilder.pos(100.0D, -100.0D, 100.0D).color(this.skyColor.getValue().getRed(), this.skyColor.getValue().getGreen(), this.skyColor.getValue().getBlue(), 255).endVertex();
+                    bufferbuilder.pos(100.0D, -100.0D, -100.0D).color(this.skyColor.getValue().getRed(), this.skyColor.getValue().getGreen(), this.skyColor.getValue().getBlue(), 255).endVertex();
                     break;
                 case END:
                     bufferbuilder.pos(-100.0D, -100.0D, -100.0D).tex(0.0D, 0.0D).color(this.skyGammaEnd.getValue(), this.skyGammaEnd.getValue(), this.skyGammaEnd.getValue(), 255).endVertex();
@@ -116,15 +131,17 @@ public class AmbianceModule extends Module {
                     bufferbuilder.pos(100.0D, -100.0D, -100.0D).tex(16.0D, 0.0D).color(this.skyGammaEnd.getValue(), this.skyGammaEnd.getValue(), this.skyGammaEnd.getValue(), 255).endVertex();
                     break;
                 case NONE:
-                    bufferbuilder.pos(-100.0D, -100.0D, -100.0D).tex(0.0D, 0.0D).color(10, 10, 10, 255).endVertex();
-                    bufferbuilder.pos(-100.0D, -100.0D, 100.0D).tex(0.0D, 16.0D).color(10, 10, 10, 255).endVertex();
-                    bufferbuilder.pos(100.0D, -100.0D, 100.0D).tex(16.0D, 16.0D).color(10, 10, 10, 255).endVertex();
-                    bufferbuilder.pos(100.0D, -100.0D, -100.0D).tex(16.0D, 0.0D).color(10, 10, 10, 255).endVertex();
+                    bufferbuilder.pos(-100.0D, -100.0D, -100.0D).color(10, 10, 10, 255).endVertex();
+                    bufferbuilder.pos(-100.0D, -100.0D, 100.0D).color(10, 10, 10, 255).endVertex();
+                    bufferbuilder.pos(100.0D, -100.0D, 100.0D).color(10, 10, 10, 255).endVertex();
+                    bufferbuilder.pos(100.0D, -100.0D, -100.0D).color(10, 10, 10, 255).endVertex();
                     break;
             }
+
             tessellator.draw();
             GlStateManager.popMatrix();
         }
+
         GlStateManager.disableBlend();
         GlStateManager.depthMask(true);
         GlStateManager.enableTexture2D();

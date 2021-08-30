@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.api.module;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.value.Regex;
+import me.rigamortis.seppuku.api.value.Shader;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
@@ -115,6 +116,10 @@ public class Module {
 
             if (v.getValue() instanceof Regex) {
                 msg.appendSibling(new TextComponentString(valuePrefix + v.getName() + ChatFormatting.GRAY + " <regex>" + ChatFormatting.RESET + ": " + v.getValue()).setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(v.getName() + "\n" + ChatFormatting.GOLD + ((v.getDesc() == null || v.getDesc().equals("")) ? "There is no description for this regular expression value." : v.getDesc()) + ChatFormatting.RESET + "\n " + ChatFormatting.GRAY + "<regex>")))));
+            }
+
+            if (v.getValue() instanceof Shader) {
+                msg.appendSibling(new TextComponentString(valuePrefix + v.getName() + ChatFormatting.GRAY + " <shader>" + ChatFormatting.RESET + ": " + v.getValue()).setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(v.getName() + "\n" + ChatFormatting.GOLD + ((v.getDesc() == null || v.getDesc().equals("")) ? "There is no description for this shader ID value." : v.getDesc()) + ChatFormatting.RESET + "\n " + ChatFormatting.GRAY + "<shader>")))));
             }
         }
 

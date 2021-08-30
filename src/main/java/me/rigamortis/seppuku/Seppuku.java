@@ -77,6 +77,8 @@ public final class Seppuku {
 
     private AltManager altManager;
 
+    private ShaderManager shaderManager;
+
     /**
      * The initialization point of the client
      * this is called post launch
@@ -102,6 +104,7 @@ public final class Seppuku {
         this.commandManager = new CommandManager();
         this.cameraManager = new CameraManager();
         this.altManager = new AltManager();
+        this.shaderManager = new ShaderManager();
         this.hudManager = new HudManager();
         this.hudEditor = new GuiHudEditor();
         this.seppukuMainMenu = new GuiSeppukuMainMenu();
@@ -161,6 +164,7 @@ public final class Seppuku {
         this.seppukuMainMenu.unload();
         this.cameraManager.unload();
         this.altManager.unload();
+        this.shaderManager.unload();
 
         this.getEventManager().dispatchEvent(new EventUnload());
 
@@ -188,6 +192,7 @@ public final class Seppuku {
         this.macroManager.getMacroList().clear();
         this.worldManager.getWorldDataList().clear();
         this.ignoredManager.getIgnoredList().clear();
+        this.shaderManager.reload();
 
         this.capeManager.getCapeUserList().clear();
         this.capeManager.getCapesMap().clear();
@@ -379,5 +384,12 @@ public final class Seppuku {
             this.altManager = new AltManager();
         }
         return this.altManager;
+    }
+
+    public ShaderManager getShaderManager() {
+        if (this.shaderManager == null) {
+            this.shaderManager = new ShaderManager();
+        }
+        return this.shaderManager;
     }
 }

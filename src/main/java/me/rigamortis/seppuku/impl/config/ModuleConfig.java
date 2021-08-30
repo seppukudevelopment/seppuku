@@ -5,6 +5,7 @@ import me.rigamortis.seppuku.api.config.Configurable;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.FileUtil;
 import me.rigamortis.seppuku.api.value.Regex;
+import me.rigamortis.seppuku.api.value.Shader;
 import me.rigamortis.seppuku.api.value.Value;
 
 import java.awt.*;
@@ -70,6 +71,8 @@ public class ModuleConfig extends Configurable {
                         val.setValue(new Color((int) Long.parseLong(entry.getValue().getAsString(), 16)));
                     } else if (val.getValue() instanceof Regex) {
                         val.setValue(new Regex(entry.getValue().getAsString()));
+                    } else if (val.getValue() instanceof Shader) {
+                        val.setValue(new Shader(entry.getValue().getAsString()));
                     }
                 }
             }
@@ -104,6 +107,8 @@ public class ModuleConfig extends Configurable {
                     moduleJsonObject.addProperty(value.getName(), Integer.toHexString(((Color) value.getValue()).getRGB()).toUpperCase());
                 } else if (value.getValue() instanceof Regex) {
                     moduleJsonObject.addProperty(value.getName(), ((Regex) value.getValue()).getPatternString());
+                } else if (value.getValue() instanceof Shader) {
+                    moduleJsonObject.addProperty(value.getName(), ((Shader) value.getValue()).getShaderID());
                 }
             });
         }
