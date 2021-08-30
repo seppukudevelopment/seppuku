@@ -18,7 +18,7 @@ public class Regex {
 
     public void setPatternString(String patternString) {
         this.patternString = patternString;
-        if(patternString == "") {
+        if(patternString.equals("")) {
             this.pattern = null;
             return;
         }

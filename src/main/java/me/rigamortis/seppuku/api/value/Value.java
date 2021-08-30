@@ -23,17 +23,12 @@ public class Value<T> {
     }
 
     public Value(String name, String[] alias, String desc, T value) {
-        this.name = name;
-        this.alias = alias;
-        this.desc = desc;
+        this(name, alias, desc);
         this.value = value;
     }
 
     public Value(String name, String[] alias, String desc, T value, T min, T max, T inc) {
-        this.name = name;
-        this.alias = alias;
-        this.desc = desc;
-        this.value = value;
+        this(name, alias, desc, value);
         this.min = min;
         this.max = max;
         this.inc = inc;

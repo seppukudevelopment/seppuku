@@ -1,8 +1,13 @@
 package me.rigamortis.seppuku.api.gui.hud.component;
 
+import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.util.RenderUtil;
+import me.rigamortis.seppuku.api.value.Shader;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * @author noil
@@ -90,27 +95,70 @@ public final class CarouselComponent extends HudComponent {
         this.focused = true;
     }
 
-    public void raiseOption() {
-        final Enum[] options = ((Enum) this.value.getValue()).getClass().getEnumConstants();
-        for (int index = 0; index < options.length; index++) {
-            if (options[index].name().equalsIgnoreCase(value.getValue().toString())) {
-                index++;
-                if (index > options.length - 1)
-                    index = 0;
-                value.setEnumValue(options[index].toString());
-            }
+    protected String getValueAsOption() {
+        final Object wrappedValue = this.value.getValue();
+        if (wrappedValue instanceof Shader) {
+            return ((Shader)wrappedValue).getShaderID();
+        } else {
+            return wrappedValue.toString().toLowerCase();
         }
     }
 
-    public void declineOption() {
-        final Enum[] options = ((Enum) this.value.getValue()).getClass().getEnumConstants();
-        for (int index = 0; index < options.length; index++) {
-            if (options[index].name().equalsIgnoreCase(value.getValue().toString())) {
-                index--;
-                if (index < 0)
-                    index = options.length - 1;
-                value.setEnumValue(options[index].toString());
+    protected ArrayList<String> getOptions() {
+        final Object wrappedValue = this.value.getValue();
+        final ArrayList<String> options = new ArrayList<String>();
+        if (wrappedValue instanceof Shader) {
+            options.add(""); // always add an option for having no shader
+            for (Iterator<String> it = Seppuku.INSTANCE.getShaderManager().getShaderList(); it.hasNext();) {
+                options.add(it.next());
+            }
+        } else {
+            for (Enum<?> e : ((Enum<?>) this.value.getValue()).getClass().getEnumConstants()) {
+                options.add(e.name().toLowerCase());
             }
         }
+
+        return options;
+    }
+
+    protected void pickOption(String option) {
+        final Object wrappedValue = this.value.getValue();
+        if (wrappedValue instanceof Shader) {
+            ((Shader)wrappedValue).setShaderID(option);
+        } else {
+            this.value.setEnumValue(option);
+        }
+    }
+
+    private void moveOption(int delta) {
+        String curValue = this.getValueAsOption();
+        ArrayList<String> options = this.getOptions();
+
+        int index = 0;
+        for (String option : options) {
+            if (option.equals(curValue)) {
+                index += delta;
+                break;
+            }
+
+            index++;
+        }
+
+        index = index % options.size();
+        if (index < 0) {
+            // java is a disgrace of a language and allows modulo output to be
+            // negative
+            index += options.size();
+        }
+
+        this.pickOption(options.get(index));
+    }
+
+    public void raiseOption() {
+        this.moveOption(1);
+    }
+
+    public void declineOption() {
+        this.moveOption(-1);
     }
 }

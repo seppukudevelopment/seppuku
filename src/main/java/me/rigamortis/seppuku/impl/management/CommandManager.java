@@ -7,6 +7,7 @@ import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.ReflectionUtil;
 import me.rigamortis.seppuku.api.util.StringUtil;
 import me.rigamortis.seppuku.api.value.Regex;
+import me.rigamortis.seppuku.api.value.Shader;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.command.*;
 import me.rigamortis.seppuku.impl.config.ModuleConfig;
@@ -235,7 +236,7 @@ public final class CommandManager {
                                 }
 
                                 final Regex regex = (Regex) v.getValue();
-                                if (split.length == 2 || split[2] == "") {
+                                if (split.length == 2 || split[2].equals("")) {
                                     regex.setPatternString("");
                                     Seppuku.INSTANCE.logChat(module.getDisplayName() + " \2477" + v.getName() + "\247f cleared");
                                 } else {
@@ -244,6 +245,29 @@ public final class CommandManager {
                                     if (regex.getPattern() == null) {
                                         regex.setPatternString(oldPatternString);
                                         Seppuku.INSTANCE.errorChat("Invalid input " + "\"" + split[2] + "\" expected a valid regular expression or an empty string");
+                                    } else {
+                                        Seppuku.INSTANCE.logChat(module.getDisplayName() + " \2477" + v.getName() + "\247f set to " + split[2]);
+                                        Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class);
+                                    }
+                                }
+                            }
+
+                            if (v.getValue() instanceof Shader) {
+                                if (!this.clamp(input, 2, 3)) {
+                                    this.printUsage();
+                                    return;
+                                }
+
+                                final Shader shader = (Shader) v.getValue();
+                                if (split.length == 2 || split[2].equals("")) {
+                                    shader.setShaderID("");
+                                    Seppuku.INSTANCE.logChat(module.getDisplayName() + " \2477" + v.getName() + "\247f unset");
+                                } else {
+                                    final String oldShaderID = shader.getShaderID();
+                                    shader.setShaderID(split[2]);
+                                    if (shader.getShaderProgram() == null) {
+                                        shader.setShaderID(oldShaderID);
+                                        Seppuku.INSTANCE.errorChat("Invalid input " + "\"" + split[2] + "\" expected an existing shader ID or an empty string");
                                     } else {
                                         Seppuku.INSTANCE.logChat(module.getDisplayName() + " \2477" + v.getName() + "\247f set to " + split[2]);
                                         Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class);
