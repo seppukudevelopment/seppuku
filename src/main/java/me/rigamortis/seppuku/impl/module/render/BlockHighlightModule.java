@@ -9,6 +9,7 @@ import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -65,6 +66,7 @@ public final class BlockHighlightModule extends Module {
                 }
             }
 
+            GlStateManager.color(1.0f, 1.0f, 1.0f);
             RenderUtil.begin3D();
             final Vec3d interp = MathUtil.interpolateEntity(mc.player, mc.getRenderPartialTicks());
             final AxisAlignedBB bb = iblockstate.getSelectedBoundingBox(mc.world, blockpos).shrink(currentDamage / 2.0f).offset(-interp.x, -interp.y, -interp.z);
