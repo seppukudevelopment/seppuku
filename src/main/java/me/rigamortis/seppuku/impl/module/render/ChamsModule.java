@@ -4,19 +4,18 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.event.render.EventRenderEntity;
-import me.rigamortis.seppuku.api.event.render.EventRenderName;
+import me.rigamortis.seppuku.api.event.render.EventDrawNameplate;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.util.shader.ShaderProgram;
 import me.rigamortis.seppuku.api.value.Shader;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderLivingBase;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityBoat;
@@ -28,6 +27,7 @@ import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.awt.*;
 
@@ -84,7 +84,6 @@ public final class ChamsModule extends Module {
         public final EntityType entityType;
         public final boolean hasShadow;
         public final Render<Entity> render;
-        public boolean needsNametag = false;
 
         public QueuedEntity(Entity entity, double x, double y, double z, float yaw, float partialTicks, EntityType entityType, boolean hasShadow) {
             this.x = x;
@@ -104,6 +103,7 @@ public final class ChamsModule extends Module {
     }
 
     private final HashMap<Entity, QueuedEntity> queuedEntities = new HashMap<Entity, QueuedEntity>();
+    private final ArrayList<EventDrawNameplate> queuedNameplates = new ArrayList<EventDrawNameplate>();
     private boolean renderShadow = false;
     private boolean renderingShaded = false;
 
@@ -204,6 +204,7 @@ public final class ChamsModule extends Module {
         final Minecraft mc = Minecraft.getMinecraft();
         if (!this.mode.getValue().name().equalsIgnoreCase("shader") || mc.getRenderManager().renderEngine == null) {
             this.queuedEntities.clear();
+            this.queuedNameplates.clear();
             return;
         }
 
@@ -255,38 +256,33 @@ public final class ChamsModule extends Module {
             }
         }
 
+        this.queuedEntities.clear();
+
         // release shader
         this.renderingShaded = false;
         if (prog != null) {
             prog.release();
         }
 
-        // draw name tags
+        // draw queued name tags
         GlStateManager.color(1.0f, 1.0f, 1.0f);
-        for (HashMap.Entry<Entity, QueuedEntity> entry : this.queuedEntities.entrySet()) {
-            final Entity entity = entry.getKey();
-            final QueuedEntity qEntity = entry.getValue();
-            if (qEntity.render != null && qEntity.needsNametag) {
-                ((RenderLivingBase)qEntity.render).renderName((EntityLivingBase)entity, qEntity.x, qEntity.y, qEntity.z);
-            }
+        for (EventDrawNameplate nEvent : this.queuedNameplates) {
+            EntityRenderer.drawNameplate(nEvent.fontRenderer, nEvent.str, nEvent.x, nEvent.y, nEvent.z, nEvent.verticalShift, nEvent.viewerYaw, nEvent.viewerPitch, nEvent.isThirdPersonFrontal, nEvent.isSneaking);
         }
+
+        this.queuedNameplates.clear();
 
         // clean up context
         RenderHelper.disableStandardItemLighting();
         mc.entityRenderer.disableLightmap();
-        this.queuedEntities.clear();
         GlStateManager.color(1.0f, 1.0f, 1.0f);
     }
 
     @Listener
-    public void onRenderName(EventRenderName event) {
+    public void onDrawNameplate(EventDrawNameplate event) {
         if (this.renderingShaded) {
-            final Entity entity = event.getEntity();
-            final QueuedEntity qEntity = this.queuedEntities.get(entity);
-            if (qEntity != null && qEntity.render instanceof RenderLivingBase) { // should never be null, but just in case
-                event.setCanceled(true);
-                qEntity.needsNametag = true;
-            }
+            event.setCanceled(true);
+            this.queuedNameplates.add(event);
         }
     }
 
