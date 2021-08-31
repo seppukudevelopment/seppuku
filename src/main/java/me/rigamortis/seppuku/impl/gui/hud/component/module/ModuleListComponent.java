@@ -9,6 +9,7 @@ import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.value.Regex;
+import me.rigamortis.seppuku.api.value.Shader;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.config.ModuleConfig;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
@@ -649,6 +650,11 @@ public final class ModuleListComponent extends ResizableHudComponent {
                     };
                     components.add(valueText);
                     this.addComponentToButtons(valueText);
+                } else if (value.getValue() instanceof Shader) {
+                    CarouselComponent carouselComponent = new CarouselComponent(value.getName(), value);
+                    carouselComponent.setTooltipText(value.getDesc());
+                    components.add(carouselComponent);
+                    this.addComponentToButtons(carouselComponent);
                 }
             }
         }
