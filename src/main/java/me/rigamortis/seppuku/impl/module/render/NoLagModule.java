@@ -36,7 +36,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class NoLagModule extends Module {
 
-    public final Value<Boolean> light = new Value<Boolean>("Light", new String[]{"Lit", "l"}, "Choose to enable the lighting lag fix. Disables lighting updates.", true);
+    public final Value<Boolean> light = new Value<Boolean>("Light", new String[]{"Lit", "l"}, "Choose to enable the lighting lag fix. Disables lighting updates.", false);
     public final Value<Boolean> signs = new Value<Boolean>("Signs", new String[]{"Sign", "si"}, "Choose to enable the sign lag fix. Disables the rendering of sign text.", false);
     public final Value<Boolean> sounds = new Value<Boolean>("Sounds", new String[]{"Sound", "s"}, "Choose to enable the sound lag fix. Disable entity swap-item/equip sound.", true);
     public final Value<Boolean> fluids = new Value<Boolean>("Fluids", new String[]{"Fluid", "f", "Liquids", "liq", "Water", "Lava"}, "Disables the rendering of all fluids.", false);
