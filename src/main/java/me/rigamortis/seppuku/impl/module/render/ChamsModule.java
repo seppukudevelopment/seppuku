@@ -4,17 +4,18 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.event.render.EventRenderEntity;
+import me.rigamortis.seppuku.api.event.render.EventDrawNameplate;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.util.shader.ShaderProgram;
 import me.rigamortis.seppuku.api.value.Shader;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityBoat;
@@ -27,7 +28,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.awt.*;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -75,7 +76,6 @@ public final class ChamsModule extends Module {
     }
 
     private class QueuedEntity {
-        public final Entity entity;
         public final double x;
         public final double y;
         public final double z;
@@ -83,9 +83,9 @@ public final class ChamsModule extends Module {
         public final float partialTicks;
         public final EntityType entityType;
         public final boolean hasShadow;
+        public final Render<Entity> render;
 
         public QueuedEntity(Entity entity, double x, double y, double z, float yaw, float partialTicks, EntityType entityType, boolean hasShadow) {
-            this.entity = entity;
             this.x = x;
             this.y = y;
             this.z = z;
@@ -93,6 +93,8 @@ public final class ChamsModule extends Module {
             this.partialTicks = partialTicks;
             this.entityType = entityType;
             this.hasShadow = hasShadow;
+            this.render = Minecraft.getMinecraft().getRenderManager().<Entity>getEntityRenderObject(entity);
+            this.render.setRenderOutlines(false);
         }
 
         public QueuedEntity(EventRenderEntity event, EntityType entityType, boolean hasShadow) {
@@ -100,8 +102,10 @@ public final class ChamsModule extends Module {
         }
     }
 
-    private final List<QueuedEntity> queuedEntities = new ArrayList<QueuedEntity>();
+    private final HashMap<Entity, QueuedEntity> queuedEntities = new HashMap<Entity, QueuedEntity>();
+    private final ArrayList<EventDrawNameplate> queuedNameplates = new ArrayList<EventDrawNameplate>();
     private boolean renderShadow = false;
+    private boolean renderingShaded = false;
 
     public ChamsModule() {
         super("Chams", new String[]{"Cham", "Chameleon"}, "Allows you to see entities through walls", "NONE", -1, ModuleType.RENDER);
@@ -124,7 +128,7 @@ public final class ChamsModule extends Module {
         if (this.checkFilter(entityType)) {
             if (mode.equalsIgnoreCase("shader")) {
                 if (event.getStage() == EventStageable.EventStage.PRE) {
-                    this.queuedEntities.add(new QueuedEntity(event, entityType, Minecraft.getMinecraft().getRenderManager().isRenderShadow()));
+                    this.queuedEntities.put(event.getEntity(), new QueuedEntity(event, entityType, Minecraft.getMinecraft().getRenderManager().isRenderShadow()));
                 }
 
                 event.setCanceled(true);
@@ -197,27 +201,29 @@ public final class ChamsModule extends Module {
 
     @Listener
     public void render3D(EventRender3D event) {
-        if (!this.mode.getValue().name().equalsIgnoreCase("shader")) {
+        final Minecraft mc = Minecraft.getMinecraft();
+        if (!this.mode.getValue().name().equalsIgnoreCase("shader") || mc.getRenderManager().renderEngine == null) {
             this.queuedEntities.clear();
+            this.queuedNameplates.clear();
             return;
         }
 
-        final Minecraft mc = Minecraft.getMinecraft();
-        final RenderManager renderMan = mc.getRenderManager();
+        this.renderingShaded = true;
         mc.entityRenderer.enableLightmap();
         RenderHelper.enableStandardItemLighting();
 
         // draw entity shadows and fire without shader so they don't render on
         // top of entity in case you are using a shader that overrides depth
         GlStateManager.color(1.0f, 1.0f, 1.0f);
-        for(QueuedEntity qEntity : this.queuedEntities) {
-            Render<Entity> render = renderMan.<Entity>getEntityRenderObject(qEntity.entity);
+        for (HashMap.Entry<Entity, QueuedEntity> entry : this.queuedEntities.entrySet()) {
+            final Entity entity = entry.getKey();
+            final QueuedEntity qEntity = entry.getValue();
 
-            if (render != null && renderMan.renderEngine != null)
+            if (qEntity.render != null)
             {
                 //OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)(15728880 % 65536), (float)(15728880 / 65536));
                 OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0f, 240.0f); // max brightness
-                render.doRenderShadowAndFire(qEntity.entity, qEntity.x, qEntity.y, qEntity.z, qEntity.yaw, qEntity.partialTicks);
+                qEntity.render.doRenderShadowAndFire(entity, qEntity.x, qEntity.y, qEntity.z, qEntity.yaw, qEntity.partialTicks);
             }
         }
 
@@ -229,14 +235,14 @@ public final class ChamsModule extends Module {
 
         // draw entities with shader
         EntityType lastEntityType = EntityType.SKIP;
-        for(QueuedEntity qEntity : this.queuedEntities) {
-            Render<Entity> render = renderMan.<Entity>getEntityRenderObject(qEntity.entity);
-            render.setRenderOutlines(false);
+        for (HashMap.Entry<Entity, QueuedEntity> entry : this.queuedEntities.entrySet()) {
+            final Entity entity = entry.getKey();
+            final QueuedEntity qEntity = entry.getValue();
 
-            if (render != null && renderMan.renderEngine != null)
+            if (qEntity.render != null)
             {
                 // set light level (from RenderManager.renderEntityStatic) and color
-                final int lightLevel = qEntity.entity.isBurning() ? 15728880 : qEntity.entity.getBrightnessForRender();
+                final int lightLevel = entity.isBurning() ? 15728880 : entity.getBrightnessForRender();
                 OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)(lightLevel % 65536), (float)(lightLevel / 65536));
                 GlStateManager.color(1.0f, 1.0f, 1.0f);
 
@@ -246,17 +252,38 @@ public final class ChamsModule extends Module {
                 }
 
                 // render entity (from RenderManager.renderEntity)
-                render.doRender(qEntity.entity, qEntity.x, qEntity.y, qEntity.z, qEntity.yaw, qEntity.partialTicks);
+                qEntity.render.doRender(entity, qEntity.x, qEntity.y, qEntity.z, qEntity.yaw, qEntity.partialTicks);
             }
         }
 
-        // release shader and clean up context
+        this.queuedEntities.clear();
+
+        // release shader
+        this.renderingShaded = false;
         if (prog != null) {
             prog.release();
         }
+
+        // draw queued name tags
+        GlStateManager.color(1.0f, 1.0f, 1.0f);
+        for (EventDrawNameplate nEvent : this.queuedNameplates) {
+            EntityRenderer.drawNameplate(nEvent.fontRenderer, nEvent.str, nEvent.x, nEvent.y, nEvent.z, nEvent.verticalShift, nEvent.viewerYaw, nEvent.viewerPitch, nEvent.isThirdPersonFrontal, nEvent.isSneaking);
+        }
+
+        this.queuedNameplates.clear();
+
+        // clean up context
         RenderHelper.disableStandardItemLighting();
         mc.entityRenderer.disableLightmap();
-        this.queuedEntities.clear();
+        GlStateManager.color(1.0f, 1.0f, 1.0f);
+    }
+
+    @Listener
+    public void onDrawNameplate(EventDrawNameplate event) {
+        if (this.renderingShaded) {
+            event.setCanceled(true);
+            this.queuedNameplates.add(event);
+        }
     }
 
     private EntityType getEntityType(Entity entity) {

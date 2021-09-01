@@ -759,7 +759,7 @@ public class ShaderProgram {
             this.depthTextureCounter++;
 
             if (this.depthTextureCounter == 1) {
-                OpenGlHelper.setActiveTexture(GL_TEXTURE3); // nothing special about texture 3, it's just never used (at least in vanilla)
+                GlStateManager.setActiveTexture(GL_TEXTURE3); // nothing special about texture 3, it's just never used (at least in vanilla)
                 GlStateManager.enableTexture2D();
                 FramebufferUtil.bindDepthTexture();
             }
@@ -768,7 +768,7 @@ public class ShaderProgram {
             this.setUniform(DEPTHDIMS_UNIFORM, (float)FramebufferUtil.getWidth(), (float)FramebufferUtil.getHeight());
 
             if (this.depthTextureCounter == 1) {
-                OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+                GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
             }
         }
     }
@@ -785,10 +785,10 @@ public class ShaderProgram {
             if (this.depthTextureCounter < 0) {
                 throw new RuntimeException("Too many depth texture unbinds; there's a bug somewhere, report this");
             } else if(this.depthTextureCounter == 0) {
-                OpenGlHelper.setActiveTexture(GL_TEXTURE3);
+                GlStateManager.setActiveTexture(GL_TEXTURE3);
                 GlStateManager.bindTexture(0);
                 GlStateManager.disableTexture2D();
-                OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+                GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
             }
         }
     }

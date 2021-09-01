@@ -6,6 +6,7 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.player.EventFovModifier;
 import me.rigamortis.seppuku.api.event.player.EventGetMouseOver;
 import me.rigamortis.seppuku.api.event.player.EventPlayerReach;
+import me.rigamortis.seppuku.api.event.render.EventDrawNameplate;
 import me.rigamortis.seppuku.api.event.render.EventHurtCamEffect;
 import me.rigamortis.seppuku.api.event.render.EventOrientCamera;
 import me.rigamortis.seppuku.api.event.render.EventRender2D;
@@ -15,6 +16,7 @@ import me.rigamortis.seppuku.api.patch.MethodPatch;
 import me.rigamortis.seppuku.api.util.ASMUtil;
 import me.rigamortis.seppuku.impl.management.PatchManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -324,5 +326,70 @@ public final class EntityRendererPatch extends ClassPatch {
             mc.profiler.endSection();
         }
 
+    }
+
+    /**
+     * This is where minecraft renders name plates
+     *
+     * @param methodNode
+     * @param env
+     */
+    @MethodPatch(
+            mcpName = "drawNameplate",
+            notchName = "a",
+            mcpDesc = "(Lnet/minecraft/client/gui/FontRenderer;Ljava/lang/String;FFFIFFZZ)V",
+            notchDesc = "(Lbip;Ljava/lang/String;FFFIFFZZ)V")
+    public void drawNameplate(MethodNode methodNode, PatchManager.Environment env) {
+        //create a list of instructions and add the needed instructions to call our hook function
+        final InsnList insnList = new InsnList();
+        //add ALOAD instructions to pass all arguments into our hook function
+        //drawNameplate is static so argument indices start from 0 since there is no `this`
+        insnList.add(new VarInsnNode(ALOAD, 0)); // fontRenderer
+        insnList.add(new VarInsnNode(ALOAD, 1)); // str
+        insnList.add(new VarInsnNode(FLOAD, 2)); // x
+        insnList.add(new VarInsnNode(FLOAD, 3)); // y
+        insnList.add(new VarInsnNode(FLOAD, 4)); // z
+        insnList.add(new VarInsnNode(ILOAD, 5)); // verticalShift
+        insnList.add(new VarInsnNode(FLOAD, 6)); // viewerYaw
+        insnList.add(new VarInsnNode(FLOAD, 7)); // viewerPitch
+        insnList.add(new VarInsnNode(ILOAD, 8)); // isThirdPersonFrontal
+        insnList.add(new VarInsnNode(ILOAD, 9)); // isSneaking
+        //call our hook function
+        insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "drawNameplateHook", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/client/gui/FontRenderer;Ljava/lang/String;FFFIFFZZ)Z" : "(Lbip;Ljava/lang/String;FFFIFFZZ)Z", false));
+        //add a label to jump to
+        final LabelNode jmp = new LabelNode();
+        //add if equals and pass the label
+        insnList.add(new JumpInsnNode(IFEQ, jmp));
+        //add return so the rest of the function doesn't get called
+        insnList.add(new InsnNode(RETURN));
+        //add our label
+        insnList.add(jmp);
+        //insert the list of instructions at the top of the function
+        methodNode.instructions.insert(insnList);
+    }
+
+    /**
+     * This is our renderName hook
+     * Used to disable rendering minecrafts default
+     * name tags on certain entities
+     *
+     * @param fontRenderer
+     * @param str
+     * @param x
+     * @param y
+     * @param z
+     * @param verticalShift
+     * @param viewerYaw
+     * @param viewerPitch
+     * @param isThirdPersonFrontal
+     * @param isSneaking
+     * @return
+     */
+    public static boolean drawNameplateHook(FontRenderer fontRenderer, String str, float x, float y, float z, int verticalShift, float viewerYaw, float viewerPitch, boolean isThirdPersonFrontal, boolean isSneaking) {
+        //dispatch our event and pass the entity in
+        final EventDrawNameplate event = new EventDrawNameplate(fontRenderer, str, x, y, z, verticalShift, viewerYaw, viewerPitch, isThirdPersonFrontal, isSneaking);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
     }
 }
