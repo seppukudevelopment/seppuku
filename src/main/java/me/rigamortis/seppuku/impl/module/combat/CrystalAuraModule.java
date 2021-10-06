@@ -24,12 +24,11 @@ import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
+import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.network.play.server.SPacketSpawnObject;
-import net.minecraft.util.CombatRules;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.world.Explosion;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -50,8 +49,8 @@ public final class CrystalAuraModule extends Module {
     public final Value<Float> attackMaxDistance = new Value<Float>("AttackMaxDistance", new String[]{"AMaxRange", "MaxAttackRange", "AMaxRadius", "AMD", "AMR"}, "The max (block)distance an entity must be to the a crystal to begin attacking.", 14.0f, 1.0f, 20.0f, 1.0f);
     public final Value<Boolean> place = new Value<Boolean>("Place", new String[]{"AutoPlace"}, "Automatically place crystals.", true);
     public final Value<Boolean> placeRapid = new Value<Boolean>("PlaceRapid", new String[]{"RapidPlace"}, "Rapidly place crystals.", true);
-    public final Value<Boolean> placeSpread = new Value<Boolean>("PlaceSpread", new String[]{"SpreadPlace"}, "Spread crystals around target by swapping place positions each time.", false);
-    public final Value<Float> placeSpreadDistance = new Value<Float>("PlaceSpreadDistance", new String[]{"SpreadPlaceDistance", "SpreadDistance"}, "Distance (in blocks) to spread the crystals around the target.", 1.0f, 0.0f, 4.0f, 0.1f);
+    public final Value<Boolean> placeSpread = new Value<Boolean>("PlaceSpread", new String[]{"SpreadPlace"}, "Spread crystals around target by swapping place positions each time. (toggle on if target is running)", false);
+    public final Value<Float> placeSpreadDistance = new Value<Float>("PlaceSpreadDistance", new String[]{"SpreadPlaceDistance", "SpreadDistance"}, "Distance (in blocks) to spread the crystals around the target.", 1.0f, 0.0f, 3.0f, 0.1f);
     public final Value<Float> placeDelay = new Value<Float>("PlaceDelay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay to place crystals.", 50.0f, 0.0f, 500.0f, 1.0f);
     public final Value<Float> placeRadius = new Value<Float>("PlaceRadius", new String[]{"Radius", "PR", "PlaceRange", "Range"}, "The radius in blocks around the player to process placing in.", 5.5f, 1.0f, 7.0f, 0.5f);
     public final Value<Float> placeMaxDistance = new Value<Float>("PlaceMaxDistance", new String[]{"BlockDistance", "MaxBlockDistance", "PMBD", "MBD", "PBD", "BD"}, "The (max)distance an entity must be to the new crystal to begin placing.", 14.0f, 1.0f, 20.0f, 1.0f);
@@ -61,6 +60,8 @@ public final class CrystalAuraModule extends Module {
     public final Value<Boolean> render = new Value<Boolean>("Render", new String[]{"R"}, "Draws information about recently placed crystals from your player.", true);
     public final Value<Boolean> renderDamage = new Value<Boolean>("RenderDamage", new String[]{"RD", "RenderDamage", "ShowDamage"}, "Draws calculated explosion damage on recently placed crystals from your player.", true);
     public final Value<Boolean> offHand = new Value<Boolean>("Offhand", new String[]{"Hand", "otherhand", "off"}, "Use crystals in the off-hand instead of holding them with the main-hand.", false);
+    public final Value<Boolean> fixDesync = new Value<Boolean>("FixDesync", new String[]{"Desync", "DesyncFix", "df"}, "Forces crystals to be dead client-side when sound effect is played.", true);
+    public final Value<Float> fixDesyncRadius = new Value<Float>("FixDesyncRadius", new String[]{"DesyncRadius", "FixDesyncRange", "DesyncRange", "DesyncFixRadius", "dfr"}, "The radius (in blocks) around the explosion sound effect to force crystals to be dead.", 10.0f, 1.0f, 40.0f, 1.0f);
 
     private final Timer attackTimer = new Timer();
     private final Timer placeTimer = new Timer();
@@ -130,7 +131,7 @@ public final class CrystalAuraModule extends Module {
                                                 final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), entity.getPositionVector());
 
                                                 Seppuku.INSTANCE.getRotationManager().startTask(this.attackRotationTask);
-                                                if (this.attackRotationTask.isOnline()) {
+                                                if (this.attackRotationTask.isOnline() || this.attackRapid.getValue()) {
                                                     Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
                                                     this.currentAttackEntity = entity;
                                                 }
@@ -145,7 +146,7 @@ public final class CrystalAuraModule extends Module {
                 break;
             case POST:
                 if (this.currentPlacePosition != null) {
-                    if (this.placeRotationTask.isOnline()) {
+                    if (this.placeRotationTask.isOnline() || this.placeRapid.getValue()) {
                         mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(this.currentPlacePosition, EnumFacing.UP, this.offHand.getValue() ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0, 0, 0));
                         this.placeLocations.add(new PlaceLocation(this.currentPlacePosition.getX(), this.currentPlacePosition.getY(), this.currentPlacePosition.getZ()));
                         this.lastPlacePosition = this.currentPlacePosition;
@@ -155,7 +156,7 @@ public final class CrystalAuraModule extends Module {
                 }
 
                 if (this.currentAttackEntity != null) {
-                    if (this.attackRotationTask.isOnline()) {
+                    if (this.attackRotationTask.isOnline() || this.attackRapid.getValue()) {
                         if (this.attackRapid.getValue()) {
                             mc.player.swingArm(this.offHand.getValue() ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND);
                             mc.playerController.attackEntity(mc.player, this.currentAttackEntity);
@@ -183,6 +184,27 @@ public final class CrystalAuraModule extends Module {
                     for (PlaceLocation placeLocation : this.placeLocations) {
                         if (placeLocation.getDistance((int) packetSpawnObject.getX(), (int) packetSpawnObject.getY() - 1, (int) packetSpawnObject.getZ()) <= 1) {
                             placeLocation.placed = true;
+                        }
+                    }
+                }
+            }
+
+            if (this.fixDesync.getValue()) {
+                if (event.getPacket() instanceof SPacketSoundEffect) {
+                    final SPacketSoundEffect packetSoundEffect = (SPacketSoundEffect) event.getPacket();
+                    if (packetSoundEffect.getCategory() == SoundCategory.BLOCKS && packetSoundEffect.getSound() == SoundEvents.ENTITY_GENERIC_EXPLODE) {
+                        final Minecraft mc = Minecraft.getMinecraft();
+                        if (mc.world != null) {
+                            for (int i = mc.world.loadedEntityList.size() - 1; i > 0; i--) {
+                                Entity entity = mc.world.loadedEntityList.get(i);
+                                if (entity != null) {
+                                    if (entity.isEntityAlive() && entity instanceof EntityEnderCrystal) {
+                                        if (entity.getDistance(packetSoundEffect.getX(), packetSoundEffect.getY(), packetSoundEffect.getZ()) <= this.fixDesyncRadius.getValue()) {
+                                            entity.setDead();
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -241,7 +263,7 @@ public final class CrystalAuraModule extends Module {
                 for (float z = radius; z >= -radius; z--) {
                     final BlockPos blockPos = new BlockPos(mc.player.posX + x, mc.player.posY + y, mc.player.posZ + z);
 
-                    if (canPlaceCrystal(blockPos)) {
+                    if (this.canPlaceCrystal(blockPos)) {
                         for (Entity entity : mc.world.loadedEntityList) {
                             if (entity instanceof EntityPlayer) {
                                 final EntityPlayer player = (EntityPlayer) entity;
@@ -260,7 +282,6 @@ public final class CrystalAuraModule extends Module {
                             final float currentDamage = calculateExplosionDamage(targetPlayer, 6.0f, blockPos.getX() + 0.5f, blockPos.getY() + 1.0f, blockPos.getZ() + 0.5f) / 2.0f;
 
                             float localDamage = calculateExplosionDamage(mc.player, 6.0f, blockPos.getX() + 0.5f, blockPos.getY() + 1.0f, blockPos.getZ() + 0.5f) / 2.0f;
-
                             if (this.isLocalImmune()) {
                                 localDamage = -1;
                             }
@@ -279,7 +300,7 @@ public final class CrystalAuraModule extends Module {
             final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d(this.currentPlacePosition.getX() + 0.5f, this.currentPlacePosition.getY() + 0.5f, this.currentPlacePosition.getZ() + 0.5f));
 
             Seppuku.INSTANCE.getRotationManager().startTask(this.placeRotationTask);
-            if (this.placeRotationTask.isOnline()) {
+            if (this.placeRotationTask.isOnline() || this.placeRapid.getValue()) {
                 Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
             }
         }
@@ -295,17 +316,13 @@ public final class CrystalAuraModule extends Module {
         if (mod != null && mod.isEnabled())
             return true;
 
-        if (this.ignore.getValue())
-            return true;
-
-        return false;
+        return this.ignore.getValue();
     }
 
     private boolean canPlaceCrystal(BlockPos pos) {
         final Minecraft mc = Minecraft.getMinecraft();
         final Block block = mc.world.getBlockState(pos).getBlock();
 
-        //todo
         if (this.placeSpread.getValue()) {
             if (this.lastPlacePosition != null)
                 if (pos.getDistance(this.lastPlacePosition.getX(), this.lastPlacePosition.getY(), this.lastPlacePosition.getZ()) <= this.placeSpreadDistance.getValue())
@@ -333,7 +350,7 @@ public final class CrystalAuraModule extends Module {
         final double dist = MathUtil.getDistance(pos, x, y, z) / (double) scale;
         //final double dist = entity.getDistance(x, y, z) / (double) scale;
         final Vec3d vec3d = new Vec3d(x, y, z);
-        final double density = (double) entity.world.getBlockDensity(vec3d, entity.getEntityBoundingBox());
+        final double density = entity.world.getBlockDensity(vec3d, entity.getEntityBoundingBox());
         final double densityScale = (1.0D - dist) * density;
 
         float unscaledDamage = (float) ((int) ((densityScale * densityScale + densityScale) / 2.0d * 7.0d * (double) scale + 1.0d));
