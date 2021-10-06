@@ -309,14 +309,20 @@ public final class CrystalAuraModule extends Module {
     private boolean isLocalImmune() {
         final Minecraft mc = Minecraft.getMinecraft();
 
-        if (mc.player.capabilities.isCreativeMode)
+        if (mc.player.capabilities.isCreativeMode) {
             return true;
+        }
 
         final GodModeModule mod = (GodModeModule) Seppuku.INSTANCE.getModuleManager().find(GodModeModule.class);
-        if (mod != null && mod.isEnabled())
+        if (mod != null && mod.isEnabled()) {
             return true;
+        }
 
-        return this.ignore.getValue();
+        if (this.ignore.getValue()) {
+            return true;
+        }
+
+        return false;
     }
 
     private boolean canPlaceCrystal(BlockPos pos) {
