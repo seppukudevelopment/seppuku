@@ -37,7 +37,7 @@ public class ButtonComponent extends HudComponent {
                 if (isMousingHoveringDropdown)
                     RenderUtil.drawTriangle(this.getX() + this.getW() - 4, this.getY() + 4, 3, 180, 0x50FFFFFF);
             } else {
-                RenderUtil.drawTriangle(this.getX() + this.getW() - 4, this.getY() + 4, 3, -90, 0x75909090);
+                RenderUtil.drawTriangle(this.getX() + this.getW() - 4, this.getY() + 4, 3, -90, 0x906D55FF);
                 if (isMousingHoveringDropdown)
                     RenderUtil.drawTriangle(this.getX() + this.getW() - 4, this.getY() + 4, 3, -90, 0x50FFFFFF);
             }
