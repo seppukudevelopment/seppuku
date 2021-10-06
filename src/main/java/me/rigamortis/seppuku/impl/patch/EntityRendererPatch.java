@@ -7,10 +7,7 @@ import me.rigamortis.seppuku.api.event.player.EventFovModifier;
 import me.rigamortis.seppuku.api.event.player.EventGetMouseOver;
 import me.rigamortis.seppuku.api.event.player.EventPlayerReach;
 import me.rigamortis.seppuku.api.event.render.EventDrawNameplate;
-import me.rigamortis.seppuku.api.event.render.EventHurtCamEffect;
-import me.rigamortis.seppuku.api.event.render.EventOrientCamera;
-import me.rigamortis.seppuku.api.event.render.EventRender2D;
-import me.rigamortis.seppuku.api.event.render.EventRender3D;
+import me.rigamortis.seppuku.api.event.render.*;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
 import me.rigamortis.seppuku.api.util.ASMUtil;
@@ -233,6 +230,24 @@ public final class EntityRendererPatch extends ClassPatch {
         insnList.add(new InsnNode(RETURN));
         methodNode.instructions.insert(insnList);
     }
+
+//private void setupFog(int startCoords, float partialTicks) {
+//    @MethodPatch(
+//            mcpName = "setupFog",
+//            notchName = "a",
+//            mcpDesc = "(IF)V")
+//    public void setupFog(MethodNode methodNode, PatchManager.Environment env) {
+//        final InsnList insnList = new InsnList();
+//        insnList.add(new VarInsnNode(ILOAD, 1));
+//        insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "setupFogHook", "(I)V", false));
+//        //insnList.add(new InsnNode(RETURN));
+//        methodNode.instructions.insert(insnList);
+//    }
+//
+//    public static void setupFogHook(int startCoords) {
+//        final EventSetupFog event = new EventSetupFog(startCoords);
+//        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+//    }
 
     /**
      * getMouseOver (original game function with modified event handling)

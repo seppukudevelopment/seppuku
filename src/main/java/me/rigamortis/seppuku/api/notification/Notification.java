@@ -53,7 +53,7 @@ public final class Notification {
     }
 
     public void update() {
-        int incline = 8;
+        int incline = 16;
         this.transitionX = (float) MathUtil.parabolic(this.transitionX, this.x, incline);
         this.transitionY = (float) MathUtil.parabolic(this.transitionY, this.y, incline);
         if (this.timer.passed((this.duration))) {

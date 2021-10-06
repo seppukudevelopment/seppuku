@@ -12,6 +12,7 @@ import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.ParticleFirework;
 import net.minecraft.entity.boss.EntityWither;
+import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.item.EntityItem;
@@ -19,8 +20,7 @@ import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.network.play.server.SPacketSoundEffect;
-import net.minecraft.network.play.server.SPacketSpawnMob;
+import net.minecraft.network.play.server.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.EnumParticleTypes;
@@ -44,6 +44,8 @@ public final class NoLagModule extends Module {
     public final Value<Boolean> slimes = new Value<Boolean>("Slimes", new String[]{"Slime", "sl"}, "Choose to enable the slime lag fix. Disables slimes from spawning.", false);
     public final Value<Boolean> items = new Value<Boolean>("Items", new String[]{"Item", "i"}, "Disables the rendering of items.", false);
     public final Value<Boolean> particles = new Value<Boolean>("Particles", new String[]{"Part", "par"}, "Disables the spawning of all particles.", true);
+    public final Value<Boolean> particlesPackets = new Value<Boolean>("ParticlesPackets", new String[]{"PartPacket", "parpac"}, "Disables particle packets and effect packets.", false);
+    public final Value<Boolean> particlesEntityPackets = new Value<Boolean>("ParticlesEntityPackets", new String[]{"PartEntPacket", "parentpac"}, "Disables entity effect packets (usually particles).", false);
     public final Value<Boolean> sky = new Value<Boolean>("Sky", new String[]{"Skies", "ski"}, "Disables the rendering of the sky.", true);
     public final Value<Boolean> names = new Value<Boolean>("Names", new String[]{"Name", "n"}, "Disables the rendering of vanilla name-tags.", false);
     public final Value<Boolean> withers = new Value<Boolean>("Withers", new String[]{"Wither", "w"}, "Disables the rendering of withers.", false);
@@ -57,6 +59,7 @@ public final class NoLagModule extends Module {
     public final Value<Boolean> redstone = new Value<Boolean>("Redstone", new String[]{"Red", "r"}, "Disables the rendering of redstone dust.", false);
     public final Value<Boolean> redstoneTorch = new Value<Boolean>("RedstoneTorch", new String[]{"RedTorch", "rt"}, "Disables the rendering of redstone torches.", false);
     public final Value<Boolean> redstoneLogic = new Value<Boolean>("RedstoneLogic", new String[]{"RedLogic", "rl"}, "Disables the rendering of redstone logic blocks.", false);
+    public final Value<Boolean> storms = new Value<Boolean>("Storms", new String[]{"Lightning"}, "Disables the rendering of lightning strikes.", false);
 
     public NoLagModule() {
         super("NoLag", new String[]{"AntiLag", "NoRender"}, "Fixes malicious lag exploits and bugs that cause lag.", "NONE", -1, ModuleType.RENDER);
@@ -96,6 +99,18 @@ public final class NoLagModule extends Module {
                     if (packet.getSound() == SoundEvents.ENTITY_FIREWORK_LAUNCH) {
                         event.setCanceled(true);
                     }
+                }
+            }
+
+            if (this.particlesPackets.getValue()) {
+                if (event.getPacket() instanceof SPacketParticles || event.getPacket() instanceof SPacketEffect) {
+                    event.setCanceled(true);
+                }
+            }
+
+            if (this.particlesEntityPackets.getValue()) {
+                if (event.getPacket() instanceof SPacketEntityEffect) {
+                    event.setCanceled(true);
                 }
             }
         }
@@ -284,6 +299,12 @@ public final class NoLagModule extends Module {
 
         if (this.tnt.getValue()) {
             if (event.getEntity() instanceof EntityTNTPrimed) {
+                event.setCanceled(true);
+            }
+        }
+
+        if (this.storms.getValue()) { // fix this
+            if (event.getEntity() instanceof EntityLightningBolt) {
                 event.setCanceled(true);
             }
         }
