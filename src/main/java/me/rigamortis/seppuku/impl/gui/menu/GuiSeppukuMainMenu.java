@@ -42,8 +42,6 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
 
     private ParticleSystem particleSystem;
 
-    private boolean inactive = false;
-
     public GuiSeppukuMainMenu() {
         Seppuku.INSTANCE.getEventManager().addEventListener(this);
     }
@@ -150,7 +148,7 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
         this.disable = new MainMenuButton(2, 2, 14, 14, "X") {
             @Override
             public void action() {
-                inactive = true;
+                Seppuku.INSTANCE.getConfigManager().setCustomMainMenuHidden(true);
                 mc.displayGuiScreen(new GuiMainMenu());
             }
         };
@@ -165,7 +163,7 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
 
     @Listener
     public void displayScreen(EventDisplayGui event) {
-        if (this.inactive)
+        if (Seppuku.INSTANCE.getConfigManager().isCustomMainMenuHidden())
             return;
 
         if (event.getScreen() == null && mc.world == null) {

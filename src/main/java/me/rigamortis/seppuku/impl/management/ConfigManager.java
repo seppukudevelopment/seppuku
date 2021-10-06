@@ -20,6 +20,7 @@ public final class ConfigManager {
     private File hudComponentConfigDir;
 
     private boolean firstLaunch = false;
+    private boolean customMainMenuHidden = false;
 
     private List<Configurable> configurableList = new ArrayList<>();
 
@@ -56,6 +57,7 @@ public final class ConfigManager {
             this.configurableList.add(new HudConfig(this.hudComponentConfigDir, hudComponent));
         });
 
+        this.configurableList.add(new ClientConfig(configDir));
         this.configurableList.add(new FriendConfig(configDir));
         this.configurableList.add(new XrayConfig(configDir));
         this.configurableList.add(new SearchConfig(configDir));
@@ -124,6 +126,14 @@ public final class ConfigManager {
 
     public void setFirstLaunch(boolean firstLaunch) {
         this.firstLaunch = firstLaunch;
+    }
+
+    public boolean isCustomMainMenuHidden() {
+        return this.customMainMenuHidden;
+    }
+
+    public void setCustomMainMenuHidden(boolean hidden) {
+        this.customMainMenuHidden = hidden;
     }
 
     public void addConfigurable(Configurable configurable) {

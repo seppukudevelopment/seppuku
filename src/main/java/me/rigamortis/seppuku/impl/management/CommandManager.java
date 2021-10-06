@@ -74,6 +74,7 @@ public final class CommandManager {
         this.commandList.add(new SearchCommand());
         this.commandList.add(new PlayCommand());
         this.commandList.add(new LocateFeatureCommand());
+        this.commandList.add(new MainMenuCommand());
 
         //create commands for every value within every module
         loadValueCommands();
