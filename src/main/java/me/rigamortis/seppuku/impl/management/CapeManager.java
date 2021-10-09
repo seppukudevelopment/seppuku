@@ -143,6 +143,9 @@ public final class CapeManager {
      * @return
      */
     public CapeUser find(AbstractClientPlayer player) {
+        if (this.capeUserList.isEmpty())
+            return null;
+
         for (CapeUser user : this.capeUserList) {
             if (user.getUuid().equals(player.getUniqueID().toString().replace("-", ""))) {
                 return user;

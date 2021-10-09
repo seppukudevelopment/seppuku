@@ -2,6 +2,7 @@ package me.rigamortis.seppuku.impl.gui.hud.component;
 
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
+import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
@@ -10,20 +11,27 @@ import me.rigamortis.seppuku.impl.module.combat.KillAuraModule;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 
+/**
+ * @author noil/uoil
+ */
 public final class BattleInfoComponent extends DraggableHudComponent {
 
     private CrystalAuraModule crystalAuraModule;
     private KillAuraModule killAuraModule;
-
     private AbstractClientPlayer currentOpponent;
+
+    private final Texture donorsTexture;
 
     public BattleInfoComponent() {
         super("BattleInfo");
         this.setW(117);
         this.setH(48);
+
+        this.donorsTexture = new Texture("seppuku_sky.jpg");
     }
 
     @Override
@@ -42,19 +50,23 @@ public final class BattleInfoComponent extends DraggableHudComponent {
             String targetType = "target";
 
             // grid
-            if (mc.currentScreen instanceof GuiHudEditor) {
-                for (float j = this.getX() + this.getW(); j > this.getX(); j -= 10) {
-                    if (j <= this.getX())
-                        continue;
-
-                    if (j >= this.getX() + this.getW())
-                        continue;
-
-                    RenderUtil.drawLine(j, this.getY(), j, this.getY() + this.getH(), 2.0f, 0x75101010);
-                }
-            } else {
+            if (!(mc.currentScreen instanceof GuiHudEditor)) {
                 // background
                 RenderUtil.drawRect(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 0x75101010);
+            }
+
+            float closestDistance = 10000.0f;
+            EntityPlayer closestTarget = null;
+
+            for (EntityPlayer player : mc.world.playerEntities) {
+                if (player == mc.player || !(player instanceof AbstractClientPlayer))
+                    continue;
+
+                float distanceToLocal = mc.player.getDistance(player);
+                if (distanceToLocal < closestDistance) {
+                    closestDistance = distanceToLocal;
+                    closestTarget = player;
+                }
             }
 
             if (this.crystalAuraModule.getCurrentAttackEntity() != null) {
@@ -65,15 +77,14 @@ public final class BattleInfoComponent extends DraggableHudComponent {
                     this.currentOpponent = (AbstractClientPlayer) this.killAuraModule.getCurrentTarget();
                     targetType = "kill aura";
                 }
-            } else if (mc.objectMouseOver != null) {
-                if (mc.objectMouseOver.entityHit != null) {
-                    if (mc.objectMouseOver.entityHit instanceof AbstractClientPlayer && mc.objectMouseOver.entityHit.isEntityAlive()) {
-                        this.currentOpponent = (AbstractClientPlayer) mc.objectMouseOver.entityHit;
-                        targetType = "mouse over";
-                    }
+            } else if (mc.objectMouseOver != null && mc.objectMouseOver.entityHit != null) {
+                if (mc.objectMouseOver.entityHit instanceof AbstractClientPlayer && mc.objectMouseOver.entityHit.isEntityAlive()) {
+                    this.currentOpponent = (AbstractClientPlayer) mc.objectMouseOver.entityHit;
+                    targetType = "mouse over";
                 }
             } else {
-                this.currentOpponent = null;
+                this.currentOpponent = (AbstractClientPlayer) closestTarget;
+                targetType = "nearby" + " " + ((closestDistance < 10000.0f) ? (int) closestDistance + "m" : "");
             }
 
             if (this.currentOpponent != null) {
@@ -81,9 +92,17 @@ public final class BattleInfoComponent extends DraggableHudComponent {
                     // head bg
                     RenderUtil.drawRect(this.getX() + 1, this.getY() + 1, this.getX() + 27, this.getY() + 27, 0x75101010);
 
+                    // reset colors
+                    GlStateManager.color(1, 1, 1, 1);
+
                     // head
-                    mc.getTextureManager().bindTexture(this.currentOpponent.getLocationSkin());
-                    RenderUtil.drawTexture(this.getX() + 2, this.getY() + 2, 24, 24, 8F / 64f, 8f / 64f, 16f / 64f, 16f / 64f);
+                    if (Seppuku.INSTANCE.getCapeManager().find(this.currentOpponent) != null) {
+                        //RenderUtil.drawTexture(this.getX() + 2, this.getY() + 2, 24, 24, 5f / 64f, 4f / 64f, 8f / 64f, 8f / 64f);
+                        this.donorsTexture.render(this.getX() + 2, this.getY() + 2, 24, 24);
+                    } else {
+                        mc.getTextureManager().bindTexture(this.currentOpponent.getLocationSkin());
+                        RenderUtil.drawTexture(this.getX() + 2, this.getY() + 2, 24, 24, 8f / 64f, 8f / 64f, 16f / 64f, 16f / 64f);
+                    }
 
                     // armor and items
                     GlStateManager.pushMatrix();
@@ -132,10 +151,21 @@ public final class BattleInfoComponent extends DraggableHudComponent {
                     // }
 
                     // entity name
-                    mc.fontRenderer.drawStringWithShadow(this.currentOpponent.getName(), this.getX() + 28, this.getY() + 2, 0xFFEEEEEE);
+                    String entityName = this.currentOpponent.getName();
+                    int entityNameWidth = mc.fontRenderer.getStringWidth(entityName);
+                    if (entityNameWidth > this.getW() - 30) {
+                        //entityName = this.currentOpponent.getName().substring(0, this.currentOpponent.getName().length() - 2) + "..";
+                        this.setW(32 + mc.fontRenderer.getStringWidth(entityName));
+                    } else if (entityNameWidth < 117 - 30) {
+                        this.setW(117);
+                    }
+                    mc.fontRenderer.drawStringWithShadow(entityName, this.getX() + 28, this.getY() + 2, 0xFFEEEEEE);
+
+                    // target type
                     mc.fontRenderer.drawStringWithShadow("[" + targetType + "]", this.getX() + 28, this.getY() + 2 + mc.fontRenderer.FONT_HEIGHT, 0xFF999999);
                 } else {
                     this.currentOpponent = null;
+                    this.setW(117);
                 }
             } else {
                 mc.fontRenderer.drawStringWithShadow("Waiting for target...", this.getX() + 2, this.getY() + 2, 0xFFAAAAAA);
