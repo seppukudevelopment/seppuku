@@ -130,13 +130,13 @@ public final class BattleInfoComponent extends DraggableHudComponent {
                     //Minecraft.getMinecraft().getTextureManager().bindTexture(abstractClientPlayer.getLocationSkin());
                     //RenderUtil.drawTexture(this.getX(), this.getY(), 20, 20, 1, 0, 1, 1);
                     // }
+
+                    // entity name
+                    mc.fontRenderer.drawStringWithShadow(this.currentOpponent.getName(), this.getX() + 28, this.getY() + 2, 0xFFEEEEEE);
+                    mc.fontRenderer.drawStringWithShadow("[" + targetType + "]", this.getX() + 28, this.getY() + 2 + mc.fontRenderer.FONT_HEIGHT, 0xFF999999);
                 } else {
                     this.currentOpponent = null;
                 }
-
-                // entity name
-                mc.fontRenderer.drawStringWithShadow(this.currentOpponent.getName(), this.getX() + 28, this.getY() + 2, 0xFFEEEEEE);
-                mc.fontRenderer.drawStringWithShadow("[" + targetType + "]", this.getX() + 28, this.getY() + 2 + mc.fontRenderer.FONT_HEIGHT, 0xFF999999);
             } else {
                 mc.fontRenderer.drawStringWithShadow("Waiting for target...", this.getX() + 2, this.getY() + 2, 0xFFAAAAAA);
             }
