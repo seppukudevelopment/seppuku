@@ -10,8 +10,8 @@ import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
-import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.util.logging.Level;
 
 /**
@@ -316,7 +316,7 @@ public class TextComponent extends HudComponent {
             return "";
         }
 
-        if(this.textCursor > this.selectCursor) {
+        if (this.textCursor > this.selectCursor) {
             return this.displayValue.substring(this.selectCursor, this.textCursor);
         } else {
             return this.displayValue.substring(this.textCursor, this.selectCursor);
@@ -332,7 +332,7 @@ public class TextComponent extends HudComponent {
     public void setTextCursor(int pos, boolean shiftDown) {
         if (pos <= 0) {
             pos = 0;
-        } else if(pos > this.displayValue.length()) {
+        } else if (pos > this.displayValue.length()) {
             pos = this.displayValue.length();
         }
 
@@ -365,7 +365,7 @@ public class TextComponent extends HudComponent {
         end = Math.min(Math.max(end, 0), this.displayValue.length());
         if (start == end) {
             return;
-        } else if(start > end) {
+        } else if (start > end) {
             final int temp = start;
             start = end;
             end = temp;

@@ -21,18 +21,19 @@ public final class ResourceUtil {
     // note that this is kinda expensive for jar files since it lists ALL the
     // resources and then filters them, so, if you need recursion, set recurse
     // to true instead of doing it yourself or you will slow everything down
+
     /**
-    * List directory contents for a resource folder.
-    * This is basically a brute-force implementation.
-    * Works for regular files and also JARs.
-    *
-    * @author Greg Briggs
-    * @param clazz Any java class that lives in the same place as the resources you want.
-    * @param path Should end with "/".
-    * @return The full path of each member item. Directories have a trailing slash.
-    * @throws URISyntaxException
-    * @throws IOException
-    */
+     * List directory contents for a resource folder.
+     * This is basically a brute-force implementation.
+     * Works for regular files and also JARs.
+     *
+     * @param clazz Any java class that lives in the same place as the resources you want.
+     * @param path  Should end with "/".
+     * @return The full path of each member item. Directories have a trailing slash.
+     * @throws URISyntaxException
+     * @throws IOException
+     * @author Greg Briggs
+     */
     public static Set<String> getResourceListing(Class clazz, String path, boolean recurse) throws URISyntaxException, IOException {
         String classPath = clazz.getName().replace(".", "/");
 
@@ -51,9 +52,9 @@ public final class ResourceUtil {
 
         if (dirURL == null) {
             /*
-            * In case of a jar file, we can't actually find a directory.
-            * Have to assume the same jar as clazz.
-            */
+             * In case of a jar file, we can't actually find a directory.
+             * Have to assume the same jar as clazz.
+             */
             String me = classPath + ".class";
             dirURL = clazz.getClassLoader().getResource(me);
             // make absolute path from class' package if path doesnt have a leading slash, else, remove leading slash so patterns match
@@ -73,7 +74,7 @@ public final class ResourceUtil {
             JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
             Enumeration<JarEntry> entries = jar.entries(); //gives ALL entries in jar
             Set<String> result = new HashSet<String>(); //avoid duplicates in case it is a subdirectory
-            while(entries.hasMoreElements()) {
+            while (entries.hasMoreElements()) {
                 String name = entries.nextElement().getName();
                 if (name.startsWith(path) && !name.equals(path)) { //filter according to the path and ignore entry if it's the input path
                     // ignore part after next slash so that only subdirectories are kept instead of children of subdirectories (if not recursing)

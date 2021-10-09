@@ -1,13 +1,13 @@
 package me.rigamortis.seppuku.impl.management;
 
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.util.shader.ShaderProgram;
 import me.rigamortis.seppuku.api.util.ResourceUtil;
+import me.rigamortis.seppuku.api.util.shader.ShaderProgram;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -43,7 +43,7 @@ public final class ShaderManager {
 
         // TODO remove me
         Seppuku.INSTANCE.getLogger().log(Level.INFO, "================= Loaded shaders =================");
-        for (Iterator<String> it = this.getShaderList(); it.hasNext();) {
+        for (Iterator<String> it = this.getShaderList(); it.hasNext(); ) {
             Seppuku.INSTANCE.getLogger().log(Level.INFO, it.next());
         }
         Seppuku.INSTANCE.getLogger().log(Level.INFO, "==================================================");
@@ -59,7 +59,7 @@ public final class ShaderManager {
     }
 
     private void destroyAll() {
-        for (Iterator<String> it = this.getShaderList(); it.hasNext();) {
+        for (Iterator<String> it = this.getShaderList(); it.hasNext(); ) {
             this.getShader(it.next()).destroy();
         }
 
@@ -72,7 +72,7 @@ public final class ShaderManager {
         for (File file : files) {
             if (file.isDirectory()) {
                 this.loadShadersFilesystem(file);
-            } else if(file.getName().endsWith(".json")) {
+            } else if (file.getName().endsWith(".json")) {
                 // path is relative to shaders folder, remove prefix
                 final String path = file.getPath().substring(ShaderProgram.SHADER_FS_PATH.length());
                 final ShaderProgram shader = ShaderProgram.loadFromJSONNoThrow(path);
@@ -88,14 +88,14 @@ public final class ShaderManager {
         Set<String> listings;
         try {
             listings = ResourceUtil.getResourceListing(ShaderManager.class, path, true);
-        } catch(Exception e) {
+        } catch (Exception e) {
             Seppuku.INSTANCE.getLogger().log(Level.WARNING, "Failed to recurse into resource path '" + path + "' when looking for shader files (see stack trace)");
             e.printStackTrace();
             return;
         }
 
         for (String listing : listings) {
-            if(listing.endsWith(".json")) {
+            if (listing.endsWith(".json")) {
                 String resourcePath = "resource://" + listing;
                 final ShaderProgram shader = ShaderProgram.loadFromJSONNoThrow(resourcePath);
                 if (shader != null) {

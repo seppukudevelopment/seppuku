@@ -642,7 +642,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                         public void onComponentEvent() {
                             final Regex regex = (Regex) value.getValue();
                             regex.setPatternString(valueText.getText());
-                            if(regex.getPattern() == null)
+                            if (regex.getPattern() == null)
                                 Seppuku.INSTANCE.logfChat("%s - %s: Invalid or empty regular expression; no input will match with pattern.", module.getDisplayName(), value.getName());
                             Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class); // save configs
                             Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventUIValueChanged(value));

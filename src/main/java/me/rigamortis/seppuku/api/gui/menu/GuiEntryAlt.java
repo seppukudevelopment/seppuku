@@ -1,16 +1,12 @@
 package me.rigamortis.seppuku.api.gui.menu;
 
+import me.rigamortis.seppuku.api.util.NetworkUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.ImageBufferDownload;
-import net.minecraft.client.renderer.ThreadDownloadImageData;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StringUtils;
 
 /**
  * @author noil
@@ -46,7 +42,7 @@ public class GuiEntryAlt implements GuiListExtended.IGuiListEntry {
         // load resource location & download skin from minotar's public api
         if (this.resourceLocation == null) {
             this.resourceLocation = AbstractClientPlayer.getLocationSkin(this.alt.getUsername());
-            this.getDownloadImageSkin(this.resourceLocation, this.alt.getUsername());
+            NetworkUtil.getDownloadImageSkin(this.resourceLocation, this.alt.getUsername());
         } else { // render player head
             Minecraft.getMinecraft().getTextureManager().bindTexture(this.resourceLocation);
             GlStateManager.enableTexture2D();
@@ -62,14 +58,6 @@ public class GuiEntryAlt implements GuiListExtended.IGuiListEntry {
 
     @Override
     public void mouseReleased(int slotIndex, int x, int y, int mouseEvent, int relativeX, int relativeY) {
-    }
-
-    private ThreadDownloadImageData getDownloadImageSkin(ResourceLocation resourceLocationIn, String username) {
-        TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
-        textureManager.getTexture(resourceLocationIn);
-        ThreadDownloadImageData textureObject = new ThreadDownloadImageData(null, String.format("https://minotar.net/avatar/%s/64.png", StringUtils.stripControlCodes(username)), DefaultPlayerSkin.getDefaultSkin(AbstractClientPlayer.getOfflineUUID(username)), new ImageBufferDownload());
-        textureManager.loadTexture(resourceLocationIn, textureObject);
-        return textureObject;
     }
 
     public AltData getAlt() {

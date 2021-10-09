@@ -98,7 +98,7 @@ public final class CarouselComponent extends HudComponent {
     protected String getValueAsOption() {
         final Object wrappedValue = this.value.getValue();
         if (wrappedValue instanceof Shader) {
-            return ((Shader)wrappedValue).getShaderID();
+            return ((Shader) wrappedValue).getShaderID();
         } else {
             return wrappedValue.toString().toLowerCase();
         }
@@ -109,7 +109,7 @@ public final class CarouselComponent extends HudComponent {
         final ArrayList<String> options = new ArrayList<String>();
         if (wrappedValue instanceof Shader) {
             options.add(""); // always add an option for having no shader
-            for (Iterator<String> it = Seppuku.INSTANCE.getShaderManager().getShaderList(); it.hasNext();) {
+            for (Iterator<String> it = Seppuku.INSTANCE.getShaderManager().getShaderList(); it.hasNext(); ) {
                 options.add(it.next());
             }
         } else {
@@ -124,7 +124,7 @@ public final class CarouselComponent extends HudComponent {
     protected void pickOption(String option) {
         final Object wrappedValue = this.value.getValue();
         if (wrappedValue instanceof Shader) {
-            ((Shader)wrappedValue).setShaderID(option);
+            ((Shader) wrappedValue).setShaderID(option);
         } else {
             this.value.setEnumValue(option);
         }

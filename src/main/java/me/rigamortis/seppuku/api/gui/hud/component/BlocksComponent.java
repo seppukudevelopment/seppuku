@@ -10,16 +10,12 @@ import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.IFluidBlock;
 import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -51,7 +47,7 @@ public final class BlocksComponent extends HudComponent {
             if (block instanceof BlockAir)
                 continue;
 
-            if(!(block instanceof BlockLiquid || block instanceof IFluidBlock) && Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getItemModel(new ItemStack(block)) == Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getModelManager().getMissingModel()) {
+            if (!(block instanceof BlockLiquid || block instanceof IFluidBlock) && Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getItemModel(new ItemStack(block)) == Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getModelManager().getMissingModel()) {
                 continue;
             }
 
@@ -102,12 +98,12 @@ public final class BlocksComponent extends HudComponent {
                     final float rectX = renderPaddingX + this.getX() + xOffset;
                     final float rectY = renderPaddingY + this.getY() + yOffset;
                     RenderUtil.drawBorderedRect(rectX, rectY, rectX + 16, rectY + 16, 0.5f, color, borderColor);
-                    if(block instanceof BlockLiquid || block instanceof IFluidBlock) {
+                    if (block instanceof BlockLiquid || block instanceof IFluidBlock) {
                         final Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
 
                         final ResourceLocation fluidStill = fluid.getStill();
                         final TextureAtlasSprite sprite;
-                        if(fluidStill == null) {
+                        if (fluidStill == null) {
                             sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
                         } else {
                             // getTextureExtry (instead of getTextureEntry) is a forge typo, not a typo on our side

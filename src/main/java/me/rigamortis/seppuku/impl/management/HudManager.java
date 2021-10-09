@@ -105,6 +105,7 @@ public final class HudManager {
         add(new TpsGraphComponent());
         add(new MovementGraphComponent());
         add(new ColorsComponent());
+        add(new BattleInfoComponent());
 
         TrayComponent trayComponent = new TrayComponent();
         trayComponent.setAnchorPoint(BOTTOM_CENTER);

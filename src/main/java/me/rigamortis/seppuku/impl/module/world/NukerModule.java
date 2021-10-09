@@ -214,7 +214,7 @@ public final class NukerModule extends Module {
                         final double dist = mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ());
                         if (pos.equals(SpeedMineModule.autoPos)) {
                             continue;
-                        }   
+                        }
                         if (dist <= maxDist && (mc.world.getBlockState(pos).getBlock() != Blocks.AIR && !(mc.world.getBlockState(pos).getBlock() instanceof BlockLiquid)) && canBreak(pos)) {
                             if (selection) {
                                 if ((this.selected == null) || !mc.world.getBlockState(pos).getBlock().equals(this.selected)) {

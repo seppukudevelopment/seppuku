@@ -54,6 +54,7 @@ public final class KillAuraModule extends Module {
     public void onDisable() {
         super.onDisable();
         Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
+        this.currentTarget = null;
     }
 
     @Listener
@@ -156,4 +157,15 @@ public final class KillAuraModule extends Module {
         return ret;
     }
 
+    public RotationTask getRotationTask() {
+        return rotationTask;
+    }
+
+    public Entity getCurrentTarget() {
+        return currentTarget;
+    }
+
+    public void setCurrentTarget(Entity currentTarget) {
+        this.currentTarget = currentTarget;
+    }
 }

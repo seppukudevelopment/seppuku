@@ -94,7 +94,7 @@ public final class LocateFeatureCommand extends Command {
             // I would use getDeclaredField("world") here, but it fails outside the dev environment
             // I also tried using ObfuscationReflectionHelper but it wouldn't compile, so I gave up
             Field worldField = null;
-            for(Field field : MapGenBase.class.getDeclaredFields()) {
+            for (Field field : MapGenBase.class.getDeclaredFields()) {
                 if (World.class.isAssignableFrom(field.getType())) {
                     worldField = field;
                     break;
@@ -108,27 +108,25 @@ public final class LocateFeatureCommand extends Command {
 
             worldField.setAccessible(true);
 
-            for(Field field : this.chunkGenerator.getClass().getDeclaredFields()) {
+            for (Field field : this.chunkGenerator.getClass().getDeclaredFields()) {
                 try {
                     if (MapGenStructure.class.isAssignableFrom(field.getType())) {
                         field.setAccessible(true);
                         MapGenBase structureGenerator = (MapGenBase) field.get(this.chunkGenerator);
                         worldField.set(structureGenerator, this);
                     }
-                } catch(IllegalAccessException e) {
+                } catch (IllegalAccessException e) {
                     Seppuku.INSTANCE.errorChat("Potential feature type skipped due to exception");
                     e.printStackTrace();
                 }
             }
         }
 
-        protected IChunkProvider createChunkProvider()
-        {
+        protected IChunkProvider createChunkProvider() {
             return null;
         }
 
-        protected boolean isChunkLoaded(int x, int z, boolean allowEmpty)
-        {
+        protected boolean isChunkLoaded(int x, int z, boolean allowEmpty) {
             return false;
         }
 

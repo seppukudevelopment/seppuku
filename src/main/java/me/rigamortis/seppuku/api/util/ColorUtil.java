@@ -1,5 +1,8 @@
 package me.rigamortis.seppuku.api.util;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+
 import java.awt.*;
 
 /**
@@ -24,5 +27,12 @@ public final class ColorUtil {
     public static String toHex(Color color) {
         String hex = String.format("#%02x%02x%02x%02x", color.getAlpha(), color.getRed(), color.getGreen(), color.getBlue());
         return hex;
+    }
+
+    public static int getHealthColor(Entity entity) {
+        int scale = (int) Math.round(255.0 - (double) ((EntityLivingBase) entity).getHealth() * 255.0 / (double) ((EntityLivingBase) entity).getMaxHealth());
+        int damageColor = 255 - scale << 8 | scale << 16;
+
+        return (255 << 24) | damageColor;
     }
 }

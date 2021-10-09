@@ -74,6 +74,7 @@ public final class CrystalAuraModule extends Module {
     private BlockPos currentPlacePosition = null;
     private BlockPos lastPlacePosition = null;
     private Entity currentAttackEntity = null;
+    private Entity currentAttackPlayer = null;
 
     public CrystalAuraModule() {
         super("CrystalAura", new String[]{"AutoCrystal", "Crystal"}, "Automatically places crystals near enemies and detonates them", "NONE", -1, ModuleType.COMBAT);
@@ -84,6 +85,8 @@ public final class CrystalAuraModule extends Module {
         super.onDisable();
         Seppuku.INSTANCE.getRotationManager().finishTask(this.placeRotationTask);
         Seppuku.INSTANCE.getRotationManager().finishTask(this.attackRotationTask);
+        this.currentAttackEntity = null;
+        this.currentAttackPlayer = null;
     }
 
     @Listener
@@ -279,6 +282,8 @@ public final class CrystalAuraModule extends Module {
                         }
 
                         if (targetPlayer != null) {
+                            this.currentAttackPlayer = targetPlayer;
+
                             final float currentDamage = calculateExplosionDamage(targetPlayer, 6.0f, blockPos.getX() + 0.5f, blockPos.getY() + 1.0f, blockPos.getZ() + 0.5f) / 2.0f;
 
                             float localDamage = calculateExplosionDamage(mc.player, 6.0f, blockPos.getX() + 0.5f, blockPos.getY() + 1.0f, blockPos.getZ() + 0.5f) / 2.0f;
@@ -393,4 +398,51 @@ public final class CrystalAuraModule extends Module {
         }
     }
 
+    public Timer getAttackTimer() {
+        return attackTimer;
+    }
+
+    public Timer getPlaceTimer() {
+        return placeTimer;
+    }
+
+    public List<PlaceLocation> getPlaceLocations() {
+        return placeLocations;
+    }
+
+    public RotationTask getPlaceRotationTask() {
+        return placeRotationTask;
+    }
+
+    public RotationTask getAttackRotationTask() {
+        return attackRotationTask;
+    }
+
+    public BlockPos getCurrentPlacePosition() {
+        return currentPlacePosition;
+    }
+
+    public void setCurrentPlacePosition(BlockPos currentPlacePosition) {
+        this.currentPlacePosition = currentPlacePosition;
+    }
+
+    public BlockPos getLastPlacePosition() {
+        return lastPlacePosition;
+    }
+
+    public void setLastPlacePosition(BlockPos lastPlacePosition) {
+        this.lastPlacePosition = lastPlacePosition;
+    }
+
+    public Entity getCurrentAttackEntity() {
+        return currentAttackEntity;
+    }
+
+    public Entity getCurrentAttackPlayer() {
+        return currentAttackPlayer;
+    }
+
+    public void setCurrentAttackEntity(Entity currentAttackEntity) {
+        this.currentAttackEntity = currentAttackEntity;
+    }
 }

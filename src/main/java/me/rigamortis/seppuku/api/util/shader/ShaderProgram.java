@@ -2,36 +2,23 @@ package me.rigamortis.seppuku.api.util.shader;
 
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.value.Value;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.shader.Framebuffer;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL11.glGetInteger;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE3;
 import static org.lwjgl.opengl.GL20.*;
 
 public class ShaderProgram {
@@ -94,7 +81,7 @@ public class ShaderProgram {
     }
 
     public static ShaderProgram loadFromJSON(String filename) throws IOException, ParseException {
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(getInputStream(filename), StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getInputStream(filename), StandardCharsets.UTF_8))) {
             final JSONParser parser = new JSONParser();
             final Object objRaw = parser.parse(reader);
 
@@ -102,7 +89,7 @@ public class ShaderProgram {
                 throw jsonTypeException("JSON root value", "a JSON object", objRaw);
             }
 
-            final JSONObject obj = (JSONObject)objRaw;
+            final JSONObject obj = (JSONObject) objRaw;
 
             // parse shader program name or default to its filename
             ShaderProgram shader;
@@ -110,7 +97,7 @@ public class ShaderProgram {
             if (name == null) {
                 shader = new ShaderProgram(filename);
             } else if (name instanceof String) {
-                shader = new ShaderProgram((String)name);
+                shader = new ShaderProgram((String) name);
             } else {
                 throw jsonTypeException("name property", "a string or missing", name);
             }
@@ -120,9 +107,9 @@ public class ShaderProgram {
             if (files == null) {
                 throw jsonException("files array missing");
             } else if (files instanceof JSONArray) {
-                for (final Object file : (JSONArray)files) {
+                for (final Object file : (JSONArray) files) {
                     if (file instanceof String) {
-                        shader.addShaderFile((String)file);
+                        shader.addShaderFile((String) file);
                     } else {
                         throw jsonTypeException("a member of the files array", "a string", file);
                     }
@@ -136,7 +123,7 @@ public class ShaderProgram {
             // sanitisation for you
             final Object uniforms = obj.get("uniforms");
             if (uniforms instanceof JSONObject) {
-                for (HashMap.Entry<String, Object> entry : ((HashMap<String, Object>)uniforms).entrySet()) {
+                for (HashMap.Entry<String, Object> entry : ((HashMap<String, Object>) uniforms).entrySet()) {
                     final String uniform = entry.getKey();
                     if (isUniformReserved(uniform)) {
                         throw jsonException("the uniform name '" + uniform + "' is reserved");
@@ -148,13 +135,13 @@ public class ShaderProgram {
                         throw jsonTypeException("a uniform entry", "JSON object", uniformObjRaw);
                     }
 
-                    final JSONObject uniformObj = (JSONObject)uniformObjRaw;
+                    final JSONObject uniformObj = (JSONObject) uniformObjRaw;
 
                     // get display name
                     String uName;
                     final Object displayName = uniformObj.get("displayname");
                     if (displayName instanceof String) {
-                        uName = (String)displayName;
+                        uName = (String) displayName;
                     } else if (displayName == null) {
                         uName = uniform;
                     } else {
@@ -165,15 +152,15 @@ public class ShaderProgram {
                     String[] uAlias;
                     final Object aliases = uniformObj.get("alias");
                     if (aliases instanceof JSONArray) {
-                        for (final Object alias : (JSONArray)aliases) {
+                        for (final Object alias : (JSONArray) aliases) {
                             if (!(alias instanceof String)) {
                                 throw jsonTypeException("a member of the uniform alias array", "a string", alias);
                             }
                         }
 
-                        uAlias = ((ArrayList<String>)aliases).toArray(new String[((ArrayList<String>)aliases).size()]);
+                        uAlias = ((ArrayList<String>) aliases).toArray(new String[((ArrayList<String>) aliases).size()]);
                     } else if (aliases == null) {
-                        uAlias = new String[]{ uniform };
+                        uAlias = new String[]{uniform};
                     } else {
                         throw jsonTypeException("uniform alias", "an array of strings or missing", aliases);
                     }
@@ -182,7 +169,7 @@ public class ShaderProgram {
                     String uDesc;
                     final Object description = uniformObj.get("description");
                     if (description instanceof String) {
-                        uDesc = (String)description;
+                        uDesc = (String) description;
                     } else if (description == null) {
                         uDesc = null;
                     } else {
@@ -207,7 +194,7 @@ public class ShaderProgram {
 
                     // make value object that can be used in the ui
                     Value finalValue;
-                    switch ((String)uType) {
+                    switch ((String) uType) {
                         case "int":
                         case "float":
                             if (uDefault == null) {
@@ -227,7 +214,7 @@ public class ShaderProgram {
                                 throw jsonTypeException("uniform default value type mismatched;", "a number or missing", uDefault);
                             }
 
-                            if (((String)uType).equals("int")) {
+                            if (((String) uType).equals("int")) {
                                 // check that numbers are whole
                                 // XXX org.json.simple stores whole numbers as Long (at least it seemed so in testing, if not, my bad -rafern)
                                 if (!(uMin instanceof Long)) {
@@ -240,17 +227,17 @@ public class ShaderProgram {
                                     throw jsonException("uniform default value is an integer and must therefore be whole");
                                 }
 
-                                if (((Number)uMin).intValue() > ((Number)uMax).intValue()) {
+                                if (((Number) uMin).intValue() > ((Number) uMax).intValue()) {
                                     throw jsonException("uniform min must not be greater than max");
                                 }
 
-                                finalValue = new Value<Integer>(uName, uAlias, uDesc, ((Number)uDefault).intValue(), ((Number)uMin).intValue(), ((Number)uMax).intValue(), ((Number)uIncrements).intValue());
+                                finalValue = new Value<Integer>(uName, uAlias, uDesc, ((Number) uDefault).intValue(), ((Number) uMin).intValue(), ((Number) uMax).intValue(), ((Number) uIncrements).intValue());
                             } else {
-                                if (((Number)uMin).floatValue() > ((Number)uMax).floatValue()) {
+                                if (((Number) uMin).floatValue() > ((Number) uMax).floatValue()) {
                                     throw jsonException("uniform min must not be greater than max");
                                 }
 
-                                finalValue = new Value<Float>(uName, uAlias, uDesc, ((Number)uDefault).floatValue(), ((Number)uMin).floatValue(), ((Number)uMax).floatValue(), ((Number)uIncrements).floatValue());
+                                finalValue = new Value<Float>(uName, uAlias, uDesc, ((Number) uDefault).floatValue(), ((Number) uMin).floatValue(), ((Number) uMax).floatValue(), ((Number) uIncrements).floatValue());
                             }
                             break;
                         case "bool":
@@ -266,7 +253,7 @@ public class ShaderProgram {
                                 throw jsonTypeException("uniform default value type mismatched;", "a boolean or missing", uDefault);
                             }
 
-                            finalValue = new Value<Boolean>(uName, uAlias, uDesc, (Boolean)uDefault);
+                            finalValue = new Value<Boolean>(uName, uAlias, uDesc, (Boolean) uDefault);
                             break;
                         default:
                             throw jsonException("unsupported uniform type '" + uType + "'");
@@ -285,7 +272,7 @@ public class ShaderProgram {
     public static ShaderProgram loadFromJSONNoThrow(String filename) {
         try {
             return loadFromJSON(filename);
-        } catch(Exception e) {
+        } catch (Exception e) {
             Seppuku.INSTANCE.getLogger().log(Level.WARNING, "Failed to load shader program from json (see stack trace)");
             e.printStackTrace();
             return null;
@@ -409,7 +396,7 @@ public class ShaderProgram {
     public void destroy() {
         if (this.valid) {
             // release all, delete and invalidate program
-            while(this.release(true));
+            while (this.release(true)) ;
             OpenGlHelper.glDeleteProgram(this.program);
             this.program = 0;
             this.valid = false;
@@ -448,11 +435,11 @@ public class ShaderProgram {
                 final String uniformName = entry.getKey();
                 final Object val = entry.getValue().getValue();
                 if (val instanceof Integer) {
-                    this.setUniform(uniformName, (Integer)val);
+                    this.setUniform(uniformName, (Integer) val);
                 } else if (val instanceof Float) {
-                    this.setUniform(uniformName, (Float)val);
+                    this.setUniform(uniformName, (Float) val);
                 } else if (val instanceof Boolean) {
-                    this.setUniform(uniformName, (Boolean)val);
+                    this.setUniform(uniformName, (Boolean) val);
                 }
             }
 
@@ -491,7 +478,7 @@ public class ShaderProgram {
 
             if (programStack.isEmpty()) {
                 OpenGlHelper.glUseProgram(programBeforeGrab);
-            } else if(programStack.size() == stackIndex) {
+            } else if (programStack.size() == stackIndex) {
                 ShaderProgram newProgram = programStack.peekLast();
                 OpenGlHelper.glUseProgram(newProgram.getProgram());
                 newProgram.flushUniformQueue();
@@ -518,14 +505,14 @@ public class ShaderProgram {
             locations.put(name, new Integer(fetched));
             return fetched;
         } else {
-            return (int)cached;
+            return (int) cached;
         }
     }
 
     public void flushUniformQueue() {
         if (this.make()) {
             for (Map.Entry<Integer, UniformUtil.UValue> entry : this.uniformQueue.entrySet()) {
-                entry.getValue().set((int)entry.getKey());
+                entry.getValue().set((int) entry.getKey());
             }
         }
 
@@ -665,11 +652,11 @@ public class ShaderProgram {
 
     public void setColorUniform(int location, int color) {
         this.setUniform(
-            location,
-            (float) (color >> 16 & 0xFF) * 0.003921569f,
-            (float) (color >> 8  & 0xFF) * 0.003921569f,
-            (float) (color       & 0xFF) * 0.003921569f,
-            (float) (color >> 24 & 0xFF) * 0.003921569f
+                location,
+                (float) (color >> 16 & 0xFF) * 0.003921569f,
+                (float) (color >> 8 & 0xFF) * 0.003921569f,
+                (float) (color & 0xFF) * 0.003921569f,
+                (float) (color >> 24 & 0xFF) * 0.003921569f
         );
     }
 
@@ -748,7 +735,7 @@ public class ShaderProgram {
 
     public void setAnimateUniform() {
         // not passing time directly or it will lead to floating point precision problems where the value never changes because of how big it is
-        this.setUniform(ANIMATE_UNIFORM, (float)(System.currentTimeMillis() % 1000) / 1000.0f);
+        this.setUniform(ANIMATE_UNIFORM, (float) (System.currentTimeMillis() % 1000) / 1000.0f);
     }
 
     public void setDepthUniformAndBindTexture() {
@@ -765,7 +752,7 @@ public class ShaderProgram {
             }
 
             this.setUniform(depthUniform, 3);
-            this.setUniform(DEPTHDIMS_UNIFORM, (float)FramebufferUtil.getWidth(), (float)FramebufferUtil.getHeight());
+            this.setUniform(DEPTHDIMS_UNIFORM, (float) FramebufferUtil.getWidth(), (float) FramebufferUtil.getHeight());
 
             if (this.depthTextureCounter == 1) {
                 GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
@@ -784,7 +771,7 @@ public class ShaderProgram {
 
             if (this.depthTextureCounter < 0) {
                 throw new RuntimeException("Too many depth texture unbinds; there's a bug somewhere, report this");
-            } else if(this.depthTextureCounter == 0) {
+            } else if (this.depthTextureCounter == 0) {
                 GlStateManager.setActiveTexture(GL_TEXTURE3);
                 GlStateManager.bindTexture(0);
                 GlStateManager.disableTexture2D();

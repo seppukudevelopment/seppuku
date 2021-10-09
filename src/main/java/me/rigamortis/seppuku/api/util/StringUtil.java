@@ -121,16 +121,17 @@ public final class StringUtil {
     /**
      * Integer to Roman Numeral
      * credits: Adilli Adil
+     *
      * @param num
      * @return
      */
     public static String intToRoman(int num) {
         StringBuilder sb = new StringBuilder();
         int times = 0;
-        String[] romans = new String[] { "I", "IV", "V", "IX", "X", "XL", "L",
-                "XC", "C", "CD", "D", "CM", "M" };
-        int[] ints = new int[] { 1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500,
-                900, 1000 };
+        String[] romans = new String[]{"I", "IV", "V", "IX", "X", "XL", "L",
+                "XC", "C", "CD", "D", "CM", "M"};
+        int[] ints = new int[]{1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500,
+                900, 1000};
         for (int i = ints.length - 1; i >= 0; i--) {
             times = num / ints[i];
             num %= ints[i];
@@ -145,47 +146,50 @@ public final class StringUtil {
     /**
      * Insert a string inside another string at a given position. Does not check
      * for bounds and therefore may throw.
-     * @param original The original string, where the insertion string will be put
+     *
+     * @param original  The original string, where the insertion string will be put
      * @param insertion The string to insert
-     * @param position Where to insert the string at
+     * @param position  Where to insert the string at
      * @returns the final string
      */
     public static String insertAt(String original, String insertion, int position) {
         return new StringBuilder(original.length() + insertion.length())
-            .append(original, 0, position)
-            .append(insertion)
-            .append(original,position, original.length())
-            .toString();
+                .append(original, 0, position)
+                .append(insertion)
+                .append(original, position, original.length())
+                .toString();
     }
 
     /**
      * Insert a character inside another string at a given position. Does not
      * check for bounds and therefore may throw.
-     * @param original The original string, where the insertion string will be put
+     *
+     * @param original  The original string, where the insertion string will be put
      * @param insertion The character to insert
-     * @param position Where to insert the character at
+     * @param position  Where to insert the character at
      * @returns the final string
      */
     public static String insertAt(String original, char insertion, int position) {
         return new StringBuilder(original.length() + 1)
-            .append(original, 0, position)
-            .append(insertion)
-            .append(original,position, original.length())
-            .toString();
+                .append(original, 0, position)
+                .append(insertion)
+                .append(original, position, original.length())
+                .toString();
     }
 
     /**
      * Delete a range of characters in a string. Does not check for bounds and
      * therefore may throw.
-     * @param s The string to manipulate
+     *
+     * @param s     The string to manipulate
      * @param start The start of the range
-     * @param end The end of the range (exclusive; character at this position not removed)
+     * @param end   The end of the range (exclusive; character at this position not removed)
      * @returns the final string
      */
     public static String removeRange(String s, int start, int end) {
         return new StringBuilder(s.length() + start - end)
-            .append(s, 0, start)
-            .append(s, end, s.length())
-            .toString();
+                .append(s, 0, start)
+                .append(s, end, s.length())
+                .toString();
     }
 }

@@ -1,5 +1,13 @@
 package me.rigamortis.seppuku.api.util;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.renderer.ImageBufferDownload;
+import net.minecraft.client.renderer.ThreadDownloadImageData;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StringUtils;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -32,5 +40,13 @@ public final class NetworkUtil {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static ThreadDownloadImageData getDownloadImageSkin(ResourceLocation resourceLocationIn, String username) {
+        TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
+        textureManager.getTexture(resourceLocationIn);
+        ThreadDownloadImageData textureObject = new ThreadDownloadImageData(null, String.format("https://minotar.net/avatar/%s/64.png", StringUtils.stripControlCodes(username)), DefaultPlayerSkin.getDefaultSkin(AbstractClientPlayer.getOfflineUUID(username)), new ImageBufferDownload());
+        textureManager.loadTexture(resourceLocationIn, textureObject);
+        return textureObject;
     }
 }

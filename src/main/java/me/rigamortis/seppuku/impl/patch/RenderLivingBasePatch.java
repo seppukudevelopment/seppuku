@@ -108,8 +108,8 @@ public final class RenderLivingBasePatch extends ClassPatch {
      * @return
      */
     public static void setBrightnessHook(Buffer buf) {
-        FloatBuffer brightness = (FloatBuffer)buf;
-        for (Iterator<ShaderProgram> it = ShaderProgram.getProgramsInUse(); it.hasNext();) {
+        FloatBuffer brightness = (FloatBuffer) buf;
+        for (Iterator<ShaderProgram> it = ShaderProgram.getProgramsInUse(); it.hasNext(); ) {
             it.next().setEntityBrightnessUniform(brightness.get(), brightness.get(), brightness.get(), brightness.get());
             brightness.position(0);
         }
@@ -139,7 +139,7 @@ public final class RenderLivingBasePatch extends ClassPatch {
      * @return
      */
     public static void unsetBrightnessHook() {
-        for (Iterator<ShaderProgram> it = ShaderProgram.getProgramsInUse(); it.hasNext();) {
+        for (Iterator<ShaderProgram> it = ShaderProgram.getProgramsInUse(); it.hasNext(); ) {
             it.next().setEntityBrightnessUniform(0.0f, 0.0f, 0.0f, 0.0f);
         }
     }

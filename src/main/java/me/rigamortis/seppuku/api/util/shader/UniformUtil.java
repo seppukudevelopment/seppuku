@@ -1,14 +1,10 @@
 package me.rigamortis.seppuku.api.util.shader;
 
 import me.rigamortis.seppuku.Seppuku;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.shader.Framebuffer;
 import org.lwjgl.opengl.ContextCapabilities;
 import org.lwjgl.opengl.GLContext;
 
-import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.logging.Level;
@@ -202,6 +198,7 @@ public final class UniformUtil {
     }
 
     private static Boolean arbShaders = null;
+
     private static boolean usingArbShaders() {
         if (arbShaders == null) {
             // OpenGlHelper.arbShaders is private :(
@@ -209,10 +206,11 @@ public final class UniformUtil {
             arbShaders = new Boolean(contextcapabilities.OpenGL21);
         }
 
-        return (boolean)arbShaders;
+        return (boolean) arbShaders;
     }
 
     private static boolean canWarn = true;
+
     private static void showWarning(String message) {
         if (canWarn) {
             canWarn = false;
@@ -303,7 +301,7 @@ public final class UniformUtil {
 
     // methods for setting array uniforms. does no bounds checking; WILL crash on invalid data
     public static void set(int loc, int vecSize, FloatBuffer val) {
-        switch(vecSize) {
+        switch (vecSize) {
             case 1:
                 OpenGlHelper.glUniform1(loc, val);
                 break;
@@ -322,7 +320,7 @@ public final class UniformUtil {
     }
 
     public static void set(int loc, int vecSize, IntBuffer val) {
-        switch(vecSize) {
+        switch (vecSize) {
             case 1:
                 OpenGlHelper.glUniform1(loc, val);
                 break;
@@ -342,7 +340,7 @@ public final class UniformUtil {
 
     // methods for setting matrix uniforms. does no bounds checking; WILL crash on invalid data
     public static void set(int loc, int matrixSize, boolean transpose, FloatBuffer val) {
-        switch(matrixSize) {
+        switch (matrixSize) {
             case 2:
                 OpenGlHelper.glUniformMatrix2(loc, transpose, val);
                 break;
