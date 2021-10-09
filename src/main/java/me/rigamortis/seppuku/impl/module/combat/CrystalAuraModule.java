@@ -42,26 +42,26 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public final class CrystalAuraModule extends Module {
 
-    public final Value<Boolean> attack = new Value<Boolean>("Attack", new String[]{"AutoAttack"}, "Automatically attack crystals.", true);
-    public final Value<Boolean> attackRapid = new Value<Boolean>("AttackRapid", new String[]{"RapidAttack"}, "Rapidly break crystals (disables delay).", true);
-    public final Value<Float> attackDelay = new Value<Float>("AttackDelay", new String[]{"AttackDelay", "AttackDel", "Del"}, "The delay to attack in milliseconds.", 50.0f, 0.0f, 500.0f, 1.0f);
-    public final Value<Float> attackRadius = new Value<Float>("AttackRadius", new String[]{"ARange", "HitRange", "AttackDistance", "AttackRange", "ARadius"}, "The minimum range to attack crystals.", 5.0f, 0.0f, 7.0f, 0.1f);
-    public final Value<Float> attackMaxDistance = new Value<Float>("AttackMaxDistance", new String[]{"AMaxRange", "MaxAttackRange", "AMaxRadius", "AMD", "AMR"}, "The max (block)distance an entity must be to the a crystal to begin attacking.", 14.0f, 1.0f, 20.0f, 1.0f);
-    public final Value<Boolean> place = new Value<Boolean>("Place", new String[]{"AutoPlace"}, "Automatically place crystals.", true);
-    public final Value<Boolean> placeRapid = new Value<Boolean>("PlaceRapid", new String[]{"RapidPlace"}, "Rapidly place crystals (disables delay).", true);
+    public final Value<Boolean> attack = new Value<Boolean>("Attack", new String[]{"AutoAttack"}, "Automatically attack crystals", true);
+    public final Value<Boolean> attackRapid = new Value<Boolean>("AttackRapid", new String[]{"RapidAttack"}, "Remove attack delay", true);
+    public final Value<Float> attackDelay = new Value<Float>("AttackDelay", new String[]{"AttackDelay", "AttackDel", "Del"}, "The delay to attack in milliseconds", 50.0f, 0.0f, 500.0f, 1.0f);
+    public final Value<Float> attackRadius = new Value<Float>("AttackRadius", new String[]{"ARange", "HitRange", "AttackDistance", "AttackRange", "ARadius"}, "The maximum range to attack crystals", 5.0f, 0.0f, 7.0f, 0.1f);
+    public final Value<Float> attackMaxDistance = new Value<Float>("AttackMaxDistance", new String[]{"AMaxRange", "MaxAttackRange", "AMaxRadius", "AMD", "AMR"}, "Range around the enemy crystals will be attacked", 14.0f, 1.0f, 20.0f, 1.0f);
+    public final Value<Boolean> place = new Value<Boolean>("Place", new String[]{"AutoPlace"}, "Automatically place crystals", true);
+    public final Value<Boolean> placeRapid = new Value<Boolean>("PlaceRapid", new String[]{"RapidPlace"}, "Remove place delay", true);
     public final Value<Boolean> placeSpread = new Value<Boolean>("PlaceSpread", new String[]{"SpreadPlace"}, "Spread crystals around target by swapping place positions each time. (toggle on if target is running)", false);
-    public final Value<Float> placeSpreadDistance = new Value<Float>("PlaceSpreadDistance", new String[]{"SpreadPlaceDistance", "SpreadDistance"}, "Distance (in blocks) to spread the crystals around the target.", 1.0f, 0.0f, 3.0f, 0.1f);
-    public final Value<Float> placeDelay = new Value<Float>("PlaceDelay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay to place crystals.", 50.0f, 0.0f, 500.0f, 1.0f);
-    public final Value<Float> placeRadius = new Value<Float>("PlaceRadius", new String[]{"Radius", "PR", "PlaceRange", "Range"}, "The radius in blocks around the player to process placing in.", 5.5f, 1.0f, 7.0f, 0.5f);
-    public final Value<Float> placeMaxDistance = new Value<Float>("PlaceMaxDistance", new String[]{"BlockDistance", "MaxBlockDistance", "PMBD", "MBD", "PBD", "BD"}, "The (max)distance an entity must be to the new crystal to begin placing.", 14.0f, 1.0f, 20.0f, 1.0f);
-    public final Value<Float> placeLocalDistance = new Value<Float>("PlaceLocalDistance", new String[]{"LocalDistance", "PLD", "LD"}, "The (max)distance away the entity must be from the local player to begin placing.", 6.0f, 1.0f, 20.0f, 0.5f);
-    public final Value<Float> minDamage = new Value<Float>("MinDamage", new String[]{"MinDamage", "Min", "MinDmg"}, "The minimum explosion damage calculated to place down a crystal.", 1.5f, 0.0f, 20.0f, 0.5f);
-    public final Value<Boolean> ignore = new Value<Boolean>("Ignore", new String[]{"Ig"}, "Ignore self damage checks.", false);
-    public final Value<Boolean> render = new Value<Boolean>("Render", new String[]{"R"}, "Draws information about recently placed crystals from your player.", true);
-    public final Value<Boolean> renderDamage = new Value<Boolean>("RenderDamage", new String[]{"RD", "RenderDamage", "ShowDamage"}, "Draws calculated explosion damage on recently placed crystals from your player.", true);
-    public final Value<Boolean> offHand = new Value<Boolean>("Offhand", new String[]{"Hand", "otherhand", "off"}, "Use crystals in the off-hand instead of holding them with the main-hand.", false);
-    public final Value<Boolean> fixDesync = new Value<Boolean>("FixDesync", new String[]{"Desync", "DesyncFix", "df"}, "Forces crystals to be dead client-side when sound effect is played.", true);
-    public final Value<Float> fixDesyncRadius = new Value<Float>("FixDesyncRadius", new String[]{"DesyncRadius", "FixDesyncRange", "DesyncRange", "DesyncFixRadius", "dfr"}, "The radius (in blocks) around the explosion sound effect to force crystals to be dead.", 10.0f, 1.0f, 40.0f, 1.0f);
+    public final Value<Float> placeSpreadDistance = new Value<Float>("PlaceSpreadDistance", new String[]{"SpreadPlaceDistance", "SpreadDistance"}, "Distance (in blocks) to spread the crystals around the target", 1.0f, 0.0f, 3.0f, 0.1f);
+    public final Value<Float> placeDelay = new Value<Float>("PlaceDelay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay to place crystals", 50.0f, 0.0f, 500.0f, 1.0f);
+    public final Value<Float> placeRadius = new Value<Float>("PlaceRadius", new String[]{"Radius", "PR", "PlaceRange", "Range"}, "The radius in blocks around the player to attempt placing in", 5.5f, 1.0f, 7.0f, 0.5f);
+    public final Value<Float> placeMaxDistance = new Value<Float>("PlaceMaxDistance", new String[]{"BlockDistance", "MaxBlockDistance", "PMBD", "MBD", "PBD", "BD"}, "Range around the enemy crystals will be placed", 14.0f, 1.0f, 20.0f, 1.0f);
+    public final Value<Float> placeLocalDistance = new Value<Float>("PlaceLocalDistance", new String[]{"LocalDistance", "PLD", "LD"}, "Enemy must be within this range to start placing", 6.0f, 1.0f, 20.0f, 0.5f);
+    public final Value<Float> minDamage = new Value<Float>("MinDamage", new String[]{"MinDamage", "Min", "MinDmg"}, "The minimum explosion damage calculated to place down a crystal", 1.5f, 0.0f, 20.0f, 0.5f);
+    public final Value<Boolean> ignore = new Value<Boolean>("Ignore", new String[]{"Ig"}, "Ignore self damage checks", false);
+    public final Value<Boolean> render = new Value<Boolean>("Render", new String[]{"R"}, "Draws information about recently placed crystals from your player", true);
+    public final Value<Boolean> renderDamage = new Value<Boolean>("RenderDamage", new String[]{"RD", "RenderDamage", "ShowDamage"}, "Draws calculated explosion damage on recently placed crystals from your player", true);
+    public final Value<Boolean> offHand = new Value<Boolean>("Offhand", new String[]{"Hand", "otherhand", "off"}, "Use crystals in the off-hand instead of holding them with the main-hand", false);
+    public final Value<Boolean> fixDesync = new Value<Boolean>("FixDesync", new String[]{"Desync", "DesyncFix", "df"}, "Forces crystals to be dead client-side when sound effect is played", true);
+    public final Value<Float> fixDesyncRadius = new Value<Float>("FixDesyncRadius", new String[]{"DesyncRadius", "FixDesyncRange", "DesyncRange", "DesyncFixRadius", "dfr"}, "The radius (in blocks) around the explosion sound effect to force crystals to be dead", 10.0f, 1.0f, 40.0f, 1.0f);
 
     private final Timer attackTimer = new Timer();
     private final Timer placeTimer = new Timer();
