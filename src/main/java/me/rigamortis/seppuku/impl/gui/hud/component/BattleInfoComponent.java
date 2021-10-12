@@ -31,7 +31,7 @@ public final class BattleInfoComponent extends DraggableHudComponent {
         this.setW(117);
         this.setH(48);
 
-        this.donorsTexture = new Texture("seppuku_sky.jpg");
+        this.donorsTexture = new Texture("john.jpg");
     }
 
     @Override

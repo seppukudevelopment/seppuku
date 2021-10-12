@@ -6,10 +6,10 @@ import net.minecraft.client.Minecraft;
  * @author Daniel E
  */
 public final class HandSwapContext {
-    private final int oldSlot;
-    private final int newSlot;
+    private int oldSlot;
+    private int newSlot;
 
-    public HandSwapContext(final int oldSlot, final int newSlot) {
+    public HandSwapContext(int oldSlot, int newSlot) {
         this.oldSlot = oldSlot;
         this.newSlot = newSlot;
     }
@@ -20,6 +20,14 @@ public final class HandSwapContext {
 
     public int getNewSlot() {
         return newSlot;
+    }
+
+    public void setOldSlot(int oldSlot) {
+        this.oldSlot = oldSlot;
+    }
+
+    public void setNewSlot(int newSlot) {
+        this.newSlot = newSlot;
     }
 
     public void handleHandSwap(final boolean restore,
