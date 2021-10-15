@@ -26,14 +26,14 @@ public final class StackSizeCommand extends Command {
         final Minecraft mc = Minecraft.getMinecraft();
 
         if (!mc.player.isCreative()) {
-            Seppuku.INSTANCE.errorChat("Creative mode is required to use this command.");
+            Seppuku.INSTANCE.errorChat("Creative mode is required to use this command");
             return;
         }
 
         final ItemStack itemStack = mc.player.getHeldItemMainhand();
 
         if (itemStack.isEmpty()) {
-            Seppuku.INSTANCE.errorChat("Please hold an item in your main hand to enchant.");
+            Seppuku.INSTANCE.errorChat("Please hold an item in your main hand to enchant");
             return;
         }
 

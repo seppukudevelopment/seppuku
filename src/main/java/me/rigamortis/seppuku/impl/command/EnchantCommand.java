@@ -15,7 +15,7 @@ import net.minecraft.network.play.client.CPacketCreativeInventoryAction;
 public final class EnchantCommand extends Command {
 
     public EnchantCommand() {
-        super("Enchant", new String[]{"Ench"}, "Add enchants to your held item while in creative mode.", "Enchant <Enchantment / All> <Level / Max> ([true/false] Disable Curses)");
+        super("Enchant", new String[]{"Ench"}, "Add enchants to your held item while in creative mode", "Enchant <Enchantment / All> <Level / Max> ([true/false] Disable Curses)");
     }
 
     @Override

@@ -14,7 +14,7 @@ import net.minecraft.network.play.client.CPacketCreativeInventoryAction;
 public final class RenameCommand extends Command {
 
     public RenameCommand() {
-        super("Rename", new String[]{"Ren"}, "Allows you to rename your held item while in creative mode(Supports color codes)", "Rename <Name>");
+        super("Rename", new String[]{"Ren"}, "Allows you to rename your held item while in creative mode (supports color codes)", "Rename <Name>");
     }
 
     @Override
@@ -27,14 +27,14 @@ public final class RenameCommand extends Command {
         final Minecraft mc = Minecraft.getMinecraft();
 
         if (!mc.player.isCreative()) {
-            Seppuku.INSTANCE.errorChat("Creative mode is required to use this command.");
+            Seppuku.INSTANCE.errorChat("Creative mode is required to use this command");
             return;
         }
 
         final ItemStack itemStack = mc.player.getHeldItemMainhand();
 
         if (itemStack.isEmpty()) {
-            Seppuku.INSTANCE.errorChat("Please hold an item in your main hand to enchant.");
+            Seppuku.INSTANCE.errorChat("Please hold an item in your main hand to enchant");
             return;
         }
 

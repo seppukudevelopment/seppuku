@@ -12,7 +12,7 @@ import me.rigamortis.seppuku.impl.config.ModuleConfig;
 public final class RenameModuleCommand extends Command {
 
     public RenameModuleCommand() {
-        super("RenameModule", new String[]{"rm", "renamemod", "renamemodule"}, "Rename modules.", "renamemodule <module> <name>");
+        super("RenameModule", new String[]{"rm", "renamemod", "renamemodule"}, "Rename modules", "renamemodule <module> <name>");
     }
 
     @Override
