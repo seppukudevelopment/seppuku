@@ -2,9 +2,9 @@ package me.rigamortis.seppuku.impl.module.render;
 
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
+import me.rigamortis.seppuku.api.event.render.EventDrawNameplate;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.event.render.EventRenderEntity;
-import me.rigamortis.seppuku.api.event.render.EventDrawNameplate;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.util.shader.ShaderProgram;
@@ -27,9 +27,9 @@ import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.awt.*;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -39,33 +39,33 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public final class ChamsModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode"}, "The chams mode to use", Mode.NORMAL);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode"}, "The chams mode to use.", Mode.NORMAL);
 
-    public final Value<Boolean> players = new Value<Boolean>("Players", new String[]{"Player"}, "Choose to enable on players", true);
-    public final Value<Color> playersColor = new Value<Color>("PlayersColor", new String[]{"playerscolor", "pc"}, "Change the color of players on chams", new Color(255, 68, 68));
+    public final Value<Boolean> players = new Value<Boolean>("Players", new String[]{"Player"}, "Choose to enable on players.", true);
+    public final Value<Color> playersColor = new Value<Color>("PlayersColor", new String[]{"playerscolor", "pc"}, "Change the color of players on chams.", new Color(255, 68, 68));
 
-    public final Value<Boolean> mobs = new Value<Boolean>("Mobs", new String[]{"Mob"}, "Choose to enable on mobs", true);
-    public final Value<Color> mobsColor = new Value<Color>("MobsColor", new String[]{"mobscolor", "mc"}, "Change the color of mobs on chams", new Color(255, 170, 0));
+    public final Value<Boolean> mobs = new Value<Boolean>("Mobs", new String[]{"Mob"}, "Choose to enable on mobs.", true);
+    public final Value<Color> mobsColor = new Value<Color>("MobsColor", new String[]{"mobscolor", "mc"}, "Change the color of mobs on chams.", new Color(255, 170, 0));
 
-    public final Value<Boolean> animals = new Value<Boolean>("Animals", new String[]{"Animal"}, "Choose to enable on animals", true);
-    public final Value<Color> animalsColor = new Value<Color>("AnimalsColor", new String[]{"animalscolor", "ac"}, "Change the color of animals on chams", new Color(0, 255, 68));
+    public final Value<Boolean> animals = new Value<Boolean>("Animals", new String[]{"Animal"}, "Choose to enable on animals.", true);
+    public final Value<Color> animalsColor = new Value<Color>("AnimalsColor", new String[]{"animalscolor", "ac"}, "Change the color of animals on chams.", new Color(0, 255, 68));
 
-    public final Value<Boolean> vehicles = new Value<Boolean>("Vehicles", new String[]{"Vehic", "Vehicle"}, "Choose to enable on vehicles", true);
-    public final Value<Color> vehiclesColor = new Value<Color>("VehiclesColor", new String[]{"vehiclescolor", "vc"}, "Change the color of vehicles on chams", new Color(213, 255, 0));
+    public final Value<Boolean> vehicles = new Value<Boolean>("Vehicles", new String[]{"Vehic", "Vehicle"}, "Choose to enable on vehicles.", true);
+    public final Value<Color> vehiclesColor = new Value<Color>("VehiclesColor", new String[]{"vehiclescolor", "vc"}, "Change the color of vehicles on chams.", new Color(213, 255, 0));
 
-    public final Value<Boolean> items = new Value<Boolean>("Items", new String[]{"Item", "i"}, "Choose to enable on items", false);
-    public final Value<Color> itemsColor = new Value<Color>("ItemsColor", new String[]{"itemscolor", "ic"}, "Change the color of items on chams", new Color(0, 255, 170));
+    public final Value<Boolean> items = new Value<Boolean>("Items", new String[]{"Item", "i"}, "Choose to enable on items.", false);
+    public final Value<Color> itemsColor = new Value<Color>("ItemsColor", new String[]{"itemscolor", "ic"}, "Change the color of items on chams.", new Color(0, 255, 170));
 
-    public final Value<Boolean> crystals = new Value<Boolean>("Crystals", new String[]{"crystal", "crystals", "endcrystal", "endcrystals"}, "Choose to enable on end crystals", true);
-    public final Value<Color> crystalsColor = new Value<Color>("CrystalsColor", new String[]{"endercrystalscolor", "endercrystalcolor", "crystalscolor", "crystalcolor", "ecc"}, "Change the color of ender crystals on chams", new Color(205, 0, 205));
+    public final Value<Boolean> crystals = new Value<Boolean>("Crystals", new String[]{"crystal", "crystals", "endcrystal", "endcrystals"}, "Choose to enable on end crystals.", true);
+    public final Value<Color> crystalsColor = new Value<Color>("CrystalsColor", new String[]{"endercrystalscolor", "endercrystalcolor", "crystalscolor", "crystalcolor", "ecc"}, "Change the color of ender crystals on chams.", new Color(205, 0, 205));
 
-    public final Value<Boolean> unknowns = new Value<Boolean>("Unknowns", new String[]{"unknown", "unknowns"}, "Choose to enable on unknown entity types", false);
-    public final Value<Color> unknownsColor = new Value<Color>("UnknownsColor", new String[]{"unknownscolor", "unknowncolor", "uc"}, "Change the color of unknown entity types on chams", new Color(60, 60, 60));
+    public final Value<Boolean> unknowns = new Value<Boolean>("Unknowns", new String[]{"unknown", "unknowns"}, "Choose to enable on unknown entity types.", false);
+    public final Value<Color> unknownsColor = new Value<Color>("UnknownsColor", new String[]{"unknownscolor", "unknowncolor", "uc"}, "Change the color of unknown entity types on chams.", new Color(60, 60, 60));
 
-    public final Value<Color> friendsColor = new Value<Color>("FriendsColor", new String[]{"friendscolor", "friendcolor", "fc"}, "Change the color of friendly players on esp", new Color(153, 0, 238));
-    public final Value<Color> sneakingColor = new Value<Color>("SneakingColor", new String[]{"sneakingcolor", "sneakcolor", "sc"}, "Change the color of sneaking players on esp", new Color(238, 153, 0));
+    public final Value<Color> friendsColor = new Value<Color>("FriendsColor", new String[]{"friendscolor", "friendcolor", "fc"}, "Change the color of friendly players on esp.", new Color(153, 0, 238));
+    public final Value<Color> sneakingColor = new Value<Color>("SneakingColor", new String[]{"sneakingcolor", "sneakcolor", "sc"}, "Change the color of sneaking players on esp.", new Color(238, 153, 0));
 
-    public final Value<Shader> shader = new Value<Shader>("Shader", new String[]{"shader", "program", "shaderprogram", "sp"}, "Change the shader to use when in shader mode", new Shader("resource:///assets/seppukumod/shaders/chams.json"));
+    public final Value<Shader> shader = new Value<Shader>("Shader", new String[]{"shader", "program", "shaderprogram", "sp"}, "Change the shader to use when in shader mode.", new Shader("resource:///assets/seppukumod/shaders/chams.json"));
 
     private enum Mode {
         NORMAL, COLOR, TEXTURE, FLAT, WIREFRAME, SHADER
@@ -219,8 +219,7 @@ public final class ChamsModule extends Module {
             final Entity entity = entry.getKey();
             final QueuedEntity qEntity = entry.getValue();
 
-            if (qEntity.render != null)
-            {
+            if (qEntity.render != null) {
                 //OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)(15728880 % 65536), (float)(15728880 / 65536));
                 OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0f, 240.0f); // max brightness
                 qEntity.render.doRenderShadowAndFire(entity, qEntity.x, qEntity.y, qEntity.z, qEntity.yaw, qEntity.partialTicks);
@@ -239,11 +238,10 @@ public final class ChamsModule extends Module {
             final Entity entity = entry.getKey();
             final QueuedEntity qEntity = entry.getValue();
 
-            if (qEntity.render != null)
-            {
+            if (qEntity.render != null) {
                 // set light level (from RenderManager.renderEntityStatic) and color
                 final int lightLevel = entity.isBurning() ? 15728880 : entity.getBrightnessForRender();
-                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)(lightLevel % 65536), (float)(lightLevel / 65536));
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) (lightLevel % 65536), (float) (lightLevel / 65536));
                 GlStateManager.color(1.0f, 1.0f, 1.0f);
 
                 if (qEntity.entityType != lastEntityType && prog != null) {
@@ -288,26 +286,26 @@ public final class ChamsModule extends Module {
 
     private EntityType getEntityType(Entity entity) {
         if (entity == Minecraft.getMinecraft().player ||
-            (entity instanceof EntityLivingBase && entity.ticksExisted <= 0) ||
-            Minecraft.getMinecraft().player.getRidingEntity() != null && entity == Minecraft.getMinecraft().player.getRidingEntity()) {
+                (entity instanceof EntityLivingBase && entity.ticksExisted <= 0) ||
+                Minecraft.getMinecraft().player.getRidingEntity() != null && entity == Minecraft.getMinecraft().player.getRidingEntity()) {
             return EntityType.SKIP;
-        } else if(entity instanceof EntityPlayer) {
+        } else if (entity instanceof EntityPlayer) {
             if (entity.isSneaking()) {
                 return EntityType.SNEAKING_PLAYER;
-            } else if(Seppuku.INSTANCE.getFriendManager().isFriend(entity) != null) {
+            } else if (Seppuku.INSTANCE.getFriendManager().isFriend(entity) != null) {
                 return EntityType.FRIENDLY_PLAYER;
             } else {
                 return EntityType.NORMAL_PLAYER;
             }
-        } else if(entity instanceof IAnimals && !(entity instanceof IMob)) {
+        } else if (entity instanceof IAnimals && !(entity instanceof IMob)) {
             return EntityType.ANIMAL;
-        } else if(entity instanceof IMob) {
+        } else if (entity instanceof IMob) {
             return EntityType.MOB;
-        } else if(entity instanceof EntityItem) {
+        } else if (entity instanceof EntityItem) {
             return EntityType.ITEM;
-        } else if(entity instanceof EntityEnderCrystal) {
+        } else if (entity instanceof EntityEnderCrystal) {
             return EntityType.CRYSTAL;
-        } else if(entity instanceof EntityBoat || entity instanceof EntityMinecart) {
+        } else if (entity instanceof EntityBoat || entity instanceof EntityMinecart) {
             return EntityType.VEHICLE;
         } else {
             return EntityType.UNKNOWN;
@@ -315,7 +313,7 @@ public final class ChamsModule extends Module {
     }
 
     private int getColor(EntityType entityType) {
-        switch(entityType) {
+        switch (entityType) {
             case SNEAKING_PLAYER:
                 return this.sneakingColor.getValue().getRGB();
             case FRIENDLY_PLAYER:
@@ -340,7 +338,7 @@ public final class ChamsModule extends Module {
     }
 
     private boolean checkFilter(EntityType entityType) {
-        switch(entityType) {
+        switch (entityType) {
             case SNEAKING_PLAYER:
             case FRIENDLY_PLAYER:
             case NORMAL_PLAYER:
