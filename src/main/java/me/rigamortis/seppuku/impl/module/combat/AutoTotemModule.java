@@ -1,9 +1,12 @@
 package me.rigamortis.seppuku.impl.module.combat;
 
+import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
+import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.value.Value;
+import me.rigamortis.seppuku.impl.module.player.AutoGappleModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
@@ -19,10 +22,20 @@ public final class AutoTotemModule extends Module {
 
     public final Value<Float> health = new Value<>("Health", new String[]{"Hp", "h"}, "The amount of health needed to acquire a totem", 7.0f, 0.0f, 20.0f, 0.5f);
     public final Value<Boolean> crystals = new Value<>("Crystals", new String[]{"cry", "c"}, "Go back to crystals in offhand after health is replenished", false);
+    //public final Value<Boolean> force = new Value<>("Force", new String[]{"f"}, "Prioritize AutoTotem over AutoGapple, etc.", true);
     public final Value<Boolean> checkScreen = new Value<>("CheckScreen", new String[]{"screen", "check", "cs"}, "Checks if a screen is not opened to begin (usually disabled)", false);
+
+    private AutoGappleModule autoGappleModule;
 
     public AutoTotemModule() {
         super("AutoTotem", new String[]{"Totem"}, "Automatically places a totem of undying in your offhand", "NONE", -1, ModuleType.COMBAT);
+    }
+
+    @Listener
+    public void onLoadWorld(EventLoadWorld event) {
+        if (event.getWorld() != null) {
+            this.autoGappleModule = (AutoGappleModule) Seppuku.INSTANCE.getModuleManager().find(AutoGappleModule.class);
+        }
     }
 
     @Override
@@ -57,6 +70,14 @@ public final class AutoTotemModule extends Module {
             }
         } else {
             if (mc.player.getHealth() > this.health.getValue() && this.crystals.getValue()) {
+                if (this.autoGappleModule != null) {
+                    if (this.autoGappleModule.isEnabled()) {
+                        if (this.autoGappleModule.isActiveOffHand()) {
+                            return;
+                        }
+                    }
+                }
+
                 if (offHand.getItem() == Items.END_CRYSTAL) {
                     return;
                 }

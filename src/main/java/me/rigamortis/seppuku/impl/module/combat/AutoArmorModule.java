@@ -20,8 +20,8 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class AutoArmorModule extends Module {
 
-    public final Value<Float> delay = new Value<Float>("Delay", new String[]{"Del"}, "The amount of delay in milliseconds.", 250.0f, 0.0f, 1000.0f, 1.0f);
-    public final Value<Boolean> curse = new Value<Boolean>("Curse", new String[]{"Curses"}, "Prevents you from equipping armor with cursed enchantments.", false);
+    public final Value<Float> delay = new Value<Float>("Delay", new String[]{"Del"}, "The amount of delay in milliseconds", 250.0f, 0.0f, 1000.0f, 1.0f);
+    public final Value<Boolean> curse = new Value<Boolean>("Curse", new String[]{"Curses"}, "Prevents you from equipping armor with cursed enchantments", false);
 
     private final Timer equipTimer = new Timer();
 

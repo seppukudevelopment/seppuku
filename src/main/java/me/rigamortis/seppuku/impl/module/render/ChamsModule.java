@@ -2,9 +2,9 @@ package me.rigamortis.seppuku.impl.module.render;
 
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
+import me.rigamortis.seppuku.api.event.render.EventDrawNameplate;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.event.render.EventRenderEntity;
-import me.rigamortis.seppuku.api.event.render.EventDrawNameplate;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.util.shader.ShaderProgram;
@@ -27,9 +27,9 @@ import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.awt.*;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -219,8 +219,7 @@ public final class ChamsModule extends Module {
             final Entity entity = entry.getKey();
             final QueuedEntity qEntity = entry.getValue();
 
-            if (qEntity.render != null)
-            {
+            if (qEntity.render != null) {
                 //OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)(15728880 % 65536), (float)(15728880 / 65536));
                 OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0f, 240.0f); // max brightness
                 qEntity.render.doRenderShadowAndFire(entity, qEntity.x, qEntity.y, qEntity.z, qEntity.yaw, qEntity.partialTicks);
@@ -239,11 +238,10 @@ public final class ChamsModule extends Module {
             final Entity entity = entry.getKey();
             final QueuedEntity qEntity = entry.getValue();
 
-            if (qEntity.render != null)
-            {
+            if (qEntity.render != null) {
                 // set light level (from RenderManager.renderEntityStatic) and color
                 final int lightLevel = entity.isBurning() ? 15728880 : entity.getBrightnessForRender();
-                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)(lightLevel % 65536), (float)(lightLevel / 65536));
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) (lightLevel % 65536), (float) (lightLevel / 65536));
                 GlStateManager.color(1.0f, 1.0f, 1.0f);
 
                 if (qEntity.entityType != lastEntityType && prog != null) {
@@ -288,26 +286,26 @@ public final class ChamsModule extends Module {
 
     private EntityType getEntityType(Entity entity) {
         if (entity == Minecraft.getMinecraft().player ||
-            (entity instanceof EntityLivingBase && entity.ticksExisted <= 0) ||
-            Minecraft.getMinecraft().player.getRidingEntity() != null && entity == Minecraft.getMinecraft().player.getRidingEntity()) {
+                (entity instanceof EntityLivingBase && entity.ticksExisted <= 0) ||
+                Minecraft.getMinecraft().player.getRidingEntity() != null && entity == Minecraft.getMinecraft().player.getRidingEntity()) {
             return EntityType.SKIP;
-        } else if(entity instanceof EntityPlayer) {
+        } else if (entity instanceof EntityPlayer) {
             if (entity.isSneaking()) {
                 return EntityType.SNEAKING_PLAYER;
-            } else if(Seppuku.INSTANCE.getFriendManager().isFriend(entity) != null) {
+            } else if (Seppuku.INSTANCE.getFriendManager().isFriend(entity) != null) {
                 return EntityType.FRIENDLY_PLAYER;
             } else {
                 return EntityType.NORMAL_PLAYER;
             }
-        } else if(entity instanceof IAnimals && !(entity instanceof IMob)) {
+        } else if (entity instanceof IAnimals && !(entity instanceof IMob)) {
             return EntityType.ANIMAL;
-        } else if(entity instanceof IMob) {
+        } else if (entity instanceof IMob) {
             return EntityType.MOB;
-        } else if(entity instanceof EntityItem) {
+        } else if (entity instanceof EntityItem) {
             return EntityType.ITEM;
-        } else if(entity instanceof EntityEnderCrystal) {
+        } else if (entity instanceof EntityEnderCrystal) {
             return EntityType.CRYSTAL;
-        } else if(entity instanceof EntityBoat || entity instanceof EntityMinecart) {
+        } else if (entity instanceof EntityBoat || entity instanceof EntityMinecart) {
             return EntityType.VEHICLE;
         } else {
             return EntityType.UNKNOWN;
@@ -315,7 +313,7 @@ public final class ChamsModule extends Module {
     }
 
     private int getColor(EntityType entityType) {
-        switch(entityType) {
+        switch (entityType) {
             case SNEAKING_PLAYER:
                 return this.sneakingColor.getValue().getRGB();
             case FRIENDLY_PLAYER:
@@ -340,7 +338,7 @@ public final class ChamsModule extends Module {
     }
 
     private boolean checkFilter(EntityType entityType) {
-        switch(entityType) {
+        switch (entityType) {
             case SNEAKING_PLAYER:
             case FRIENDLY_PLAYER:
             case NORMAL_PLAYER:
