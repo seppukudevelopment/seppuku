@@ -47,13 +47,14 @@ public final class KillAuraModule extends Module {
     private Entity currentTarget = null;
 
     public KillAuraModule() {
-        super("KillAura", new String[]{"Aura"}, "Automatically aims at and attacks enemies", "NONE", -1, ModuleType.COMBAT);
+        super("KillAura", new String[]{"Aura"}, "Automatically aims and attacks enemies", "NONE", -1, ModuleType.COMBAT);
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
         Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
+        this.currentTarget = null;
     }
 
     @Listener
@@ -156,4 +157,15 @@ public final class KillAuraModule extends Module {
         return ret;
     }
 
+    public RotationTask getRotationTask() {
+        return rotationTask;
+    }
+
+    public Entity getCurrentTarget() {
+        return currentTarget;
+    }
+
+    public void setCurrentTarget(Entity currentTarget) {
+        this.currentTarget = currentTarget;
+    }
 }
