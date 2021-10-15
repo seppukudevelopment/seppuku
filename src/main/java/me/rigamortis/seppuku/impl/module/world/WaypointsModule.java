@@ -27,22 +27,22 @@ import java.text.SimpleDateFormat;
  */
 public final class WaypointsModule extends Module {
 
-    public final Value<Boolean> death = new Value<Boolean>("Death", new String[]{"deathpoint", "d"}, "Creates a waypoint on death.", true);
-    public final Value<Float> hideDistance = new Value<Float>("HideDistance", new String[]{"hidedist", "hd"}, "Distance (blocks) away from a waypoint to hide it.", 5.0f, 1.0f, 10.0f, 0.5f);
+    public final Value<Boolean> death = new Value<Boolean>("Death", new String[]{"deathpoint", "d"}, "Creates a waypoint on death", true);
+    public final Value<Float> hideDistance = new Value<Float>("HideDistance", new String[]{"hidedist", "hd"}, "Distance (blocks) away from a waypoint to hide it", 5.0f, 1.0f, 10.0f, 0.5f);
 
-    public final Value<Boolean> tracers = new Value<Boolean>("Tracers", new String[]{"Tracer", "Trace"}, "Draws a line from the center of the screen to each waypoint.", false);
-    public final Value<Float> tracersWidth = new Value<Float>("TracersWidth", new String[]{"twidth", "tw"}, "Pixel width of each tracer line.", 1.0f, 0.1f, 5.0f, 0.1f);
-    public final Value<Integer> tracersAlpha = new Value<Integer>("TracersAlpha", new String[]{"talpha", "ta", "topacity", "top"}, "Alpha value for each drawn line.", 255, 1, 255, 1);
+    public final Value<Boolean> tracers = new Value<Boolean>("Tracers", new String[]{"Tracer", "Trace"}, "Draws a line from the center of the screen to each waypoint", false);
+    public final Value<Float> tracersWidth = new Value<Float>("TracersWidth", new String[]{"twidth", "tw"}, "Pixel width of each tracer line", 1.0f, 0.1f, 5.0f, 0.1f);
+    public final Value<Integer> tracersAlpha = new Value<Integer>("TracersAlpha", new String[]{"talpha", "ta", "topacity", "top"}, "Alpha value for each drawn line", 255, 1, 255, 1);
 
-    public final Value<Boolean> point = new Value<Boolean>("Point", new String[]{"p", "waypoint", "object", "o"}, "Renders a 3D object at each waypoint.", true);
-    public final Value<Shape> pointShape = new Value<Shape>("PointShape", new String[]{"wps", "ps", "shape"}, "Selects what shape should be rendered.", Shape.CUBE);
-    public final Value<Boolean> pointRotate = new Value<Boolean>("PointRotate", new String[]{"protate", "rotate", "wpr"}, "Rotates each 3D object around in a circle.", true);
-    public final Value<Float> pointRotateSpeed = new Value<Float>("PointRotateSpeed", new String[]{"protatespeed", "rotatespeed", "pspinspeed", "prs"}, "The speed at which the 3D object rotates around.", 0.5f, 0.1f, 2.0f, 0.1f);
-    public final Value<Float> pointWidth = new Value<Float>("PointWidth", new String[]{"pwidth", "pw"}, "Pixel width of the 3D objects lines.", 1f, 0.1f, 5.0f, 0.1f);
-    public final Value<Integer> pointAlpha = new Value<Integer>("PointAlpha", new String[]{"palpha", "pa", "popacity", "pop"}, "Alpha value for the 3D rendered object.", 127, 1, 255, 1);
-    public final Value<Float> pointSize = new Value<Float>("PointSize", new String[]{"psize", "pscale", "ps", "size", "scale", "s"}, "Size of the 3D rendered object.", 0.5f, 0.1f, 3.0f, 0.1f);
-    public final Value<Float> pointYOffset = new Value<Float>("PointYOffset", new String[]{"pyoffset", "pyoff", "pyo"}, "Y-level offset of the 3D rendered object.", 0.0f, -1.0f, 1.0f, 0.1f);
-    public final Value<Float> pointDiamondHeight = new Value<Float>("PointDiamondHeight", new String[]{"diamondheight", "diamondh", "pdh", "dh"}, "Extra height added to the top of the diamond object.", 0.5f, 0.1f, 3.0f, 0.1f);
+    public final Value<Boolean> point = new Value<Boolean>("Point", new String[]{"p", "waypoint", "object", "o"}, "Renders a 3D object at each waypoint", true);
+    public final Value<Shape> pointShape = new Value<Shape>("PointShape", new String[]{"wps", "ps", "shape"}, "Selects what shape should be rendered", Shape.CUBE);
+    public final Value<Boolean> pointRotate = new Value<Boolean>("PointRotate", new String[]{"protate", "rotate", "wpr"}, "Rotates each 3D object around in a circle", true);
+    public final Value<Float> pointRotateSpeed = new Value<Float>("PointRotateSpeed", new String[]{"protatespeed", "rotatespeed", "pspinspeed", "prs"}, "The speed at which the 3D object rotates around", 0.5f, 0.1f, 2.0f, 0.1f);
+    public final Value<Float> pointWidth = new Value<Float>("PointWidth", new String[]{"pwidth", "pw"}, "Pixel width of the 3D objects lines", 1f, 0.1f, 5.0f, 0.1f);
+    public final Value<Integer> pointAlpha = new Value<Integer>("PointAlpha", new String[]{"palpha", "pa", "popacity", "pop"}, "Alpha value for the 3D rendered object", 127, 1, 255, 1);
+    public final Value<Float> pointSize = new Value<Float>("PointSize", new String[]{"psize", "pscale", "ps", "size", "scale", "s"}, "Size of the 3D rendered object", 0.5f, 0.1f, 3.0f, 0.1f);
+    public final Value<Float> pointYOffset = new Value<Float>("PointYOffset", new String[]{"pyoffset", "pyoff", "pyo"}, "Y-level offset of the 3D rendered object", 0.0f, -1.0f, 1.0f, 0.1f);
+    public final Value<Float> pointDiamondHeight = new Value<Float>("PointDiamondHeight", new String[]{"diamondheight", "diamondh", "pdh", "dh"}, "Extra height added to the top of the diamond object", 0.5f, 0.1f, 3.0f, 0.1f);
 
     public enum Shape {
         CUBE, PYRAMID, DIAMOND, SPHERE

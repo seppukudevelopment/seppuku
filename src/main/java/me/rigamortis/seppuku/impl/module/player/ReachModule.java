@@ -23,13 +23,13 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class ReachModule extends Module {
 
-    public final Value<Float> distance = new Value<Float>("Distance", new String[]{"Dist", "D"}, "The distance (in blocks) to reach.", 5.5f, 0.0f, 10.0f, 0.5f);
-    public final Value<Boolean> teleport = new Value<Boolean>("Teleport", new String[]{"Tp", "Tele"}, "Allows you to reach further on vanilla servers.", false);
+    public final Value<Float> distance = new Value<Float>("Distance", new String[]{"Dist", "D"}, "The distance (in blocks) to reach", 5.5f, 0.0f, 10.0f, 0.5f);
+    public final Value<Boolean> teleport = new Value<Boolean>("Teleport", new String[]{"Tp", "Tele"}, "Allows you to reach further on vanilla servers", false);
 
     private final Minecraft mc = Minecraft.getMinecraft();
 
     public ReachModule() {
-        super("Reach", new String[]{"Rch"}, "Extends the player's reach.", "NONE", -1, ModuleType.PLAYER);
+        super("Reach", new String[]{"Rch"}, "Extends the player's reach", "NONE", -1, ModuleType.PLAYER);
     }
 
     private float getVanillaReach() {

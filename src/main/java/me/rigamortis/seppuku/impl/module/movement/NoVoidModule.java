@@ -15,7 +15,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class NoVoidModule extends Module {
 
-    public final Value<Integer> height = new Value<Integer>("Height", new String[]{"hgt"}, "The Y level the player must be at or below to start running ray-traces for void checks.", 16, 0, 256, 1);
+    public final Value<Integer> height = new Value<Integer>("Height", new String[]{"hgt"}, "The Y level the player must be at or below to start running ray-traces for void checks", 16, 0, 256, 1);
 
     public NoVoidModule() {
         super("NoVoid", new String[]{"AntiVoid"}, "Slows down movement when over the void.", "NONE", -1, ModuleType.MOVEMENT);

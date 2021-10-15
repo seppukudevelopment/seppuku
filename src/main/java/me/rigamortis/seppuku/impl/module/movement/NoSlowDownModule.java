@@ -21,11 +21,11 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class NoSlowDownModule extends Module {
 
-    public final Value<Boolean> soulsand = new Value<Boolean>("SoulSand", new String[]{"Soul", "SS"}, "Disables the slowness from walking on soul sand.", true);
-    public final Value<Boolean> slime = new Value<Boolean>("Slime", new String[]{"Slime", "SlimeBlock", "SlimeBlocks", "slim"}, "Disables the slowness from walking on slime blocks.", true);
-    public final Value<Boolean> items = new Value<Boolean>("Items", new String[]{"it"}, "Disables the slowness from using items (shields, eating, etc).", true);
-    public final Value<Boolean> cobweb = new Value<Boolean>("CobWeb", new String[]{"Webs", "Cob"}, "Disables slowness from moving in a cobweb.", true);
-    public final Value<Boolean> ice = new Value<Boolean>("Ice", new String[]{"ic"}, "Disables slowness from walking on ice.", true);
+    public final Value<Boolean> soulsand = new Value<Boolean>("SoulSand", new String[]{"Soul", "SS"}, "Disables the slowness from walking on soul sand", true);
+    public final Value<Boolean> slime = new Value<Boolean>("Slime", new String[]{"Slime", "SlimeBlock", "SlimeBlocks", "slim"}, "Disables the slowness from walking on slime blocks", true);
+    public final Value<Boolean> items = new Value<Boolean>("Items", new String[]{"it"}, "Disables the slowness from using items (shields, eating, etc)", true);
+    public final Value<Boolean> cobweb = new Value<Boolean>("CobWeb", new String[]{"Webs", "Cob"}, "Disables slowness from moving in a cobweb", true);
+    public final Value<Boolean> ice = new Value<Boolean>("Ice", new String[]{"ic"}, "Disables slowness from walking on ice", true);
 
     public NoSlowDownModule() {
         super("NoSlow", new String[]{"AntiSlow", "NoSlowdown", "AntiSlowdown"}, "Allows you to move faster with things that slow you down", "NONE", -1, ModuleType.MOVEMENT);

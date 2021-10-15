@@ -17,7 +17,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class NoAfkModule extends Module {
 
-    public final Value<Integer> yawOffset = new Value<Integer>("Yaw", new String[]{"yaw", "y"}, "The yaw to alternate each tick.", 1, 0, 180, 1);
+    public final Value<Integer> yawOffset = new Value<Integer>("Yaw", new String[]{"yaw", "y"}, "The yaw to alternate each tick", 1, 0, 180, 1);
 
     private final RotationTask rotationTask = new RotationTask("NoAFKTask", 1); /* 1 == low priority */
 

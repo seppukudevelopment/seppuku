@@ -12,7 +12,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class FriendTabModule extends Module {
 
     public FriendTabModule() {
-        super("FriendTab", new String[]{"FTab", "FriendT", "FriendTabOverlay", "FriendTabHighlight"}, "Displays friends names in tab as a different colour and as their nickname.", "NONE", -1, ModuleType.MISC);
+        super("FriendTab", new String[]{"FTab", "FriendT", "FriendTabOverlay", "FriendTabHighlight"}, "Displays friends names in tab as a different colour and as their nickname", "NONE", -1, ModuleType.MISC);
     }
 
     @Listener

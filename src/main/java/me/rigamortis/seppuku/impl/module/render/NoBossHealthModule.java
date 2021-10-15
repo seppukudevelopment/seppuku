@@ -10,7 +10,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class NoBossHealthModule extends Module {
 
     public NoBossHealthModule() {
-        super("NoBossHealth", new String[]{"NoBossHealthBar", "NoBossBar"}, "Disables the rendering of the boss health-bar located at the top of the screen.", "NONE", -1, ModuleType.RENDER);
+        super("NoBossHealth", new String[]{"NoBossHealthBar", "NoBossBar"}, "Disables the rendering of the boss health-bar located at the top of the screen", "NONE", -1, ModuleType.RENDER);
     }
 
     @Listener

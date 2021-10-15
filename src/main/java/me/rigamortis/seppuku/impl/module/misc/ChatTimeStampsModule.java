@@ -17,7 +17,7 @@ import java.util.Date;
  */
 public final class ChatTimeStampsModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Time format, 12 hour or 24 hour.", Mode.TWELVE);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Time format, 12 hour or 24 hour", Mode.TWELVE);
 
     private enum Mode {
         TWELVE, TWENTY_FOUR

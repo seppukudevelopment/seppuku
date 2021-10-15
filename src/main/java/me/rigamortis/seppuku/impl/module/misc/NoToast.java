@@ -7,7 +7,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class NoToast extends Module {
 
     public NoToast() {
-        super("NoToast", new String[]{"Toast"}, "Prevents toasts from being displayed on screen.", "NONE", -1, ModuleType.WORLD);
+        super("NoToast", new String[]{"Toast"}, "Prevents toasts from being displayed on screen. (Achievements, etc.)", "NONE", -1, ModuleType.WORLD);
     }
 
     @Listener

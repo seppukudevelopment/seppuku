@@ -18,21 +18,21 @@ import static org.lwjgl.opengl.GL11.*;
 
 public final class CrosshairModule extends Module {
 
-    public final Value<Float> size = new Value<Float>("Size", new String[]{"chsize", "CrosshairSize", "CrosshairScale", "size", "scale", "crosssize", "cs"}, "The size of the crosshair in pixels.", 5.0f, 0.5f, 15.0f, 0.1f);
-    public final Value<Float> thickness = new Value<Float>("Thickness", new String[]{"thickness", "thick", "t"}, "The thickness of the crosshair in pixels.", 1.0f, 0.5f, 15.0f, 0.1f);
-    public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"chalpha", "CrosshairAlpha", "alpha", "ca", "cha"}, "The alpha RGBA value of the crosshair.", 255, 1, 255, 1);
+    public final Value<Float> size = new Value<Float>("Size", new String[]{"chsize", "CrosshairSize", "CrosshairScale", "size", "scale", "crosssize", "cs"}, "The size of the crosshair in pixels", 5.0f, 0.5f, 15.0f, 0.1f);
+    public final Value<Float> thickness = new Value<Float>("Thickness", new String[]{"thickness", "thick", "t"}, "The thickness of the crosshair in pixels", 1.0f, 0.5f, 15.0f, 0.1f);
+    public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"chalpha", "CrosshairAlpha", "alpha", "ca", "cha"}, "The alpha RGBA value of the crosshair", 255, 1, 255, 1);
 
-    public final Value<Boolean> outline = new Value<Boolean>("Outline", new String[]{"choutline", "CrosshairOutline", "CrosshairBorder", "CrosshairB", "outline", "out", "chout", "chb", "crossb", "b"}, "Enable or disable the crosshair border/outline.", true);
-    public final Value<Color> outlineColor = new Value<Color>("OutlineColor", new String[]{"outlinecolor", "oc"}, "Change the color of the cross-hair's outline.", new Color(0, 0, 0));
-    public final Value<Float> outlineThickness = new Value<Float>("OutlineThickness", new String[]{"outlinethickness", "outlinethick", "outlinet", "ot", "othickness", "othick"}, "The thickness of the crosshair's border/outline in pixels. Some GPUs don't support this.", 1.0f, 0.5f, 15.0f, 0.1f);
+    public final Value<Boolean> outline = new Value<Boolean>("Outline", new String[]{"choutline", "CrosshairOutline", "CrosshairBorder", "CrosshairB", "outline", "out", "chout", "chb", "crossb", "b"}, "Enable or disable the crosshair border/outline", true);
+    public final Value<Color> outlineColor = new Value<Color>("OutlineColor", new String[]{"outlinecolor", "oc"}, "Change the color of the cross-hair's outline", new Color(0, 0, 0));
+    public final Value<Float> outlineThickness = new Value<Float>("OutlineThickness", new String[]{"outlinethickness", "outlinethick", "outlinet", "ot", "othickness", "othick"}, "The thickness of the crosshair's border/outline in pixels. Some GPUs don't support this!!", 1.0f, 0.5f, 15.0f, 0.1f);
 
-    public final Value<Boolean> fill = new Value<Boolean>("Fill", new String[]{"cfill", "CrosshairFill", "CrosshairBackground", "CrosshairBg", "outline", "out", "chout", "chbg", "crossbg", "bg"}, "Enable or disable the crosshair background/outline.", true);
-    public final Value<Color> fillColor = new Value<Color>("FillColor", new String[]{"fillcolor", "fc"}, "Change the color of the cross-hair.", new Color(255, 255, 255));
-    public final Value<Boolean> fillInvert = new Value<Boolean>("FillInvert", new String[]{"FillInvert", "FInvert", "FillInv", "FInv", "FillNegative", "FNegative", "FillNeg", "FNeg", "invert", "inv", "negative", "neg", "fi", "fn"}, "Invert crosshair color like in vanilla.", true);
+    public final Value<Boolean> fill = new Value<Boolean>("Fill", new String[]{"cfill", "CrosshairFill", "CrosshairBackground", "CrosshairBg", "outline", "out", "chout", "chbg", "crossbg", "bg"}, "Enable or disable the crosshair background/outline", true);
+    public final Value<Color> fillColor = new Value<Color>("FillColor", new String[]{"fillcolor", "fc"}, "Change the color of the cross-hair", new Color(255, 255, 255));
+    public final Value<Boolean> fillInvert = new Value<Boolean>("FillInvert", new String[]{"FillInvert", "FInvert", "FillInv", "FInv", "FillNegative", "FNegative", "FillNeg", "FNeg", "invert", "inv", "negative", "neg", "fi", "fn"}, "Invert crosshair color like in vanilla", true);
 
     public CrosshairModule() {
         super("Crosshair", new String[]{"Cross", "Xhair", "Chair"}, "NONE", -1, ModuleType.RENDER);
-        this.setDesc("Replaces the game's cross-hair with your own.");
+        this.setDesc("Replaces the game's cross-hair with your own");
     }
 
     @Listener
@@ -45,7 +45,7 @@ public final class CrosshairModule extends Module {
         final Minecraft mc = Minecraft.getMinecraft();
         final ScaledResolution sr = new ScaledResolution(mc);
 
-        final float alpha = (float) this.alpha.getValue() / 255;
+        final float alpha = (float)this.alpha.getValue() / 255;
 
         float size = this.size.getValue();
         float thickness = this.thickness.getValue();
@@ -57,8 +57,8 @@ public final class CrosshairModule extends Module {
             thickness = temp;
         }
 
-        final float xMid = (float) sr.getScaledWidth() / 2;
-        final float yMid = (float) sr.getScaledHeight() / 2;
+        final float xMid = (float)sr.getScaledWidth() / 2;
+        final float yMid = (float)sr.getScaledHeight() / 2;
         final float halfSize = size / 2;
         final float left = xMid - halfSize;
         final float right = xMid + halfSize;
@@ -81,9 +81,9 @@ public final class CrosshairModule extends Module {
         // crosshair fill
         if (this.fill.getValue()) {
             final Color fillColor = this.fillColor.getValue();
-            final float red = (float) fillColor.getRed() / 255;
-            final float green = (float) fillColor.getGreen() / 255;
-            final float blue = (float) fillColor.getBlue() / 255;
+            final float red = (float)fillColor.getRed() / 255;
+            final float green = (float)fillColor.getGreen() / 255;
+            final float blue = (float)fillColor.getBlue() / 255;
 
             if (this.fillInvert.getValue()) {
                 GlStateManager.tryBlendFuncSeparate(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR, 1, 0);
@@ -123,9 +123,9 @@ public final class CrosshairModule extends Module {
         // crosshair outline
         if (this.outline.getValue()) {
             final Color outlineColor = this.outlineColor.getValue();
-            final float ored = (float) outlineColor.getRed() / 255;
-            final float ogreen = (float) outlineColor.getGreen() / 255;
-            final float oblue = (float) outlineColor.getBlue() / 255;
+            final float ored = (float)outlineColor.getRed() / 255;
+            final float ogreen = (float)outlineColor.getGreen() / 255;
+            final float oblue = (float)outlineColor.getBlue() / 255;
 
             GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
             GlStateManager.shadeModel(GL_SMOOTH);

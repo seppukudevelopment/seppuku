@@ -39,7 +39,7 @@ public final class InfEnderChestModule extends Module {
     private boolean hideEnderChestGui = false;
 
     public InfEnderChestModule() {
-        super("InfEnderChest", new String[]{"EnderChest", "EChest", "InfiniteEChest", "InfiniteEnderChest", "InfEChest"}, "Replaces your inventory with an Ender Chest after you open one.", "NONE", -1, ModuleType.WORLD);
+        super("InfEnderChest", new String[]{"EnderChest", "EChest", "InfiniteEChest", "InfiniteEnderChest", "InfEChest"}, "Replaces your inventory with a view of your Ender Chest after you open it", "NONE", -1, ModuleType.WORLD);
     }
 
     @Override

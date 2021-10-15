@@ -14,7 +14,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class NoFallModule extends Module {
 
-    public final Value<Boolean> elytraDisable = new Value<Boolean>("ElytraDisable", new String[]{"noelytra", "elytra", "disableonelytrafly"}, "Disables NoFall when the player is flying.", true);
+    public final Value<Boolean> elytraDisable = new Value<Boolean>("ElytraDisable", new String[]{"noelytra", "elytra", "disableonelytrafly"}, "Disables NoFall when the player is flying", true);
 
     public NoFallModule() {
         super("NoFall", new String[]{"NoFallDamage"}, "Prevents fall damage", "NONE", -1, ModuleType.MOVEMENT);

@@ -28,22 +28,22 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class AutoMountModule extends Module {
 
-    public final Value<Float> range = new Value<>("Range", new String[]{"Dist"}, "The minimum range to begin scanning for mounts.", 4.0f, 0.1f, 5.0f, 0.1f);
-    public final Value<Float> delay = new Value<>("Delay", new String[]{"del"}, "The delay(ms) between mounts.", 500.0f, 0.0f, 1000.0f, 1f);
-    public final Value<Boolean> autoChest = new Value<Boolean>("AutoChest", new String[]{"Chest"}, "Tries to place a chest onto the donkey or llama before mounting (hold a chest for this to work).", false);
-    public final Value<Boolean> forceStand = new Value<Boolean>("ForceStand", new String[]{"Stand", "NoSneak"}, "Forces the player to stand (un-sneak) before sending the packet to ride the entity.", true);
-    public final Value<Boolean> boat = new Value<Boolean>("Boat", new String[]{"Boat"}, "Enables auto-mounting onto boats.", true);
-    public final Value<Boolean> minecart = new Value<Boolean>("Minecart", new String[]{"Minecart"}, "Enables auto-mounting onto minecarts.", true);
-    public final Value<Boolean> donkey = new Value<Boolean>("Donkey", new String[]{"Donkey", "Ass"}, "Enables auto-mounting onto donkeys.", true);
-    public final Value<Boolean> llama = new Value<Boolean>("Llama", new String[]{"Llama"}, "Enables auto-mounting onto llamas.", true);
-    public final Value<Boolean> horse = new Value<Boolean>("Horse", new String[]{"Horse"}, "Enables auto-mounting onto horses.", true);
-    public final Value<Boolean> skeletonHorse = new Value<Boolean>("SkeletonHorse", new String[]{"SkeleHorse"}, "Enables auto-mounting onto skeleton horses.", true);
-    public final Value<Boolean> pig = new Value<Boolean>("Pig", new String[]{"Pig"}, "Enables auto-mounting onto pigs.", true);
+    public final Value<Float> range = new Value<>("Range", new String[]{"Dist"}, "The minimum range to begin scanning for mounts", 4.0f, 0.1f, 5.0f, 0.1f);
+    public final Value<Float> delay = new Value<>("Delay", new String[]{"del"}, "The delay(ms) between mounts", 500.0f, 0.0f, 1000.0f, 1f);
+    public final Value<Boolean> autoChest = new Value<Boolean>("AutoChest", new String[]{"Chest"}, "Tries to place a chest onto the donkey or llama before mounting (hold a chest for this to work)", false);
+    public final Value<Boolean> forceStand = new Value<Boolean>("ForceStand", new String[]{"Stand", "NoSneak"}, "Forces the player to stand (un-sneak) before sending the packet to ride the entity", true);
+    public final Value<Boolean> boat = new Value<Boolean>("Boat", new String[]{"Boat"}, "Enables auto-mounting onto boats", true);
+    public final Value<Boolean> minecart = new Value<Boolean>("Minecart", new String[]{"Minecart"}, "Enables auto-mounting onto minecarts", true);
+    public final Value<Boolean> donkey = new Value<Boolean>("Donkey", new String[]{"Donkey", "Ass"}, "Enables auto-mounting onto donkeys", true);
+    public final Value<Boolean> llama = new Value<Boolean>("Llama", new String[]{"Llama"}, "Enables auto-mounting onto llamas", true);
+    public final Value<Boolean> horse = new Value<Boolean>("Horse", new String[]{"Horse"}, "Enables auto-mounting onto horses", true);
+    public final Value<Boolean> skeletonHorse = new Value<Boolean>("SkeletonHorse", new String[]{"SkeleHorse"}, "Enables auto-mounting onto skeleton horses", true);
+    public final Value<Boolean> pig = new Value<Boolean>("Pig", new String[]{"Pig"}, "Enables auto-mounting onto pigs", true);
 
     private final Timer delayTimer = new Timer();
 
     public AutoMountModule() {
-        super("AutoMount", new String[]{"AutoMount", "autmount", "amount", "auto_mount"}, "NONE", -1, ModuleType.MISC);
+        super("AutoMount", new String[]{"AutoMount", "autmount", "amount", "auto_mount"}, "Attempts to ride nearby mountable entities", "NONE", -1, ModuleType.MISC);
     }
 
     @Listener

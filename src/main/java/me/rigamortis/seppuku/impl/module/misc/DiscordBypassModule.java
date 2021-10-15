@@ -18,7 +18,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public class DiscordBypassModule extends Module {
 
     public DiscordBypassModule() {
-        super("DiscordBypass", new String[]{"DiscBypass", "NoDiscord", "NoBan"}, "Bypasses jj's stupid plugin that temp-bans you when you say \"discord\" nearby spawn.", "NONE", -1, ModuleType.MISC);
+        super("DiscordBypass", new String[]{"DiscBypass", "NoDiscord", "NoBan"}, "Bypasses jj's stupid plugin that temp-bans you when you say \"discord\" near spawn", "NONE", -1, ModuleType.MISC);
     }
 
     @Listener

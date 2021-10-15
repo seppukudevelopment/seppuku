@@ -13,7 +13,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class KeybindsModule extends Module {
 
-    public final Value<Boolean> f3Toggle = new Value<Boolean>("F3Toggle", new String[]{"f3"}, "If enabled you will not toggle modules if you also press f3.", true);
+    public final Value<Boolean> f3Toggle = new Value<Boolean>("F3Toggle", new String[]{"f3"}, "If enabled, you will not toggle modules if you also press F3", true);
 
     public KeybindsModule() {
         super("Keybinds", new String[]{"Binds"}, "Allows you to bind modules to keys", "NONE", -1, ModuleType.HIDDEN);

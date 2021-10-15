@@ -22,15 +22,15 @@ import java.util.regex.Pattern;
  */
 public final class ChatFilterModule extends Module {
 
-    public final Value<Boolean> unicode = new Value<>("Unicode", new String[]{"uc"}, "Reverts \"Fancy Chat\" characters back into normal ones. ", true);
-    public final Value<Boolean> broadcasts = new Value<>("Broadcasts", new String[]{"broadcast", "broad", "bc"}, "Prevents displaying chat messages that begin with [SERVER].", false);
-    public final Value<Boolean> russian = new Value<>("Russian", new String[]{"russiantext", "rus", "r"}, "Prevents displaying russian-character containing messages.", false);
-    public final Value<Boolean> asian = new Value<>("Asian", new String[]{"asiantext", "asia", "chinese", "japanese", "korean"}, "Prevents displaying \"CJK Unified Ideograph\"-character containing messages (chinese, korean, jap...).", false);
-    public final Value<Boolean> spam = new Value<>("Spam", new String[]{"sp", "s"}, "Attempts to prevent spam by checking recent chat messages for duplicates.", true);
-    public final Value<Boolean> death = new Value<>("Death", new String[]{"dead", "d"}, "Attempts to prevent death messages.", false);
-    public final Value<Boolean> blue = new Value<>("BlueText", new String[]{"Blue", "b"}, "Cancels blue-text containing messages.", false);
-    public final Value<Boolean> green = new Value<>("GreenText", new String[]{"Green", "g"}, "Cancels green-text containing messages.", false);
-    public final Value<Regex> regex = new Value<>("Regex", new String[]{"re"}, "Messages matching this regular expression will be hidden. Leave it blank to disable.", new Regex());
+    public final Value<Boolean> unicode = new Value<>("Unicode", new String[]{"uc"}, "Reverts \"Fancy Chat\" characters back into normal ones", true);
+    public final Value<Boolean> broadcasts = new Value<>("Broadcasts", new String[]{"broadcast", "broad", "bc"}, "Prevents displaying chat messages that begin with [SERVER]", false);
+    public final Value<Boolean> russian = new Value<>("Russian", new String[]{"russiantext", "rus", "r"}, "Prevents displaying russian-character containing messages", false);
+    public final Value<Boolean> asian = new Value<>("Asian", new String[]{"asiantext", "asia", "chinese", "japanese", "korean"}, "Prevents displaying \"CJK Unified Ideograph\"-character containing messages (chinese, korean, jap...)", false);
+    public final Value<Boolean> spam = new Value<>("Spam", new String[]{"sp", "s"}, "Attempts to prevent spam by checking recent chat messages for duplicates", true);
+    public final Value<Boolean> death = new Value<>("Death", new String[]{"dead", "d"}, "Attempts to prevent death messages", false);
+    public final Value<Boolean> blue = new Value<>("BlueText", new String[]{"Blue", "b"}, "Cancels blue-text containing messages", false);
+    public final Value<Boolean> green = new Value<>("GreenText", new String[]{"Green", "g"}, "Cancels green-text containing messages", false);
+    public final Value<Regex> regex = new Value<>("Regex", new String[]{"re"}, "Messages matching this regular expression will be hidden. Leave it blank to disable", new Regex());
 
     private final List<String> cache = new ArrayList<>();
 

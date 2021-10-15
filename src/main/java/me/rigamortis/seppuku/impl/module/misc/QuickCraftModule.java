@@ -19,7 +19,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class QuickCraftModule extends Module {
     public QuickCraftModule() {
-        super("QuickCraft", new String[]{"FastCraft", "qcraft"}, "Automatically collects the result when crafting.", "NONE", -1, Module.ModuleType.MISC);
+        super("QuickCraft", new String[]{"FastCraft", "qcraft"}, "Automatically collects the result when crafting", "NONE", -1, Module.ModuleType.MISC);
     }
 
     @Listener

@@ -20,7 +20,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class GodModeModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The mode of the god-mode exploit.", Mode.PORTAL);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The mode of the god-mode exploit", Mode.PORTAL);
 
     private enum Mode {
         PORTAL, RIDING, LOCK, PACKET

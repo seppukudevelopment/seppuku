@@ -29,7 +29,7 @@ public final class AutoClickerModule extends Module {
     private final Timer timer = new Timer();
 
     public AutoClickerModule() {
-        super("AutoClicker", new String[]{"AutoClick", "Clicker", "AutoAttack"}, "Automatically clicks the mouse while mouse is held down.", "NONE", -1, ModuleType.COMBAT);
+        super("AutoClicker", new String[]{"AutoClick", "Clicker", "AutoAttack"}, "Automatically clicks the mouse while mouse is held down", "NONE", -1, ModuleType.COMBAT);
         this.weapons.setValue(new ArrayList<>());
         this.weapons.getValue().add(Items.DIAMOND_SWORD);
         this.weapons.getValue().add(Items.IRON_SWORD);

@@ -14,10 +14,10 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class FastPlaceModule extends Module {
 
-    public final Value<Boolean> xp = new Value<Boolean>("XP", new String[]{"EXP"}, "Only activate while holding XP bottles.", false);
+    public final Value<Boolean> xp = new Value<Boolean>("XP", new String[]{"EXP"}, "Only activate while holding XP bottles", false);
 
     public FastPlaceModule() {
-        super("FastPlace", new String[]{"Fp"}, "Removes place delay", "NONE", -1, ModuleType.WORLD);
+        super("FastPlace", new String[]{"Fp"}, "Removes placement delay", "NONE", -1, ModuleType.WORLD);
     }
 
     @Override

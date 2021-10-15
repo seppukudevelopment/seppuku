@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  */
 public final class NameAlertModule extends Module {
 
-    public final Value<Boolean> saveToFile = new Value<Boolean>("SaveToFile", new String[]{"Save", "Saves"}, "Saves the alert to a file in your Seppuku 'Config' directory.", false);
+    public final Value<Boolean> saveToFile = new Value<Boolean>("SaveToFile", new String[]{"Save", "Saves"}, "Saves the alert to a file in your Seppuku 'Config' directory", false);
 
     //private final String REGEX_NAME = "(?<=<).*?(?=>)";
     private final String REGEX_NAME = "<(\\S+)\\s*(\\S+?)?>\\s(.*)";
@@ -36,7 +36,7 @@ public final class NameAlertModule extends Module {
     private final File messagesFile;
 
     public NameAlertModule() {
-        super("NameAlert", new String[]{"NameAlert", "SayMyName", "WhoSaid"}, "Alerts you when someone says your name in chat via a notification.", "NONE", -1, ModuleType.MISC);
+        super("NameAlert", new String[]{"NameAlert", "SayMyName", "WhoSaid"}, "Alerts you when someone says your name in chat via a notification", "NONE", -1, ModuleType.MISC);
 
         this.messagesFile = new File(Seppuku.INSTANCE.getConfigManager().getConfigDir(), "NameAlerts.txt");
         try {

@@ -14,16 +14,16 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class NoEffectsModule extends Module {
 
     /* any anti-cheat */
-    public final Value<Boolean> nausea = new Value<Boolean>("Nausea", new String[]{"naus", "nau", "n"}, "Disables the nausea potion effect.", true);
-    public final Value<Boolean> blindness = new Value<Boolean>("Blindness", new String[]{"blind", "b"}, "Disables the blindness potion effect.", true);
-    public final Value<Boolean> invisibility = new Value<Boolean>("Invisibility", new String[]{"invis", "inv", "i"}, "Disables the invisibility potion effect.", false);
+    public final Value<Boolean> nausea = new Value<Boolean>("Nausea", new String[]{"naus", "nau", "n"}, "Disables the nausea potion effect", true);
+    public final Value<Boolean> blindness = new Value<Boolean>("Blindness", new String[]{"blind", "b"}, "Disables the blindness potion effect", true);
+    public final Value<Boolean> invisibility = new Value<Boolean>("Invisibility", new String[]{"invis", "inv", "i"}, "Disables the invisibility potion effect", false);
 
     /* questionable on certain anti-cheats */
-    public final Value<Boolean> wither = new Value<Boolean>("Wither", new String[]{"wit", "w"}, "Disables the withering effect.", false);
-    public final Value<Boolean> levitation = new Value<Boolean>("Levitation", new String[]{"lev", "l"}, "Disables the levitation effect.", false);
+    public final Value<Boolean> wither = new Value<Boolean>("Wither", new String[]{"wit", "w"}, "Disables the withering effect", false);
+    public final Value<Boolean> levitation = new Value<Boolean>("Levitation", new String[]{"lev", "l"}, "Disables the levitation effect", false);
 
     public NoEffectsModule() {
-        super("NoEffects", new String[]{"AntiEffects", "NoEff", "AntiEff"}, "Removes potion effects from the player.", "NONE", -1, ModuleType.PLAYER);
+        super("NoEffects", new String[]{"AntiEffects", "NoEff", "AntiEff"}, "Removes potion effects from the player", "NONE", -1, ModuleType.PLAYER);
     }
 
     @Listener

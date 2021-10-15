@@ -19,10 +19,10 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class VelocityModule extends Module {
 
-    public final Value<Integer> horizontalVelocity = new Value<>("Horizontal", new String[]{"HorizontalVelocity", "Horizontal_Velocity", "HVel", "HV", "HorizontalVel", "Horizontal", "H"}, "The horizontal velocity you will take.", 0, 0, 100, 1);
-    public final Value<Integer> verticalVelocity = new Value<>("Vertical", new String[]{"VerticalVelocity", "Vertical_Velocity", "VVel", "VV", "VerticalVel", "Vertical", "Vert", "V"}, "The vertical velocity you will take.", 0, 0, 100, 1);
-    public final Value<Boolean> explosions = new Value<>("Explosions", new String[]{"Explosions", "Explosion", "EXP", "EX", "Expl"}, "Apply velocity modifier on explosion velocity.", true);
-    public final Value<Boolean> bobbers = new Value<>("Bobbers", new String[]{"Bobb", "Bob", "FishHook", "FishHooks"}, "Apply velocity modifier on fishing bobber velocity.", true);
+    public final Value<Integer> horizontalVelocity = new Value<>("Horizontal", new String[]{"HorizontalVelocity", "Horizontal_Velocity", "HVel", "HV", "HorizontalVel", "Horizontal", "H"}, "The horizontal velocity you will take", 0, 0, 100, 1);
+    public final Value<Integer> verticalVelocity = new Value<>("Vertical", new String[]{"VerticalVelocity", "Vertical_Velocity", "VVel", "VV", "VerticalVel", "Vertical", "Vert", "V"}, "The vertical velocity you will take", 0, 0, 100, 1);
+    public final Value<Boolean> explosions = new Value<>("Explosions", new String[]{"Explosions", "Explosion", "EXP", "EX", "Expl"}, "Apply velocity modifier on explosion velocity", true);
+    public final Value<Boolean> bobbers = new Value<>("Bobbers", new String[]{"Bobb", "Bob", "FishHook", "FishHooks"}, "Apply velocity modifier on fishing bobber velocity", true);
 
     public final Minecraft mc = Minecraft.getMinecraft();
 

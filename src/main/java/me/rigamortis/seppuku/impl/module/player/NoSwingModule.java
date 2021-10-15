@@ -11,7 +11,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class NoSwingModule extends Module {
 
     public NoSwingModule() {
-        super("NoSwing", new String[]{"AntiSwing"}, "Prevents swinging server-side", "NONE", -1, ModuleType.PLAYER);
+        super("NoSwing", new String[]{"AntiSwing"}, "Prevents arm swinging server-side", "NONE", -1, ModuleType.PLAYER);
     }
 
     @Listener

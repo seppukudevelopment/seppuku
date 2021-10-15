@@ -31,7 +31,7 @@ public final class ItemSpoofModule extends Module {
     public float facingZ;
 
     public ItemSpoofModule() {
-        super("ItemSpoof", new String[]{"ItemS"}, "Allows you to display a different item server-side(Use the top left slot in your inventory)", "NONE", -1, ModuleType.PLAYER);
+        super("ItemSpoof", new String[]{"ItemS"}, "Allows you to display a different item server-side (Use the top left slot in your inventory)", "NONE", -1, ModuleType.PLAYER);
     }
 
     @Listener

@@ -20,19 +20,19 @@ import java.util.OptionalInt;
 
 public final class EntityDesyncModule extends Module {
 
-    public final Value<Boolean> noDismountPlugin = new Value<Boolean>("NoDismountPlugin", new String[]{"NoDismount", "nd", "ndp", "AntiDismount"}, "Prevents server plugin from dismounting you while riding.", false);
-    public final Value<Boolean> dismountEntity = new Value<Boolean>("DismountEntity", new String[]{"Dismount", "d", "de"}, "Dismounts the riding entity client-side. (debug)", true);
-    public final Value<Boolean> removeEntity = new Value<Boolean>("RemoveEntity", new String[]{"Remove", "r", "re"}, "Removes the entity from the world client-side. (debug)", true);
-    public final Value<Boolean> respawnEntity = new Value<Boolean>("RespawnEntity", new String[]{"Respawn", "res", "resp"}, "Forces the riding entity's 'isDead' value to be false on respawn. (debug)", true);
-    public final Value<Boolean> sendMovePackets = new Value<Boolean>("SendMovePackets", new String[]{"MovePackets", "sendmp", "SendMove", "sm"}, "Sends CPacketVehicleMove packets for the riding entity. (debug)", true);
-    public final Value<Boolean> forceOnGround = new Value<Boolean>("ForceOnGround", new String[]{"ForceGound", "fog", "fg", "ground"}, "Forces player.onGround = true when de-syncing. (debug)", true);
-    public final Value<Boolean> setMountPosition = new Value<Boolean>("SetMountPosition", new String[]{"SetMountPos", "setmp", "setmpos"}, "Updates the riding entity position & bounding-box client-side. (debug)", true);
+    public final Value<Boolean> noDismountPlugin = new Value<Boolean>("NoDismountPlugin", new String[]{"NoDismount", "nd", "ndp", "AntiDismount"}, "Prevents server plugin from dismounting you while riding", false);
+    public final Value<Boolean> dismountEntity = new Value<Boolean>("DismountEntity", new String[]{"Dismount", "d", "de"}, "Dismounts the riding entity client-side (debug)", true);
+    public final Value<Boolean> removeEntity = new Value<Boolean>("RemoveEntity", new String[]{"Remove", "r", "re"}, "Removes the entity from the world client-side (debug)", true);
+    public final Value<Boolean> respawnEntity = new Value<Boolean>("RespawnEntity", new String[]{"Respawn", "res", "resp"}, "Forces the riding entity's 'isDead' value to be false on respawn (debug)", true);
+    public final Value<Boolean> sendMovePackets = new Value<Boolean>("SendMovePackets", new String[]{"MovePackets", "sendmp", "SendMove", "sm"}, "Sends CPacketVehicleMove packets for the riding entity (debug)", true);
+    public final Value<Boolean> forceOnGround = new Value<Boolean>("ForceOnGround", new String[]{"ForceGound", "fog", "fg", "ground"}, "Forces player.onGround = true when de-syncing (debug)", true);
+    public final Value<Boolean> setMountPosition = new Value<Boolean>("SetMountPosition", new String[]{"SetMountPos", "setmp", "setmpos"}, "Updates the riding entity position & bounding-box client-side (debug)", true);
 
     private Entity originalRidingEntity;
 
     public EntityDesyncModule() {
         super("EntityDesync", new String[]{"EntityDesync", "EDesync", "Desync"}, "NONE", -1, ModuleType.PLAYER);
-        this.setDesc("Dismounts you from an entity client-side.");
+        this.setDesc("Dismounts you from an entity client-side");
     }
 
     @Listener

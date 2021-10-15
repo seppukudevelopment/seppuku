@@ -30,7 +30,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class ScaffoldModule extends Module {
 
-    public final Value<Boolean> refill = new Value<Boolean>("Refill", new String[]{"ref"}, "If the held item is empty or not a block, fill the slot with a block from the inventory when the scaffold is triggered to place.", true);
+    public final Value<Boolean> refill = new Value<Boolean>("Refill", new String[]{"ref"}, "If the held item is empty or not a block, fill the slot with a block from the inventory when the scaffold is triggered to place", true);
     public final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"rot"}, "Should we rotate the player's head according to the place position?", true);
     //public final Value<Boolean> destroy = new Value<Boolean>("Destroy", new String[]{"Dest"}, "When enabled, after placing the block, forces the player to swing/destroy at the same position.", false);
 
@@ -42,7 +42,7 @@ public final class ScaffoldModule extends Module {
     private final RotationTask rotationTask = new RotationTask("ScaffoldTask", 3);
 
     public ScaffoldModule() {
-        super("Scaffold", new String[]{"Scaff"}, "Automatically places blocks where you are walking.", "NONE", -1, ModuleType.MOVEMENT);
+        super("Scaffold", new String[]{"Scaff"}, "Automatically places blocks where you are walking", "NONE", -1, ModuleType.MOVEMENT);
     }
 
     @Override

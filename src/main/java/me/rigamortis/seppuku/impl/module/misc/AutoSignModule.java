@@ -24,7 +24,7 @@ public final class AutoSignModule extends Module {
 
     private String[] lines;
 
-    public final Value<Boolean> overflow = new Value("Overflow", new String[]{"Ov"}, "Fill the sign with the maximum number of randomly generated characters.", false);
+    public final Value<Boolean> overflow = new Value("Overflow", new String[]{"Ov"}, "Fill the sign with the maximum number of randomly generated characters", false);
 
     public AutoSignModule() {
         super("AutoSign", new String[]{"AutomaticSign", "ASign"}, "Automatically writes text on signs for you", "NONE", -1, ModuleType.MISC);

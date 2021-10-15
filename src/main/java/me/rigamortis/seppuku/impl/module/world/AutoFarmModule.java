@@ -25,10 +25,10 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class AutoFarmModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "m"}, "The current farming mode.", Mode.HARVEST);
-    public final Value<Boolean> modeHarvestRClick = new Value<Boolean>("ModeHarvestRClick", new String[]{"HarvestRightClick", "HarvestRClick", "hrc", "mhrc"}, "Should we right click instead of breaking when harvesting? (Modpacks)", false);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "m"}, "The current farming mode", Mode.HARVEST);
+    public final Value<Boolean> modeHarvestRClick = new Value<Boolean>("ModeHarvestRClick", new String[]{"HarvestRightClick", "HarvestRClick", "hrc", "mhrc"}, "Should we right click instead of left clicking when harvesting? (Modpacks)", false);
 
-    public final Value<Float> range = new Value<Float>("Range", new String[]{"Range", "Reach", "r"}, "The range in blocks your player should reach to farm.", 4.0f, 1.0f, 9.0f, 0.1f);
+    public final Value<Float> range = new Value<Float>("Range", new String[]{"Range", "Reach", "r"}, "The range in blocks your player should reach to farm", 4.0f, 1.0f, 9.0f, 0.1f);
     public final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"rot"}, "Should we rotate the player's head when Auto-Farming?", true);
 
     private BlockPos currentBlockPos;
@@ -36,7 +36,7 @@ public final class AutoFarmModule extends Module {
     private final RotationTask rotationTask = new RotationTask("AutoFarmTask", 3);
 
     public AutoFarmModule() {
-        super("AutoFarm", new String[]{"AutoFarm", "Farm", "AutoHoe", "AutoBoneMeal", "AutoPlant"}, "Good ol' farming, just change the \"Mode\" value.", "NONE", -1, ModuleType.WORLD);
+        super("AutoFarm", new String[]{"AutoFarm", "Farm", "AutoHoe", "AutoBoneMeal", "AutoPlant"}, "Good ol' farming, just change the \"Mode\" value", "NONE", -1, ModuleType.WORLD);
     }
 
     @Listener

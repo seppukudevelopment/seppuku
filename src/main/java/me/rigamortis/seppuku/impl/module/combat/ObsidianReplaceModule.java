@@ -50,7 +50,7 @@ public final class ObsidianReplaceModule extends Module {
     public ObsidianReplaceModule() {
         super("ObsidianReplace", new String[]{
                         "ObbyRep", "ObbyReplace", "ObbRep", "ObsidianRep"
-                }, "Automatically replaces broken obsidian near you",
+                }, "Automatically replaces broken obsidian within reach",
                 "NONE", -1, ModuleType.COMBAT);
     }
 

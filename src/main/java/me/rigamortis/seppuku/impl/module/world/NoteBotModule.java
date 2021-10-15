@@ -39,12 +39,12 @@ import java.util.stream.IntStream;
  */
 public final class NoteBotModule extends Module {
 
-    private final Value<BotState> state = new Value<BotState>("State", new String[]{"State", "s"}, "Current state of the note-bot.", BotState.IDLE);
-    private final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"mod", "m"}, "Current mode of the note-bot.", Mode.NORMAL);
-    private final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"rot", "r"}, "Rotate the player's head & body for each note-bot function.", false);
-    private final Value<Boolean> swing = new Value<Boolean>("Swing", new String[]{"swingarm", "armswing", "sa"}, "Swing the player's hand for each note-bot function.", false);
-    private final Value<Float> discoverDelay = new Value<Float>("DiscoverDelay", new String[]{"Discover Delay", "discover-delay", "ddelay", "ddel", "dd", "d"}, "Delay(ms) to wait between left clicks.", 50.0f, 0.0f, 1000.0f, 1.0f);
-    private final Value<Float> tuneDelay = new Value<Float>("TuneDelay", new String[]{"Tune Delay", "tune-delay", "tdelay", "tdel", "td"}, "Delay(ms) to wait between right clicks.", 200.0f, 0.0f, 1000.0f, 1.0f);
+    private final Value<BotState> state = new Value<BotState>("State", new String[]{"State", "s"}, "Current state of the note-bot", BotState.IDLE);
+    private final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"mod", "m"}, "Current mode of the note-bot", Mode.NORMAL);
+    private final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"rot", "r"}, "Rotate the player's head & body for each note-bot function", false);
+    private final Value<Boolean> swing = new Value<Boolean>("Swing", new String[]{"swingarm", "armswing", "sa"}, "Swing the player's hand for each note-bot function", false);
+    private final Value<Float> discoverDelay = new Value<Float>("DiscoverDelay", new String[]{"Discover Delay", "discover-delay", "ddelay", "ddel", "dd", "d"}, "Delay(ms) to wait between left clicks", 50.0f, 0.0f, 1000.0f, 1.0f);
+    private final Value<Float> tuneDelay = new Value<Float>("TuneDelay", new String[]{"Tune Delay", "tune-delay", "tdelay", "tdel", "td"}, "Delay(ms) to wait between right clicks", 200.0f, 0.0f, 1000.0f, 1.0f);
 
     private final RotationTask rotationTask = new RotationTask("NoteBot", 2);
 
@@ -67,7 +67,7 @@ public final class NoteBotModule extends Module {
     private final Minecraft mc = Minecraft.getMinecraft();
 
     public NoteBotModule() {
-        super("NoteBot", new String[]{"NoteBot+", "MusicBot", "MusicPlayer", "MidiPlayer", "MidiBot"}, "Play .midi files on a 5x5 grid of note-blocks.", "NONE", -1, ModuleType.WORLD);
+        super("NoteBot", new String[]{"NoteBot+", "MusicBot", "MusicPlayer", "MidiPlayer", "MidiBot"}, "Play .midi files on a 5x5 grid of note-blocks", "NONE", -1, ModuleType.WORLD);
     }
 
     @Override

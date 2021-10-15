@@ -1,5 +1,7 @@
 package me.rigamortis.seppuku.impl.module.world;
 
+import java.awt.*;
+import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventClickBlock;
 import me.rigamortis.seppuku.api.event.player.EventPlayerDamageBlock;
@@ -7,6 +9,7 @@ import me.rigamortis.seppuku.api.event.player.EventPlayerUpdate;
 import me.rigamortis.seppuku.api.event.player.EventResetBlockRemoving;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
@@ -20,15 +23,13 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
-import java.awt.*;
-
 /**
  * Author Seth
  * 4/24/2019 @ 12:16 PM.
  */
 public final class SpeedMineModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The speed-mine mode to use.", Mode.DAMAGE);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The speed-mine mode to use", Mode.DAMAGE);
 
     private enum Mode {
         PACKET, DAMAGE, INSTANT, SEQUENTIAL
@@ -40,7 +41,7 @@ public final class SpeedMineModule extends Module {
     public EnumFacing seqDir;
     public final Minecraft mc = Minecraft.getMinecraft();
 
-    public final Value<Boolean> reset = new Value<Boolean>("Reset", new String[]{"Res"}, "Stops current block destroy damage from resetting if enabled.", true);
+    public final Value<Boolean> reset = new Value<Boolean>("Reset", new String[]{"Res"}, "Stops current block destroy damage from resetting if enabled", true);
     public final Value<Boolean> doubleBreak = new Value<Boolean>("DoubleBreak", new String[]{"DoubleBreak", "Double", "DB"}, "Mining a block will also mine the block above it, if enabled.", false);
     public final Value<Boolean> auto = new Value<Boolean>("Auto", new String[]{}, "When enabled, allows for multi-mining blocks.", false);
 
@@ -90,19 +91,19 @@ public final class SpeedMineModule extends Module {
         if (autoPos != null && mc.world.getBlockState(autoPos).getBlock() != Blocks.AIR) {
             RenderUtil.begin3D();
             final AxisAlignedBB bb = new AxisAlignedBB(
-                    autoPos.getX() - mc.getRenderManager().viewerPosX,
-                    autoPos.getY() - mc.getRenderManager().viewerPosY,
-                    autoPos.getZ() - mc.getRenderManager().viewerPosZ,
-                    autoPos.getX() + 1 - mc.getRenderManager().viewerPosX,
-                    autoPos.getY() + 1 - mc.getRenderManager().viewerPosY,
-                    autoPos.getZ() + 1 - mc.getRenderManager().viewerPosZ
+                autoPos.getX() - mc.getRenderManager().viewerPosX,
+                autoPos.getY() - mc.getRenderManager().viewerPosY,
+                autoPos.getZ() - mc.getRenderManager().viewerPosZ,
+                autoPos.getX() + 1 - mc.getRenderManager().viewerPosX,
+                autoPos.getY() + 1 - mc.getRenderManager().viewerPosY,
+                autoPos.getZ() + 1 - mc.getRenderManager().viewerPosZ
             );
-            RenderUtil.drawBoundingBox(bb, 2f, new Color(255, 255, 255).getRGB());
+            RenderUtil.drawBoundingBox(bb, 2f, new Color(255,255,255).getRGB());
             RenderUtil.end3D();
         }
     }
 
-
+    
     @Listener
     public void damageBlock(EventPlayerDamageBlock event) {
         if (canBreak(event.getPos())) {
@@ -135,7 +136,8 @@ public final class SpeedMineModule extends Module {
                     if (auto.getValue()) {
                         if (autoPos == null) {
                             autoPos = event.getPos();
-                        } else if (mc.world.getBlockState(autoPos).getBlock() == Blocks.AIR) {
+                        }
+                        else if (mc.world.getBlockState(autoPos).getBlock() == Blocks.AIR) {
                             autoPos = event.getPos();
                         }
 
@@ -165,6 +167,8 @@ public final class SpeedMineModule extends Module {
         }
     }
 
+
+    
 
     private boolean canBreak(BlockPos pos) {
         final IBlockState blockState = mc.world.getBlockState(pos);

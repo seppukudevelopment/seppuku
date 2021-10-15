@@ -23,13 +23,13 @@ import java.util.Map;
  */
 public final class LogoutSpotsModule extends Module {
 
-    public final Value<Integer> removeDistance = new Value<Integer>("RemoveDistance", new String[]{"RD", "RemoveRange"}, "Minimum distance in blocks the player must be away from the spot for it to be removed.", 200, 1, 2000, 1);
+    public final Value<Integer> removeDistance = new Value<Integer>("RemoveDistance", new String[]{"RD", "RemoveRange"}, "Minimum distance in blocks the player must be away from the spot for it to be removed", 200, 1, 2000, 1);
 
     private final Map<String, EntityPlayer> playerCache = Maps.newConcurrentMap();
     private final Map<String, PlayerData> logoutCache = Maps.newConcurrentMap();
 
     public LogoutSpotsModule() {
-        super("LogoutSpots", new String[]{"Logout", "Spots"}, "Draws the location of nearby player logouts.", "NONE", -1, ModuleType.RENDER);
+        super("LogoutSpots", new String[]{"Logout", "Spots"}, "Draws the location of nearby player logouts", "NONE", -1, ModuleType.RENDER);
     }
 
     @Override

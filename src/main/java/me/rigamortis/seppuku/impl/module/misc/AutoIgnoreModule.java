@@ -29,8 +29,8 @@ public final class AutoIgnoreModule extends Module {
 
     private static final String REGEX_NAME = "<(\\S+)\\s*(\\S+?)?>\\s(.*)";
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The auto ignore mode to use.", Mode.CLIENT);
-    public final Value<Boolean> allowFriends = new Value<Boolean>("AllowFriends", new String[]{"AllowF", "Friends", "AF", "F"}, "If enabled, any friend's message will not be auto-ignored.", true);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The auto ignore mode to use", Mode.CLIENT);
+    public final Value<Boolean> allowFriends = new Value<Boolean>("AllowFriends", new String[]{"AllowF", "Friends", "AF", "F"}, "If enabled, any friend's message will not be auto-ignored", true);
 
     private List<String> blacklist = new ArrayList<>();
 

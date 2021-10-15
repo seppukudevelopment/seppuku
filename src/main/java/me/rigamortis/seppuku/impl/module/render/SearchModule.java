@@ -42,26 +42,26 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public final class SearchModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"M", "type", "t"}, "Select which mode to draw the search visual.", Mode.OUTLINE);
-    public final Value<Integer> range = new Value<Integer>("Range", new String[]{"radius"}, "The range(m) to render search blocks.", 128, 1, 512, 1);
-    public final Value<Integer> limit = new Value<Integer>("Limit", new String[]{"max"}, "The maximum amount of blocks that can be rendered.", 3000, 1, 9000, 1);
-    public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"opacity"}, "Alpha value for the search bounding box.", 127, 1, 255, 1);
-    public final Value<Float> width = new Value<Float>("Width", new String[]{"size"}, "Line width of the search bounding box.", 1.0f, 0.1f, 5.0f, 0.1f);
-    public final Value<Float> renderTime = new Value<Float>("RenderDelay", new String[]{"rendelay", "delay", "rd"}, "Delay(ms) between render updates if chunks are queued.", 4000.0f, 500f, 8000f, 100f);
-    public final Value<Boolean> tracer = new Value<Boolean>("Tracer", new String[]{"trace", "line"}, "Draw a tracer line to each search result.", false);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"M", "type", "t"}, "Select which mode to draw the search visual", Mode.OUTLINE);
+    public final Value<Integer> range = new Value<Integer>("Range", new String[]{"radius"}, "The range(m) to render search blocks", 128, 1, 512, 1);
+    public final Value<Integer> limit = new Value<Integer>("Limit", new String[]{"max"}, "The maximum amount of blocks that can be rendered", 3000, 1, 9000, 1);
+    public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"opacity"}, "Alpha value for the search bounding box", 127, 1, 255, 1);
+    public final Value<Float> width = new Value<Float>("Width", new String[]{"size"}, "Line width of the search bounding box", 1.0f, 0.1f, 5.0f, 0.1f);
+    public final Value<Float> renderTime = new Value<Float>("RenderDelay", new String[]{"rendelay", "delay", "rd"}, "Delay(ms) between render updates if chunks are queued", 4000.0f, 500f, 8000f, 100f);
+    public final Value<Boolean> tracer = new Value<Boolean>("Tracer", new String[]{"trace", "line"}, "Draw a tracer line to each search result", false);
 
     public enum Mode {
         BOX, OUTLINE, OUTLINE_BOX, PLANE
     }
 
-    private final Value<List<Block>> blockIds = new Value<>("Ids", new String[]{"id", "i", "blocks"}, "Blocks to search for.");
+    private final Value<List<Block>> blockIds = new Value<>("Ids", new String[]{"id", "i", "blocks"}, "Blocks to search for");
     private final List<Vec3i> blocks = new CopyOnWriteArrayList<>();
     private final List<Chunk> renderQueue = new CopyOnWriteArrayList<>();
     private final Timer renderTimer = new Timer();
     private final ICamera frustum = new Frustum();
 
     public SearchModule() {
-        super("Search", new String[]{"srch", "src"}, "Search for different types of blocks. Enter the \"search\" command.", "NONE", -1, ModuleType.RENDER);
+        super("Search", new String[]{"srch", "src"}, "Search for different types of blocks. Enter the \"search\" command", "NONE", -1, ModuleType.RENDER);
 
         this.blockIds.setValue(new ArrayList<>());
 

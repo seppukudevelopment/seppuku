@@ -25,11 +25,11 @@ import java.util.List;
  */
 public final class NewChunksModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"M", "type", "t"}, "Select a mode to use to draw the chunk visual.", Mode.PLANE);
-    public final Value<Color> color = new Value<Color>("Color", new String[]{"color", "c"}, "Change the color of the chunk visual.", new Color(255, 255, 255));
-    public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"Alp", "Opacity", "a", "o"}, "Edit the alpha of the chunk visual.", 127, 1, 255, 1);
-    public final Value<Float> lineWidth = new Value<Float>("LineWidth", new String[]{"Width", "Line-Width", "line", "size", "s", "l"}, "Edit the line width chunk visual.", 1.5f, 0.1f, 5.0f, 0.1f);
-    public final Value<Float> height = new Value<Float>("Height", new String[]{"H"}, "Edit the height of the chunk visual.", 3f, 1f, 25f, 1f);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"M", "type", "t"}, "Select a mode to use to draw the chunk visual", Mode.PLANE);
+    public final Value<Color> color = new Value<Color>("Color", new String[]{"color", "c"}, "Change the color of the chunk visual", new Color(255, 255, 255));
+    public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"Alp", "Opacity", "a", "o"}, "Edit the alpha of the chunk visual", 127, 1, 255, 1);
+    public final Value<Float> lineWidth = new Value<Float>("LineWidth", new String[]{"Width", "Line-Width", "line", "size", "s", "l"}, "Edit the line width chunk visual", 1.5f, 0.1f, 5.0f, 0.1f);
+    public final Value<Float> height = new Value<Float>("Height", new String[]{"H"}, "Edit the height of the chunk visual", 3f, 1f, 25f, 1f);
 
     public enum Mode {
         BOX, OUTLINE, PLANE

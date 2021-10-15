@@ -17,7 +17,7 @@ import java.util.Random;
  */
 public final class ChatMutatorModule extends Module {
 
-    public final Value<Mode> mode = new Value("Mode", new String[]{"Mode", "M"}, "The chat mutator mode to use.", Mode.LEET);
+    public final Value<Mode> mode = new Value("Mode", new String[]{"Mode", "M"}, "The chat mutator mode to use", Mode.LEET);
 
     public ChatMutatorModule() {
         super("ChatMutator", new String[]{"ChatMutate", "ChatM"}, "Modify your outgoing chat messages", "NONE", -1, ModuleType.MISC);

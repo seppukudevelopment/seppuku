@@ -22,13 +22,13 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class PhaseModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The phase mode to use.", Mode.SAND);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The phase mode to use", Mode.SAND);
 
     private enum Mode {
         SAND, PACKET, SKIP, NOCLIP
     }
 
-    public final Value<Boolean> floor = new Value<Boolean>("Floor", new String[]{"Fl"}, "Prevents falling out of the world if enabled.", true);
+    public final Value<Boolean> floor = new Value<Boolean>("Floor", new String[]{"Fl"}, "Prevents falling out of the world if enabled", true);
 
     public PhaseModule() {
         super("Phase", new String[]{"NoClip"}, "Allows you to glitch through blocks", "NONE", -1, ModuleType.WORLD);

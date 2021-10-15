@@ -12,13 +12,13 @@ import net.minecraft.client.entity.EntityOtherPlayerMP;
  */
 public final class FakePlayerModule extends Module {
 
-    public final Value<String> username = new Value<String>("Username", new String[]{"name", "uname", "u"}, "The username of the fake player.", "Notch");
+    public final Value<String> username = new Value<String>("Username", new String[]{"name", "uname", "u"}, "The username of the fake player", "Notch");
 
     private EntityOtherPlayerMP entity;
     private final Minecraft mc = Minecraft.getMinecraft();
 
     public FakePlayerModule() {
-        super("FakePlayer", new String[]{"FakeP", "FPlayer"}, "Adds a fake player to your game.", "NONE", -1, Module.ModuleType.MISC);
+        super("FakePlayer", new String[]{"FakeP", "FPlayer"}, "Adds a fake player to your game", "NONE", -1, Module.ModuleType.MISC);
     }
 
     @Override
