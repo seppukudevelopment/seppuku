@@ -3,7 +3,9 @@ package me.rigamortis.seppuku.impl.module.movement;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.player.EventMove;
 import me.rigamortis.seppuku.api.module.Module;
+import me.rigamortis.seppuku.api.util.BlockUtil;
 import me.rigamortis.seppuku.api.value.Value;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.MobEffects;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -14,8 +16,9 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class StrafeModule extends Module {
 
-    public Value<Boolean> ground = new Value<Boolean>("Ground", new String[]{"Ground", "OnGround"}, "When enabled, enables strafe movement while on ground", false);
-    public Value<Boolean> elytraCheck = new Value<Boolean>("ElytraCheck", new String[]{"Flycheck", "Elytra"}, "Lets you use ElytraFly and Strafe at the same time without bugging out", true);
+    public Value<Boolean> ground = new Value<Boolean>("Ground", new String[]{"Floor", "OnGround", "G"}, "When enabled, enables strafe movement while on ground", false);
+    public Value<Boolean> elytraCheck = new Value<Boolean>("ElytraCheck", new String[]{"FlyChecks", "Elytra"}, "Lets you use ElytraFly and Strafe at the same time without bugging out", true);
+    public Value<Boolean> liquidCheck = new Value<Boolean>("LiquidCheck", new String[]{"LiquidChecks", "Liquids", "Liquid", "Water", "Lava"}, "Attempts to fix bugs while swimming", true);
 
     public StrafeModule() {
         super("Strafe", new String[]{"Strafe"}, "Unlocks full movement control while airborne, and optionally on ground too", "NONE", -1, ModuleType.MOVEMENT);
@@ -30,6 +33,12 @@ public final class StrafeModule extends Module {
 
         if (mc.player.isSneaking() || mc.player.isOnLadder() || mc.player.isInWeb || mc.player.isInLava() || mc.player.isInWater() || mc.player.capabilities.isFlying)
             return;
+
+        if (this.liquidCheck.getValue()) {
+            if (BlockUtil.getBlock(mc.player.posX, mc.player.posY - 1, mc.player.posZ) instanceof BlockLiquid) {
+                return;
+            }
+        }
 
         if (this.elytraCheck.getValue() && mc.player.isElytraFlying())
             return;
