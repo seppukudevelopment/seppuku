@@ -16,7 +16,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class MapBypassModule extends Module {
 
     public MapBypassModule() {
-        super("MapBypass", new String[]{"MapArtBypass", "MBypass"}, "Helps you create maps on 9b9t.com", "NONE", -1, ModuleType.MISC);
+        super("MapBypass", new String[]{"MapArtBypass", "MBypass"}, "Helps you create maps on 9b9t.com (patched)", "NONE", -1, ModuleType.MISC);
     }
 
     @Listener

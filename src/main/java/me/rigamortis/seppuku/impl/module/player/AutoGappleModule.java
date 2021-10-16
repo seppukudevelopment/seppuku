@@ -20,9 +20,9 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class AutoGappleModule extends Module {
 
-    public final Value<Float> health = new Value<Float>("Health", new String[]{"Hp", "h"}, "The amount of health needed to acquire a notch apple.", 15.0f, 0.0f, 20.0f, 0.5f);
-    public final Value<Integer> forcedSlot = new Value<Integer>("Slot", new String[]{"s"}, "The hot-bar slot to put the notch apple into. (45 for offhand)", 44, 0, 44, 1);
-    public final Value<Boolean> enchantedOnly = new Value<Boolean>("EnchantedOnly", new String[]{"Enchanted", "Enchant", "EnchantOnly", "Notch", "NotchOnly", "NO", "EO"}, "Only allow enchanted golden apples to be used.", true);
+    public final Value<Float> health = new Value<Float>("Health", new String[]{"Hp", "h"}, "The amount of health needed to acquire a notch apple", 15.0f, 0.0f, 20.0f, 0.5f);
+    public final Value<Integer> forcedSlot = new Value<Integer>("Slot", new String[]{"s"}, "The hot-bar slot to put the notch apple into (45 for offhand)", 44, 0, 44, 1);
+    public final Value<Boolean> enchantedOnly = new Value<Boolean>("EnchantedOnly", new String[]{"Enchanted", "Enchant", "EnchantOnly", "Notch", "NotchOnly", "NO", "EO"}, "Only allow enchanted golden apples to be used", true);
 
     private int previousHeldItem = -1;
     private int notchAppleSlot = -1;
@@ -33,7 +33,7 @@ public final class AutoGappleModule extends Module {
     private MultitaskModule multitaskModule;
 
     public AutoGappleModule() {
-        super("AutoGapple", new String[]{"Gapple", "AutoApple"}, "Automatically swaps & eats a (notch) apple when health is below the set threshold.", "NONE", -1, ModuleType.PLAYER);
+        super("AutoGapple", new String[]{"Gapple", "AutoApple"}, "Automatically swaps & eats a (notch) apple when health is below the set threshold", "NONE", -1, ModuleType.PLAYER);
     }
 
     @Override

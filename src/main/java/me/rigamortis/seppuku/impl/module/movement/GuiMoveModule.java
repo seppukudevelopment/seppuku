@@ -24,8 +24,8 @@ public final class GuiMoveModule extends Module {
         NEW, OLD
     }
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"mod", "m"}, "Change between modes.", Mode.NEW);
-    public final Value<Boolean> allowSignMove = new Value<Boolean>("AllowSignMove", new String[]{"sign", "allowsign", "as"}, "If enabled you will be able to move while in a sign GUI.", false);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"mod", "m"}, "Change between modes", Mode.NEW);
+    public final Value<Boolean> allowSignMove = new Value<Boolean>("AllowSignMove", new String[]{"sign", "allowsign", "as"}, "If enabled you will be able to move while in a sign GUI", false);
 
     public GuiMoveModule() {
         super("GUIMove", new String[]{"InvMove", "InventoryMove", "GUIM"}, "Allows you to move while guis are open", "NONE", -1, ModuleType.MOVEMENT);

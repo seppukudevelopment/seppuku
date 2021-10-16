@@ -20,9 +20,9 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  * @since 12/7/19
  */
 public class HotBarRefillModule extends Module {
-    public final Value<Float> delay = new Value<>("Delay", new String[]{"Del"}, "The delay(ms) per item transfer to hot-bar.", 500.0f, 0.0f, 2000.0f, 1.0f);
-    public final Value<Integer> percentage = new Value<>("RefillPercentage", new String[]{"percent", "p", "percent"}, "The percentage a slot should be filled to get refilled.", 50, 0, 100, 1);
-    public final Value<Boolean> offHand = new Value<>("OffHand", new String[]{"oh", "off", "hand"}, "If the off hand should be refilled.", true);
+    public final Value<Float> delay = new Value<>("Delay", new String[]{"Del"}, "The delay(ms) per item transfer to hot-bar", 500.0f, 0.0f, 2000.0f, 1.0f);
+    public final Value<Integer> percentage = new Value<>("RefillPercentage", new String[]{"percent", "p", "percent"}, "The percentage a slot should be filled to get refilled", 50, 0, 100, 1);
+    public final Value<Boolean> offHand = new Value<>("OffHand", new String[]{"oh", "off", "hand"}, "If the off hand should be refilled", true);
 
     private final Timer timer = new Timer();
 

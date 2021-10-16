@@ -12,10 +12,10 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class NoEntityTraceModule extends Module {
 
-    public Value<Boolean> toolsOnly = new Value<Boolean>("Tools", new String[]{"OnlyTools", "Tool", "Pickaxe", "Axe", "Shovel"}, "When enabled, you will only trace through entities when holding tools.", true);
+    public Value<Boolean> toolsOnly = new Value<Boolean>("Tools", new String[]{"OnlyTools", "Tool", "Pickaxe", "Axe", "Shovel"}, "When enabled, you will only trace through entities when holding tools", true);
 
     public NoEntityTraceModule() {
-        super("NoEntityTrace", new String[]{"NoMiningTrace", "EntityTrace", "MiningTrace", "NoBB"}, "Mine through entities by overriding the moused over entity-list.", "NONE", -1, ModuleType.COMBAT);
+        super("NoEntityTrace", new String[]{"NoMiningTrace", "EntityTrace", "MiningTrace", "NoBB"}, "Mine through entities by overriding the moused over entity-list", "NONE", -1, ModuleType.COMBAT);
     }
 
     @Listener

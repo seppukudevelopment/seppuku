@@ -17,14 +17,14 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class AutoEatModule extends Module {
 
-    public final Value<Float> hunger = new Value<Float>("Hunger", new String[]{"food", "h"}, "The amount of hunger needed to acquire some food.", 9.0f, 0.0f, 20.0f, 0.5f);
-    public final Value<Integer> forcedSlot = new Value<Integer>("Slot", new String[]{"s"}, "The hot-bar slot to put the food into. (45 for offhand)", 43, 0, 43, 1);
+    public final Value<Float> hunger = new Value<Float>("Hunger", new String[]{"food", "h"}, "The amount of hunger needed to acquire some food", 9.0f, 0.0f, 20.0f, 0.5f);
+    public final Value<Integer> forcedSlot = new Value<Integer>("Slot", new String[]{"s"}, "The hot-bar slot to put the food into (45 for offhand)", 43, 0, 43, 1);
 
     private int previousHeldItem = -1;
     private int foodSlot = -1;
 
     public AutoEatModule() {
-        super("AutoEat", new String[]{"Eat", "AutoFeed"}, "Automatically swaps & eats food when hunger is below the set threshold.", "NONE", -1, ModuleType.PLAYER);
+        super("AutoEat", new String[]{"Eat", "AutoFeed"}, "Automatically swaps & eats food when hunger is below the set threshold", "NONE", -1, ModuleType.PLAYER);
     }
 
     @Override

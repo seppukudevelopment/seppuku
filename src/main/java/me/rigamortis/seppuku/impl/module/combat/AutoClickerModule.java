@@ -20,16 +20,16 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public final class AutoClickerModule extends Module {
 
-    private final Value<Float> clicksPerSecond = new Value<Float>("Speed", new String[]{"Speed", "S"}, "Clicks per second to automatically click.", 8.0f, 1.0f, 15.0f, 0.1f);
-    private final Value<Boolean> randomize = new Value<Boolean>("Randomize", new String[]{"Random", "R"}, "Randomizes the clicks per second.", true);
-    private final Value<Boolean> onlyWeapons = new Value<Boolean>("OnlyWeapons", new String[]{"OnlyWep", "OW"}, "When enabled, will only auto click with chosen held weapons.", true);
+    private final Value<Float> clicksPerSecond = new Value<Float>("Speed", new String[]{"Speed", "S"}, "Clicks per second to automatically click", 8.0f, 1.0f, 15.0f, 0.1f);
+    private final Value<Boolean> randomize = new Value<Boolean>("Randomize", new String[]{"Random", "R"}, "Randomizes the clicks per second", true);
+    private final Value<Boolean> onlyWeapons = new Value<Boolean>("OnlyWeapons", new String[]{"OnlyWep", "OW"}, "When enabled, will only auto click with chosen held weapons", true);
     private final Value<List<Item>> weapons = new Value<List<Item>>("Weapons", new String[]{"Wep", "Items", "WI", "I", "W"}, "Choose which items to automatically click with");
     //private final Value<Boolean> humanize = new Value<Boolean>("Humanize", new String[]{"Human", "h"}, "Humanizes the clicks per second.", false);
 
     private final Timer timer = new Timer();
 
     public AutoClickerModule() {
-        super("AutoClicker", new String[]{"AutoClick", "Clicker", "AutoAttack"}, "Automatically clicks the mouse while mouse is held down.", "NONE", -1, ModuleType.COMBAT);
+        super("AutoClicker", new String[]{"AutoClick", "Clicker", "AutoAttack"}, "Automatically clicks the mouse while mouse is held down", "NONE", -1, ModuleType.COMBAT);
         this.weapons.setValue(new ArrayList<>());
         this.weapons.getValue().add(Items.DIAMOND_SWORD);
         this.weapons.getValue().add(Items.IRON_SWORD);

@@ -31,16 +31,16 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class KillAuraModule extends Module {
 
-    public final Value<Boolean> players = new Value<>("Players", new String[]{"Player"}, "Choose to target players.", true);
-    public final Value<Boolean> mobs = new Value<>("Mobs", new String[]{"Mob"}, "Choose to target mobs.", true);
-    public final Value<Boolean> animals = new Value<>("Animals", new String[]{"Animal"}, "Choose to target animals.", true);
-    public final Value<Boolean> vehicles = new Value<>("Vehicles", new String[]{"Vehic", "Vehicle"}, "Choose to target vehicles.", true);
-    public final Value<Boolean> projectiles = new Value<>("Projectiles", new String[]{"Projectile", "Proj"}, "Choose to target projectiles.", true);
+    public final Value<Boolean> players = new Value<>("Players", new String[]{"Player"}, "Choose to target players", true);
+    public final Value<Boolean> mobs = new Value<>("Mobs", new String[]{"Mob"}, "Choose to target mobs", true);
+    public final Value<Boolean> animals = new Value<>("Animals", new String[]{"Animal"}, "Choose to target animals", true);
+    public final Value<Boolean> vehicles = new Value<>("Vehicles", new String[]{"Vehic", "Vehicle"}, "Choose to target vehicles", true);
+    public final Value<Boolean> projectiles = new Value<>("Projectiles", new String[]{"Projectile", "Proj"}, "Choose to target projectiles", true);
 
-    public final Value<Float> range = new Value<>("Range", new String[]{"Dist"}, "The minimum range to attack.", 4.5f, 0.0f, 5.0f, 0.1f);
-    public final Value<Boolean> coolDown = new Value<>("CoolDown", new String[]{"CoolD"}, "Delay your hits to gain damage.", true);
-    public final Value<Boolean> sync = new Value<>("Sync", new String[]{"snc"}, "Sync your hits with the server's estimated TPS.", true);
-    public final Value<Boolean> teleport = new Value<>("Teleport", new String[]{"tp"}, "Teleports to your target(Only works on vanilla).", false);
+    public final Value<Float> range = new Value<>("Range", new String[]{"Dist"}, "The minimum range to attack", 4.5f, 0.0f, 5.0f, 0.1f);
+    public final Value<Boolean> coolDown = new Value<>("CoolDown", new String[]{"CoolD"}, "Delay your hits to gain damage", true);
+    public final Value<Boolean> sync = new Value<>("Sync", new String[]{"snc"}, "Sync your hits with the server's estimated TPS", true);
+    public final Value<Boolean> teleport = new Value<>("Teleport", new String[]{"tp"}, "Teleports to your target (Only works on vanilla)", false);
 
     private final RotationTask rotationTask = new RotationTask("KillAuraTask", 5);
 

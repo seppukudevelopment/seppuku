@@ -18,13 +18,13 @@ import java.awt.*;
  */
 public final class NoBiomeColorModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Change between NoBiomeColor modes, Default to use vanilla colors, Custom to use specified RGB values.", Mode.DEFAULT);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Change between NoBiomeColor modes, Default to use vanilla colors, Custom to use specified RGB values", Mode.DEFAULT);
 
     private enum Mode {
         DEFAULT, CUSTOM
     }
 
-    public final Value<Color> color = new Value<Color>("CustomColor", new String[]{"customcolor", "color", "c"}, "Edit the custom biome color.", new Color(255, 255, 255));
+    public final Value<Color> color = new Value<Color>("CustomColor", new String[]{"customcolor", "color", "c"}, "Edit the custom biome color", new Color(255, 255, 255));
 
     private float prevRed;
     private float prevGreen;
@@ -33,7 +33,7 @@ public final class NoBiomeColorModule extends Module {
     private Mode prevMode;
 
     public NoBiomeColorModule() {
-        super("NoBiomeColor", new String[]{"AntiBiomeColor", "NoBiomeC", "NoBiome"}, "Prevents the game from altering the color of foliage, water and grass in biomes.", "NONE", -1, ModuleType.RENDER);
+        super("NoBiomeColor", new String[]{"AntiBiomeColor", "NoBiomeC", "NoBiome"}, "Prevents the game from altering the color of foliage, water and grass in biomes", "NONE", -1, ModuleType.RENDER);
     }
 
     @Override

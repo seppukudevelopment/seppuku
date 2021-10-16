@@ -12,7 +12,7 @@ import net.minecraft.util.Session;
 public final class NameCommand extends Command {
 
     public NameCommand() {
-        super("Name", new String[]{"Nam"}, "Allows you to change the case of your name", "Name <Username>");
+        super("Name", new String[]{"Nam"}, "Allows you to change the capitalizaton of your name", "Name <Username>");
     }
 
     @Override

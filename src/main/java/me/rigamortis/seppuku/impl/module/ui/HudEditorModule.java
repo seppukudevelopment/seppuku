@@ -13,8 +13,8 @@ import net.minecraft.util.ResourceLocation;
  */
 public final class HudEditorModule extends Module {
 
-    public final Value<Boolean> blur = new Value<Boolean>("Blur", new String[]{"b"}, "Apply a blur effect to the Hud Editor's background.", false);
-    public final Value<Boolean> tooltips = new Value<Boolean>("ToolTips", new String[]{"TT", "Tool"}, "Displays tooltips for modules.", true);
+    public final Value<Boolean> blur = new Value<Boolean>("Blur", new String[]{"b"}, "Apply a blur effect to the Hud Editor's background", false);
+    public final Value<Boolean> tooltips = new Value<Boolean>("ToolTips", new String[]{"TT", "Tool"}, "Displays tooltips for modules", true);
 
     private boolean open;
 

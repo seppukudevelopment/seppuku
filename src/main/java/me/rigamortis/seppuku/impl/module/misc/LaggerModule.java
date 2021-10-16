@@ -30,13 +30,13 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class LaggerModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Change between various lagger modes, each utilizing a different exploit to cause lag.", Mode.BOXER);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Change between various lagger modes, each utilizing a different exploit to cause lag", Mode.BOXER);
 
     private enum Mode {
         BOXER, SWAP, MOVEMENT, SIGN, NBT, CONTAINER, MAP
     }
 
-    public final Value<Integer> packets = new Value<Integer>("Packets", new String[]{"pckts", "packet"}, "Amount of packets to send each tick while running the chosen lag mode.", 500, 0, 5000, 1);
+    public final Value<Integer> packets = new Value<Integer>("Packets", new String[]{"pckts", "packet"}, "Amount of packets to send each tick while running the chosen lag mode", 500, 0, 5000, 1);
 
     private Container lastContainer = null;
 

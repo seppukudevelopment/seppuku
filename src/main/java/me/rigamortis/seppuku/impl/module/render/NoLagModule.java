@@ -36,33 +36,33 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class NoLagModule extends Module {
 
-    public final Value<Boolean> light = new Value<Boolean>("Light", new String[]{"Lit", "l"}, "Choose to enable the lighting lag fix. Disables lighting updates.", false);
-    public final Value<Boolean> signs = new Value<Boolean>("Signs", new String[]{"Sign", "si"}, "Choose to enable the sign lag fix. Disables the rendering of sign text.", false);
-    public final Value<Boolean> sounds = new Value<Boolean>("Sounds", new String[]{"Sound", "s"}, "Choose to enable the sound lag fix. Disable entity swap-item/equip sound.", true);
-    public final Value<Boolean> fluids = new Value<Boolean>("Fluids", new String[]{"Fluid", "f", "Liquids", "liq", "Water", "Lava"}, "Disables the rendering of all fluids.", false);
-    public final Value<Boolean> pistons = new Value<Boolean>("Pistons", new String[]{"Piston", "p"}, "Choose to enable the piston lag fix. Disables pistons from rendering.", false);
-    public final Value<Boolean> slimes = new Value<Boolean>("Slimes", new String[]{"Slime", "sl"}, "Choose to enable the slime lag fix. Disables slimes from spawning.", false);
-    public final Value<Boolean> items = new Value<Boolean>("Items", new String[]{"Item", "i"}, "Disables the rendering of items.", false);
-    public final Value<Boolean> particles = new Value<Boolean>("Particles", new String[]{"Part", "par"}, "Disables the spawning of all particles.", true);
-    public final Value<Boolean> particlesPackets = new Value<Boolean>("ParticlesPackets", new String[]{"PartPacket", "parpac"}, "Disables particle packets and effect packets.", false);
-    public final Value<Boolean> particlesEntityPackets = new Value<Boolean>("ParticlesEntityPackets", new String[]{"PartEntPacket", "parentpac"}, "Disables entity effect packets (usually particles).", false);
-    public final Value<Boolean> sky = new Value<Boolean>("Sky", new String[]{"Skies", "ski"}, "Disables the rendering of the sky.", true);
-    public final Value<Boolean> names = new Value<Boolean>("Names", new String[]{"Name", "n"}, "Disables the rendering of vanilla name-tags.", false);
-    public final Value<Boolean> withers = new Value<Boolean>("Withers", new String[]{"Wither", "w"}, "Disables the rendering of withers.", false);
-    public final Value<Boolean> withersForce = new Value<Boolean>("WithersForce", new String[]{"WithersF", "wf"}, "Force disables the rendering of withers.", false);
-    public final Value<Boolean> skulls = new Value<Boolean>("Skulls", new String[]{"WitherSkull", "skulls", "skull", "ws"}, "Disables the rendering of flying wither skulls.", false);
-    public final Value<Boolean> crystals = new Value<Boolean>("Crystals", new String[]{"Crystal", "cr", "c"}, "Disables the rendering of crystals.", false);
-    public final Value<Boolean> tnt = new Value<Boolean>("TNT", new String[]{"Dynamite", "explosives", "tn"}, "Disables the rendering of (primed) TNT.", false);
-    public final Value<Boolean> torches = new Value<Boolean>("Torches", new String[]{"Torch", "t"}, "Disables the rendering of torches.", false);
-    public final Value<Boolean> fireworks = new Value<Boolean>("Fireworks", new String[]{"FireW", "Fworks", "fw"}, "Disables the rendering of fireworks.", false);
-    public final Value<Boolean> fireworksEffects = new Value<Boolean>("FireworksEffects", new String[]{"FireWE", "Fworkfx", "fwe"}, "Disables the rendering of firework effects.", false);
-    public final Value<Boolean> redstone = new Value<Boolean>("Redstone", new String[]{"Red", "r"}, "Disables the rendering of redstone dust.", false);
-    public final Value<Boolean> redstoneTorch = new Value<Boolean>("RedstoneTorch", new String[]{"RedTorch", "rt"}, "Disables the rendering of redstone torches.", false);
-    public final Value<Boolean> redstoneLogic = new Value<Boolean>("RedstoneLogic", new String[]{"RedLogic", "rl"}, "Disables the rendering of redstone logic blocks.", false);
-    public final Value<Boolean> storms = new Value<Boolean>("Storms", new String[]{"Lightning"}, "Disables the rendering of lightning strikes.", false);
+    public final Value<Boolean> light = new Value<Boolean>("Light", new String[]{"Lit", "l"}, "Choose to enable the lighting lag fix. Disables lighting updates", false);
+    public final Value<Boolean> signs = new Value<Boolean>("Signs", new String[]{"Sign", "si"}, "Choose to enable the sign lag fix. Disables the rendering of sign text", false);
+    public final Value<Boolean> sounds = new Value<Boolean>("Sounds", new String[]{"Sound", "s"}, "Choose to enable the sound lag fix. Disable entity swap-item/equip sound", true);
+    public final Value<Boolean> fluids = new Value<Boolean>("Fluids", new String[]{"Fluid", "f", "Liquids", "liq", "Water", "Lava"}, "Disables the rendering of all fluids", false);
+    public final Value<Boolean> pistons = new Value<Boolean>("Pistons", new String[]{"Piston", "p"}, "Choose to enable the piston lag fix. Disables pistons from rendering", false);
+    public final Value<Boolean> slimes = new Value<Boolean>("Slimes", new String[]{"Slime", "sl"}, "Choose to enable the slime lag fix. Disables slimes from spawning", false);
+    public final Value<Boolean> items = new Value<Boolean>("Items", new String[]{"Item", "i"}, "Disables the rendering of items", false);
+    public final Value<Boolean> particles = new Value<Boolean>("Particles", new String[]{"Part", "par"}, "Disables the spawning of all particles", true);
+    public final Value<Boolean> particlesPackets = new Value<Boolean>("ParticlesPackets", new String[]{"PartPacket", "parpac"}, "Disables particle packets and effect packets", false);
+    public final Value<Boolean> particlesEntityPackets = new Value<Boolean>("ParticlesEntityPackets", new String[]{"PartEntPacket", "parentpac"}, "Disables entity effect packets (usually particles)", false);
+    public final Value<Boolean> sky = new Value<Boolean>("Sky", new String[]{"Skies", "ski"}, "Disables the rendering of the sky", true);
+    public final Value<Boolean> names = new Value<Boolean>("Names", new String[]{"Name", "n"}, "Disables the rendering of vanilla name-tags", false);
+    public final Value<Boolean> withers = new Value<Boolean>("Withers", new String[]{"Wither", "w"}, "Disables the rendering of withers", false);
+    public final Value<Boolean> withersForce = new Value<Boolean>("WithersForce", new String[]{"WithersF", "wf"}, "Force disables the rendering of withers", false);
+    public final Value<Boolean> skulls = new Value<Boolean>("Skulls", new String[]{"WitherSkull", "skulls", "skull", "ws"}, "Disables the rendering of flying wither skulls", false);
+    public final Value<Boolean> crystals = new Value<Boolean>("Crystals", new String[]{"Crystal", "cr", "c"}, "Disables the rendering of crystals", false);
+    public final Value<Boolean> tnt = new Value<Boolean>("TNT", new String[]{"Dynamite", "explosives", "tn"}, "Disables the rendering of (primed) TNT", false);
+    public final Value<Boolean> torches = new Value<Boolean>("Torches", new String[]{"Torch", "t"}, "Disables the rendering of torches", false);
+    public final Value<Boolean> fireworks = new Value<Boolean>("Fireworks", new String[]{"FireW", "Fworks", "fw"}, "Disables the rendering of fireworks", false);
+    public final Value<Boolean> fireworksEffects = new Value<Boolean>("FireworksEffects", new String[]{"FireWE", "Fworkfx", "fwe"}, "Disables the rendering of firework effects", false);
+    public final Value<Boolean> redstone = new Value<Boolean>("Redstone", new String[]{"Red", "r"}, "Disables the rendering of redstone dust", false);
+    public final Value<Boolean> redstoneTorch = new Value<Boolean>("RedstoneTorch", new String[]{"RedTorch", "rt"}, "Disables the rendering of redstone torches", false);
+    public final Value<Boolean> redstoneLogic = new Value<Boolean>("RedstoneLogic", new String[]{"RedLogic", "rl"}, "Disables the rendering of redstone logic blocks", false);
+    public final Value<Boolean> storms = new Value<Boolean>("Storms", new String[]{"Lightning"}, "Disables the rendering of lightning strikes", false);
 
     public NoLagModule() {
-        super("NoLag", new String[]{"AntiLag", "NoRender"}, "Fixes malicious lag exploits and bugs that cause lag.", "NONE", -1, ModuleType.RENDER);
+        super("NoLag", new String[]{"AntiLag", "NoRender"}, "Fixes malicious lag exploits and bugs that cause lag", "NONE", -1, ModuleType.RENDER);
     }
 
     @Listener

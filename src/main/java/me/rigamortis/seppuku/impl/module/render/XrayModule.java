@@ -23,7 +23,7 @@ import java.util.List;
  */
 public final class XrayModule extends Module {
 
-    public final Value<List<Block>> blocks = new Value<List<Block>>("Ids", new String[]{"id", "i"}, "Blocks to xray for.");
+    public final Value<List<Block>> blocks = new Value<List<Block>>("Ids", new String[]{"id", "i"}, "Blocks to xray for");
 
     private float lastGamma;
     private int lastAO;

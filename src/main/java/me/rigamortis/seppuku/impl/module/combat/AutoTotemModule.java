@@ -20,10 +20,10 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class AutoTotemModule extends Module {
 
-    public final Value<Float> health = new Value<>("Health", new String[]{"Hp", "h"}, "The amount of health needed to acquire a totem.", 7.0f, 0.0f, 20.0f, 0.5f);
-    public final Value<Boolean> crystals = new Value<>("Crystals", new String[]{"cry", "c"}, "Go back to crystals in offhand after health is replenished.", false);
+    public final Value<Float> health = new Value<>("Health", new String[]{"Hp", "h"}, "The amount of health needed to acquire a totem", 7.0f, 0.0f, 20.0f, 0.5f);
+    public final Value<Boolean> crystals = new Value<>("Crystals", new String[]{"cry", "c"}, "Go back to crystals in offhand after health is replenished", false);
     //public final Value<Boolean> force = new Value<>("Force", new String[]{"f"}, "Prioritize AutoTotem over AutoGapple, etc.", true);
-    public final Value<Boolean> checkScreen = new Value<>("CheckScreen", new String[]{"screen", "check", "cs"}, "Checks if a screen is not opened to begin (usually disabled).", false);
+    public final Value<Boolean> checkScreen = new Value<>("CheckScreen", new String[]{"screen", "check", "cs"}, "Checks if a screen is not opened to begin (usually disabled)", false);
 
     private AutoGappleModule autoGappleModule;
 

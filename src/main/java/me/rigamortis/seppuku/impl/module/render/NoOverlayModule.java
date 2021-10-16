@@ -13,14 +13,14 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class NoOverlayModule extends Module {
 
-    public final Value<Boolean> portal = new Value<Boolean>("Portal", new String[]{}, "Disables the portal screen overlay when using a portal.", true);
-    public final Value<Boolean> helmet = new Value<Boolean>("Helmet", new String[]{}, "Disables the helmet/pumpkin screen overlay.", true);
-    public final Value<Boolean> block = new Value<Boolean>("Block", new String[]{}, "Disables the block-side screen overlay when inside of a block.", true);
-    public final Value<Boolean> water = new Value<Boolean>("Water", new String[]{}, "Disables the water screen overlay when under water.", true);
-    public final Value<Boolean> fire = new Value<Boolean>("Fire", new String[]{}, "Disables the fire screen overlay when on fire.", true);
+    public final Value<Boolean> portal = new Value<Boolean>("Portal", new String[]{}, "Disables the portal screen overlay when using a portal", true);
+    public final Value<Boolean> helmet = new Value<Boolean>("Helmet", new String[]{}, "Disables the helmet/pumpkin screen overlay", true);
+    public final Value<Boolean> block = new Value<Boolean>("Block", new String[]{}, "Disables the block-side screen overlay when inside of a block", true);
+    public final Value<Boolean> water = new Value<Boolean>("Water", new String[]{}, "Disables the water screen overlay when under water", true);
+    public final Value<Boolean> fire = new Value<Boolean>("Fire", new String[]{}, "Disables the fire screen overlay when on fire", true);
 
     public NoOverlayModule() {
-        super("NoOverlay", new String[]{"AntiOverlay"}, "Removes screen overlay effects.", "NONE", -1, ModuleType.RENDER);
+        super("NoOverlay", new String[]{"AntiOverlay"}, "Removes screen overlay effects", "NONE", -1, ModuleType.RENDER);
     }
 
     @Listener

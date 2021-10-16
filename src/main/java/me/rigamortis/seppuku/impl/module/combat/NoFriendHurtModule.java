@@ -15,7 +15,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class NoFriendHurtModule extends Module {
 
     public NoFriendHurtModule() {
-        super("NoFriendHurt", new String[]{"NoFriendDMG", "FriendProtect"}, "Cancels any packets that try to hurt your friends.", "NONE", -1, ModuleType.COMBAT);
+        super("NoFriendHurt", new String[]{"NoFriendDMG", "FriendProtect"}, "Cancels any packets that try to hurt your friends", "NONE", -1, ModuleType.COMBAT);
     }
 
     @Listener

@@ -30,18 +30,18 @@ public final class StorageESPModule extends Module {
         TWO_D, THREE_D // TWO_DIMENSIONAL, THREE_DIMENSIONAL
     }
 
-    public final Value<Boolean> nametag = new Value<Boolean>("Nametag", new String[]{"Nametag", "Tag", "Tags", "Ntag", "name", "names"}, "Renders the name of the drawn storage object.", false);
-    public final Value<Integer> opacity = new Value<Integer>("Opacity", new String[]{"Opacity", "Transparency", "Alpha"}, "Opacity of the rendered esp.", 128, 0, 255, 1);
-    public final Value<Boolean> tracer = new Value<Boolean>("Tracer", new String[]{"TracerLine", "trace", "line"}, "Display a tracer line to each storage object.", false);
-    public final Value<Color> tracerColor = new Value<Color>("TracerColor", new String[]{"TracerColor", "TColor", "TC"}, "Edit the storage object tracer color.", new Color(0, 0, 255));
-    public final Value<Boolean> tracerStorageColor = new Value<Boolean>("TracerStorageColor", new String[]{"TracerStorageColor", "TStorageColor", "TSColor", "TStorageC", "TSC"}, "Use the storage object's color as the tracer color.", false);
-    public final Value<Float> tracerWidth = new Value<Float>("TracerWidth", new String[]{"TracerWidth", "TWidth", "TW"}, "Pixel width of each tracer-line.", 0.5f, 0.1f, 5.0f, 0.1f);
-    public final Value<Integer> tracerAlpha = new Value<Integer>("TracerAlpha", new String[]{"TracerAlpha", "TAlpha", "TA", "TracerOpacity", "TOpacity", "TO"}, "Alpha value for each drawn line.", 255, 1, 255, 1);
+    public final Value<Boolean> nametag = new Value<Boolean>("Nametag", new String[]{"Nametag", "Tag", "Tags", "Ntag", "name", "names"}, "Renders the name of the drawn storage object", false);
+    public final Value<Integer> opacity = new Value<Integer>("Opacity", new String[]{"Opacity", "Transparency", "Alpha"}, "Opacity of the rendered esp", 128, 0, 255, 1);
+    public final Value<Boolean> tracer = new Value<Boolean>("Tracer", new String[]{"TracerLine", "trace", "line"}, "Display a tracer line to each storage object", false);
+    public final Value<Color> tracerColor = new Value<Color>("TracerColor", new String[]{"TracerColor", "TColor", "TC"}, "Edit the storage object tracer color", new Color(0, 0, 255));
+    public final Value<Boolean> tracerStorageColor = new Value<Boolean>("TracerStorageColor", new String[]{"TracerStorageColor", "TStorageColor", "TSColor", "TStorageC", "TSC"}, "Use the storage object's color as the tracer color", false);
+    public final Value<Float> tracerWidth = new Value<Float>("TracerWidth", new String[]{"TracerWidth", "TWidth", "TW"}, "Pixel width of each tracer-line", 0.5f, 0.1f, 5.0f, 0.1f);
+    public final Value<Integer> tracerAlpha = new Value<Integer>("TracerAlpha", new String[]{"TracerAlpha", "TAlpha", "TA", "TracerOpacity", "TOpacity", "TO"}, "Alpha value for each drawn line", 255, 1, 255, 1);
 
     private final ICamera camera = new Frustum();
 
     public StorageESPModule() {
-        super("Storage", new String[]{"StorageESP", "ChestFinder", "ChestESP"}, "Highlights different types of storage entities.", "NONE", -1, ModuleType.RENDER);
+        super("Storage", new String[]{"StorageESP", "ChestFinder", "ChestESP"}, "Highlights different types of storage entities", "NONE", -1, ModuleType.RENDER);
     }
 
     @Listener

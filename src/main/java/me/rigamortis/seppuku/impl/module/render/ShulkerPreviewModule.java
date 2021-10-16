@@ -24,12 +24,12 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class ShulkerPreviewModule extends Module {
 
-    public final Value<Boolean> middleClick = new Value("MiddleClick", new String[]{"MC", "Mid"}, "Allows you to middle click shulkers and view their contents.", true);
+    public final Value<Boolean> middleClick = new Value("MiddleClick", new String[]{"MC", "Mid"}, "Allows you to middle click shulkers and view their contents", true);
 
     private boolean clicked;
 
     public ShulkerPreviewModule() {
-        super("ShulkerPreview", new String[]{"SPreview", "ShulkerView"}, "Hover over a shulker box to the items inside.", "NONE", -1, ModuleType.RENDER);
+        super("ShulkerPreview", new String[]{"SPreview", "ShulkerView"}, "Hover over a shulker box to view the items inside", "NONE", -1, ModuleType.RENDER);
     }
 
     @Listener

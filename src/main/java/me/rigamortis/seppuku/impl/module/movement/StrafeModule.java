@@ -16,12 +16,12 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class StrafeModule extends Module {
 
-    public Value<Boolean> ground = new Value<Boolean>("Ground", new String[]{"Floor", "OnGround", "G"}, "When enabled, enables strafe movement while on ground.", false);
-    public Value<Boolean> elytraCheck = new Value<Boolean>("ElytraCheck", new String[]{"FlyChecks", "Elytra"}, "Lets you use ElytraFly and Strafe at the same time without bugging out.", true);
-    public Value<Boolean> liquidCheck = new Value<Boolean>("LiquidCheck", new String[]{"LiquidChecks", "Liquids", "Liquid", "Water", "Lava"}, "Attempts to fix bugs while swimming.", true);
+    public Value<Boolean> ground = new Value<Boolean>("Ground", new String[]{"Floor", "OnGround", "G"}, "When enabled, enables strafe movement while on ground", false);
+    public Value<Boolean> elytraCheck = new Value<Boolean>("ElytraCheck", new String[]{"FlyChecks", "Elytra"}, "Lets you use ElytraFly and Strafe at the same time without bugging out", true);
+    public Value<Boolean> liquidCheck = new Value<Boolean>("LiquidCheck", new String[]{"LiquidChecks", "Liquids", "Liquid", "Water", "Lava"}, "Attempts to fix bugs while swimming", true);
 
     public StrafeModule() {
-        super("Strafe", new String[]{"Strafe"}, "Unlocks full movement control while airborne, and optionally on ground too.", "NONE", -1, ModuleType.MOVEMENT);
+        super("Strafe", new String[]{"Strafe"}, "Unlocks full movement control while airborne, and optionally on ground too", "NONE", -1, ModuleType.MOVEMENT);
     }
 
     @Listener

@@ -35,11 +35,11 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class AutoTorchModule extends Module {
 
-    public final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"rotation", "r", "rotate"}, "Rotate to place blocks.", true);
-    public final Value<Boolean> swap = new Value<Boolean>("Swap", new String[]{"autoswap", "sw"}, "Automatically swaps to torches in your hotbar.", true);
-    public final Value<Boolean> overlay = new Value<Boolean>("Overlay", new String[]{"overlay", "ov", "o"}, "Renders an overlay of the light level on blocks within your reach.", false);
-    public final Value<Integer> light = new Value<>("Light", new String[]{"MaxLight", "MinLight", "LightLevel"}, "The minimum light level to place a light source.", 8, 0, 15, 1);
-    public final Value<Float> placeDelay = new Value<Float>("Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay(ms) between blocks being placed.", 100.0f, 0.0f, 500.0f, 1.0f);
+    public final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"rotation", "r", "rotate"}, "Rotate to place blocks", true);
+    public final Value<Boolean> swap = new Value<Boolean>("Swap", new String[]{"autoswap", "sw"}, "Automatically swaps to torches in your hotbar", true);
+    public final Value<Boolean> overlay = new Value<Boolean>("Overlay", new String[]{"overlay", "ov", "o"}, "Renders an overlay of the light level on blocks within your reach", false);
+    public final Value<Integer> light = new Value<>("Light", new String[]{"MaxLight", "MinLight", "LightLevel"}, "The minimum light level to place a light source", 8, 0, 15, 1);
+    public final Value<Float> placeDelay = new Value<Float>("Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay(ms) between blocks being placed", 100.0f, 0.0f, 500.0f, 1.0f);
 
     private final RotationTask rotationTask = new RotationTask("AutoTorch", 2);
     private final Minecraft mc = Minecraft.getMinecraft();
@@ -50,7 +50,7 @@ public final class AutoTorchModule extends Module {
     private int torchSlot = -1;
 
     public AutoTorchModule() {
-        super("AutoTorch", new String[]{"ATorch", "AutoLight", "TorchMaster", "Torch+"}, "Automatically places torches in low light levels.", "NONE", -1, ModuleType.WORLD);
+        super("AutoTorch", new String[]{"ATorch", "AutoLight", "TorchMaster", "Torch+"}, "Automatically places torches in low light levels", "NONE", -1, ModuleType.WORLD);
     }
 
     @Override

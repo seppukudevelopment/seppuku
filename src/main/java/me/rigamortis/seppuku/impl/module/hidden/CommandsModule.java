@@ -27,7 +27,7 @@ import java.util.Set;
 public final class CommandsModule extends Module {
 
     public final Value<String> prefix = new Value("Prefix", new String[]{"prefx", "pfx"}, "The command prefix.", ".");
-    public final Value<Boolean> predictions = new Value("Predictions", new String[]{"predict", "pre"}, "Renders command predictions on the screen (WIP).", false);
+    public final Value<Boolean> predictions = new Value("Predictions", new String[]{"predict", "pre"}, "Renders command predictions on the screen (WIP)", false);
 
     private final Set<String> predictedCommands = new LinkedHashSet<>();
 

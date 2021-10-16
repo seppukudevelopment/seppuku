@@ -16,7 +16,7 @@ public final class SmallShieldModule extends Module {
     ItemRenderer itemRenderer = Minecraft.getMinecraft().entityRenderer.itemRenderer;
 
     public SmallShieldModule() {
-        super("SmallShield", new String[]{"SmallShield", "SS"}, "Smaller shield", "NONE", -1, ModuleType.RENDER);
+        super("SmallShield", new String[]{"SmallShield", "SS"}, "Lowers your offhand", "NONE", -1, ModuleType.RENDER);
     }
 
     @Listener

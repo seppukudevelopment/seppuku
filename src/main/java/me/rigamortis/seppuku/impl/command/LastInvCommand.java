@@ -13,7 +13,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class LastInvCommand extends Command {
 
     public LastInvCommand() {
-        super("LastInv", new String[]{"EnderChest", "Echest", "Portable"}, "Opens your previous inventory if \"MoreInv\" is enabled.", "LastInv");
+        super("LastInv", new String[]{"EnderChest", "Echest", "Portable"}, "Opens your previous inventory if \"MoreInv\" is enabled", "LastInv");
     }
 
     @Override

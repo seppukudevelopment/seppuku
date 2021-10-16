@@ -25,7 +25,7 @@ public final class ReconnectModule extends Module {
     private boolean reconnect;
     private Timer timer = new Timer();
 
-    public final Value<Float> delay = new Value<Float>("Delay", new String[]{"Del"}, "Delay in MS (milliseconds) between reconnect attempts.", 3000.0f, 0.0f, 10000.0f, 500.0f);
+    public final Value<Float> delay = new Value<Float>("Delay", new String[]{"Del"}, "Delay in MS (milliseconds) between reconnect attempts", 3000.0f, 0.0f, 10000.0f, 500.0f);
 
     public ReconnectModule() {
         super("Reconnect", new String[]{"Rejoin", "Recon", "AutoReconnect"}, "Automatically reconnects to the last server after being kicked", "NONE", -1, ModuleType.MISC);

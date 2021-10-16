@@ -12,7 +12,7 @@ import net.minecraft.network.play.client.CPacketUseEntity;
 public final class DupeCommand extends Command {
 
     public DupeCommand() {
-        super("Dupe", new String[]{"Dup", "Doop"}, "Allows you to dupe your inventory", "Dupe");
+        super("Dupe", new String[]{"Dup", "Doop"}, "Attempts to dupe your inventory using an outdated method", "Dupe");
     }
 
     @Override

@@ -21,7 +21,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class StepModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The step block-height mode to use.", Mode.ONE);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The step block-height mode to use", Mode.ONE);
 
     private enum Mode {
         ONE, TWO

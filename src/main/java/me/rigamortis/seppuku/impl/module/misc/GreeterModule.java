@@ -13,8 +13,8 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class GreeterModule extends Module {
 
-    public final Value<Boolean> friends = new Value<Boolean>("Friends", new String[]{"Friend", "F"}, "Will only greet friends.", false);
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Change between greeter modes. Client mode will only appear for you, Server mode will broadcast the greeting message for everyone.", Mode.CLIENT);
+    public final Value<Boolean> friends = new Value<Boolean>("Friends", new String[]{"Friend", "F"}, "Will only greet friends", false);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Change between greeter modes: Client mode will only appear for you, Server mode will type the greeting in chat", Mode.CLIENT);
 
     private enum Mode {
         CLIENT, SERVER

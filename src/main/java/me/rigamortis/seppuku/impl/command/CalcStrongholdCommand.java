@@ -35,7 +35,7 @@ public final class CalcStrongholdCommand extends Command {
     private final String[] resetAlias = new String[]{"Reset", "Res", "R"};
 
     public CalcStrongholdCommand() {
-        super("CalcStronghold", new String[]{"CS", "FindStronghold", "cstrong"}, "Calculates where the nearest stronghold is.", "CalcStronghold\n" +
+        super("CalcStronghold", new String[]{"CS", "FindStronghold", "cstrong"}, "Calculates where the nearest stronghold is", "CalcStronghold\n" +
                 "CalcStronghold Reset");
     }
 

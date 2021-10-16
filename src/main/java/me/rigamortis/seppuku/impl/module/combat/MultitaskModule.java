@@ -16,11 +16,11 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class MultitaskModule extends Module {
 
-    private final Value<Boolean> bowDisable = new Value<Boolean>("BowDisable", new String[]{"disableonbow", "bd"}, "Disables multi-tasking when holding a bow.", true);
-    private final Value<Boolean> shieldDisable = new Value<Boolean>("ShielDisable", new String[]{"disablewithshield", "sd"}, "Disables multi-tasking when holding a shield.", true);
+    private final Value<Boolean> bowDisable = new Value<Boolean>("BowDisable", new String[]{"disableonbow", "bd"}, "Disables multi-tasking when holding a bow", true);
+    private final Value<Boolean> shieldDisable = new Value<Boolean>("ShielDisable", new String[]{"disablewithshield", "sd"}, "Disables multi-tasking when holding a shield", true);
 
     public MultitaskModule() {
-        super("Multitask", new String[]{"multi", "task"}, "Allows the player to perform multiple actions at once. (eating, placing, attacking)", "NONE", -1, ModuleType.COMBAT);
+        super("Multitask", new String[]{"multi", "task"}, "Allows the player to perform multiple actions at once (eating, placing, attacking)", "NONE", -1, ModuleType.COMBAT);
     }
 
     @Listener

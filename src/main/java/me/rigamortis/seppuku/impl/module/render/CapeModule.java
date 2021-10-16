@@ -14,7 +14,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class CapeModule extends Module {
 
     public CapeModule() {
-        super("Cape", new String[]{"Capes"}, "Displays your cape.", "NONE", -1, ModuleType.RENDER);
+        super("Cape", new String[]{"Capes"}, "Displays your cape", "NONE", -1, ModuleType.RENDER);
     }
 
     @Listener

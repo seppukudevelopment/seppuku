@@ -23,13 +23,13 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class JesusModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The current Jesus/WaterWalk mode to use.", Mode.NCP);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The current Jesus/WaterWalk mode to use", Mode.NCP);
 
     private enum Mode {
         VANILLA, NCP, BOUNCE
     }
 
-    public final Value<Float> offset = new Value<Float>("Offset", new String[]{"Off", "O"}, "Amount to offset the player into the water's bounding box.", 0.05f, 0.0f, 0.9f, 0.01f);
+    public final Value<Float> offset = new Value<Float>("Offset", new String[]{"Off", "O"}, "Amount to offset the player into the water's bounding box", 0.05f, 0.0f, 0.9f, 0.01f);
 
     public JesusModule() {
         super("Jesus", new String[]{"LiquidWalk", "WaterWalk"}, "Allows you to walk on water", "NONE", -1, ModuleType.MOVEMENT);

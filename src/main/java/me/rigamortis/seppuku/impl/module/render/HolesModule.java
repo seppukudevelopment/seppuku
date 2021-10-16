@@ -29,16 +29,16 @@ import static org.lwjgl.opengl.GL11.glLineWidth;
  */
 public final class HolesModule extends Module {
 
-    public final Value<Color> color = new Value<Color>("Color", new String[]{"col", "c"}, "Change the color of holes.", new Color(153, 0, 238));
-    public final Value<Integer> radius = new Value<Integer>("Radius", new String[]{"Radius", "Range", "Distance"}, "Radius in blocks to scan for holes.", 8, 0, 32, 1);
-    public final Value<Boolean> fade = new Value<Boolean>("Fade", new String[]{"f"}, "Fades the opacity of the hole the closer your player is to it when enabled.", true);
+    public final Value<Color> color = new Value<Color>("Color", new String[]{"col", "c"}, "Change the color of holes", new Color(153, 0, 238));
+    public final Value<Integer> radius = new Value<Integer>("Radius", new String[]{"Radius", "Range", "Distance"}, "Radius in blocks to scan for holes", 8, 0, 32, 1);
+    public final Value<Boolean> fade = new Value<Boolean>("Fade", new String[]{"f"}, "Fades the opacity of the hole the closer your player is to it when enabled", true);
 
     public final List<Hole> holes = new ArrayList<>();
 
     private final ICamera camera = new Frustum();
 
     public HolesModule() {
-        super("Holes", new String[]{"Hole", "HoleESP"}, "Shows areas the player could fall into, holes.", "NONE", -1, ModuleType.RENDER);
+        super("Holes", new String[]{"Hole", "HoleESP"}, "Shows areas the player could fall into, holes", "NONE", -1, ModuleType.RENDER);
     }
 
     @Listener

@@ -30,7 +30,7 @@ public final class SlimeChunksModule extends Module {
     private List<SlimeChunk> slimeChunkList = new ArrayList<>();
 
     public SlimeChunksModule() {
-        super("SlimeChunks", new String[]{"SlimesChunks", "SlimeC"}, "Highlights slime chunks(Requires the seed)", "NONE", -1, ModuleType.WORLD);
+        super("SlimeChunks", new String[]{"SlimesChunks", "SlimeC"}, "Highlights slime chunks(Requires world seed with .seed)", "NONE", -1, ModuleType.WORLD);
     }
 
     @Listener

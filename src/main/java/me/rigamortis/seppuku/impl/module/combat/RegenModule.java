@@ -18,9 +18,9 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class RegenModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The regen mode to use.", Mode.GAPPLE);
-    public final Value<Float> health = new Value<Float>("Health", new String[]{"hp", "absorption"}, "The minimum health required to heal.", 8.0f, 0.0f, 20.0f, 0.5f);
-    public final Value<Boolean> refill = new Value<Boolean>("Refill", new String[]{"ref"}, "Automatically refill the hotbar with gapples.", true);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The regen mode to use", Mode.GAPPLE);
+    public final Value<Float> health = new Value<Float>("Health", new String[]{"hp", "absorption"}, "The minimum health required to heal", 8.0f, 0.0f, 20.0f, 0.5f);
+    public final Value<Boolean> refill = new Value<Boolean>("Refill", new String[]{"ref"}, "Automatically refill the hotbar with gapples", true);
     public final Value<Boolean> once = new Value<Boolean>("Once", new String[]{"o", "once"}, "Consume only 1 item, then toggle off", false);
 
     private int gappleSlot = -1;
