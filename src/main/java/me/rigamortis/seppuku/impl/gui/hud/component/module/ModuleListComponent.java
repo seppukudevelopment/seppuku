@@ -409,7 +409,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
         public final ModuleListComponent parentModuleList;
 
         public BackButtonComponent(ModuleListComponent parentModuleList) {
-            super("Back", "Go back.");
+            super("Back", "Go back");
             this.parentModuleList = parentModuleList;
         }
 
@@ -459,7 +459,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
             components.add(new BackButtonComponent(parentModuleList));
 
             TextComponent keybindText = new TextComponent("Keybind", module.getKey().toLowerCase(), false);
-            keybindText.setTooltipText("The current key for toggling this module.");
+            keybindText.setTooltipText("The current key for toggling this module");
             keybindText.textListener = new TextComponent.TextComponentListener() {
                 @Override
                 public void onKeyTyped(int keyCode) {
@@ -483,7 +483,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
             components.add(keybindText);
 
             ButtonComponent enabledButton = new ButtonComponent("Enabled");
-            enabledButton.setTooltipText("Enables this module.");
+            enabledButton.setTooltipText("Enables this module");
             enabledButton.enabled = module.isEnabled();
             enabledButton.mouseClickListener = new ComponentListener() {
                 @Override
@@ -494,7 +494,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
             components.add(enabledButton);
 
             ButtonComponent hiddenButton = new ButtonComponent("Hidden");
-            hiddenButton.setTooltipText("Hides this module from the enabled mods list.");
+            hiddenButton.setTooltipText("Hides this module from the enabled mods list");
             hiddenButton.enabled = module.isHidden();
             hiddenButton.mouseClickListener = new ComponentListener() {
                 @Override
@@ -505,7 +505,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
             components.add(hiddenButton);
 
             ColorComponent colorComponent = new ColorComponent("List Color", module.getColor());
-            colorComponent.setTooltipText("The color for this module in the enabled mods list.");
+            colorComponent.setTooltipText("The color for this module in the enabled mods list");
             colorComponent.returnListener = new ComponentListener() {
                 @Override
                 public void onComponentEvent() {
@@ -549,7 +549,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                                 }
                                 Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class); // save module configs
                             } catch (NumberFormatException e) {
-                                Seppuku.INSTANCE.logfChat("%s - %s: Invalid number format.", module.getDisplayName(), value.getName());
+                                Seppuku.INSTANCE.logfChat("%s - %s: Invalid number format", module.getDisplayName(), value.getName());
                             }
                         }
                     };
@@ -580,7 +580,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                                 Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class); // save configs
                                 Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventUIValueChanged(value));
                             } else {
-                                Seppuku.INSTANCE.logfChat("%s - %s: Invalid entry.", module.getDisplayName(), value.getName());
+                                Seppuku.INSTANCE.logfChat("%s - %s: Invalid entry", module.getDisplayName(), value.getName());
                             }
                         }
                     };
@@ -602,7 +602,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                                 Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class); // save configs
                                 Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventUIValueChanged(value));
                             } else {
-                                Seppuku.INSTANCE.logfChat("%s - %s: Not enough input.", module.getDisplayName(), value.getName());
+                                Seppuku.INSTANCE.logfChat("%s - %s: Not enough input", module.getDisplayName(), value.getName());
                             }
                         }
                     };
@@ -643,7 +643,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                             final Regex regex = (Regex) value.getValue();
                             regex.setPatternString(valueText.getText());
                             if (regex.getPattern() == null)
-                                Seppuku.INSTANCE.logfChat("%s - %s: Invalid or empty regular expression; no input will match with pattern.", module.getDisplayName(), value.getName());
+                                Seppuku.INSTANCE.logfChat("%s - %s: Invalid or empty regular expression; no input will match with pattern", module.getDisplayName(), value.getName());
                             Seppuku.INSTANCE.getConfigManager().save(ModuleConfig.class); // save configs
                             Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventUIValueChanged(value));
                         }
