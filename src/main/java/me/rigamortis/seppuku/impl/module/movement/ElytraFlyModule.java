@@ -44,7 +44,8 @@ public final class ElytraFlyModule extends Module {
     public final Value<Float> speedZ = new Value<Float>("SpeedZ", new String[]{"SpdZ", "amountZ", "sZ"}, "The Z speed factor (speed * this)", 1.0f, 0.1f, 5.0f, 0.1f);
 
     public final Value<Boolean> autoStart = new Value<Boolean>("AutoStart", new String[]{"AutoStart", "Auto-Start", "start", "autojump", "as"}, "Hold down the jump key to have an easy automated lift off", true);
-    public final Value<Float> autoStartDelay = new Value<Float>("StartDelay", new String[]{"AutoStartDelay", "startdelay", "autojumpdelay", "asd"}, "Delay(ms) between auto-start attempts", 150.0f, 0.0f, 300.0f, 10.0f);
+    public final Value<Float> autoStartDelay = new Value<Float>("StartDelay", new String[]{"AutoStartDelay", "startdelay", "asd"}, "Delay(ms) between auto-start attempts", 100.0f, 0.0f, 300.0f, 10.0f);
+    public final Value<Float> autoStartJumpDelay = new Value<Float>("JumpDelay", new String[]{"AutoStartJumpDelay", "jumpdelay", "autojumpdelay", "ajd"}, "Delay(ms) after holding jump key auto-start begins", 500.0f, 0.0f, 1000.0f, 100.0f);
     public final Value<Boolean> autoEquip = new Value<Boolean>("AutoEquip", new String[]{"AutoEquipt", "AutoElytra", "Equip", "Equipt", "ae"}, "Automatically equips a durable elytra before or during flight. (Inventory only, not hotbar!)", false);
     public final Value<Float> autoEquipDelay = new Value<Float>("EquipDelay", new String[]{"AutoEquipDelay", "AutoEquiptDelay", "equipdelay", "aed"}, "Delay(ms) between elytra equip swap attempts", 200.0f, 0.0f, 1000.0f, 10.0f);
     public final Value<Boolean> stayAirborne = new Value<Boolean>("StayAirborne", new String[]{"Airborne", "StayInAir", "Stay-Airborne", "air", "sa"}, "Attempts to always keep the player airborne (only use when AutoEquip is enabled)", false);
@@ -53,11 +54,12 @@ public final class ElytraFlyModule extends Module {
     public final Value<Boolean> disableInLiquid = new Value<Boolean>("DisableInLiquid", new String[]{"DisableInWater", "DisableInLava", "disableliquid", "liquidoff", "noliquid", "dil"}, "Disables all elytra flight when the player is in contact with liquid", false);
     public final Value<Boolean> disableNoHunger = new Value<Boolean>("DisableNoHunger", new String[]{"NoHunger", "Hunger", "DNH"}, "Automatically disables the 'NoHunger' module", true);
     public final Value<Boolean> infiniteDurability = new Value<Boolean>("InfiniteDurability", new String[]{"InfiniteDura", "dura", "inf", "infdura"}, "Enables an old exploit that sends the start elytra-flying packet each tick (will kick you)", false);
-    public final Value<Boolean> noKick = new Value<Boolean>("NoKick", new String[]{"AntiKick", "Kick", "nk"}, "Bypass the server kicking you for flying while in elytra flight (Only works for Packet mode!!)", true);
+    public final Value<Boolean> noKick = new Value<Boolean>("NoKick", new String[]{"AntiKick", "Kick", "nk"}, "Bypass the server kicking you for flying while in elytra flight (Only works for Packet mode!!)", false);
 
     private final Timer startDelayTimer = new Timer();
     private final Timer equipDelayTimer = new Timer();
     private final Timer stayAirborneTimer = new Timer();
+    private final Timer jumpTimer = new Timer();
 
     public ElytraFlyModule() {
         super("ElytraFly", new String[]{"Elytra", "ElytraPlus", "Elytra+"}, "Allows you to fly with elytras", "NONE", -1, ModuleType.MOVEMENT);
@@ -169,12 +171,14 @@ public final class ElytraFlyModule extends Module {
                         }
 
                         if (mc.gameSettings.keyBindJump.isKeyDown()) { // jump is held, player is not elytra flying
-                            if (mc.player.motionY < 0) { // player motion is falling
+                            if (this.jumpTimer.passed(this.autoStartJumpDelay.getValue()) && mc.player.motionY < 0) { // player motion is falling
                                 if (this.startDelayTimer.passed(this.autoStartDelay.getValue())) {
                                     mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_FALL_FLYING));
                                     this.startDelayTimer.reset();
                                 }
                             }
+                        } else {
+                            this.jumpTimer.reset();
                         }
                     }
                 }
