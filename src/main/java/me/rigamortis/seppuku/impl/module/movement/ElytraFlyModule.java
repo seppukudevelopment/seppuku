@@ -44,7 +44,7 @@ public final class ElytraFlyModule extends Module {
     public final Value<Float> speedZ = new Value<Float>("SpeedZ", new String[]{"SpdZ", "amountZ", "sZ"}, "The Z speed factor (speed * this)", 1.0f, 0.1f, 5.0f, 0.1f);
 
     public final Value<Boolean> autoStart = new Value<Boolean>("AutoStart", new String[]{"AutoStart", "Auto-Start", "start", "autojump", "as"}, "Hold down the jump key to have an easy automated lift off", true);
-    public final Value<Float> autoStartDelay = new Value<Float>("StartDelay", new String[]{"AutoStartDelay", "startdelay", "asd"}, "Delay(ms) between auto-start attempts", 100.0f, 0.0f, 300.0f, 10.0f);
+    public final Value<Float> autoStartDelay = new Value<Float>("StartDelay", new String[]{"AutoStartDelay", "startdelay", "asd"}, "Delay(ms) between auto-start attempts", 0.0f, 0.0f, 300.0f, 10.0f);
     public final Value<Float> autoStartJumpDelay = new Value<Float>("JumpDelay", new String[]{"AutoStartJumpDelay", "jumpdelay", "autojumpdelay", "ajd"}, "Delay(ms) after holding jump key auto-start begins", 500.0f, 0.0f, 1000.0f, 100.0f);
     public final Value<Boolean> autoEquip = new Value<Boolean>("AutoEquip", new String[]{"AutoEquipt", "AutoElytra", "Equip", "Equipt", "ae"}, "Automatically equips a durable elytra before or during flight. (Inventory only, not hotbar!)", false);
     public final Value<Float> autoEquipDelay = new Value<Float>("EquipDelay", new String[]{"AutoEquipDelay", "AutoEquiptDelay", "equipdelay", "aed"}, "Delay(ms) between elytra equip swap attempts", 200.0f, 0.0f, 1000.0f, 10.0f);
