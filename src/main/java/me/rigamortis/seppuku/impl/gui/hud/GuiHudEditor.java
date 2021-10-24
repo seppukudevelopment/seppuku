@@ -106,8 +106,6 @@ public final class GuiHudEditor extends GuiScreen {
                     final ModuleListComponent moduleListComponent = (ModuleListComponent) component;
                     if (moduleListComponent.getCurrentToolTip() != null) {
                         toolTipComponent = moduleListComponent.getCurrentToolTip();
-                    } else {
-                        toolTipComponent = null;
                     }
                 }
 
