@@ -682,8 +682,13 @@ public final class ModuleListComponent extends ResizableHudComponent {
                     }
                 }
 
-                if (skipRendering)
+                if (skipRendering) {
+                    component.setX(0);
+                    component.setY(0);
+                    component.setW(0);
+                    component.setH(0);
                     continue;
+                }
 
                 component.setX(this.getX() + 1 + offsetX);
                 component.setY(this.getY() + offsetY);
