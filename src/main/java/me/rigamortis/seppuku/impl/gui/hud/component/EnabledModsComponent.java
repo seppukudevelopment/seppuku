@@ -3,6 +3,7 @@ package me.rigamortis.seppuku.impl.gui.hud.component;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.client.EventSaveConfig;
+import me.rigamortis.seppuku.api.event.gui.hud.EventUIValueChanged;
 import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.module.Module;
@@ -167,6 +168,13 @@ public final class EnabledModsComponent extends DraggableHudComponent {
 
         if (this.getH() > res.getScaledHeight()) {
             this.setH(res.getScaledHeight() - 4);
+        }
+    }
+
+    @Listener
+    public void onUIValueChanged(EventUIValueChanged eventUIValueChanged) {
+        if (eventUIValueChanged.getValue().getAlias()[0].startsWith("HudRainbow")) {
+            this.updateValues();
         }
     }
 
