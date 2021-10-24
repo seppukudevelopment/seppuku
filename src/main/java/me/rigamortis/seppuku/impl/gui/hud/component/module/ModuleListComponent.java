@@ -235,7 +235,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                     if (this.currentToolTip == null) {
                         this.currentToolTip = new ToolTipComponent(tooltipText);
                     } else {
-                        this.currentToolTip.render(mouseX, mouseY, partialTicks);
+                        //this.currentToolTip.render(mouseX, mouseY, partialTicks);
                     }
                 } else {
                     this.removeTooltip();
@@ -399,6 +399,10 @@ public final class ModuleListComponent extends ResizableHudComponent {
 
     public ToolTipComponent getCurrentToolTip() {
         return currentToolTip;
+    }
+
+    public void setCurrentToolTip(ToolTipComponent currentToolTip) {
+        this.currentToolTip = currentToolTip;
     }
 
     public ModuleSettingsComponent getCurrentSettings() {

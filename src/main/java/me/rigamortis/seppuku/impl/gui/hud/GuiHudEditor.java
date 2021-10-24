@@ -3,10 +3,12 @@ package me.rigamortis.seppuku.impl.gui.hud;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.gui.hud.component.DraggableHudComponent;
 import me.rigamortis.seppuku.api.gui.hud.component.HudComponent;
+import me.rigamortis.seppuku.api.gui.hud.component.ToolTipComponent;
 import me.rigamortis.seppuku.api.gui.hud.particle.ParticleSystem;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
 import me.rigamortis.seppuku.impl.gui.hud.component.ParticlesComponent;
+import me.rigamortis.seppuku.impl.gui.hud.component.module.ModuleListComponent;
 import me.rigamortis.seppuku.impl.module.ui.HudEditorModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -94,9 +96,20 @@ public final class GuiHudEditor extends GuiScreen {
             RenderUtil.drawRect(point.getX() - 1, point.getY() - 1, point.getX() + 1, point.getY() + 1, 0x75909090);
         }
 
+        ToolTipComponent toolTipComponent = null;
+
         for (HudComponent component : Seppuku.INSTANCE.getHudManager().getComponentList()) {
             if (component.isVisible()) {
                 component.render(mouseX, mouseY, partialTicks);
+
+                if (component instanceof ModuleListComponent) {
+                    final ModuleListComponent moduleListComponent = (ModuleListComponent) component;
+                    if (moduleListComponent.getCurrentToolTip() != null) {
+                        toolTipComponent = moduleListComponent.getCurrentToolTip();
+                    } else {
+                        toolTipComponent = null;
+                    }
+                }
 
                 if (component instanceof DraggableHudComponent) {
                     DraggableHudComponent draggable = (DraggableHudComponent) component;
@@ -140,6 +153,10 @@ public final class GuiHudEditor extends GuiScreen {
                     }
                 }
             }
+        }
+
+        if (toolTipComponent != null) {
+            toolTipComponent.render(mouseX, mouseY, partialTicks);
         }
     }
 
