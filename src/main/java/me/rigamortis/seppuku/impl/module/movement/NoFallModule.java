@@ -21,15 +21,7 @@ public final class NoFallModule extends Module {
     }
 
     private boolean isFlying() {
-        if (this.elytraDisable.getValue()) {
-            if (Minecraft.getMinecraft().player.isElytraFlying()) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
+        return this.elytraDisable.getValue() && Minecraft.getMinecraft().player.isElytraFlying();
     }
 
     @Listener
