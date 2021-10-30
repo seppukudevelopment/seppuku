@@ -1,5 +1,6 @@
 package me.rigamortis.seppuku.impl.module.combat;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
@@ -37,7 +38,6 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author noil
@@ -52,11 +52,11 @@ public final class CrystalAuraModule extends Module {
     public final Value<Float> attackMaxDistance = new Value<Float>("AttackMaxDistance", new String[]{"AMaxRange", "MaxAttackRange", "AMaxRadius", "AMD", "AMR"}, "Range around the enemy crystals will be attacked", 8.0f, 1.0f, 20.0f, 1.0f);
     public final Value<Boolean> place = new Value<Boolean>("Place", new String[]{"AutoPlace"}, "Automatically place crystals", true);
     public final Value<Boolean> placeRapid = new Value<Boolean>("PlaceRapid", new String[]{"RapidPlace"}, "Remove place delay", true);
-    public final Value<Boolean> placeSpread = new Value<Boolean>("PlaceSpread", new String[]{"SpreadPlace"}, "Spread crystals around target by swapping place positions each time. (toggle on if target is running)", false);
+    public final Value<Boolean> placeSpread = new Value<Boolean>("PlaceSpread", new String[]{"SpreadPlace"}, "Spread crystals around target by swapping place positions each time (toggle on if target is running)", false);
     public final Value<Float> placeSpreadDistance = new Value<Float>("PlaceSpreadDistance", new String[]{"SpreadPlaceDistance", "SpreadDistance"}, "Distance (in blocks) to spread the crystals around the target", 1.0f, 0.0f, 3.0f, 0.1f);
     public final Value<Float> placeDelay = new Value<Float>("PlaceDelay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay to place crystals", 15.0f, 0.0f, 500.0f, 1.0f);
     public final Value<Float> placeRadius = new Value<Float>("PlaceRadius", new String[]{"Radius", "PR", "PlaceRange", "Range"}, "The radius in blocks around the player to attempt placing in", 5.5f, 1.0f, 7.0f, 0.5f);
-    public final Value<Float> placeMaxDistance = new Value<Float>("PlaceMaxDistance", new String[]{"BlockDistance", "MaxBlockDistance", "PMBD", "MBD", "PBD", "BD"}, "Range around the enemy crystals will be placed", 1.5f, 1.0f, 20.0f, 1.0f);
+    public final Value<Float> placeMaxDistance = new Value<Float>("PlaceMaxDistance", new String[]{"BlockDistance", "MaxBlockDistance", "PMBD", "MBD", "PBD", "BD"}, "Range around the enemy crystals will be placed (1.1 - 1.6 for feet place)", 1.5f, 1.1f, 16.0f, 1.0f);
     public final Value<Float> placeLocalDistance = new Value<Float>("PlaceLocalDistance", new String[]{"LocalDistance", "PLD", "LD"}, "Enemy must be within this range to start placing", 8.0f, 1.0f, 20.0f, 0.5f);
     public final Value<Float> minDamage = new Value<Float>("MinDamage", new String[]{"MinDamage", "Min", "MinDmg"}, "The minimum explosion damage calculated to place down a crystal", 1.5f, 0.0f, 20.0f, 0.5f);
     public final Value<Boolean> offHand = new Value<Boolean>("Offhand", new String[]{"Hand", "otherhand", "off"}, "Use crystals in the off-hand instead of holding them with the main-hand", false);
@@ -73,7 +73,7 @@ public final class CrystalAuraModule extends Module {
     private final Timer placeTimer = new Timer();
 
     private final Map<Integer, EntityEnderCrystal> predictedCrystals = Maps.newConcurrentMap();
-    private final List<PlaceLocation> placeLocations = new CopyOnWriteArrayList<>();
+    private final List<PlaceLocation> placeLocations = Lists.newArrayList();
 
     private final RotationTask placeRotationTask = new RotationTask("CrystalAuraPlaceTask", 6);
     private final RotationTask attackRotationTask = new RotationTask("CrystalAuraAttackTask", 7);
@@ -250,7 +250,8 @@ public final class CrystalAuraModule extends Module {
             if (event.getPacket() instanceof SPacketSpawnObject) {
                 final SPacketSpawnObject packetSpawnObject = (SPacketSpawnObject) event.getPacket();
                 if (packetSpawnObject.getType() == 51) {
-                    for (PlaceLocation placeLocation : this.placeLocations) {
+                    for (int i = this.placeLocations.size() - 1; i >= 0; i--) {
+                        final PlaceLocation placeLocation = this.placeLocations.get(i);
                         if (placeLocation.getDistance((int) packetSpawnObject.getX(), (int) packetSpawnObject.getY() - 1, (int) packetSpawnObject.getZ()) <= 1) {
                             placeLocation.placed = true;
                         }
@@ -289,7 +290,8 @@ public final class CrystalAuraModule extends Module {
         final Minecraft mc = Minecraft.getMinecraft();
 
         RenderUtil.begin3D();
-        for (PlaceLocation placeLocation : this.placeLocations) {
+        for (int i = this.placeLocations.size() - 1; i >= 0; i--) {
+            final PlaceLocation placeLocation = this.placeLocations.get(i);
             if (placeLocation.alpha <= 0) {
                 this.placeLocations.remove(placeLocation);
                 continue;
