@@ -1,10 +1,12 @@
 package me.rigamortis.seppuku.impl.module.combat;
 
+import com.google.common.collect.Maps;
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.network.EventReceivePacket;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.event.render.EventRender3D;
+import me.rigamortis.seppuku.api.event.world.EventAddEntity;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.task.rotation.RotationTask;
 import me.rigamortis.seppuku.api.util.ColorUtil;
@@ -34,38 +36,43 @@ import net.minecraft.world.Explosion;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Author Seth
- * 4/29/2019 @ 1:19 AM.
+ * @author noil
+ * @author Seth (riga)
  */
 public final class CrystalAuraModule extends Module {
 
     public final Value<Boolean> attack = new Value<Boolean>("Attack", new String[]{"AutoAttack"}, "Automatically attack crystals", true);
     public final Value<Boolean> attackRapid = new Value<Boolean>("AttackRapid", new String[]{"RapidAttack"}, "Remove attack delay", true);
     public final Value<Float> attackDelay = new Value<Float>("AttackDelay", new String[]{"AttackDelay", "AttackDel", "Del"}, "The delay to attack in milliseconds", 50.0f, 0.0f, 500.0f, 1.0f);
-    public final Value<Float> attackRadius = new Value<Float>("AttackRadius", new String[]{"ARange", "HitRange", "AttackDistance", "AttackRange", "ARadius"}, "The maximum range to attack crystals", 5.0f, 0.0f, 7.0f, 0.1f);
-    public final Value<Float> attackMaxDistance = new Value<Float>("AttackMaxDistance", new String[]{"AMaxRange", "MaxAttackRange", "AMaxRadius", "AMD", "AMR"}, "Range around the enemy crystals will be attacked", 14.0f, 1.0f, 20.0f, 1.0f);
+    public final Value<Float> attackRadius = new Value<Float>("AttackRadius", new String[]{"ARange", "HitRange", "AttackDistance", "AttackRange", "ARadius"}, "The maximum range to attack crystals", 4.0f, 0.0f, 7.0f, 0.1f);
+    public final Value<Float> attackMaxDistance = new Value<Float>("AttackMaxDistance", new String[]{"AMaxRange", "MaxAttackRange", "AMaxRadius", "AMD", "AMR"}, "Range around the enemy crystals will be attacked", 8.0f, 1.0f, 20.0f, 1.0f);
     public final Value<Boolean> place = new Value<Boolean>("Place", new String[]{"AutoPlace"}, "Automatically place crystals", true);
     public final Value<Boolean> placeRapid = new Value<Boolean>("PlaceRapid", new String[]{"RapidPlace"}, "Remove place delay", true);
     public final Value<Boolean> placeSpread = new Value<Boolean>("PlaceSpread", new String[]{"SpreadPlace"}, "Spread crystals around target by swapping place positions each time. (toggle on if target is running)", false);
     public final Value<Float> placeSpreadDistance = new Value<Float>("PlaceSpreadDistance", new String[]{"SpreadPlaceDistance", "SpreadDistance"}, "Distance (in blocks) to spread the crystals around the target", 1.0f, 0.0f, 3.0f, 0.1f);
-    public final Value<Float> placeDelay = new Value<Float>("PlaceDelay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay to place crystals", 50.0f, 0.0f, 500.0f, 1.0f);
+    public final Value<Float> placeDelay = new Value<Float>("PlaceDelay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay to place crystals", 15.0f, 0.0f, 500.0f, 1.0f);
     public final Value<Float> placeRadius = new Value<Float>("PlaceRadius", new String[]{"Radius", "PR", "PlaceRange", "Range"}, "The radius in blocks around the player to attempt placing in", 5.5f, 1.0f, 7.0f, 0.5f);
-    public final Value<Float> placeMaxDistance = new Value<Float>("PlaceMaxDistance", new String[]{"BlockDistance", "MaxBlockDistance", "PMBD", "MBD", "PBD", "BD"}, "Range around the enemy crystals will be placed", 14.0f, 1.0f, 20.0f, 1.0f);
-    public final Value<Float> placeLocalDistance = new Value<Float>("PlaceLocalDistance", new String[]{"LocalDistance", "PLD", "LD"}, "Enemy must be within this range to start placing", 6.0f, 1.0f, 20.0f, 0.5f);
+    public final Value<Float> placeMaxDistance = new Value<Float>("PlaceMaxDistance", new String[]{"BlockDistance", "MaxBlockDistance", "PMBD", "MBD", "PBD", "BD"}, "Range around the enemy crystals will be placed", 1.5f, 1.0f, 20.0f, 1.0f);
+    public final Value<Float> placeLocalDistance = new Value<Float>("PlaceLocalDistance", new String[]{"LocalDistance", "PLD", "LD"}, "Enemy must be within this range to start placing", 8.0f, 1.0f, 20.0f, 0.5f);
     public final Value<Float> minDamage = new Value<Float>("MinDamage", new String[]{"MinDamage", "Min", "MinDmg"}, "The minimum explosion damage calculated to place down a crystal", 1.5f, 0.0f, 20.0f, 0.5f);
+    public final Value<Boolean> offHand = new Value<Boolean>("Offhand", new String[]{"Hand", "otherhand", "off"}, "Use crystals in the off-hand instead of holding them with the main-hand", false);
+    public final Value<Boolean> predict = new Value<Boolean>("Predict", new String[]{"P", "Pre"}, "Predict crystal spawns to attack faster.", true);
+    public final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"Rot", "Ro"}, "Send packets to rotate the players head.", true);
+    public final Value<Boolean> swing = new Value<Boolean>("Swing", new String[]{"Swi", "S"}, "Send packets to swing the players hand.", true);
     public final Value<Boolean> ignore = new Value<Boolean>("Ignore", new String[]{"Ig"}, "Ignore self damage checks", false);
     public final Value<Boolean> render = new Value<Boolean>("Render", new String[]{"R"}, "Draws information about recently placed crystals from your player", true);
     public final Value<Boolean> renderDamage = new Value<Boolean>("RenderDamage", new String[]{"RD", "RenderDamage", "ShowDamage"}, "Draws calculated explosion damage on recently placed crystals from your player", true);
-    public final Value<Boolean> offHand = new Value<Boolean>("Offhand", new String[]{"Hand", "otherhand", "off"}, "Use crystals in the off-hand instead of holding them with the main-hand", false);
     public final Value<Boolean> fixDesync = new Value<Boolean>("FixDesync", new String[]{"Desync", "DesyncFix", "df"}, "Forces crystals to be dead client-side when sound effect is played", true);
     public final Value<Float> fixDesyncRadius = new Value<Float>("FixDesyncRadius", new String[]{"DesyncRadius", "FixDesyncRange", "DesyncRange", "DesyncFixRadius", "dfr"}, "The radius (in blocks) around the explosion sound effect to force crystals to be dead", 10.0f, 1.0f, 40.0f, 1.0f);
 
     private final Timer attackTimer = new Timer();
     private final Timer placeTimer = new Timer();
 
+    private final Map<Integer, EntityEnderCrystal> predictedCrystals = Maps.newConcurrentMap();
     private final List<PlaceLocation> placeLocations = new CopyOnWriteArrayList<>();
 
     private final RotationTask placeRotationTask = new RotationTask("CrystalAuraPlaceTask", 6);
@@ -73,6 +80,7 @@ public final class CrystalAuraModule extends Module {
 
     private BlockPos currentPlacePosition = null;
     private BlockPos lastPlacePosition = null;
+    private Entity lastAttackEntity = null;
     private Entity currentAttackEntity = null;
     private Entity currentAttackPlayer = null;
 
@@ -85,8 +93,13 @@ public final class CrystalAuraModule extends Module {
         super.onDisable();
         Seppuku.INSTANCE.getRotationManager().finishTask(this.placeRotationTask);
         Seppuku.INSTANCE.getRotationManager().finishTask(this.attackRotationTask);
+        this.currentPlacePosition = null;
+        this.lastPlacePosition = null;
         this.currentAttackEntity = null;
+        this.lastAttackEntity = null;
         this.currentAttackPlayer = null;
+        this.predictedCrystals.clear();
+        this.placeLocations.clear();
     }
 
     @Listener
@@ -99,6 +112,14 @@ public final class CrystalAuraModule extends Module {
             case PRE:
                 this.currentPlacePosition = null;
                 this.currentAttackEntity = null;
+
+                if (this.predict.getValue()) {
+                    this.predictedCrystals.forEach((i, entityEnderCrystal) -> {
+                        if (!entityEnderCrystal.isEntityAlive() || mc.player.getDistance(entityEnderCrystal) > this.attackRadius.getValue()) {
+                            this.predictedCrystals.remove(i);
+                        }
+                    });
+                }
 
                 if (mc.player.getHeldItem(this.offHand.getValue() ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND).getItem() == Items.END_CRYSTAL) {
                     if (this.place.getValue()) {
@@ -117,6 +138,33 @@ public final class CrystalAuraModule extends Module {
                     }
 
                     if (this.attack.getValue()) {
+                        if (this.predict.getValue()) {
+                            this.predictedCrystals.forEach((i, entityEnderCrystal) -> {
+                                if (mc.player.getDistance(entityEnderCrystal) <= this.attackRadius.getValue()) {
+                                    for (Entity ent : mc.world.loadedEntityList) {
+                                        if (ent != null && ent != mc.player && (ent.getDistance(entityEnderCrystal) <= this.attackMaxDistance.getValue()) && ent instanceof EntityPlayer) {
+                                            final EntityPlayer player = (EntityPlayer) ent;
+                                            float currentDamage = calculateExplosionDamage(player, 6.0f, (float) entityEnderCrystal.posX, (float) entityEnderCrystal.posY, (float) entityEnderCrystal.posZ) / 2.0f;
+                                            float localDamage = calculateExplosionDamage(mc.player, 6.0f, (float) entityEnderCrystal.posX, (float) entityEnderCrystal.posY, (float) entityEnderCrystal.posZ) / 2.0f;
+
+                                            if (this.isLocalImmune()) {
+                                                localDamage = -1;
+                                            }
+
+                                            if (localDamage <= currentDamage && currentDamage >= this.minDamage.getValue()) {
+                                                final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), entityEnderCrystal.getPositionVector());
+
+                                                Seppuku.INSTANCE.getRotationManager().startTask(this.attackRotationTask);
+                                                if (this.attackRotationTask.isOnline() || this.attackRapid.getValue()) {
+                                                    Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
+                                                    this.currentAttackEntity = entityEnderCrystal;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
                         for (Entity entity : mc.world.loadedEntityList) {
                             if (entity instanceof EntityEnderCrystal) {
                                 if (mc.player.getDistance(entity) <= this.attackRadius.getValue()) {
@@ -135,7 +183,9 @@ public final class CrystalAuraModule extends Module {
 
                                                 Seppuku.INSTANCE.getRotationManager().startTask(this.attackRotationTask);
                                                 if (this.attackRotationTask.isOnline() || this.attackRapid.getValue()) {
-                                                    Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
+                                                    if (this.rotate.getValue()) {
+                                                        Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
+                                                    }
                                                     this.currentAttackEntity = entity;
                                                 }
                                             }
@@ -161,20 +211,36 @@ public final class CrystalAuraModule extends Module {
                 if (this.currentAttackEntity != null) {
                     if (this.attackRotationTask.isOnline() || this.attackRapid.getValue()) {
                         if (this.attackRapid.getValue()) {
-                            mc.player.swingArm(this.offHand.getValue() ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND);
+                            if (this.swing.getValue()) {
+                                mc.player.swingArm(this.offHand.getValue() ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND);
+                            }
                             mc.playerController.attackEntity(mc.player, this.currentAttackEntity);
                         } else {
                             if (this.attackTimer.passed(this.attackDelay.getValue())) {
-                                mc.player.swingArm(this.offHand.getValue() ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND);
+                                if (this.swing.getValue()) {
+                                    mc.player.swingArm(this.offHand.getValue() ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND);
+                                }
                                 mc.playerController.attackEntity(mc.player, this.currentAttackEntity);
                                 this.attackTimer.reset();
                             }
                         }
                     }
+
+                    this.lastAttackEntity = this.currentAttackEntity;
                 } else {
                     Seppuku.INSTANCE.getRotationManager().finishTask(this.attackRotationTask);
                 }
                 break;
+        }
+    }
+
+    @Listener
+    public void onEntityAdd(EventAddEntity eventAddEntity) {
+        if (eventAddEntity.getEntity() != null) {
+            if (eventAddEntity.getEntity() instanceof EntityEnderCrystal) {
+                final EntityEnderCrystal entityEnderCrystal = (EntityEnderCrystal) eventAddEntity.getEntity();
+                this.predictedCrystals.put(eventAddEntity.getEntity().getEntityId(), entityEnderCrystal);
+            }
         }
     }
 
