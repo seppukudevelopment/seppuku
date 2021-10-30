@@ -56,7 +56,7 @@ public final class CrystalAuraModule extends Module {
     public final Value<Float> placeSpreadDistance = new Value<Float>("PlaceSpreadDistance", new String[]{"SpreadPlaceDistance", "SpreadDistance"}, "Distance (in blocks) to spread the crystals around the target", 1.0f, 0.0f, 3.0f, 0.1f);
     public final Value<Float> placeDelay = new Value<Float>("PlaceDelay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay to place crystals", 15.0f, 0.0f, 500.0f, 1.0f);
     public final Value<Float> placeRadius = new Value<Float>("PlaceRadius", new String[]{"Radius", "PR", "PlaceRange", "Range"}, "The radius in blocks around the player to attempt placing in", 5.5f, 1.0f, 7.0f, 0.5f);
-    public final Value<Float> placeMaxDistance = new Value<Float>("PlaceMaxDistance", new String[]{"BlockDistance", "MaxBlockDistance", "PMBD", "MBD", "PBD", "BD"}, "Range around the enemy crystals will be placed (1.1 - 1.6 for feet place)", 1.5f, 1.1f, 16.0f, 1.0f);
+    public final Value<Float> placeMaxDistance = new Value<Float>("PlaceMaxDistance", new String[]{"BlockDistance", "MaxBlockDistance", "PMBD", "MBD", "PBD", "BD"}, "Range around the enemy crystals will be placed (1.5 - 2.5 for feet place)", 1.5f, 1.5f, 16.0f, 0.1f);
     public final Value<Float> placeLocalDistance = new Value<Float>("PlaceLocalDistance", new String[]{"LocalDistance", "PLD", "LD"}, "Enemy must be within this range to start placing", 8.0f, 1.0f, 20.0f, 0.5f);
     public final Value<Float> minDamage = new Value<Float>("MinDamage", new String[]{"MinDamage", "Min", "MinDmg"}, "The minimum explosion damage calculated to place down a crystal", 1.5f, 0.0f, 20.0f, 0.5f);
     public final Value<Boolean> offHand = new Value<Boolean>("Offhand", new String[]{"Hand", "otherhand", "off"}, "Use crystals in the off-hand instead of holding them with the main-hand", false);
@@ -308,21 +308,26 @@ public final class CrystalAuraModule extends Module {
                         placeLocation.getY() + 1 - mc.getRenderManager().viewerPosY,
                         placeLocation.getZ() + 1 - mc.getRenderManager().viewerPosZ);
 
-                RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(0xAA9900EE, placeLocation.alpha / 2));
-                RenderUtil.drawBoundingBox(bb, 1, ColorUtil.changeAlpha(0xAAAAAAAA, placeLocation.alpha));
 
-                if (this.renderDamage.getValue()) {
-                    GlStateManager.pushMatrix();
-                    RenderUtil.glBillboardDistanceScaled((float) placeLocation.getX() + 0.5f, (float) placeLocation.getY() + 0.5f, (float) placeLocation.getZ() + 0.5f, mc.player, 1);
-                    final float damage = placeLocation.damage;
-                    if (damage != -1) {
-                        final String damageText = (Math.floor(damage) == damage ? (int) damage : String.format("%.1f", damage)) + "";
-                        //GlStateManager.disableDepth();
-                        GlStateManager.translate(-(mc.fontRenderer.getStringWidth(damageText) / 2.0d), 0, 0);
-                        mc.fontRenderer.drawStringWithShadow(damageText, 0, 0, 0xFFAAAAAA);
-                    }
-                    GlStateManager.popMatrix();
-                }
+                float crystalAlpha = placeLocation.alpha / 2.0f;
+                int crystalColorRounded = Math.round(255.0f - (crystalAlpha * 255.0f / (255.0f / 2)));
+                int crystalColorHex = 255 - crystalColorRounded << 8 | crystalColorRounded << 16;
+
+                RenderUtil.drawFilledBox(bb, ColorUtil.changeAlpha(crystalColorHex, placeLocation.alpha / 2));
+                RenderUtil.drawBoundingBox(bb, 1, ColorUtil.changeAlpha(crystalColorHex, placeLocation.alpha));
+
+//                if (this.renderDamage.getValue()) {
+//                    GlStateManager.pushMatrix();
+//                    RenderUtil.glBillboardDistanceScaled((float) placeLocation.getX() + 0.5f, (float) placeLocation.getY() + 0.5f, (float) placeLocation.getZ() + 0.5f, mc.player, 1);
+//                    final float damage = placeLocation.damage;
+//                    if (damage != -1) {
+//                        final String damageText = (Math.floor(damage) == damage ? (int) damage : String.format("%.1f", damage)) + "";
+//                        //GlStateManager.disableDepth();
+//                        GlStateManager.translate(-(mc.fontRenderer.getStringWidth(damageText) / 2.0d), 0, 0);
+//                        mc.fontRenderer.drawStringWithShadow(damageText, 0, 0, 0xFFAAAAAA);
+//                    }
+//                    GlStateManager.popMatrix();
+//                }
             }
         }
         RenderUtil.end3D();
@@ -339,9 +344,9 @@ public final class CrystalAuraModule extends Module {
                             if (entity instanceof EntityPlayer) {
                                 final EntityPlayer player = (EntityPlayer) entity;
                                 if (player != mc.player && !player.getName().equals(mc.player.getName()) && player.getHealth() > 0 && Seppuku.INSTANCE.getFriendManager().isFriend(player) == null) {
-                                    final double distToBlock = entity.getDistance(blockPos.getX() + 0.5f, blockPos.getY() + 1, blockPos.getZ() + 0.5f);
+                                    final double distToBlock = entity.getDistance(blockPos.getX(), blockPos.getY(), blockPos.getZ());
                                     final double distToLocal = entity.getDistance(mc.player.posX, mc.player.posY, mc.player.posZ);
-                                    if (distToBlock <= this.placeMaxDistance.getValue() && distToLocal <= maxDistanceToLocal) {
+                                    if (distToBlock < this.placeMaxDistance.getValue() && distToLocal <= maxDistanceToLocal) {
                                         targetPlayer = player;
                                         maxDistanceToLocal = distToLocal;
                                     }
@@ -351,6 +356,9 @@ public final class CrystalAuraModule extends Module {
 
                         if (targetPlayer != null) {
                             this.currentAttackPlayer = targetPlayer;
+
+                            if (this.currentAttackPlayer.getDistance(blockPos.getX(), blockPos.getY(), blockPos.getZ()) > this.placeMaxDistance.getValue())
+                                continue;
 
                             final float currentDamage = calculateExplosionDamage(targetPlayer, 6.0f, blockPos.getX() + 0.5f, blockPos.getY() + 1.0f, blockPos.getZ() + 0.5f) / 2.0f;
 
@@ -462,7 +470,7 @@ public final class CrystalAuraModule extends Module {
 
         private void update() {
             if (this.alpha > 0)
-                this.alpha -= 1;
+                this.alpha -= 2;
         }
     }
 
