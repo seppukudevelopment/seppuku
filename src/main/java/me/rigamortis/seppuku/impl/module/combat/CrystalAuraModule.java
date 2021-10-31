@@ -110,6 +110,12 @@ public final class CrystalAuraModule extends Module {
 
         switch (event.getStage()) {
             case PRE:
+                if (mc.player.getDistance(this.currentPlacePosition.getX(), this.currentPlacePosition.getY(), this.currentPlacePosition.getZ()) > this.placeMaxDistance.getValue())
+                    this.currentPlacePosition = null;
+
+                if (mc.player.getDistance(this.currentAttackEntity) > this.attackMaxDistance.getValue() || !this.currentAttackEntity.isEntityAlive())
+                    this.currentAttackEntity = null;
+
                 //this.currentPlacePosition = null;
                 //this.currentAttackEntity = null;
 
