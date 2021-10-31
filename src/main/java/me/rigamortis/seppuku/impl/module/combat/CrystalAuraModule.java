@@ -56,7 +56,7 @@ public final class CrystalAuraModule extends Module {
     public final Value<Float> placeSpreadDistance = new Value<Float>("PlaceSpreadDistance", new String[]{"SpreadPlaceDistance", "SpreadDistance"}, "Distance (in blocks) to spread the crystals around the target", 1.0f, 0.0f, 3.0f, 0.1f);
     public final Value<Float> placeDelay = new Value<Float>("PlaceDelay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay to place crystals", 15.0f, 0.0f, 500.0f, 1.0f);
     public final Value<Float> placeRadius = new Value<Float>("PlaceRadius", new String[]{"Radius", "PR", "PlaceRange", "Range"}, "The radius in blocks around the player to attempt placing in", 5.5f, 1.0f, 7.0f, 0.5f);
-    public final Value<Float> placeMaxDistance = new Value<Float>("PlaceMaxDistance", new String[]{"BlockDistance", "MaxBlockDistance", "PMBD", "MBD", "PBD", "BD"}, "Range around the enemy crystals will be placed (1.5 - 2.5 for feet place)", 1.5f, 1.5f, 16.0f, 0.1f);
+    public final Value<Float> placeMaxDistance = new Value<Float>("PlaceMaxDistance", new String[]{"BlockDistance", "MaxBlockDistance", "PMBD", "MBD", "PBD", "BD"}, "Range around the enemy crystals will be placed (1.3 - 2.5 for feet place)", 1.3f, 1.3f, 16.0f, 0.1f);
     public final Value<Float> placeLocalDistance = new Value<Float>("PlaceLocalDistance", new String[]{"LocalDistance", "PLD", "LD"}, "Enemy must be within this range to start placing", 8.0f, 1.0f, 20.0f, 0.5f);
     public final Value<Float> minDamage = new Value<Float>("MinDamage", new String[]{"MinDamage", "Min", "MinDmg"}, "The minimum explosion damage calculated to place down a crystal", 1.5f, 0.0f, 20.0f, 0.5f);
     public final Value<Boolean> offHand = new Value<Boolean>("Offhand", new String[]{"Hand", "otherhand", "off"}, "Use crystals in the off-hand instead of holding them with the main-hand", false);
@@ -110,8 +110,8 @@ public final class CrystalAuraModule extends Module {
 
         switch (event.getStage()) {
             case PRE:
-                this.currentPlacePosition = null;
-                this.currentAttackEntity = null;
+                //this.currentPlacePosition = null;
+                //this.currentAttackEntity = null;
 
                 if (this.predict.getValue()) {
                     this.predictedCrystals.forEach((i, entityEnderCrystal) -> {
@@ -203,6 +203,7 @@ public final class CrystalAuraModule extends Module {
                         mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(this.currentPlacePosition, EnumFacing.UP, this.offHand.getValue() ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND, 0, 0, 0));
                         this.placeLocations.add(new PlaceLocation(this.currentPlacePosition.getX(), this.currentPlacePosition.getY(), this.currentPlacePosition.getZ()));
                         this.lastPlacePosition = this.currentPlacePosition;
+                        Seppuku.INSTANCE.getRotationManager().finishTask(this.placeRotationTask);
                     }
                 } else {
                     Seppuku.INSTANCE.getRotationManager().finishTask(this.placeRotationTask);
@@ -227,6 +228,7 @@ public final class CrystalAuraModule extends Module {
                     }
 
                     this.lastAttackEntity = this.currentAttackEntity;
+                    Seppuku.INSTANCE.getRotationManager().finishTask(this.attackRotationTask);
                 } else {
                     Seppuku.INSTANCE.getRotationManager().finishTask(this.attackRotationTask);
                 }
@@ -444,7 +446,7 @@ public final class CrystalAuraModule extends Module {
 
         unscaledDamage *= 0.5f * mc.world.getDifficulty().getId();
 
-        return scaleExplosionDamage(entity, new Explosion(mc.world, null, x, y, z, size, false, true), unscaledDamage);
+        return scaleExplosionDamage(entity, new Explosion(mc.world, entity, x, y, z, size, false, true), unscaledDamage);
     }
 
     private float scaleExplosionDamage(EntityLivingBase entity, Explosion explosion, float damage) {
