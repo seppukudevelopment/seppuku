@@ -111,16 +111,22 @@ public final class CrystalAuraModule extends Module {
         switch (event.getStage()) {
             case PRE:
                 // place position reset
-                if (mc.player.getDistance(this.currentPlacePosition.getX(), this.currentPlacePosition.getY(), this.currentPlacePosition.getZ()) > this.placeRadius.getValue())
-                    this.currentPlacePosition = null;
+                if (currentPlacePosition != null) {
+                    if (mc.player.getDistance(this.currentPlacePosition.getX(), this.currentPlacePosition.getY(), this.currentPlacePosition.getZ()) > this.placeRadius.getValue())
+                        this.currentPlacePosition = null;
+                }
 
                 // crystal reset
-                if ((mc.player.getDistance(this.currentAttackEntity) > this.attackRadius.getValue()) || !this.currentAttackEntity.isEntityAlive())
-                    this.currentAttackEntity = null;
+                if (currentAttackEntity != null) {
+                    if ((mc.player.getDistance(this.currentAttackEntity) > this.attackRadius.getValue()) || !this.currentAttackEntity.isEntityAlive())
+                        this.currentAttackEntity = null;
+                }
 
                 // target reset
-                if ((mc.player.getDistance(this.currentAttackPlayer) > this.attackMaxDistance.getValue()) || !this.currentAttackPlayer.isEntityAlive())
-                    this.currentAttackPlayer = null;
+                if (currentAttackPlayer != null) {
+                    if ((mc.player.getDistance(this.currentAttackPlayer) > this.attackMaxDistance.getValue()) || !this.currentAttackPlayer.isEntityAlive())
+                        this.currentAttackPlayer = null;
+                }
 
                 //this.currentPlacePosition = null;
                 //this.currentAttackEntity = null;
