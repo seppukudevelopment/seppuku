@@ -178,7 +178,9 @@ public final class CrystalAuraModule extends Module {
 
                                                 Seppuku.INSTANCE.getRotationManager().startTask(this.attackRotationTask);
                                                 if (this.attackRotationTask.isOnline() || this.attackRapid.getValue()) {
-                                                    Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
+                                                    if (this.rotate.getValue()) {
+                                                        Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
+                                                    }
                                                     this.currentAttackEntity = entityEnderCrystal;
                                                 }
                                             }
@@ -406,7 +408,9 @@ public final class CrystalAuraModule extends Module {
 
             Seppuku.INSTANCE.getRotationManager().startTask(this.placeRotationTask);
             if (this.placeRotationTask.isOnline() || this.placeRapid.getValue()) {
-                Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
+                if (this.rotate.getValue()) {
+                    Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
+                }
             }
         }
     }
