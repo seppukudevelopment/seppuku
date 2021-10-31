@@ -111,7 +111,7 @@ public final class CrystalAuraModule extends Module {
         switch (event.getStage()) {
             case PRE:
                 // place position reset
-                if (mc.player.getDistance(this.currentPlacePosition.getX(), this.currentPlacePosition.getY(), this.currentPlacePosition.getZ()) > this.placeLocalDistance.getValue())
+                if (mc.player.getDistance(this.currentPlacePosition.getX(), this.currentPlacePosition.getY(), this.currentPlacePosition.getZ()) > this.placeRadius.getValue())
                     this.currentPlacePosition = null;
 
                 // crystal reset
