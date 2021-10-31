@@ -113,7 +113,7 @@ public final class CrystalAuraModule extends Module {
                 if (mc.player.getDistance(this.currentPlacePosition.getX(), this.currentPlacePosition.getY(), this.currentPlacePosition.getZ()) > this.placeMaxDistance.getValue())
                     this.currentPlacePosition = null;
 
-                if (mc.player.getDistance(this.currentAttackEntity) > this.attackMaxDistance.getValue() || !this.currentAttackEntity.isEntityAlive())
+                if ((mc.player.getDistance(this.currentAttackEntity) > this.attackMaxDistance.getValue()) || !this.currentAttackEntity.isEntityAlive())
                     this.currentAttackEntity = null;
 
                 //this.currentPlacePosition = null;
