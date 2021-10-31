@@ -112,20 +112,24 @@ public final class CrystalAuraModule extends Module {
             case PRE:
                 // place position reset
                 if (currentPlacePosition != null) {
-                    if (mc.player.getDistance(this.currentPlacePosition.getX(), this.currentPlacePosition.getY(), this.currentPlacePosition.getZ()) > this.placeRadius.getValue())
+                    if (mc.player.getDistance(this.currentPlacePosition.getX(), this.currentPlacePosition.getY(), this.currentPlacePosition.getZ()) > this.placeRadius.getValue()) {
                         this.currentPlacePosition = null;
+                    }
                 }
 
                 // crystal reset
                 if (currentAttackEntity != null) {
-                    if ((mc.player.getDistance(this.currentAttackEntity) > this.attackRadius.getValue()) || !this.currentAttackEntity.isEntityAlive())
+                    if ((mc.player.getDistance(this.currentAttackEntity) > this.attackRadius.getValue()) || !this.currentAttackEntity.isEntityAlive()) {
                         this.currentAttackEntity = null;
+                    }
                 }
 
                 // target reset
                 if (currentAttackPlayer != null) {
-                    if ((mc.player.getDistance(this.currentAttackPlayer) > this.attackMaxDistance.getValue()) || !this.currentAttackPlayer.isEntityAlive())
+                    if ((mc.player.getDistance(this.currentAttackPlayer) > this.attackMaxDistance.getValue()) || !this.currentAttackPlayer.isEntityAlive()) {
                         this.currentAttackPlayer = null;
+                        this.currentPlacePosition = null;
+                    }
                 }
 
                 //this.currentPlacePosition = null;
