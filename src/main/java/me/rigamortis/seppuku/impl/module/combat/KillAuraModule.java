@@ -44,7 +44,7 @@ public final class KillAuraModule extends Module {
 
     private final RotationTask rotationTask = new RotationTask("KillAuraTask", 5);
 
-    private Entity currentTarget = null;
+    public Entity currentTarget = null;
 
     public KillAuraModule() {
         super("KillAura", new String[]{"Aura"}, "Automatically aims and attacks enemies", "NONE", -1, ModuleType.COMBAT);

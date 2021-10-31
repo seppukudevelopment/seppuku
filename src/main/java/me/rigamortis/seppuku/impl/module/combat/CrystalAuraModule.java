@@ -78,11 +78,11 @@ public final class CrystalAuraModule extends Module {
     private final RotationTask placeRotationTask = new RotationTask("CrystalAuraPlaceTask", 6);
     private final RotationTask attackRotationTask = new RotationTask("CrystalAuraAttackTask", 7);
 
-    private BlockPos currentPlacePosition = null;
-    private BlockPos lastPlacePosition = null;
-    private Entity lastAttackEntity = null;
-    private Entity currentAttackEntity = null;
-    private Entity currentAttackPlayer = null;
+    public BlockPos currentPlacePosition = null;
+    public BlockPos lastPlacePosition = null;
+    public Entity lastAttackEntity = null;
+    public Entity currentAttackEntity = null;
+    public Entity currentAttackPlayer = null;
 
     public CrystalAuraModule() {
         super("CrystalAura", new String[]{"AutoCrystal", "Crystal"}, "Automatically places crystals near enemies and detonates them", "NONE", -1, ModuleType.COMBAT);

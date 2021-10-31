@@ -69,10 +69,10 @@ public final class BattleInfoComponent extends DraggableHudComponent {
                 }
             }
 
-            if (this.crystalAuraModule.getCurrentAttackEntity() != null) {
+            if (this.crystalAuraModule != null && (this.crystalAuraModule.currentAttackEntity != null && this.crystalAuraModule.currentPlacePosition != null)) {
                 this.currentOpponent = (AbstractClientPlayer) this.crystalAuraModule.getCurrentAttackPlayer();
                 targetType = "crystal aura";
-            } else if (this.killAuraModule.getCurrentTarget() != null) {
+            } else if (this.killAuraModule != null && this.killAuraModule.currentTarget != null) {
                 if (this.killAuraModule.getCurrentTarget() instanceof AbstractClientPlayer) {
                     this.currentOpponent = (AbstractClientPlayer) this.killAuraModule.getCurrentTarget();
                     targetType = "kill aura";
