@@ -112,7 +112,7 @@ public final class CrystalAuraModule extends Module {
             case PRE:
                 // place position reset
                 if (currentPlacePosition != null) {
-                    if (mc.player.getDistance(this.currentPlacePosition.getX(), this.currentPlacePosition.getY(), this.currentPlacePosition.getZ()) > this.placeRadius.getValue()) {
+                    if (!this.place.getValue() || mc.player.getDistance(this.currentPlacePosition.getX(), this.currentPlacePosition.getY(), this.currentPlacePosition.getZ()) > this.placeRadius.getValue()) {
                         this.currentPlacePosition = null;
                     }
                 }
@@ -361,7 +361,7 @@ public final class CrystalAuraModule extends Module {
 
     private void doPlaceLogic(final Minecraft mc, final float radius, float damage, double maxDistanceToLocal, EntityLivingBase targetPlayer) {
         for (float x = radius; x >= -radius; x--) {
-            for (float y = radius; y >= -radius; y--) {
+            for (float y = -radius; y <= radius; y++) {
                 for (float z = radius; z >= -radius; z--) {
                     final BlockPos blockPos = new BlockPos(mc.player.posX + x, mc.player.posY + y, mc.player.posZ + z);
 
