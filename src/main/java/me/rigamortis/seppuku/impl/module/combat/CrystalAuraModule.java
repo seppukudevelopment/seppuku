@@ -10,9 +10,7 @@ import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.event.world.EventAddEntity;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.task.rotation.RotationTask;
-import me.rigamortis.seppuku.api.util.ColorUtil;
-import me.rigamortis.seppuku.api.util.MathUtil;
-import me.rigamortis.seppuku.api.util.RenderUtil;
+import me.rigamortis.seppuku.api.util.*;
 import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.module.player.GodModeModule;
@@ -50,6 +48,7 @@ public final class CrystalAuraModule extends Module {
     public final Value<Float> attackDelay = new Value<Float>("AttackDelay", new String[]{"AttackDelay", "AttackDel", "Del"}, "The delay to attack in milliseconds", 50.0f, 0.0f, 500.0f, 1.0f);
     public final Value<Float> attackRadius = new Value<Float>("AttackRadius", new String[]{"ARange", "HitRange", "AttackDistance", "AttackRange", "ARadius"}, "The maximum range to attack crystals", 4.0f, 0.0f, 7.0f, 0.1f);
     public final Value<Float> attackMaxDistance = new Value<Float>("AttackMaxDistance", new String[]{"AMaxRange", "MaxAttackRange", "AMaxRadius", "AMD", "AMR"}, "Range around the enemy crystals will be attacked", 8.0f, 1.0f, 20.0f, 1.0f);
+    public final Value<Boolean> attackWhenEmpty = new Value<Boolean>("AttackWhenEmpty", new String[]{"AWhenEmpty"}, "Continue to attack other crystals when we don't have any left", false);
     public final Value<Boolean> place = new Value<Boolean>("Place", new String[]{"AutoPlace"}, "Automatically place crystals", true);
     public final Value<Boolean> placeRapid = new Value<Boolean>("PlaceRapid", new String[]{"RapidPlace"}, "Remove place delay", true);
     public final Value<Boolean> placeSpread = new Value<Boolean>("PlaceSpread", new String[]{"SpreadPlace"}, "Spread crystals around target by swapping place positions each time (toggle on if target is running)", false);
@@ -129,6 +128,13 @@ public final class CrystalAuraModule extends Module {
                     if ((mc.player.getDistance(this.currentAttackPlayer) > this.attackMaxDistance.getValue()) || !this.currentAttackPlayer.isEntityAlive()) {
                         this.currentAttackPlayer = null;
                         this.currentPlacePosition = null;
+                    }
+                }
+
+                if (!InventoryUtil.hasItem(Items.END_CRYSTAL)) {
+                    this.currentPlacePosition = null;
+                    if (!this.attackWhenEmpty.getValue()) {
+                        this.currentAttackEntity = null;
                     }
                 }
 
