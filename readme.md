@@ -16,7 +16,7 @@ Originally oriented towards the 9B9T and 2B2T anarchy servers; it is a fully fea
 Checkout the [guide](https://seppuku.pw/guide.html) for help.
 
 # Requirements
-- **JDK 8** ([AdoptOpenJDK](https://adoptopenjdk.net/) or [Corretto](https://aws.amazon.com/corretto/) is recommended)
+- **JDK 8** ([Corretto](https://aws.amazon.com/corretto/) or [Adoptium](https://adoptium.net/?variant=openjdk8) is recommended)
 - **[Git](https://git-scm.com)** (optional)
 
 # Building
