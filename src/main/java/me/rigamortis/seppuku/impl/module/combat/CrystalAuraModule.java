@@ -48,7 +48,7 @@ public final class CrystalAuraModule extends Module {
     public final Value<Float> attackDelay = new Value<Float>("AttackDelay", new String[]{"AttackDelay", "AttackDel", "Del"}, "The delay to attack in milliseconds", 50.0f, 0.0f, 500.0f, 1.0f);
     public final Value<Float> attackRadius = new Value<Float>("AttackRadius", new String[]{"ARange", "HitRange", "AttackDistance", "AttackRange", "ARadius"}, "The maximum range to attack crystals", 4.0f, 0.0f, 7.0f, 0.1f);
     public final Value<Float> attackMaxDistance = new Value<Float>("AttackMaxDistance", new String[]{"AMaxRange", "MaxAttackRange", "AMaxRadius", "AMD", "AMR"}, "Range around the enemy crystals will be attacked", 8.0f, 1.0f, 20.0f, 1.0f);
-    public final Value<Boolean> attackWhenEmpty = new Value<Boolean>("AttackWhenEmpty", new String[]{"AWhenEmpty"}, "Continue to attack other crystals when we don't have any left", false);
+    public final Value<Boolean> attackWhenEmpty = new Value<Boolean>("AttackWhenEmpty", new String[]{"AWhenEmpty"}, "Continue to attack other crystals when we don't have any left", true);
     public final Value<Boolean> place = new Value<Boolean>("Place", new String[]{"AutoPlace"}, "Automatically place crystals", true);
     public final Value<Boolean> placeRapid = new Value<Boolean>("PlaceRapid", new String[]{"RapidPlace"}, "Remove place delay", true);
     public final Value<Boolean> placeSpread = new Value<Boolean>("PlaceSpread", new String[]{"SpreadPlace"}, "Spread crystals around target by swapping place positions each time (toggle on if target is running)", false);
@@ -57,6 +57,7 @@ public final class CrystalAuraModule extends Module {
     public final Value<Float> placeRadius = new Value<Float>("PlaceRadius", new String[]{"Radius", "PR", "PlaceRange", "Range"}, "The radius in blocks around the player to attempt placing in", 5.5f, 1.0f, 7.0f, 0.5f);
     public final Value<Float> placeMaxDistance = new Value<Float>("PlaceMaxDistance", new String[]{"BlockDistance", "MaxBlockDistance", "PMBD", "MBD", "PBD", "BD"}, "Range around the enemy crystals will be placed (1.3 - 2.5 for feet place)", 1.3f, 1.3f, 16.0f, 0.1f);
     public final Value<Float> placeLocalDistance = new Value<Float>("PlaceLocalDistance", new String[]{"LocalDistance", "PLD", "LD"}, "Enemy must be within this range to start placing", 8.0f, 1.0f, 20.0f, 0.5f);
+    public final Value<Boolean> placeBetweenSwap = new Value<Boolean>("PlaceBetweenSwap", new String[]{"PBetweenSwap"}, "Continue to place during item-swapping (HotbarRefill, etc)", false);
     public final Value<Float> minDamage = new Value<Float>("MinDamage", new String[]{"MinDamage", "Min", "MinDmg"}, "The minimum explosion damage calculated to place down a crystal", 1.5f, 0.0f, 20.0f, 0.5f);
     public final Value<Boolean> offHand = new Value<Boolean>("Offhand", new String[]{"Hand", "otherhand", "off"}, "Use crystals in the off-hand instead of holding them with the main-hand", false);
     public final Value<Boolean> predict = new Value<Boolean>("Predict", new String[]{"P", "Pre"}, "Predict crystal spawns to attack faster.", true);
@@ -219,7 +220,9 @@ public final class CrystalAuraModule extends Module {
                         }
                     }
                 } else {
-                    this.currentPlacePosition = null;
+                    if (!this.placeBetweenSwap.getValue()) {
+                        this.currentPlacePosition = null;
+                    }
                     if (!this.attackWhenEmpty.getValue()) {
                         this.currentAttackEntity = null;
                     }
