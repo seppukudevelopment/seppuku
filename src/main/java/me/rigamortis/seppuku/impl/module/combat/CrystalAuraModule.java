@@ -57,7 +57,7 @@ public final class CrystalAuraModule extends Module {
     public final Value<Float> placeRadius = new Value<Float>("PlaceRadius", new String[]{"Radius", "PR", "PlaceRange", "Range"}, "The radius in blocks around the player to attempt placing in", 5.5f, 1.0f, 7.0f, 0.5f);
     public final Value<Float> placeMaxDistance = new Value<Float>("PlaceMaxDistance", new String[]{"BlockDistance", "MaxBlockDistance", "PMBD", "MBD", "PBD", "BD"}, "Range around the enemy crystals will be placed (1.3 - 2.5 for feet place)", 1.3f, 1.3f, 16.0f, 0.1f);
     public final Value<Float> placeLocalDistance = new Value<Float>("PlaceLocalDistance", new String[]{"LocalDistance", "PLD", "LD"}, "Enemy must be within this range to start placing", 8.0f, 1.0f, 20.0f, 0.5f);
-    public final Value<Boolean> placeBetweenSwap = new Value<Boolean>("PlaceBetweenSwap", new String[]{"PBetweenSwap"}, "Continue to place during item-swapping (HotbarRefill, etc)", false);
+    public final Value<Boolean> placeBetweenSwap = new Value<Boolean>("PlaceBetweenSwap", new String[]{"PBetweenSwap"}, "Continue to place crystals during item-swapping (HotbarRefill, etc)", false);
     public final Value<Float> minDamage = new Value<Float>("MinDamage", new String[]{"MinDamage", "Min", "MinDmg"}, "The minimum explosion damage calculated to place down a crystal", 1.5f, 0.0f, 20.0f, 0.5f);
     public final Value<Boolean> offHand = new Value<Boolean>("Offhand", new String[]{"Hand", "otherhand", "off"}, "Use crystals in the off-hand instead of holding them with the main-hand", false);
     public final Value<Boolean> predict = new Value<Boolean>("Predict", new String[]{"P", "Pre"}, "Predict crystal spawns to attack faster.", true);
