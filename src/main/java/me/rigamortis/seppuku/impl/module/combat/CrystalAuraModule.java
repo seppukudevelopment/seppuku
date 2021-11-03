@@ -131,13 +131,6 @@ public final class CrystalAuraModule extends Module {
                     }
                 }
 
-                if (!InventoryUtil.hasItem(Items.END_CRYSTAL)) {
-                    this.currentPlacePosition = null;
-                    if (!this.attackWhenEmpty.getValue()) {
-                        this.currentAttackEntity = null;
-                    }
-                }
-
                 //this.currentPlacePosition = null;
                 //this.currentAttackEntity = null;
 
@@ -224,6 +217,11 @@ public final class CrystalAuraModule extends Module {
                                 }
                             }
                         }
+                    }
+                } else {
+                    this.currentPlacePosition = null;
+                    if (!this.attackWhenEmpty.getValue()) {
+                        this.currentAttackEntity = null;
                     }
                 }
                 break;
