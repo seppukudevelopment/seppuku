@@ -38,8 +38,8 @@ public final class KillAuraModule extends Module {
     public final Value<Boolean> projectiles = new Value<>("Projectiles", new String[]{"Projectile", "Proj"}, "Choose to target projectiles", true);
 
     public final Value<Float> range = new Value<>("Range", new String[]{"Dist"}, "The minimum range to attack", 4.5f, 0.0f, 5.0f, 0.1f);
-    public final Value<Boolean> rotate = new Value<>("Rotate", new String[]{"R"}, "Rotate the players head while attacking", true);
-    public final Value<Boolean> swing = new Value<>("Swing", new String[]{"S"}, "Swing the players arm while attacking", true);
+    public final Value<Boolean> rotate = new Value<>("Rotate", new String[]{"R"}, "Rotate the player's head and body while attacking", true);
+    public final Value<Boolean> swing = new Value<>("Swing", new String[]{"S"}, "Swing the player's arm while attacking", true);
     public final Value<Boolean> coolDown = new Value<>("CoolDown", new String[]{"CoolD"}, "Delay your hits to gain damage", true);
     public final Value<Boolean> sync = new Value<>("Sync", new String[]{"snc"}, "Sync your hits with the server's estimated TPS", true);
     public final Value<Boolean> teleport = new Value<>("Teleport", new String[]{"tp"}, "Teleports to your target (Only works on vanilla)", false);
