@@ -39,6 +39,7 @@ public final class NoCrystalModule extends Module {
 
     public final Value<Boolean> visible = new Value<Boolean>("Visible", new String[]{"Visible", "v"}, "When disabled, you will not see swing animations or sounds", true);
     public final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"rotation", "r", "rotate"}, "Rotate to place blocks", true);
+    public final Value<Boolean> swing = new Value<Boolean>("Swing", new String[]{"Arm"}, "Swing the player's arm while placing blocks", true);
     public final Value<Boolean> center = new Value<Boolean>("Center", new String[]{"centered", "c", "cen"}, "Centers the player on their current block when beginning to place", true);
     public final Value<Boolean> extended = new Value<Boolean>("Extended", new String[]{"extend", "e", "big"}, "Enlarges the size of the fortress", false);
     public final Value<Boolean> disable = new Value<Boolean>("Disable", new String[]{"dis", "autodisable", "autodis", "d"}, "Disable after obsidian is placed", false);
@@ -229,7 +230,10 @@ public final class NoCrystalModule extends Module {
             mc.player.connection.sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
         } else {
             mc.playerController.processRightClickBlock(mc.player, mc.world, sideOffset, otherSide, new Vec3d(0.5F, 0.5F, 0.5F), EnumHand.MAIN_HAND);
-            mc.player.swingArm(EnumHand.MAIN_HAND);
+
+            if (this.swing.getValue()) {
+                mc.player.swingArm(EnumHand.MAIN_HAND);
+            }
         }
 
         if (activated)
