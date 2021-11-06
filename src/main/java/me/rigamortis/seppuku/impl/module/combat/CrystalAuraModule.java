@@ -111,12 +111,14 @@ public final class CrystalAuraModule extends Module {
 
         switch (event.getStage()) {
             case PRE:
+                // target distance to crystal reset (attack)
                 if (this.currentAttackPlayer != null && this.currentAttackEntity != null) {
                     if (this.currentAttackPlayer.getDistance(this.currentAttackEntity) > this.attackMaxDistance.getValue()) {
                         this.currentAttackEntity = null;
                     }
                 }
 
+                // target distance to crystal reset (place)
                 if (this.currentAttackPlayer != null && this.currentPlacePosition != null) {
                     if (this.currentAttackPlayer.getDistance(this.currentPlacePosition.getX(), this.currentPlacePosition.getY(), this.currentPlacePosition.getZ()) > this.placeMaxDistance.getValue()) {
                         this.currentPlacePosition = null;
@@ -130,17 +132,18 @@ public final class CrystalAuraModule extends Module {
                     }
                 }
 
-                // crystal reset
+                // crystal distance/death reset
                 if (currentAttackEntity != null) {
                     if ((mc.player.getDistance(this.currentAttackEntity) > this.attackRadius.getValue()) || !this.currentAttackEntity.isEntityAlive()) {
                         this.currentAttackEntity = null;
                     }
                 }
 
-                // target reset
+                // target distance/death reset
                 if (currentAttackPlayer != null) {
                     if ((mc.player.getDistance(this.currentAttackPlayer) > this.attackLocalDistance.getValue()) || !this.currentAttackPlayer.isEntityAlive()) {
                         this.currentAttackPlayer = null;
+                        this.currentAttackEntity = null;
                         this.currentPlacePosition = null;
                     }
                 }
@@ -177,7 +180,7 @@ public final class CrystalAuraModule extends Module {
                             this.predictedCrystals.forEach((i, entityEnderCrystal) -> {
                                 if (mc.player.getDistance(entityEnderCrystal) <= this.attackRadius.getValue()) {
                                     for (Entity ent : mc.world.loadedEntityList) {
-                                        if (ent != null && ent != mc.player && (ent.getDistance(entityEnderCrystal) <= this.attackMaxDistance.getValue()) && ent instanceof EntityPlayer) {
+                                        if (ent != null && ent != mc.player && (ent.getDistance(mc.player) <= this.attackLocalDistance.getValue()) && (ent.getDistance(entityEnderCrystal) <= this.attackMaxDistance.getValue()) && ent instanceof EntityPlayer) {
                                             final EntityPlayer player = (EntityPlayer) ent;
                                             float currentDamage = calculateExplosionDamage(player, 6.0f, (float) entityEnderCrystal.posX, (float) entityEnderCrystal.posY, (float) entityEnderCrystal.posZ) / 2.0f;
                                             float localDamage = calculateExplosionDamage(mc.player, 6.0f, (float) entityEnderCrystal.posX, (float) entityEnderCrystal.posY, (float) entityEnderCrystal.posZ) / 2.0f;
@@ -206,7 +209,7 @@ public final class CrystalAuraModule extends Module {
                             if (entity instanceof EntityEnderCrystal) {
                                 if (mc.player.getDistance(entity) <= this.attackRadius.getValue()) {
                                     for (Entity ent : mc.world.loadedEntityList) {
-                                        if (ent != null && ent != mc.player && (ent.getDistance(entity) <= this.attackMaxDistance.getValue()) && ent != entity && ent instanceof EntityPlayer) {
+                                        if (ent != null && ent != mc.player && (ent.getDistance(mc.player) <= this.attackLocalDistance.getValue()) && (ent.getDistance(entity) <= this.attackMaxDistance.getValue()) && ent != entity && ent instanceof EntityPlayer) {
                                             final EntityPlayer player = (EntityPlayer) ent;
                                             float currentDamage = calculateExplosionDamage(player, 6.0f, (float) entity.posX, (float) entity.posY, (float) entity.posZ) / 2.0f;
                                             float localDamage = calculateExplosionDamage(mc.player, 6.0f, (float) entity.posX, (float) entity.posY, (float) entity.posZ) / 2.0f;
