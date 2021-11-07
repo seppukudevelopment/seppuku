@@ -41,6 +41,8 @@ public final class AutoTrapModule extends Module {
     public final Value<Float> range = new Value<>("Range", new String[]{"Dist"}, "The minimum range to trap", 4.5f, 0.0f, 6.0f, 0.1f);
     public final Value<Float> placeDelay = new Value<Float>("Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay(ms) between obsidian blocks being placed", 0.0f, 0.0f, 500.0f, 1.0f);
 
+    public final Value<Boolean> self = new Value<Boolean>("Self", new String[]{"local", "localplayer", "me"}, "Keeps yourself trapped inside with the enemy", false);
+    public final Value<Float> selfDistance = new Value<Float>("SelfDistance", new String[]{"SelfDist", "LocalDist", "sd", "ld"}, "The distance from the target to start trapping", 2.0f, 0.0f, 6.0f, 0.1f);
     public final Value<Boolean> extended = new Value<Boolean>("Extended", new String[]{"extend", "e", "big"}, "Enlarges the size of the trap", true);
     public final Value<Boolean> visible = new Value<Boolean>("Visible", new String[]{"Visible", "v"}, "Casts a ray to the placement position, forces the placement when disabled", true);
     public final Value<Boolean> rotate = new Value<>("Rotate", new String[]{"R"}, "Rotate the player's head and body while trapping", true);
@@ -69,7 +71,6 @@ public final class AutoTrapModule extends Module {
 
     @Listener
     public void onWalkingUpdate(EventUpdateWalkingPlayer event) {
-        final Minecraft mc = Minecraft.getMinecraft();
         if (mc.player == null || mc.world == null)
             return;
 
@@ -235,8 +236,6 @@ public final class AutoTrapModule extends Module {
 
     private Entity findTarget() {
         Entity ent = null;
-
-        final Minecraft mc = Minecraft.getMinecraft();
         float maxDist = this.range.getValue();
 
         for (Entity e : mc.world.loadedEntityList) {
@@ -257,7 +256,7 @@ public final class AutoTrapModule extends Module {
     private boolean checkFilter(Entity entity) {
         boolean ret = false;
 
-        if (entity instanceof EntityPlayer && entity != Minecraft.getMinecraft().player && Seppuku.INSTANCE.getFriendManager().isFriend(entity) == null && !entity.getName().equals(Minecraft.getMinecraft().player.getName())) {
+        if (entity instanceof EntityPlayer && entity != mc.player && Seppuku.INSTANCE.getFriendManager().isFriend(entity) == null && !entity.getName().equals(mc.player.getName())) {
             ret = true;
         }
 
@@ -265,6 +264,12 @@ public final class AutoTrapModule extends Module {
             final EntityLivingBase entityLivingBase = (EntityLivingBase) entity;
             if (entityLivingBase.getHealth() <= 0) {
                 ret = false;
+            }
+
+            if (!this.self.getValue()) { // don't trap ourselves with them
+                if (entityLivingBase.getDistance(mc.player) <= this.selfDistance.getValue()) {
+                    ret = false;
+                }
             }
         }
 
