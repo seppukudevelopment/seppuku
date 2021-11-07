@@ -49,7 +49,7 @@ public final class KillAuraModule extends Module {
     public Entity currentTarget = null;
 
     public KillAuraModule() {
-        super("KillAura", new String[]{"Aura"}, "Automatically aims and attacks enemies", "NONE", -1, ModuleType.COMBAT);
+        super("KillAura", new String[]{"Aura", "KA"}, "Automatically aims and attacks enemies", "NONE", -1, ModuleType.COMBAT);
     }
 
     @Override
@@ -109,14 +109,12 @@ public final class KillAuraModule extends Module {
         Entity ent = null;
 
         final Minecraft mc = Minecraft.getMinecraft();
-
         float maxDist = this.range.getValue();
 
         for (Entity e : mc.world.loadedEntityList) {
             if (e != null) {
                 if (this.checkFilter(e)) {
                     float currentDist = mc.player.getDistance(e);
-
                     if (currentDist <= maxDist) {
                         maxDist = currentDist;
                         ent = e;

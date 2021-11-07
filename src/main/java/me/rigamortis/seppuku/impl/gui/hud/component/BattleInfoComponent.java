@@ -6,6 +6,7 @@ import me.rigamortis.seppuku.api.texture.Texture;
 import me.rigamortis.seppuku.api.util.ColorUtil;
 import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
+import me.rigamortis.seppuku.impl.module.combat.AutoTrapModule;
 import me.rigamortis.seppuku.impl.module.combat.CrystalAuraModule;
 import me.rigamortis.seppuku.impl.module.combat.KillAuraModule;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -22,6 +23,7 @@ public final class BattleInfoComponent extends DraggableHudComponent {
 
     private CrystalAuraModule crystalAuraModule;
     private KillAuraModule killAuraModule;
+    private AutoTrapModule autoTrapModule;
     private AbstractClientPlayer currentOpponent;
 
     private final Texture donorsTexture;
@@ -44,6 +46,9 @@ public final class BattleInfoComponent extends DraggableHudComponent {
 
             if (this.killAuraModule == null)
                 this.killAuraModule = (KillAuraModule) Seppuku.INSTANCE.getModuleManager().find(KillAuraModule.class);
+
+            if (this.autoTrapModule == null)
+                this.autoTrapModule = (AutoTrapModule) Seppuku.INSTANCE.getModuleManager().find(AutoTrapModule.class);
 
             // local vars
             int itemSpacingOffset = 2;
@@ -72,6 +77,11 @@ public final class BattleInfoComponent extends DraggableHudComponent {
             if (this.crystalAuraModule != null && (this.crystalAuraModule.currentAttackEntity != null && this.crystalAuraModule.currentPlacePosition != null)) {
                 this.currentOpponent = (AbstractClientPlayer) this.crystalAuraModule.getCurrentAttackPlayer();
                 targetType = "crystal aura";
+            } else if (this.autoTrapModule != null && this.autoTrapModule.currentTarget != null && this.autoTrapModule.getRotationTask().isOnline()) {
+                if (this.autoTrapModule.getCurrentTarget() instanceof AbstractClientPlayer) {
+                    this.currentOpponent = (AbstractClientPlayer) this.autoTrapModule.getCurrentTarget();
+                    targetType = "auto trap";
+                }
             } else if (this.killAuraModule != null && this.killAuraModule.currentTarget != null) {
                 if (this.killAuraModule.getCurrentTarget() instanceof AbstractClientPlayer) {
                     this.currentOpponent = (AbstractClientPlayer) this.killAuraModule.getCurrentTarget();

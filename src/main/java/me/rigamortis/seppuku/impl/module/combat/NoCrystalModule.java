@@ -37,11 +37,11 @@ public final class NoCrystalModule extends Module {
 
     private final Minecraft mc = Minecraft.getMinecraft();
 
-    public final Value<Boolean> visible = new Value<Boolean>("Visible", new String[]{"Visible", "v"}, "When disabled, you will not see swing animations or sounds", true);
+    public final Value<Boolean> extended = new Value<Boolean>("Extended", new String[]{"extend", "e", "big"}, "Enlarges the size of the fortress", false);
+    public final Value<Boolean> visible = new Value<Boolean>("Visible", new String[]{"Visible", "v"}, "Casts a ray to the placement position, forces the placement when disabled", true);
     public final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"rotation", "r", "rotate"}, "Rotate to place blocks", true);
     public final Value<Boolean> swing = new Value<Boolean>("Swing", new String[]{"Arm"}, "Swing the player's arm while placing blocks", true);
     public final Value<Boolean> center = new Value<Boolean>("Center", new String[]{"centered", "c", "cen"}, "Centers the player on their current block when beginning to place", true);
-    public final Value<Boolean> extended = new Value<Boolean>("Extended", new String[]{"extend", "e", "big"}, "Enlarges the size of the fortress", false);
     public final Value<Boolean> disable = new Value<Boolean>("Disable", new String[]{"dis", "autodisable", "autodis", "d"}, "Disable after obsidian is placed", false);
     public final Value<Boolean> sneak = new Value<Boolean>("PlaceOnSneak", new String[]{"sneak", "s", "pos", "sneakPlace"}, "When true, NoCrystal will only place while the player is sneaking", false);
     public final Value<Float> range = new Value<Float>("Range", new String[]{"MaxRange", "MaximumRange"}, "The maximum block reaching range to continue building in", 6.0f, 1.0f, 10.0f, 0.5f);
@@ -145,7 +145,7 @@ public final class NoCrystalModule extends Module {
 
             Seppuku.INSTANCE.getRotationManager().startTask(this.rotationTask);
             if (this.rotationTask.isOnline()) {
-                // swap to obby
+                // swap to obsidian
                 handSwapContext.handleHandSwap(false, mc);
 
                 if (this.center.getValue() && this.chorusTpTimer.passed(1000)) {
@@ -220,12 +220,12 @@ public final class NoCrystalModule extends Module {
         final EnumFacing otherSide = direction.getOpposite();
         final BlockPos sideOffset = pos.offset(direction);
 
-        if (rotate.getValue()) {
+        if (this.rotate.getValue()) {
             final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), new Vec3d(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f));
             Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
         }
 
-        if (!visible.getValue()) {
+        if (!this.visible.getValue()) {
             mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(sideOffset, otherSide, EnumHand.MAIN_HAND, 0.5F, 0.5F, 0.5F));
             mc.player.connection.sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
         } else {
