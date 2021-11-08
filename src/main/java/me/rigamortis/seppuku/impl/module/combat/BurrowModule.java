@@ -145,16 +145,6 @@ public final class BurrowModule extends Module {
         }
     }
 
-    private EnumFacing calcSide(BlockPos pos) {
-        for (EnumFacing side : EnumFacing.values()) {
-            BlockPos sideOffset = pos.offset(side);
-            IBlockState offsetState = Minecraft.getMinecraft().world.getBlockState(sideOffset);
-            if (!offsetState.getBlock().canCollideCheck(offsetState, false)) continue;
-            if (!offsetState.getMaterial().isReplaceable()) return side;
-        }
-        return null;
-    }
-
     private int adaptiveTpHeight() {
         final Minecraft mc = Minecraft.getMinecraft();
 
@@ -220,7 +210,7 @@ public final class BurrowModule extends Module {
     private boolean place(final BlockPos pos, final Minecraft mc) {
         final Block block = mc.world.getBlockState(pos).getBlock();
 
-        final EnumFacing direction = this.calcSide(pos);
+        final EnumFacing direction = MathUtil.calcSide(pos);
         if (direction == null)
             return false;
 

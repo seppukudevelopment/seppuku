@@ -1,6 +1,7 @@
 package me.rigamortis.seppuku.api.util;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockEnderChest;
 import net.minecraft.block.BlockObsidian;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -71,6 +72,21 @@ public final class InventoryUtil {
                 return i;
             }
         }
+        return -1;
+    }
+
+    public static boolean isItemStackEnderChest(final ItemStack itemStack) {
+        if (itemStack.getItem() instanceof ItemBlock)
+            return ((ItemBlock) itemStack.getItem()).getBlock() instanceof BlockEnderChest;
+
+        return false;
+    }
+
+    public static int findEnderChestInHotbar(final EntityPlayerSP player) {
+        for (int index = 0; InventoryPlayer.isHotbar(index); index++)
+            if (isItemStackEnderChest(player.inventory.getStackInSlot(index)))
+                return index;
+
         return -1;
     }
 

@@ -135,6 +135,7 @@ public final class AutoTrapModule extends Module {
 
                         final HandSwapContext handSwapContext = new HandSwapContext(
                                 mc.player.inventory.currentItem, InventoryUtil.findObsidianInHotbar(mc.player));
+
                         if (handSwapContext.getNewSlot() == -1) {
                             Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
                             return;

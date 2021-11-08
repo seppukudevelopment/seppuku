@@ -168,7 +168,6 @@ public final class NukerModule extends Module {
     private boolean canBreak(BlockPos pos) {
         final IBlockState blockState = Minecraft.getMinecraft().world.getBlockState(pos);
         final Block block = blockState.getBlock();
-
         return block.getBlockHardness(blockState, Minecraft.getMinecraft().world, pos) != -1;
     }
 

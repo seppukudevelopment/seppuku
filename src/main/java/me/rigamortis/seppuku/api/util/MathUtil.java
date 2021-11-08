@@ -1,7 +1,10 @@
 package me.rigamortis.seppuku.api.util;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
@@ -13,6 +16,8 @@ import java.math.RoundingMode;
  * 4/16/2019 @ 3:26 AM.
  */
 public final class MathUtil {
+
+    public static final Minecraft mc = Minecraft.getMinecraft();
 
     public static Vec3d interpolateEntity(Entity entity, float time) {
         return new Vec3d(entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * time,
@@ -42,8 +47,17 @@ public final class MathUtil {
         return new float[]{(float) MathHelper.wrapDegrees(Math.toDegrees(Math.atan2(difZ, difX)) - 90.0f), (float) MathHelper.wrapDegrees(Math.toDegrees(Math.atan2(difY, dist)))};
     }
 
+    public static EnumFacing calcSide(BlockPos pos) {
+        for (EnumFacing side : EnumFacing.values()) {
+            BlockPos sideOffset = pos.offset(side);
+            IBlockState offsetState = mc.world.getBlockState(sideOffset);
+            if (!offsetState.getBlock().canCollideCheck(offsetState, false)) continue;
+            if (!offsetState.getMaterial().isReplaceable()) return side;
+        }
+        return null;
+    }
+
     public static double[] directionSpeed(double speed) {
-        final Minecraft mc = Minecraft.getMinecraft();
         float forward = mc.player.movementInput.moveForward;
         float side = mc.player.movementInput.moveStrafe;
         float yaw = mc.player.prevRotationYaw + (mc.player.rotationYaw - mc.player.prevRotationYaw) * mc.getRenderPartialTicks();
