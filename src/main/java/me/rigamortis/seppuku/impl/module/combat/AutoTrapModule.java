@@ -1,8 +1,6 @@
 package me.rigamortis.seppuku.impl.module.combat;
 
-import com.google.common.collect.Lists;
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.event.world.EventLoadWorld;
 import me.rigamortis.seppuku.api.module.Module;
@@ -14,15 +12,16 @@ import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.module.player.FreeCamModule;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.client.*;
+import net.minecraft.network.play.client.CPacketAnimation;
+import net.minecraft.network.play.client.CPacketEntityAction;
+import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -30,6 +29,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,6 +49,7 @@ public final class AutoTrapModule extends Module {
     public final Value<Boolean> swing = new Value<>("Swing", new String[]{"S"}, "Swing the player's arm while trapping", true);
     public final Value<Boolean> disable = new Value<Boolean>("Disable", new String[]{"dis", "autodisable", "autodis", "d"}, "Disable after trap is placed", false);
     public final Value<Boolean> sneak = new Value<Boolean>("PlaceOnSneak", new String[]{"sneak", "s", "pos", "sneakPlace"}, "When true, AutoTrap will only place while the player is sneaking", false);
+    public final Value<Boolean> overrideTask = new Value<Boolean>("OverrideTask", new String[]{"ot", "otask", "override"}, "Override rotation task system and force placements", true);
 
     private final Minecraft mc = Minecraft.getMinecraft();
     private final Timer placeTimer = new Timer();
@@ -79,87 +80,99 @@ public final class AutoTrapModule extends Module {
 
         switch (event.getStage()) {
             case PRE:
+                // ensure we have obsidian in inventory
+                if (InventoryUtil.getBlockCount(Blocks.OBSIDIAN) <= 0) {
+                    this.currentTarget = null;
+                    if (this.rotationTask.isOnline()) {
+                        Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
+                    }
+                    return;
+                }
+
+                // find a target
                 this.currentTarget = this.findTarget();
+
                 if (this.currentTarget != null) {
-                    final float[] angle = MathUtil.calcAngle(mc.player.getPositionEyes(mc.getRenderPartialTicks()), this.currentTarget.getPositionEyes(mc.getRenderPartialTicks()));
-                    Seppuku.INSTANCE.getRotationManager().startTask(this.rotationTask);
-                    if (this.rotationTask.isOnline() && this.rotate.getValue()) {
-                        Seppuku.INSTANCE.getRotationManager().setPlayerRotations(angle[0], angle[1]);
+                    if (this.overrideTask.getValue()) {
+                        if (this.rotationTask.isOnline()) {
+                            Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
+                        }
                     }
                 }
                 break;
             case POST:
                 if (this.currentTarget != null) {
-                    if (this.rotationTask.isOnline()) {
-                        final Vec3d targetPos = MathUtil.interpolateEntity(this.currentTarget, mc.getRenderPartialTicks());
-                        final BlockPos interpolatedPos = new BlockPos(targetPos.x, targetPos.y, targetPos.z);
-                        final BlockPos north = interpolatedPos.north();
-                        final BlockPos south = interpolatedPos.south();
-                        final BlockPos east = interpolatedPos.east();
-                        final BlockPos west = interpolatedPos.west();
+                    final Vec3d targetPos = MathUtil.interpolateEntity(this.currentTarget, mc.getRenderPartialTicks());
+                    final BlockPos interpolatedPos = new BlockPos(targetPos.x, targetPos.y, targetPos.z);
+                    final BlockPos north = interpolatedPos.north();
+                    final BlockPos south = interpolatedPos.south();
+                    final BlockPos east = interpolatedPos.east();
+                    final BlockPos west = interpolatedPos.west();
 
-                        BlockPos[] surroundBlocks;
-                        if (this.extended.getValue()) {
-                            surroundBlocks = new BlockPos[]{north.down(), south.down(), east.down(), west.down(),
-                                    north, south, east, west, north.up(), south.up(), east.up(), west.up(), north.up().up(), interpolatedPos.up().up()};
-                        } else {
-                            surroundBlocks = new BlockPos[]{interpolatedPos.up().up()};
-                        }
+                    BlockPos[] surroundBlocks;
+                    if (this.extended.getValue()) {
+                        surroundBlocks = new BlockPos[]{north.down(), south.down(), east.down(), west.down(),
+                                north, south, east, west, north.up(), south.up(), east.up(), west.up(), north.up().up(), interpolatedPos.up().up()};
+                    } else {
+                        surroundBlocks = new BlockPos[]{interpolatedPos.up().up()};
+                    }
 
-                        final List<BlockPos> blocksToPlace = Lists.newArrayListWithCapacity(16);
+                    final List<BlockPos> blocksToPlace = new ArrayList<>();
 
-                        // find missing blocks (starting from under the player first and going upwards)
-                        for (int i = 0; i < surroundBlocks.length; i++) {
-                            BlockPos blockPos = surroundBlocks[i];
-                            if (!this.valid(blockPos))
-                                continue;
+                    // find missing blocks (starting from under the player first and going upwards)
+                    for (int i = 0; i < surroundBlocks.length; i++) {
+                        final BlockPos blockPos = surroundBlocks[i];
 
-                            blocksToPlace.add(blockPos);
-                        }
+                        if (!this.valid(blockPos))
+                            continue;
 
-                        if (blocksToPlace.size() != 0) { // we have blocks to place
-                            final HandSwapContext handSwapContext = new HandSwapContext(
-                                    mc.player.inventory.currentItem, InventoryUtil.findObsidianInHotbar(mc.player));
-                            if (handSwapContext.getNewSlot() == -1) {
-                                Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
-                                return;
-                            }
+                        blocksToPlace.add(blockPos);
+                    }
 
-                            if (!mc.player.isSneaking() && this.sneak.getValue()) {
-                                if (this.rotationTask.isOnline()) {
-                                    Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
-                                }
-                                return;
-                            }
+                    if (blocksToPlace.size() != 0) { // we have blocks to place
+                        // begin rotation task
+                        Seppuku.INSTANCE.getRotationManager().startTask(this.rotationTask);
 
-                            //Seppuku.INSTANCE.getRotationManager().startTask(this.rotationTask);
-                            if (this.rotationTask.isOnline()) {
-                                // swap to obsidian
-                                handSwapContext.handleHandSwap(false, mc);
-
-                                for (BlockPos blockPos : blocksToPlace) {
-                                    if (!this.valid(blockPos))
-                                        continue;
-
-                                    if (this.placeDelay.getValue() <= 0.0f) {
-                                        this.place(blockPos);
-                                    } else if (placeTimer.passed(this.placeDelay.getValue())) {
-                                        this.place(blockPos);
-                                        this.placeTimer.reset();
-                                    }
-                                }
-
-                                // swap back to original
-                                handSwapContext.handleHandSwap(true, mc);
-                            }
-                        } else {
+                        final HandSwapContext handSwapContext = new HandSwapContext(
+                                mc.player.inventory.currentItem, InventoryUtil.findObsidianInHotbar(mc.player));
+                        if (handSwapContext.getNewSlot() == -1) {
                             Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
+                            return;
                         }
 
-                        if (this.disable.getValue()) {
-                            if (blocksToPlace.size() == 0) // no more blocks
-                                this.toggle(); // auto disable
+                        if (!mc.player.isSneaking() && this.sneak.getValue()) {
+                            if (this.rotationTask.isOnline()) {
+                                Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
+                            }
+                            return;
                         }
+
+                        if (this.rotationTask.isOnline() || this.overrideTask.getValue()) {
+                            // swap to obsidian
+                            handSwapContext.handleHandSwap(false, mc);
+
+                            for (BlockPos blockPos : blocksToPlace) {
+                                if (!this.valid(blockPos))
+                                    continue;
+
+                                if (this.placeDelay.getValue() <= 0.0f) {
+                                    this.place(blockPos);
+                                } else if (placeTimer.passed(this.placeDelay.getValue())) {
+                                    this.place(blockPos);
+                                    this.placeTimer.reset();
+                                }
+                            }
+
+                            // swap back to original
+                            handSwapContext.handleHandSwap(true, mc);
+                        }
+                    } else {
+                        Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
+                    }
+
+                    if (this.disable.getValue()) {
+                        if (blocksToPlace.size() == 0) // no more blocks
+                            this.toggle(); // auto disable
                     }
                 } else {
                     Seppuku.INSTANCE.getRotationManager().finishTask(this.rotationTask);
@@ -176,15 +189,35 @@ public final class AutoTrapModule extends Module {
     }
 
     private boolean valid(BlockPos pos) {
-        // There are no entities colliding with block placement
-        if (!mc.world.checkNoEntityCollision(new AxisAlignedBB(pos)))
+        // check faces for air (need to do this to place properly)
+        int airFaces = 0;
+        for (int i = 0; i < EnumFacing.values().length; i++) {
+            if (mc.world.getBlockState(pos.offset(EnumFacing.values()[i])).getBlock() instanceof BlockAir) {
+                airFaces++;
+            }
+        }
+        if (airFaces == EnumFacing.values().length) {
+            return false;
+        }
+
+        // there are no entities colliding with block placement
+        final AxisAlignedBB axisAlignedBB = new AxisAlignedBB(pos);
+
+        if (this.currentTarget != null) {
+            if (!mc.world.getEntitiesWithinAABBExcludingEntity(null, axisAlignedBB).isEmpty()) {
+                return false;
+            }
+        }
+
+        if (!mc.world.checkNoEntityCollision(axisAlignedBB))
             return false;
 
-        // Player is too far from distance
+
+        // player is too far from distance
         if (mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ()) > this.range.getValue())
             return false;
 
-        // Check if the block is replaceable
+        // check if the block is replaceable
         final Block block = mc.world.getBlockState(pos).getBlock();
         return block.isReplaceable(mc.world, pos) && !(block == Blocks.OBSIDIAN) && !(block == Blocks.BEDROCK);
     }

@@ -192,15 +192,15 @@ public final class NoCrystalModule extends Module {
     }
 
     private boolean valid(BlockPos pos) {
-        // There are no entities colliding with block placement
+        // there are no entities colliding with block placement
         if (!mc.world.checkNoEntityCollision(new AxisAlignedBB(pos)))
             return false;
 
-        // Player is too far from distance
+        // player is too far from distance
         if (mc.player.getDistance(pos.getX(), pos.getY(), pos.getZ()) > this.range.getValue())
             return false;
 
-        // Check if the block is replaceable
+        // check if the block is replaceable
         final Block block = mc.world.getBlockState(pos).getBlock();
         return block.isReplaceable(mc.world, pos) && !(block == Blocks.OBSIDIAN) && !(block == Blocks.BEDROCK);
     }

@@ -44,7 +44,7 @@ public final class KillAuraModule extends Module {
     public final Value<Boolean> sync = new Value<>("Sync", new String[]{"snc"}, "Sync your hits with the server's estimated TPS", true);
     public final Value<Boolean> teleport = new Value<>("Teleport", new String[]{"tp"}, "Teleports to your target (Only works on vanilla)", false);
 
-    private final RotationTask rotationTask = new RotationTask("KillAuraTask", 5);
+    private final RotationTask rotationTask = new RotationTask("KillAuraTask", 4);
 
     public Entity currentTarget = null;
 
