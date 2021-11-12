@@ -174,6 +174,7 @@ public final class ModuleManager {
         add(new AmbianceModule());
         add(new NoToast());
         add(new AutoTrapModule());
+        add(new ChestFarmerModule());
 
         // p2w experience
         if (Seppuku.INSTANCE.getCapeManager().hasCape())

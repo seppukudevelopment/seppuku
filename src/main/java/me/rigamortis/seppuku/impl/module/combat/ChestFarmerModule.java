@@ -2,6 +2,7 @@ package me.rigamortis.seppuku.impl.module.combat;
 
 import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
+import me.rigamortis.seppuku.api.event.player.EventDestroyBlock;
 import me.rigamortis.seppuku.api.event.player.EventUpdateWalkingPlayer;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.task.hand.HandSwapContext;
@@ -50,6 +51,7 @@ public final class ChestFarmerModule extends Module {
     private final RotationTask mineRotationTask = new RotationTask("ChestFarmerMineTask", 3);
 
     private BlockPos currentWorkingPos = null;
+    private boolean breaking = false;
 
     public ChestFarmerModule() {
         //String displayName, String[] alias, String desc, String key, int color, ModuleType type
@@ -66,117 +68,149 @@ public final class ChestFarmerModule extends Module {
 
     @Listener
     public void onWalkingUpdate(EventUpdateWalkingPlayer event) {
-        if (event.getStage() != EventStageable.EventStage.PRE)
-            return;
-
         if (mc.world == null || mc.player == null)
             return;
 
-        if (InventoryUtil.getBlockCount(Blocks.ENDER_CHEST) <= this.safeLimit.getValue()) {
-            Seppuku.INSTANCE.getNotificationManager().addNotification("", this.getDisplayName() + ": Safe limit reached, toggling off.");
-            this.toggle();
-            return;
-        }
+        if (event.getStage() == EventStageable.EventStage.PRE) {
+            if (InventoryUtil.getBlockCount(Blocks.ENDER_CHEST) <= this.safeLimit.getValue()) {
+                Seppuku.INSTANCE.getNotificationManager().addNotification("", this.getDisplayName() + ": Safe limit reached, toggling off.");
+                this.toggle();
+                return;
+            }
 
-        if (this.pickOnlyMode.getValue()) {
-            if (!(mc.player.getHeldItemMainhand().getItem() instanceof ItemPickaxe)) {
-                this.currentWorkingPos = null;
-                if (this.placeRotationTask.isOnline()) {
-                    Seppuku.INSTANCE.getRotationManager().finishTask(this.placeRotationTask);
+            if (this.pickOnlyMode.getValue()) {
+                if (!(mc.player.getHeldItemMainhand().getItem() instanceof ItemPickaxe)) {
+                    this.currentWorkingPos = null;
+                    if (this.placeRotationTask.isOnline()) {
+                        Seppuku.INSTANCE.getRotationManager().finishTask(this.placeRotationTask);
+                    }
+                    if (this.mineRotationTask.isOnline()) {
+                        Seppuku.INSTANCE.getRotationManager().finishTask(this.mineRotationTask);
+                    }
+                    return;
                 }
+            }
+
+            final Vec3d pos = MathUtil.interpolateEntity(mc.player, mc.getRenderPartialTicks());
+            final float playerSpeed = (float) MathUtil.getDistance(pos, mc.player.posX, mc.player.posY, mc.player.posZ);
+
+            if (!this.moving.getValue()) {
+                if (!mc.player.onGround || playerSpeed > 0.005f) {
+                    return;
+                }
+            }
+
+            final BlockPos interpolatedPos = new BlockPos(pos.x, pos.y, pos.z);
+            final BlockPos north = interpolatedPos.north();
+            final BlockPos south = interpolatedPos.south();
+            final BlockPos east = interpolatedPos.east();
+            final BlockPos west = interpolatedPos.west();
+
+            final BlockPos[] possibleBlocks = new BlockPos[]{north.down(), south.down(), east.down(), west.down(),
+                    north, south, east, west};
+
+            if (this.currentWorkingPos == null) {
                 if (this.mineRotationTask.isOnline()) {
                     Seppuku.INSTANCE.getRotationManager().finishTask(this.mineRotationTask);
                 }
-                return;
+
+                // find a chest location (starting from under the player first and going upwards)
+                for (final BlockPos blockPos : possibleBlocks) {
+                    if (!this.valid(blockPos))
+                        continue;
+
+                    this.currentWorkingPos = blockPos;
+                }
+            } else { // we have blocks to place
+                if (!mc.player.isHandActive()) {
+                    final HandSwapContext handSwapContext = new HandSwapContext(
+                            mc.player.inventory.currentItem, InventoryUtil.findEnderChestInHotbar(mc.player));
+
+                    if (handSwapContext.getNewSlot() == -1) {
+                        Seppuku.INSTANCE.getRotationManager().finishTask(this.placeRotationTask);
+                        return;
+                    }
+
+                    if (!mc.player.isSneaking() && this.sneak.getValue()) {
+                        if (this.placeRotationTask.isOnline()) {
+                            Seppuku.INSTANCE.getRotationManager().finishTask(this.placeRotationTask);
+                        }
+                        return;
+                    }
+
+                    if (this.valid(this.currentWorkingPos) && !this.mineRotationTask.isOnline()) {
+                        Seppuku.INSTANCE.getRotationManager().startTask(this.placeRotationTask);
+                        if (this.placeRotationTask.isOnline()) {
+                            // swap to obsidian
+                            handSwapContext.handleHandSwap(false, mc);
+
+                            if (this.placeDelay.getValue() <= 0.0f) {
+                                this.place(this.currentWorkingPos);
+                            } else if (placeTimer.passed(this.placeDelay.getValue())) {
+                                this.place(this.currentWorkingPos);
+                                this.placeTimer.reset();
+                            }
+
+                            // swap back to original
+                            handSwapContext.handleHandSwap(true, mc);
+
+                            Seppuku.INSTANCE.getRotationManager().finishTask(this.placeRotationTask);
+                        }
+                    }
+                }
             }
         }
 
-        final Vec3d pos = MathUtil.interpolateEntity(mc.player, mc.getRenderPartialTicks());
-        final float playerSpeed = (float) MathUtil.getDistance(pos, mc.player.posX, mc.player.posY, mc.player.posZ);
-
-        if (!this.moving.getValue()) {
-            if (!mc.player.onGround || playerSpeed > 0.005f) {
-                return;
+        if (event.getStage() == EventStageable.EventStage.POST) {
+            if (this.currentWorkingPos != null) {
+                for (TileEntity tileEntity : mc.world.loadedTileEntityList) {
+                    if (tileEntity instanceof TileEntityEnderChest) {
+                        if (this.currentWorkingPos.getX() == tileEntity.getPos().getX() &&
+                                this.currentWorkingPos.getY() == tileEntity.getPos().getY() &&
+                                this.currentWorkingPos.getZ() == tileEntity.getPos().getZ() &&
+                                mc.player.getDistance(tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ()) < this.range.getValue()) {
+                            Seppuku.INSTANCE.getRotationManager().startTask(this.mineRotationTask);
+                            if (this.mineRotationTask.isOnline()) {
+                                if (this.rotate.getValue()) {
+                                    final float[] rotations = EntityUtil.getRotations(tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ());
+                                    Seppuku.INSTANCE.getRotationManager().setPlayerRotations(rotations[0], rotations[1]);
+                                }
+                                mc.playerController.onPlayerDamageBlock(tileEntity.getPos(), mc.player.getHorizontalFacing());
+                                if (this.swing.getValue()) {
+                                    mc.player.swingArm(EnumHand.MAIN_HAND);
+                                }
+                            }
+                        }
+                    }
+                }
             }
-        }
 
-        final BlockPos interpolatedPos = new BlockPos(pos.x, pos.y, pos.z);
-        final BlockPos north = interpolatedPos.north();
-        final BlockPos south = interpolatedPos.south();
-        final BlockPos east = interpolatedPos.east();
-        final BlockPos west = interpolatedPos.west();
-
-        final BlockPos[] possibleBlocks = new BlockPos[]{north.down(), south.down(), east.down(), west.down(),
-                north, south, east, west};
-
-        if (this.currentWorkingPos == null) {
             if (this.mineRotationTask.isOnline()) {
+                if (mc.world.loadedTileEntityList.stream().noneMatch(tileEntity -> tileEntity instanceof TileEntityEnderChest)) {
+                    this.currentWorkingPos = null;
+                    Seppuku.INSTANCE.getRotationManager().finishTask(this.mineRotationTask);
+                }
+
+                mc.world.loadedTileEntityList.stream().filter(tileEntity -> tileEntity instanceof TileEntityEnderChest && mc.player.getDistance(tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ()) > this.range.getValue()).forEach(tileEntity -> {
+                    if (this.currentWorkingPos.getX() == tileEntity.getPos().getX() &&
+                            this.currentWorkingPos.getY() == tileEntity.getPos().getY() &&
+                            this.currentWorkingPos.getZ() == tileEntity.getPos().getZ()) {
+                        this.currentWorkingPos = null;
+                        Seppuku.INSTANCE.getRotationManager().finishTask(this.mineRotationTask);
+                    }
+                });
+            }
+        }
+    }
+
+    @Listener
+    public void onDestroyBlock(EventDestroyBlock event) {
+        if (event.getPos() != null) {
+            if (event.getPos().getX() == this.currentWorkingPos.getX() &&
+                    event.getPos().getY() == this.currentWorkingPos.getY() &&
+                    event.getPos().getZ() == this.currentWorkingPos.getZ()) {
+                this.currentWorkingPos = null;
                 Seppuku.INSTANCE.getRotationManager().finishTask(this.mineRotationTask);
-            }
-
-            // find a chest location (starting from under the player first and going upwards)
-            for (int i = 0; i < possibleBlocks.length; i++) {
-                final BlockPos blockPos = possibleBlocks[i];
-
-                if (!this.valid(blockPos))
-                    continue;
-
-                this.currentWorkingPos = blockPos;
-            }
-        } else { // we have blocks to place
-            if (!mc.player.isHandActive()) {
-                final HandSwapContext handSwapContext = new HandSwapContext(
-                        mc.player.inventory.currentItem, InventoryUtil.findEnderChestInHotbar(mc.player));
-
-                if (handSwapContext.getNewSlot() == -1) {
-                    Seppuku.INSTANCE.getRotationManager().finishTask(this.placeRotationTask);
-                    return;
-                }
-
-                if (!mc.player.isSneaking() && this.sneak.getValue()) {
-                    if (this.placeRotationTask.isOnline()) {
-                        Seppuku.INSTANCE.getRotationManager().finishTask(this.placeRotationTask);
-                    }
-                    return;
-                }
-
-                if (this.valid(this.currentWorkingPos)) {
-                    Seppuku.INSTANCE.getRotationManager().startTask(this.placeRotationTask);
-                    if (this.placeRotationTask.isOnline()) {
-                        // swap to obsidian
-                        handSwapContext.handleHandSwap(false, mc);
-
-                        if (this.placeDelay.getValue() <= 0.0f) {
-                            this.place(this.currentWorkingPos);
-                        } else if (placeTimer.passed(this.placeDelay.getValue())) {
-                            this.place(this.currentWorkingPos);
-                            this.placeTimer.reset();
-                        }
-
-                        // swap back to original
-                        handSwapContext.handleHandSwap(true, mc);
-
-                        Seppuku.INSTANCE.getRotationManager().finishTask(this.placeRotationTask);
-                    }
-                }
-            }
-
-            for (TileEntity tileEntity : mc.world.loadedTileEntityList) {
-                if (tileEntity instanceof TileEntityEnderChest) {
-                    if (mc.player.getDistance(tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ()) < this.range.getValue()) {
-                        Seppuku.INSTANCE.getRotationManager().startTask(this.mineRotationTask);
-                        if (this.mineRotationTask.isOnline()) {
-                            if (this.rotate.getValue()) {
-                                final float[] rotations = EntityUtil.getRotations(this.currentWorkingPos.getX(), this.currentWorkingPos.getY(), this.currentWorkingPos.getZ());
-                                Seppuku.INSTANCE.getRotationManager().setPlayerRotations(rotations[0], rotations[1]);
-                            }
-                            mc.playerController.onPlayerDamageBlock(this.currentWorkingPos, mc.player.getHorizontalFacing());
-                            if (this.swing.getValue()) {
-                                mc.player.swingArm(EnumHand.MAIN_HAND);
-                            }
-                        }
-                    }
-                }
             }
         }
     }
