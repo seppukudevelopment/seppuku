@@ -78,44 +78,6 @@ public final class PhaseModule extends Module {
         event.setCanceled(true);
     }
 
-    @Listener
-    public void onMove(EventMove event) {
-        final Minecraft mc = Minecraft.getMinecraft();
-
-        if (mc.player != null) {
-            Minecraft.getMinecraft().player.noClip = true;
-
-            final boolean floor = this.floor.getValue() || mc.player.posY >= 1;
-
-            if (this.mode.getValue() == Mode.SAND) {
-                if (mc.player.getRidingEntity() != null) {
-                    if (mc.gameSettings.keyBindSprint.isKeyDown() && floor) {
-                        Minecraft.getMinecraft().player.motionY = 0;
-                    } else {
-                        if (!mc.gameSettings.keyBindJump.isKeyDown() && mc.player.posY < mc.player.getRidingEntity().posY) {
-                            Minecraft.getMinecraft().player.motionY = 0;
-                        }
-                        if (mc.player.posY < mc.player.getRidingEntity().posY) {
-                            Minecraft.getMinecraft().player.motionY = 0;
-                        }
-                    }
-                } else {
-                    if (!mc.gameSettings.keyBindJump.isKeyDown()) {
-                        Minecraft.getMinecraft().player.motionY = 0;
-                    }
-
-                    if (!mc.gameSettings.keyBindSneak.isKeyDown() && floor) {
-                        Minecraft.getMinecraft().player.motionY = 0;
-                    }
-                }
-            }
-        }
-
-        if (this.mode.getValue() == Mode.NOCLIP) {
-            Minecraft.getMinecraft().player.noClip = true;
-        }
-    }
-
     /**
      * Replace this somehow, it's deprecated with how we handle block patches now
      *
@@ -123,7 +85,44 @@ public final class PhaseModule extends Module {
      */
     @Listener
     public void collideWithBlock(EventAddCollisionBox event) {
+        final Minecraft mc = Minecraft.getMinecraft();
 
+        if (mc.player != null) {
+
+            final boolean floor = !this.floor.getValue() || event.getPos().getY() >= 1;
+
+            if (this.mode.getValue() == Mode.SAND) {
+                if (mc.player.getRidingEntity() != null && event.getEntity() == mc.player.getRidingEntity()) {
+                    if (mc.gameSettings.keyBindSprint.isKeyDown() && floor) {
+                        event.setCanceled(true);
+                    } else {
+                        if (mc.gameSettings.keyBindJump.isKeyDown() && event.getPos().getY() >= mc.player.getRidingEntity().posY) {
+                            event.setCanceled(true);
+                        }
+                        if (event.getPos().getY() >= mc.player.getRidingEntity().posY) {
+                            event.setCanceled(true);
+                        }
+                    }
+                } else if (event.getEntity() == mc.player) {
+                    if (mc.gameSettings.keyBindSneak.isKeyDown() && floor) {
+                        event.setCanceled(true);
+                    } else {
+                        if (mc.gameSettings.keyBindJump.isKeyDown() && event.getPos().getY() >= mc.player.posY) {
+                            event.setCanceled(true);
+                        }
+                        if (event.getPos().getY() >= mc.player.posY) {
+                            event.setCanceled(true);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (this.mode.getValue() == Mode.NOCLIP) {
+            if (event.getEntity() == mc.player || mc.player.getRidingEntity() != null && event.getEntity() == mc.player.getRidingEntity()) {
+                event.setCanceled(true);
+            }
+        }
     }
 
     @Listener
@@ -180,23 +179,19 @@ public final class PhaseModule extends Module {
 
             if (this.mode.getValue() == Mode.PACKET) {
                 final Vec3d dir = MathUtil.direction(mc.player.rotationYaw);
-                if (dir != null) {
-                    if (mc.player.onGround && mc.player.collidedHorizontally) {
-                        mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX + dir.x * 0.00001f, mc.player.posY, mc.player.posZ + dir.z * 0.0001f, mc.player.onGround));
-                        mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX + dir.x * 2.0f, mc.player.posY, mc.player.posZ + dir.z * 2.0f, mc.player.onGround));
-                    }
+                if (mc.player.onGround && mc.player.collidedHorizontally) {
+                    mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX + dir.x * 0.00001f, mc.player.posY, mc.player.posZ + dir.z * 0.0001f, mc.player.onGround));
+                    mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX + dir.x * 2.0f, mc.player.posY, mc.player.posZ + dir.z * 2.0f, mc.player.onGround));
                 }
             }
 
             if (this.mode.getValue() == Mode.SKIP) {
                 final Vec3d dir = MathUtil.direction(mc.player.rotationYaw);
-                if (dir != null) {
-                    if (mc.player.onGround && mc.player.collidedHorizontally) {
-                        mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY, mc.player.posZ, mc.player.onGround));
-                        mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX + dir.x * 0.001f, mc.player.posY + 0.1f, mc.player.posZ + dir.z * 0.001f, mc.player.onGround));
-                        mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX + dir.x * 0.03f, 0, mc.player.posZ + dir.z * 0.03f, mc.player.onGround));
-                        mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX + dir.x * 0.06f, mc.player.posY, mc.player.posZ + dir.z * 0.06f, mc.player.onGround));
-                    }
+                if (mc.player.onGround && mc.player.collidedHorizontally) {
+                    mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY, mc.player.posZ, mc.player.onGround));
+                    mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX + dir.x * 0.001f, mc.player.posY + 0.1f, mc.player.posZ + dir.z * 0.001f, mc.player.onGround));
+                    mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX + dir.x * 0.03f, 0, mc.player.posZ + dir.z * 0.03f, mc.player.onGround));
+                    mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX + dir.x * 0.06f, mc.player.posY, mc.player.posZ + dir.z * 0.06f, mc.player.onGround));
                 }
             }
         }

@@ -40,7 +40,7 @@ public final class PatchManager {
         this.patchList.add(new EntityLlamaPatch());
         this.patchList.add(new AbstractHorsePatch());
         this.patchList.add(new BlockRendererDispatcherPatch());
-        //this.patchList.add(new BlockPatch());
+        this.patchList.add(new BlockPatch());
         this.patchList.add(new BlockSoulSandPatch());
         this.patchList.add(new KeyBindingPatch());
         //this.patchList.add(new BlockModelRendererPatch());

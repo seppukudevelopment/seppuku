@@ -195,9 +195,9 @@ public final class FreeCamModule extends Module {
      */
     @Listener
     public void collideWithBlock(EventAddCollisionBox event) {
-        /*if (event.getEntity() == Minecraft.getMinecraft().player) {
+        if (event.getEntity() == Minecraft.getMinecraft().player) {
             event.setCanceled(true);
-        }*/
+        }
     }
 
     @Listener

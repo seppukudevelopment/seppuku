@@ -32,6 +32,7 @@ public final class BlockPatch extends ClassPatch {
      * @param methodNode
      * @param env
      */
+    /*
     @MethodPatch(
             mcpName = "shouldSideBeRendered",
             notchName = "a",
@@ -80,8 +81,9 @@ public final class BlockPatch extends ClassPatch {
         //add our instructions at the top of the function
         methodNode.instructions.insert(insnList);
     }
+    */
 
-
+    /*
     @MethodPatch(
             mcpName = "getBlockLayer",
             notchName = "f",
@@ -128,6 +130,7 @@ public final class BlockPatch extends ClassPatch {
         //add our instructions at the top of the function
         methodNode.instructions.insert(insnList);
     }
+    */
 
     /**
      * This is where minecraft adds aabb's for block collision
@@ -174,5 +177,4 @@ public final class BlockPatch extends ClassPatch {
 
         return event.isCanceled();
     }
-
 }
