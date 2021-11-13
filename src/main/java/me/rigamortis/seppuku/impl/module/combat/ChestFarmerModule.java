@@ -16,7 +16,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemPickaxe;
 import net.minecraft.network.play.client.CPacketAnimation;
 import net.minecraft.network.play.client.CPacketEntityAction;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
@@ -36,7 +35,7 @@ public final class ChestFarmerModule extends Module {
 
     private final Minecraft mc = Minecraft.getMinecraft();
 
-    public final Value<Boolean> pickOnlyMode = new Value<Boolean>("PickaxeOnly", new String[]{"pickonly", "onlypick", "onlypicks", "onlypickaxes", "pickaxesonly", "po"}, "Only run this module while a pickaxe is being held", true);
+    //public final Value<Boolean> pickOnlyMode = new Value<Boolean>("PickaxeOnly", new String[]{"pickonly", "onlypick", "onlypicks", "onlypickaxes", "pickaxesonly", "po"}, "Only run this module while a pickaxe is being held", true);
     public final Value<Boolean> visible = new Value<Boolean>("Visible", new String[]{"Visible", "v"}, "Casts a ray to the placement position, forces the placement when disabled", true);
     public final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"rotation", "r", "rotate"}, "Rotate to place the chest", true);
     public final Value<Boolean> swing = new Value<Boolean>("Swing", new String[]{"Arm"}, "Swing the player's arm while placing the chest", true);
@@ -50,8 +49,8 @@ public final class ChestFarmerModule extends Module {
     private final RotationTask placeRotationTask = new RotationTask("ChestFarmerPlaceTask", 3);
     private final RotationTask mineRotationTask = new RotationTask("ChestFarmerMineTask", 3);
 
-    private BlockPos currentWorkingPos = null;
-    private boolean breaking = false;
+    private BlockPos currentPlacingPos = null;
+    private BlockPos currentMiningPos = null;
 
     public ChestFarmerModule() {
         //String displayName, String[] alias, String desc, String key, int color, ModuleType type
@@ -61,7 +60,8 @@ public final class ChestFarmerModule extends Module {
     @Override
     public void onToggle() {
         super.onToggle();
-        this.currentWorkingPos = null;
+        this.currentPlacingPos = null;
+        this.currentMiningPos = null;
         Seppuku.INSTANCE.getRotationManager().finishTask(this.placeRotationTask);
         Seppuku.INSTANCE.getRotationManager().finishTask(this.mineRotationTask);
     }
@@ -78,18 +78,17 @@ public final class ChestFarmerModule extends Module {
                 return;
             }
 
-            if (this.pickOnlyMode.getValue()) {
-                if (!(mc.player.getHeldItemMainhand().getItem() instanceof ItemPickaxe)) {
-                    this.currentWorkingPos = null;
-                    if (this.placeRotationTask.isOnline()) {
-                        Seppuku.INSTANCE.getRotationManager().finishTask(this.placeRotationTask);
-                    }
-                    if (this.mineRotationTask.isOnline()) {
-                        Seppuku.INSTANCE.getRotationManager().finishTask(this.mineRotationTask);
-                    }
-                    return;
-                }
-            }
+//            if (!(mc.player.getHeldItemMainhand().getItem() instanceof ItemPickaxe)) {
+//                this.currentPlacingPos = null;
+//                this.currentMiningPos = null;
+//                if (this.placeRotationTask.isOnline()) {
+//                    Seppuku.INSTANCE.getRotationManager().finishTask(this.placeRotationTask);
+//                }
+//                if (this.mineRotationTask.isOnline()) {
+//                    Seppuku.INSTANCE.getRotationManager().finishTask(this.mineRotationTask);
+//                }
+//                return;
+//            }
 
             final Vec3d pos = MathUtil.interpolateEntity(mc.player, mc.getRenderPartialTicks());
             final float playerSpeed = (float) MathUtil.getDistance(pos, mc.player.posX, mc.player.posY, mc.player.posZ);
@@ -109,19 +108,51 @@ public final class ChestFarmerModule extends Module {
             final BlockPos[] possibleBlocks = new BlockPos[]{north.down(), south.down(), east.down(), west.down(),
                     north, south, east, west};
 
-            if (this.currentWorkingPos == null) {
-                if (this.mineRotationTask.isOnline()) {
+            if (this.mineRotationTask.isOnline()) {
+                if (mc.world.loadedTileEntityList.stream().noneMatch(tileEntity -> tileEntity instanceof TileEntityEnderChest)) {
+                    this.currentMiningPos = null;
                     Seppuku.INSTANCE.getRotationManager().finishTask(this.mineRotationTask);
                 }
 
+                if (mc.world.loadedTileEntityList.stream().allMatch(tileEntity -> tileEntity instanceof TileEntityEnderChest && mc.player.getDistance(tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ()) > this.range.getValue())) {
+                    this.currentMiningPos = null;
+                    Seppuku.INSTANCE.getRotationManager().finishTask(this.mineRotationTask);
+                }
+            }
+
+            if (this.currentPlacingPos == null) {
+                for (TileEntity tileEntity : mc.world.loadedTileEntityList) {
+                    if (tileEntity instanceof TileEntityEnderChest) {
+                        if (mc.player.getDistance(tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ()) < this.range.getValue()) {
+                            Seppuku.INSTANCE.getRotationManager().startTask(this.mineRotationTask);
+                            if (this.mineRotationTask.isOnline()) {
+                                this.currentMiningPos = tileEntity.getPos();
+                                if (this.rotate.getValue()) {
+                                    final float[] rotations = EntityUtil.getRotations(tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ());
+                                    Seppuku.INSTANCE.getRotationManager().setPlayerRotations(rotations[0], rotations[1]);
+                                }
+                                mc.playerController.onPlayerDamageBlock(tileEntity.getPos(), mc.player.getHorizontalFacing());
+                                if (this.swing.getValue()) {
+                                    mc.player.swingArm(EnumHand.MAIN_HAND);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!this.mineRotationTask.isOnline() && this.currentPlacingPos == null && this.currentMiningPos == null) {
                 // find a chest location (starting from under the player first and going upwards)
                 for (final BlockPos blockPos : possibleBlocks) {
                     if (!this.valid(blockPos))
                         continue;
 
-                    this.currentWorkingPos = blockPos;
+                    this.currentPlacingPos = blockPos;
+                    break;
                 }
-            } else { // we have blocks to place
+            }
+
+            if (!this.mineRotationTask.isOnline() && this.currentPlacingPos != null) { // we have blocks to place
                 if (!mc.player.isHandActive()) {
                     final HandSwapContext handSwapContext = new HandSwapContext(
                             mc.player.inventory.currentItem, InventoryUtil.findEnderChestInHotbar(mc.player));
@@ -138,16 +169,16 @@ public final class ChestFarmerModule extends Module {
                         return;
                     }
 
-                    if (this.valid(this.currentWorkingPos) && !this.mineRotationTask.isOnline()) {
+                    if (this.valid(this.currentPlacingPos) && !this.mineRotationTask.isOnline()) {
                         Seppuku.INSTANCE.getRotationManager().startTask(this.placeRotationTask);
                         if (this.placeRotationTask.isOnline()) {
                             // swap to obsidian
                             handSwapContext.handleHandSwap(false, mc);
 
                             if (this.placeDelay.getValue() <= 0.0f) {
-                                this.place(this.currentWorkingPos);
+                                this.place(this.currentPlacingPos);
                             } else if (placeTimer.passed(this.placeDelay.getValue())) {
-                                this.place(this.currentWorkingPos);
+                                this.place(this.currentPlacingPos);
                                 this.placeTimer.reset();
                             }
 
@@ -155,6 +186,8 @@ public final class ChestFarmerModule extends Module {
                             handSwapContext.handleHandSwap(true, mc);
 
                             Seppuku.INSTANCE.getRotationManager().finishTask(this.placeRotationTask);
+                            //this.currentMiningPos = this.currentPlacingPos;
+                            this.currentPlacingPos = null;
                         }
                     }
                 }
@@ -162,54 +195,17 @@ public final class ChestFarmerModule extends Module {
         }
 
         if (event.getStage() == EventStageable.EventStage.POST) {
-            if (this.currentWorkingPos != null) {
-                for (TileEntity tileEntity : mc.world.loadedTileEntityList) {
-                    if (tileEntity instanceof TileEntityEnderChest) {
-                        if (this.currentWorkingPos.getX() == tileEntity.getPos().getX() &&
-                                this.currentWorkingPos.getY() == tileEntity.getPos().getY() &&
-                                this.currentWorkingPos.getZ() == tileEntity.getPos().getZ() &&
-                                mc.player.getDistance(tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ()) < this.range.getValue()) {
-                            Seppuku.INSTANCE.getRotationManager().startTask(this.mineRotationTask);
-                            if (this.mineRotationTask.isOnline()) {
-                                if (this.rotate.getValue()) {
-                                    final float[] rotations = EntityUtil.getRotations(tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ());
-                                    Seppuku.INSTANCE.getRotationManager().setPlayerRotations(rotations[0], rotations[1]);
-                                }
-                                mc.playerController.onPlayerDamageBlock(tileEntity.getPos(), mc.player.getHorizontalFacing());
-                                if (this.swing.getValue()) {
-                                    mc.player.swingArm(EnumHand.MAIN_HAND);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
 
-            if (this.mineRotationTask.isOnline()) {
-                if (mc.world.loadedTileEntityList.stream().noneMatch(tileEntity -> tileEntity instanceof TileEntityEnderChest)) {
-                    this.currentWorkingPos = null;
-                    Seppuku.INSTANCE.getRotationManager().finishTask(this.mineRotationTask);
-                }
-
-                mc.world.loadedTileEntityList.stream().filter(tileEntity -> tileEntity instanceof TileEntityEnderChest && mc.player.getDistance(tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ()) > this.range.getValue()).forEach(tileEntity -> {
-                    if (this.currentWorkingPos.getX() == tileEntity.getPos().getX() &&
-                            this.currentWorkingPos.getY() == tileEntity.getPos().getY() &&
-                            this.currentWorkingPos.getZ() == tileEntity.getPos().getZ()) {
-                        this.currentWorkingPos = null;
-                        Seppuku.INSTANCE.getRotationManager().finishTask(this.mineRotationTask);
-                    }
-                });
-            }
         }
     }
 
     @Listener
     public void onDestroyBlock(EventDestroyBlock event) {
         if (event.getPos() != null) {
-            if (event.getPos().getX() == this.currentWorkingPos.getX() &&
-                    event.getPos().getY() == this.currentWorkingPos.getY() &&
-                    event.getPos().getZ() == this.currentWorkingPos.getZ()) {
-                this.currentWorkingPos = null;
+            if (event.getPos().getX() == this.currentMiningPos.getX() &&
+                    event.getPos().getY() == this.currentMiningPos.getY() &&
+                    event.getPos().getZ() == this.currentMiningPos.getZ()) {
+                this.currentMiningPos = null;
                 Seppuku.INSTANCE.getRotationManager().finishTask(this.mineRotationTask);
             }
         }
