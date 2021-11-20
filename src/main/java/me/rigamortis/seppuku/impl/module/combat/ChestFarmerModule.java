@@ -105,8 +105,7 @@ public final class ChestFarmerModule extends Module {
             final BlockPos east = interpolatedPos.east();
             final BlockPos west = interpolatedPos.west();
 
-            final BlockPos[] possibleBlocks = new BlockPos[]{north.down(), south.down(), east.down(), west.down(),
-                    north, south, east, west};
+            final BlockPos[] possibleBlocks = new BlockPos[]{north, south, east, west};
 
             if (this.mineRotationTask.isOnline()) {
                 if (mc.world.loadedTileEntityList.stream().noneMatch(tileEntity -> tileEntity instanceof TileEntityEnderChest)) {
@@ -219,8 +218,11 @@ public final class ChestFarmerModule extends Module {
     }
 
     private boolean valid(BlockPos pos) {
+        if (mc.player == null)
+            return false;
+
         // there are no entities colliding with block placement
-        if (!mc.world.checkNoEntityCollision(new AxisAlignedBB(pos)))
+        if (!mc.world.checkNoEntityCollision(new AxisAlignedBB(pos), mc.player))
             return false;
 
         // player is too far from distance
