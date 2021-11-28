@@ -19,13 +19,15 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
+import java.util.Objects;
+
 /**
- * Author Seth
- * 4/24/2019 @ 3:04 PM.
+ * @author Seth
+ * @author noil
  */
 public final class AutoToolModule extends Module {
 
-    public final Value<Boolean> silent = new Value<Boolean>("Silent", new String[]{"Sil"}, "Hold any item and spoof your mining tool. (Best tool must be in inventory)", false);
+    public final Value<Boolean> silent = new Value<>("Silent", new String[]{"Sil"}, "Hold any item and spoof your mining tool. (Best tool must be in inventory)", false);
 
     private boolean send;
 
@@ -97,13 +99,13 @@ public final class AutoToolModule extends Module {
         }
 
         if (mc.player.isPotionActive(MobEffects.HASTE)) {
-            f *= 1.0F + (float) (mc.player.getActivePotionEffect(MobEffects.HASTE).getAmplifier() + 1) * 0.2F;
+            f *= 1.0F + (float) (Objects.requireNonNull(mc.player.getActivePotionEffect(MobEffects.HASTE)).getAmplifier() + 1) * 0.2F;
         }
 
         if (mc.player.isPotionActive(MobEffects.MINING_FATIGUE)) {
             float f1;
 
-            switch (mc.player.getActivePotionEffect(MobEffects.MINING_FATIGUE).getAmplifier()) {
+            switch (Objects.requireNonNull(mc.player.getActivePotionEffect(MobEffects.MINING_FATIGUE)).getAmplifier()) {
                 case 0:
                     f1 = 0.3F;
                     break;
@@ -199,7 +201,7 @@ public final class AutoToolModule extends Module {
 
         for (int i = 9; i < 36; i++) {
             final ItemStack stack = Minecraft.getMinecraft().player.inventoryContainer.getSlot(i).getStack();
-            if (stack != null && stack != ItemStack.EMPTY) {
+            if (stack != ItemStack.EMPTY) {
                 final float digSpeed = EnchantmentHelper.getEnchantmentLevel(Enchantments.EFFICIENCY, stack);
                 final float destroySpeed = stack.getDestroySpeed(Minecraft.getMinecraft().world.getBlockState(pos));
 
@@ -220,7 +222,7 @@ public final class AutoToolModule extends Module {
 
         for (int i = 0; i <= 9; i++) {
             final ItemStack stack = Minecraft.getMinecraft().player.inventory.getStackInSlot(i);
-            if (stack != null && stack != ItemStack.EMPTY) {
+            if (stack != ItemStack.EMPTY) {
                 final float digSpeed = EnchantmentHelper.getEnchantmentLevel(Enchantments.EFFICIENCY, stack);
                 final float destroySpeed = stack.getDestroySpeed(Minecraft.getMinecraft().world.getBlockState(pos));
 

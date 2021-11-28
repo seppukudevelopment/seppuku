@@ -1,5 +1,6 @@
 package me.rigamortis.seppuku.impl.config;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import me.rigamortis.seppuku.api.config.Configurable;
 import me.rigamortis.seppuku.api.module.Module;
@@ -7,9 +8,12 @@ import me.rigamortis.seppuku.api.util.FileUtil;
 import me.rigamortis.seppuku.api.value.Regex;
 import me.rigamortis.seppuku.api.value.Shader;
 import me.rigamortis.seppuku.api.value.Value;
+import net.minecraft.item.Item;
 
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author noil
@@ -73,6 +77,16 @@ public class ModuleConfig extends Configurable {
                         val.setValue(new Regex(entry.getValue().getAsString()));
                     } else if (val.getValue() instanceof Shader) {
                         val.setValue(new Shader(entry.getValue().getAsString()));
+                    } else if (val.getValue() instanceof List) {
+                        List<?> unknownList = (List<?>) val.getValue();
+                        if (unknownList.stream().allMatch(o -> o instanceof Item)) {
+                            List<Item> itemList = new ArrayList<>();
+                            JsonArray unknownArray = (JsonArray) entry.getValue();
+                            unknownArray.forEach(jsonElement -> {
+                                itemList.add(Item.getItemById(jsonElement.getAsInt()));
+                            });
+                            val.setValue(itemList);
+                        }
                     }
                 }
             }
@@ -109,6 +123,16 @@ public class ModuleConfig extends Configurable {
                     moduleJsonObject.addProperty(value.getName(), ((Regex) value.getValue()).getPatternString());
                 } else if (value.getValue() instanceof Shader) {
                     moduleJsonObject.addProperty(value.getName(), ((Shader) value.getValue()).getShaderID());
+                } else if (value.getValue() instanceof List) {
+                    List<?> unknownList = (List<?>) value.getValue();
+                    if (unknownList.stream().allMatch(o -> o instanceof Item)) {
+                        List<Item> itemList = (List<Item>) unknownList;
+                        JsonArray itemsJsonArray = new JsonArray();
+                        itemList.forEach(item -> {
+                            itemsJsonArray.add(Item.getIdFromItem(item));
+                        });
+                        moduleJsonObject.add(value.getName(), itemsJsonArray);
+                    }
                 }
             });
         }
