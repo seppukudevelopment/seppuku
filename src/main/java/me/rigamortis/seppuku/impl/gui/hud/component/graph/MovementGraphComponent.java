@@ -1,4 +1,4 @@
-package me.rigamortis.seppuku.impl.gui.hud.component;
+package me.rigamortis.seppuku.impl.gui.hud.component.graph;
 
 import me.rigamortis.seppuku.api.gui.hud.component.ResizableHudComponent;
 import me.rigamortis.seppuku.api.util.MathUtil;

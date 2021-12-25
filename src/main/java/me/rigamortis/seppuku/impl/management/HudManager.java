@@ -9,6 +9,9 @@ import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import me.rigamortis.seppuku.impl.gui.hud.anchor.AnchorPoint;
 import me.rigamortis.seppuku.impl.gui.hud.component.*;
+import me.rigamortis.seppuku.impl.gui.hud.component.graph.FpsGraphComponent;
+import me.rigamortis.seppuku.impl.gui.hud.component.graph.MovementGraphComponent;
+import me.rigamortis.seppuku.impl.gui.hud.component.graph.TpsGraphComponent;
 import me.rigamortis.seppuku.impl.gui.hud.component.module.ModuleListComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
@@ -106,6 +109,7 @@ public final class HudManager {
         add(new MovementGraphComponent());
         add(new ColorsComponent());
         add(new BattleInfoComponent());
+        add(new FpsGraphComponent());
 
         TrayComponent trayComponent = new TrayComponent();
         trayComponent.setAnchorPoint(BOTTOM_CENTER);
