@@ -84,6 +84,14 @@ public final class NoLagModule extends Module {
         this.itemsList.setValue(new ArrayList<>());
     }
 
+    @Override
+    public void onToggle() {
+        super.onToggle();
+
+        if (Minecraft.getMinecraft().world != null)
+            Minecraft.getMinecraft().renderGlobal.loadRenderers();
+    }
+
     @Listener
     public void onReceivePacket(EventReceivePacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
