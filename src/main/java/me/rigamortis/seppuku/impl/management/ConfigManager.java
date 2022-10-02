@@ -15,16 +15,13 @@ import java.util.List;
  */
 public final class ConfigManager {
 
+    public static final String CONFIG_PATH = "Seppuku/Config/";
     private File configDir;
     private File moduleConfigDir;
     private File hudComponentConfigDir;
-
     private boolean firstLaunch = false;
     private boolean customMainMenuHidden = false;
-
     private List<Configurable> configurableList = new ArrayList<>();
-
-    public static final String CONFIG_PATH = "Seppuku/Config/";
 
     public ConfigManager() {
         this.generateDirectories();

@@ -4,7 +4,7 @@ package team.stiff.pomelo.handler;
  * Designates the order within a listener of event distribution.  This
  * is not globally sorted as the current structure of stored event listeners is
  * too complex to properly sort without major code refactoring.
- *
+ * <p>
  * todo: hint hint...
  */
 public enum ListenerPriority {

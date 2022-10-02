@@ -17,9 +17,9 @@ import java.util.List;
  */
 public final class ChatManager {
 
-    private Timer timer = new Timer();
+    private final Timer timer = new Timer();
 
-    private List<String> chatBuffer = new ArrayList<>();
+    private final List<String> chatBuffer = new ArrayList<>();
 
     private World world;
 

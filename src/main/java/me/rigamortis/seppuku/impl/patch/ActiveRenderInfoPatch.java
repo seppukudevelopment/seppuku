@@ -21,6 +21,12 @@ public final class ActiveRenderInfoPatch extends ClassPatch {
         super("net.minecraft.client.renderer.ActiveRenderInfo", "bhv");
     }
 
+    public static void updateRenderInfoHook() {
+        //update our model view projection matrix used to converting 3D world coordinates
+        //to 2D screen coordinates
+        RenderUtil.updateModelViewProjectionMatrix();
+    }
+
     /**
      * This is where minecraft updates the ModelViewProjection matrix
      *
@@ -39,12 +45,6 @@ public final class ActiveRenderInfoPatch extends ClassPatch {
         insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "updateRenderInfoHook", "()V", false));
         //insert the list of instructions at the bottom of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    public static void updateRenderInfoHook() {
-        //update our model view projection matrix used to converting 3D world coordinates
-        //to 2D screen coordinates
-        RenderUtil.updateModelViewProjectionMatrix();
     }
 
 }

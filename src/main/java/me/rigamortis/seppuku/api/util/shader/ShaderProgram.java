@@ -28,14 +28,13 @@ public class ShaderProgram {
     public static final String DEPTH_UNIFORM = "depth";
     public static final String DEPTHDIMS_UNIFORM = "depthdims";
     public static final String ENTITYBRIGHTNESS_UNIFORM = "entitybrightness";
-
-    private static int depthTextureCounter = 0;
-    private static int programBeforeGrab = 0;
-    private static final LinkedList<ShaderProgram> programStack = new LinkedList();
     public static final File shadersFsDir;
     public static final String SHADER_FS_PATH = "Seppuku/Shaders/";
     public static final String SHADER_RES_PATH = "/assets/seppukumod/shaders/";
     public static final String SHADER_RES_PATH_FORMATTED = "resource://" + SHADER_RES_PATH;
+    private static final LinkedList<ShaderProgram> programStack = new LinkedList();
+    private static int depthTextureCounter = 0;
+    private static int programBeforeGrab = 0;
 
     static {
         // make shaders directory if needed
@@ -45,21 +44,21 @@ public class ShaderProgram {
         }
     }
 
-    private final Map<String, Integer> files = new HashMap<String, Integer>();
-    private boolean boundDepth = false;
-    private boolean triedCompiling = false;
-    private boolean valid = false;
-    private int program = 0;
-    private String name;
     // user uniforms. these are configurable by the user and are set when the
     // program is used
     public final Map<String, Value> userUniforms = new HashMap<String, Value>();
+    private final Map<String, Integer> files = new HashMap<String, Integer>();
     // cache uniform locations to minimise number of glGetUniformLocation calls
     private final Map<String, Integer> locations = new HashMap<String, Integer>();
     // if you are nesting shaders and you want to update the uniform of a shader
     // not currently in use, it will be queued in one of these depending on the
     // type of uniform
     private final Map<Integer, UniformUtil.UValue> uniformQueue = new HashMap();
+    private boolean boundDepth = false;
+    private boolean triedCompiling = false;
+    private boolean valid = false;
+    private int program = 0;
+    private String name;
 
     public ShaderProgram(String name) {
         this.name = name;
@@ -214,7 +213,7 @@ public class ShaderProgram {
                                 throw jsonTypeException("uniform default value type mismatched;", "a number or missing", uDefault);
                             }
 
-                            if (((String) uType).equals("int")) {
+                            if (uType.equals("int")) {
                                 // check that numbers are whole
                                 // XXX org.json.simple stores whole numbers as Long (at least it seemed so in testing, if not, my bad -rafern)
                                 if (!(uMin instanceof Long)) {
@@ -474,7 +473,7 @@ public class ShaderProgram {
             }
 
             this.unbindDepthTexture();
-            this.programStack.remove(stackIndex);
+            programStack.remove(stackIndex);
 
             if (programStack.isEmpty()) {
                 OpenGlHelper.glUseProgram(programBeforeGrab);
@@ -505,14 +504,14 @@ public class ShaderProgram {
             locations.put(name, new Integer(fetched));
             return fetched;
         } else {
-            return (int) cached;
+            return cached;
         }
     }
 
     public void flushUniformQueue() {
         if (this.make()) {
             for (Map.Entry<Integer, UniformUtil.UValue> entry : this.uniformQueue.entrySet()) {
-                entry.getValue().set((int) entry.getKey());
+                entry.getValue().set(entry.getKey());
             }
         }
 
@@ -743,9 +742,9 @@ public class ShaderProgram {
         // only get depth sample if needed by shader since this is expensive
         if (depthUniform != -1 && !this.boundDepth) {
             this.boundDepth = true;
-            this.depthTextureCounter++;
+            depthTextureCounter++;
 
-            if (this.depthTextureCounter == 1) {
+            if (depthTextureCounter == 1) {
                 GlStateManager.setActiveTexture(GL_TEXTURE3); // nothing special about texture 3, it's just never used (at least in vanilla)
                 GlStateManager.enableTexture2D();
                 FramebufferUtil.bindDepthTexture();
@@ -754,7 +753,7 @@ public class ShaderProgram {
             this.setUniform(depthUniform, 3);
             this.setUniform(DEPTHDIMS_UNIFORM, (float) FramebufferUtil.getWidth(), (float) FramebufferUtil.getHeight());
 
-            if (this.depthTextureCounter == 1) {
+            if (depthTextureCounter == 1) {
                 GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
             }
         }
@@ -767,11 +766,11 @@ public class ShaderProgram {
     private void unbindDepthTexture() {
         if (this.boundDepth) {
             this.boundDepth = false;
-            this.depthTextureCounter--;
+            depthTextureCounter--;
 
-            if (this.depthTextureCounter < 0) {
+            if (depthTextureCounter < 0) {
                 throw new RuntimeException("Too many depth texture unbinds; there's a bug somewhere, report this");
-            } else if (this.depthTextureCounter == 0) {
+            } else if (depthTextureCounter == 0) {
                 GlStateManager.setActiveTexture(GL_TEXTURE3);
                 GlStateManager.bindTexture(0);
                 GlStateManager.disableTexture2D();

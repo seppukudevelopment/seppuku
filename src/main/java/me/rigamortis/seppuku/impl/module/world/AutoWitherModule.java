@@ -16,7 +16,6 @@ import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.module.player.FreeCamModule;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSoulSand;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -41,8 +40,6 @@ import java.util.List;
  */
 public final class AutoWitherModule extends Module {
 
-    private final Minecraft mc = Minecraft.getMinecraft();
-
     public final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"rotation", "r", "rotate"}, "Rotate to place blocks", true);
     public final Value<Boolean> disable = new Value<Boolean>("Disable", new String[]{"dis", "autodisable", "autodis", "d"}, "Automatically disable after wither is placed", false);
     public final Value<Boolean> sneak = new Value<Boolean>("PlaceOnSneak", new String[]{"sneak", "s", "pos", "sneakPlace"}, "When true, AutoWither will only place while the player is sneaking", false);
@@ -50,7 +47,7 @@ public final class AutoWitherModule extends Module {
     public final Value<Float> range = new Value<Float>("Range", new String[]{"MaxRange", "MaximumRange"}, "The maximum block reaching range to continue building in", 6.0f, 1.0f, 10.0f, 0.5f);
     public final Value<Float> placeDelay = new Value<Float>("Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay(ms) between blocks being placed", 100.0f, 0.0f, 500.0f, 1.0f);
     public final Value<Float> waitDelay = new Value<Float>("WaitDelay", new String[]{"RightClickDelay", "wd"}, "The delay(ms) between withers being created on right click", 750.0f, 0.0f, 1000.0f, 1.0f);
-
+    private final Minecraft mc = Minecraft.getMinecraft();
     private final Timer placeTimer = new Timer();
     private final Timer waitTimer = new Timer();
     private final RotationTask rotationTask = new RotationTask("AutoWitherTask", 2);

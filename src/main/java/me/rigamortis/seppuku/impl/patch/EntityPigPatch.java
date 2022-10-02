@@ -22,6 +22,28 @@ public final class EntityPigPatch extends ClassPatch {
         super("net.minecraft.entity.passive.EntityPig", "aad");
     }
 
+    public static boolean travelHook() {
+        final EventPigTravel event = new EventPigTravel();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
+     * Our canBeSteered hook
+     * Used to allow us to steer and control pigs
+     * without a "carrot on a stick"
+     *
+     * @return
+     */
+    public static boolean canBeSteeredHook() {
+        //dispatch our event
+        final EventSteerEntity event = new EventSteerEntity();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
     /**
      * This is where minecraft checks if you can steer pigs
      *
@@ -73,28 +95,6 @@ public final class EntityPigPatch extends ClassPatch {
             //insert the list of instructions at the top of the function
             methodNode.instructions.insert(target, insnList);
         }
-    }
-
-    public static boolean travelHook() {
-        final EventPigTravel event = new EventPigTravel();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
-    }
-
-    /**
-     * Our canBeSteered hook
-     * Used to allow us to steer and control pigs
-     * without a "carrot on a stick"
-     *
-     * @return
-     */
-    public static boolean canBeSteeredHook() {
-        //dispatch our event
-        final EventSteerEntity event = new EventSteerEntity();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 
 }

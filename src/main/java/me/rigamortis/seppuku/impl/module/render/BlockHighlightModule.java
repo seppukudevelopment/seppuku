@@ -30,10 +30,6 @@ public final class BlockHighlightModule extends Module {
     public final Value<Float> width = new Value<Float>("Width", new String[]{"W", "size", "s"}, "Width value of the highlight visual", 1.5f, 0.1f, 5.0f, 0.1f);
     public final Value<Boolean> breaking = new Value<Boolean>("Breaking", new String[]{"Break", "block", "brk"}, "Sizes the highlight visual based on the block breaking damage", false);
 
-    public enum Mode {
-        BOX, OUTLINE, CROSS
-    }
-
     public BlockHighlightModule() {
         super("BlockHighlight", new String[]{"BHighlight", "BlockHigh"}, "Highlights the block at your cross-hair", "NONE", -1, ModuleType.RENDER);
     }
@@ -87,5 +83,9 @@ public final class BlockHighlightModule extends Module {
             }
             RenderUtil.end3D();
         }
+    }
+
+    public enum Mode {
+        BOX, OUTLINE, CROSS
     }
 }

@@ -19,10 +19,8 @@ public class TrayComponent extends DraggableHudComponent {
 
     private static final int TEXTURE_WIDTH = 16;
     private static final int TEXTURE_HEIGHT = 16;
-
-    private ToolTipComponent currentToolTip;
-
     private final List<TrayButtonComponent> buttons = new ArrayList<>();
+    private ToolTipComponent currentToolTip;
 
     public TrayComponent() {
         super("Tray");
@@ -96,9 +94,9 @@ public class TrayComponent extends DraggableHudComponent {
 
     public static class TrayButtonComponent extends HudComponent {
 
-        private boolean pressed;
         private final Texture textureOff;
         private final Texture textureOn;
+        private boolean pressed;
 
         public TrayButtonComponent(String name) {
             super(name);

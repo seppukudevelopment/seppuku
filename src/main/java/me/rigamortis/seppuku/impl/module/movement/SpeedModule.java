@@ -19,17 +19,10 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class SpeedModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The speed mode to use", Mode.VANILLA);
-
-    private enum Mode {
-        VANILLA, BHOP
-    }
-
     public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd", "Amount", "A", "S"}, "Speed multiplier, higher numbers equal faster motion", 0.1f, 0.0f, 10.0f, 0.1f);
-
     private int tick;
     private double prevDistance;
     private double movementSpeed;
-
     public SpeedModule() {
         super("Speed", new String[]{"Spd"}, "Allows you to move faster", "NONE", -1, ModuleType.MOVEMENT);
     }
@@ -139,5 +132,9 @@ public final class SpeedModule extends Module {
                 }
             }
         }
+    }
+
+    private enum Mode {
+        VANILLA, BHOP
     }
 }

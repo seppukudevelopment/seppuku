@@ -17,15 +17,14 @@ import java.text.DecimalFormat;
  */
 public final class SliderComponent extends HudComponent {
 
-    private Value value;
-    private ComponentListener mouseClickListener;
-    private final SliderBarComponent sliderBar;
-    private TextComponent textComponent;
-
     protected final DecimalFormat decimalFormat = new DecimalFormat("#.#");
+    private final SliderBarComponent sliderBar;
     protected boolean sliding;
     protected float lastPositionX = -1;
     protected float lastWidth = -1;
+    private final Value value;
+    private ComponentListener mouseClickListener;
+    private TextComponent textComponent;
 
     public SliderComponent(String name, Value value) {
         super(name);
@@ -362,7 +361,7 @@ public final class SliderComponent extends HudComponent {
             if (this.parent.value.getValue() instanceof Integer) {
                 return (int) MathUtil.map(this.getX(), this.parent.getX(), this.parent.getX() + this.parent.getW() - this.getW(), (int) this.parent.value.getMin(), (int) this.parent.value.getMax()) + "";
             } else if (this.parent.value.getValue() instanceof Double) {
-                return this.parent.decimalFormat.format((double) MathUtil.map(this.getX(), this.parent.getX(), this.parent.getX() + this.parent.getW() - this.getW(), (double) this.parent.value.getMin(), (double) this.parent.value.getMax()));
+                return this.parent.decimalFormat.format(MathUtil.map(this.getX(), this.parent.getX(), this.parent.getX() + this.parent.getW() - this.getW(), (double) this.parent.value.getMin(), (double) this.parent.value.getMax()));
             } else if (this.parent.value.getValue() instanceof Float) {
                 return this.parent.decimalFormat.format((float) MathUtil.map(this.getX(), this.parent.getX(), this.parent.getX() + this.parent.getW() - this.getW(), (float) this.parent.value.getMin(), (float) this.parent.value.getMax()));
             } else if (this.parent.value.getValue() instanceof Long) {
@@ -379,7 +378,7 @@ public final class SliderComponent extends HudComponent {
                 final int finishedInt = (int) MathUtil.map(this.getX(), this.parent.getX(), this.parent.getX() + this.parent.getW() - this.getW(), (int) this.parent.value.getMin(), (int) this.parent.value.getMax());
                 this.parent.value.setValue(finishedInt);
             } else if (this.parent.value.getValue() instanceof Double) {
-                final double finishedDouble = (double) MathUtil.map(this.getX(), this.parent.getX(), this.parent.getX() + this.parent.getW() - this.getW(), (double) this.parent.value.getMin(), (double) this.parent.value.getMax());
+                final double finishedDouble = MathUtil.map(this.getX(), this.parent.getX(), this.parent.getX() + this.parent.getW() - this.getW(), (double) this.parent.value.getMin(), (double) this.parent.value.getMax());
                 this.parent.value.setValue(Double.valueOf(this.parent.decimalFormat.format(finishedDouble)));
             } else if (this.parent.value.getValue() instanceof Float) {
                 final float finishedFloat = (float) MathUtil.map(this.getX(), this.parent.getX(), this.parent.getX() + this.parent.getW() - this.getW(), (float) this.parent.value.getMin(), (float) this.parent.value.getMax());

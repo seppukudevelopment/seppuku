@@ -48,7 +48,7 @@ public final class BridgeModule extends Module {
     }
 
     private Vec3i getNextBlock(Vec3i direction, final Minecraft mc) {
-        for (int i = 0; i <= (int) reach.getValue(); i++) {
+        for (int i = 0; i <= reach.getValue(); i++) {
             Vec3i position = new Vec3i(mc.player.posX + direction.getX() * i, mc.player.posY - 1, mc.player.posZ + direction.getZ() * i);
             Vec3i before = new Vec3i(mc.player.posX + direction.getX() * (i - 1), mc.player.posY - 1, mc.player.posZ + direction.getZ() * (i - 1));
             if ((mc.world.getBlockState(new BlockPos(position.getX(), position.getY(), position.getZ())).getMaterial() == Material.AIR) && (mc.world.getBlockState(new BlockPos(before.getX(), before.getY(), before.getZ())).getMaterial() != Material.AIR)) {

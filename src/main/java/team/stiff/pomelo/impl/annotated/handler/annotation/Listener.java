@@ -26,7 +26,7 @@ public @interface Listener {
      *
      * @return array of filters
      */
-    Class<? extends EventFilter>[] filters() default { };
+    Class<? extends EventFilter>[] filters() default {};
 
     /**
      * The priority of the event listener in the container.

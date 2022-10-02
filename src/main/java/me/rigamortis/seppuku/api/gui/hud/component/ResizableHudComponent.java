@@ -11,16 +11,14 @@ import net.minecraft.client.Minecraft;
  */
 public class ResizableHudComponent extends DraggableHudComponent {
 
+    protected final float CLICK_ZONE = 2;
     private boolean resizeDragging;
     private float resizeDeltaX;
     private float resizeDeltaY;
-
     private float initialWidth;
     private float initialHeight;
     private float maxWidth;
     private float maxHeight;
-
-    protected final float CLICK_ZONE = 2;
 
     public ResizableHudComponent(String name, float initialWidth, float initialHeight, float maxWidth, float maxHeight) {
         super(name);
@@ -58,7 +56,7 @@ public class ResizableHudComponent extends DraggableHudComponent {
         }
 
         if (Minecraft.getMinecraft().currentScreen instanceof GuiHudEditor) {
-            RenderUtil.drawRect(this.getX() + this.getW() - CLICK_ZONE, this.getY() + this.getH() - CLICK_ZONE, this.getX() + this.getW() + CLICK_ZONE, this.getY() + this.getH() + CLICK_ZONE, this.isMouseInside(mouseX, mouseY) ? 0x90CCCCCC : 0x90CCCCCC);
+            RenderUtil.drawRect(this.getX() + this.getW() - CLICK_ZONE, this.getY() + this.getH() - CLICK_ZONE, this.getX() + this.getW() + CLICK_ZONE, this.getY() + this.getH() + CLICK_ZONE, 0x90CCCCCC);
         }
 
         final boolean insideClickZone = mouseX >= this.getX() + this.getW() - CLICK_ZONE && mouseX <= this.getX() + this.getW() + CLICK_ZONE && mouseY >= this.getY() + this.getH() - CLICK_ZONE && mouseY <= this.getY() + this.getH() + CLICK_ZONE;

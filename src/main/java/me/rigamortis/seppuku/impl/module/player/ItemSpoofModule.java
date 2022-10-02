@@ -20,15 +20,14 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class ItemSpoofModule extends Module {
 
-    private boolean send;
-    private Entity entity;
-
     public BlockPos position;
     public EnumFacing placedBlockDirection;
     public EnumHand hand;
     public float facingX;
     public float facingY;
     public float facingZ;
+    private boolean send;
+    private Entity entity;
 
     public ItemSpoofModule() {
         super("ItemSpoof", new String[]{"ItemS"}, "Allows you to display a different item server-side (Use the top left slot in your inventory)", "NONE", -1, ModuleType.PLAYER);

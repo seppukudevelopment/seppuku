@@ -23,6 +23,12 @@ public final class ChunkPatch extends ClassPatch {
         super("net.minecraft.world.chunk.Chunk", "axw");
     }
 
+    public static boolean onEntityAddedHook(Entity entity) {
+        final EventAddEntity eventAddEntity = new EventAddEntity(entity);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(eventAddEntity);
+        return eventAddEntity.isCanceled();
+    }
+
     @MethodPatch(
             mcpName = "onUnload",
             notchName = "d",
@@ -63,12 +69,6 @@ public final class ChunkPatch extends ClassPatch {
         insnList.add(new InsnNode(RETURN));
         insnList.add(jmp);
         methodNode.instructions.insert(insnList);
-    }
-
-    public static boolean onEntityAddedHook(Entity entity) {
-        final EventAddEntity eventAddEntity = new EventAddEntity(entity);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(eventAddEntity);
-        return eventAddEntity.isCanceled();
     }
 
     /**

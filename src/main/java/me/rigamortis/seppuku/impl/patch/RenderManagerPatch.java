@@ -24,6 +24,28 @@ public final class RenderManagerPatch extends ClassPatch {
     }
 
     /**
+     * Our renderEntity hook
+     * Used to disable rendering of certain entities or modify the
+     * way they render
+     *
+     * @param entity
+     * @param x
+     * @param y
+     * @param z
+     * @param yaw
+     * @param partialTicks
+     * @param stage
+     * @return
+     */
+    public static boolean renderEntityHook(Entity entity, double x, double y, double z, float yaw, float partialTicks, EventStageable.EventStage stage) {
+        //dispatch our event and pass the render information into it along with the event stage
+        final EventRenderEntity event = new EventRenderEntity(stage, entity, x, y, z, yaw, partialTicks);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
      * This is where minecraft handles rendering of entities
      *
      * @param methodNode
@@ -84,28 +106,6 @@ public final class RenderManagerPatch extends ClassPatch {
         postInsn.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "renderEntityHook", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/entity/Entity;DDDFFLme/rigamortis/seppuku/api/event/EventStageable$EventStage;)Z" : "(Lvg;DDDFFLme/rigamortis/seppuku/api/event/EventStageable$EventStage;)Z", false));
         //insert the list of instructions at the bottom of the function
         methodNode.instructions.insertBefore(ASMUtil.bottom(methodNode), postInsn);
-    }
-
-    /**
-     * Our renderEntity hook
-     * Used to disable rendering of certain entities or modify the
-     * way they render
-     *
-     * @param entity
-     * @param x
-     * @param y
-     * @param z
-     * @param yaw
-     * @param partialTicks
-     * @param stage
-     * @return
-     */
-    public static boolean renderEntityHook(Entity entity, double x, double y, double z, float yaw, float partialTicks, EventStageable.EventStage stage) {
-        //dispatch our event and pass the render information into it along with the event stage
-        final EventRenderEntity event = new EventRenderEntity(stage, entity, x, y, z, yaw, partialTicks);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 
 }

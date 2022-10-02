@@ -28,11 +28,9 @@ import java.util.Objects;
 public final class AutoToolModule extends Module {
 
     public final Value<Boolean> silent = new Value<>("Silent", new String[]{"Sil"}, "Hold any item and spoof your mining tool. (Best tool must be in inventory)", false);
-
-    private boolean send;
-
     public BlockPos position;
     public EnumFacing facing;
+    private boolean send;
 
     public AutoToolModule() {
         super("AutoTool", new String[]{"Tool"}, "Automatically switches to the best tool", "NONE", -1, ModuleType.WORLD);

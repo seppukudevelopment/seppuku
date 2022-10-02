@@ -32,17 +32,11 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class ElytraFlyModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Mode to use for elytra flight", Mode.LOOK);
-
-    private enum Mode {
-        VANILLA, PACKET, CONTROL, LOOK
-    }
-
     public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd", "amount", "s"}, "Speed multiplier for elytra flight, higher values equals more speed", 1.0f, 0.0f, 5.0f, 0.1f);
     public final Value<Float> speedX = new Value<Float>("SpeedX", new String[]{"SpdX", "amountX", "sX"}, "The X speed factor (speed * this)", 1.0f, 0.1f, 5.0f, 0.1f);
     public final Value<Float> speedYUp = new Value<Float>("SpeedYUp", new String[]{"SpdYUp", "amountYUp", "sYU"}, "The upwards Y speed factor (speed * this)", 1.0f, 0.1f, 5.0f, 0.1f);
     public final Value<Float> speedYDown = new Value<Float>("SpeedYDown", new String[]{"SpdYDown", "amountYDown", "sYD"}, "The downwards Y speed factor (speed * this)", 1.0f, 0.1f, 5.0f, 0.1f);
     public final Value<Float> speedZ = new Value<Float>("SpeedZ", new String[]{"SpdZ", "amountZ", "sZ"}, "The Z speed factor (speed * this)", 1.0f, 0.1f, 5.0f, 0.1f);
-
     public final Value<Boolean> autoStart = new Value<Boolean>("AutoStart", new String[]{"AutoStart", "Auto-Start", "start", "autojump", "as"}, "Hold down the jump key to have an easy automated lift off", true);
     public final Value<Float> autoStartDelay = new Value<Float>("StartDelay", new String[]{"AutoStartDelay", "startdelay", "asd"}, "Delay(ms) between auto-start attempts", 100.0f, 0.0f, 300.0f, 10.0f);
     public final Value<Float> autoStartJumpDelay = new Value<Float>("JumpDelay", new String[]{"AutoStartJumpDelay", "jumpdelay", "autojumpdelay", "ajd"}, "Delay(ms) after holding jump key auto-start begins", 500.0f, 0.0f, 1000.0f, 100.0f);
@@ -55,12 +49,10 @@ public final class ElytraFlyModule extends Module {
     public final Value<Boolean> disableNoHunger = new Value<Boolean>("DisableNoHunger", new String[]{"NoHunger", "Hunger", "DNH"}, "Automatically disables the 'NoHunger' module", true);
     public final Value<Boolean> infiniteDurability = new Value<Boolean>("InfiniteDurability", new String[]{"InfiniteDura", "dura", "inf", "infdura"}, "Enables an old exploit that sends the start elytra-flying packet each tick (will kick you)", false);
     public final Value<Boolean> noKick = new Value<Boolean>("NoKick", new String[]{"AntiKick", "Kick", "nk"}, "Bypass the server kicking you for flying while in elytra flight (Only works for Packet mode!!)", false);
-
     private final Timer startDelayTimer = new Timer();
     private final Timer equipDelayTimer = new Timer();
     private final Timer stayAirborneTimer = new Timer();
     private final Timer jumpTimer = new Timer();
-
     public ElytraFlyModule() {
         super("ElytraFly", new String[]{"Elytra", "ElytraPlus", "Elytra+"}, "Allows you to fly with elytras", "NONE", -1, ModuleType.MOVEMENT);
     }
@@ -365,5 +357,9 @@ public final class ElytraFlyModule extends Module {
         }
 
         return elytras;
+    }
+
+    private enum Mode {
+        VANILLA, PACKET, CONTROL, LOOK
     }
 }

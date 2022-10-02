@@ -19,6 +19,6 @@ public class ArrayListModule extends Module {
     }
 
     public enum Mode {
-        LENGTH, ALPHABET, UNSORTED;
+        LENGTH, ALPHABET, UNSORTED
     }
 }

@@ -22,6 +22,35 @@ public final class AbstractHorsePatch extends ClassPatch {
     }
 
     /**
+     * Our canBeSteered hook
+     * Used to allow us to steer and control horses without a saddle
+     *
+     * @return
+     */
+    public static boolean canBeSteeredHook() {
+        //dispatch our event
+        final EventSteerEntity event = new EventSteerEntity();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
+     * Our isHorseSaddled hook
+     * Allows us to control and ride horses without actually
+     * having a saddle
+     *
+     * @return
+     */
+    public static boolean isHorseSaddledHook() {
+        //dispatch our event
+        final EventHorseSaddled event = new EventHorseSaddled();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
      * This is where minecraft checks if you can steer horses
      *
      * @param methodNode
@@ -51,20 +80,6 @@ public final class AbstractHorsePatch extends ClassPatch {
     }
 
     /**
-     * Our canBeSteered hook
-     * Used to allow us to steer and control horses without a saddle
-     *
-     * @return
-     */
-    public static boolean canBeSteeredHook() {
-        //dispatch our event
-        final EventSteerEntity event = new EventSteerEntity();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
-    }
-
-    /**
      * This is where minecraft handles steering horses if they have a saddle on
      *
      * @param methodNode
@@ -91,21 +106,6 @@ public final class AbstractHorsePatch extends ClassPatch {
         insnList.add(jmp);
         //insert the list of instructions at the top of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    /**
-     * Our isHorseSaddled hook
-     * Allows us to control and ride horses without actually
-     * having a saddle
-     *
-     * @return
-     */
-    public static boolean isHorseSaddledHook() {
-        //dispatch our event
-        final EventHorseSaddled event = new EventHorseSaddled();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 
 }

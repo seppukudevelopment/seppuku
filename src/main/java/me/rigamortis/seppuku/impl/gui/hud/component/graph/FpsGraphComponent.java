@@ -8,7 +8,6 @@ import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.gui.hud.GuiHudEditor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.util.math.MathHelper;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -184,9 +183,9 @@ public final class FpsGraphComponent extends ResizableHudComponent {
             this.speed = speed;
             this.color = new Color(255, 255, 255);
         }
-        
+
         public FpsNode() {
-            
+
         }
     }
 }

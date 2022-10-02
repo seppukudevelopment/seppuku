@@ -20,12 +20,11 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class ReconnectModule extends Module {
 
+    public final Value<Float> delay = new Value<Float>("Delay", new String[]{"Del"}, "Delay in MS (milliseconds) between reconnect attempts", 3000.0f, 0.0f, 10000.0f, 500.0f);
     private String lastIp;
     private int lastPort;
     private boolean reconnect;
-    private Timer timer = new Timer();
-
-    public final Value<Float> delay = new Value<Float>("Delay", new String[]{"Del"}, "Delay in MS (milliseconds) between reconnect attempts", 3000.0f, 0.0f, 10000.0f, 500.0f);
+    private final Timer timer = new Timer();
 
     public ReconnectModule() {
         super("Reconnect", new String[]{"Rejoin", "Recon", "AutoReconnect"}, "Automatically reconnects to the last server after being kicked", "NONE", -1, ModuleType.MISC);

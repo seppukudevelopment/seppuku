@@ -19,6 +19,13 @@ public final class GuiBossOverlayPatch extends ClassPatch {
         super("net.minecraft.client.gui.GuiBossOverlay", "biz");
     }
 
+    public static boolean renderBossHealthHook() {
+        final EventRenderBossHealth event = new EventRenderBossHealth();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
     @MethodPatch(
             mcpName = "renderBossHealth",
             notchName = "a",
@@ -39,12 +46,5 @@ public final class GuiBossOverlayPatch extends ClassPatch {
         insnList.add(jmp);
         //insert the list of instructs at the top of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    public static boolean renderBossHealthHook() {
-        final EventRenderBossHealth event = new EventRenderBossHealth();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 }

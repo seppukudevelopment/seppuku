@@ -1,6 +1,5 @@
 package me.rigamortis.seppuku.impl.module.render;
 
-import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.EventStageable;
 import me.rigamortis.seppuku.api.event.gui.hud.EventUIValueChanged;
 import me.rigamortis.seppuku.api.event.gui.hud.modulelist.EventUIListValueChanged;

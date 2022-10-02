@@ -22,8 +22,8 @@ import java.util.regex.Pattern;
  */
 public final class IgnoreModule extends Module {
 
-    private final String REGEX_NAME = "<(\\S+)\\s*(\\S+?)?>\\s(.*)";
     public final Value<Boolean> allowFriends = new Value<Boolean>("AllowFriends", new String[]{"AllowF", "Friends", "AF", "F"}, "If enabled, any friend's message will not be auto-ignored", true);
+    private final String REGEX_NAME = "<(\\S+)\\s*(\\S+?)?>\\s(.*)";
 
     public IgnoreModule() {
         super("Ignore", new String[]{"Ignor"}, "Allows you to ignore people client-side", "NONE", -1, ModuleType.HIDDEN);

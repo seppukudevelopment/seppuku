@@ -18,8 +18,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public final class BlinkModule extends Module {
 
-    private EntityOtherPlayerMP entity;
     private final Queue<Packet> packets = new ConcurrentLinkedQueue();
+    private EntityOtherPlayerMP entity;
 
     public BlinkModule() {
         super("Blink", new String[]{"FakeLag"}, "Holds packets until disabled", "NONE", -1, ModuleType.PLAYER);

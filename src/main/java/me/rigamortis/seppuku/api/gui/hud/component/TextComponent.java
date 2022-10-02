@@ -19,21 +19,6 @@ import java.util.logging.Level;
  */
 public class TextComponent extends HudComponent {
 
-    private String displayValue;
-    public boolean focused;
-    public boolean digitOnly;
-    public ComponentListener returnListener;
-    public TextComponentListener textListener;
-
-    protected Texture checkTexture;
-
-    private int textCursor = 0;
-    private int textCursorOffset = 0;
-    private int selectCursor = 0;
-    private int selectCursorOffset = 0;
-    private int shiftLength = 0;
-    private boolean dirty = false;
-
     // space occupied from left to right: border, text, spacing, check, border
     protected static final int BORDER = 1;
     protected static final int SPACING = 1;
@@ -41,6 +26,18 @@ public class TextComponent extends HudComponent {
     protected static final int CHECK_WIDTH = 8;
     protected static final int BLOCK_WIDTH = 2;
     protected static final float ICON_V_OFFSET = 0.5f;
+    public boolean focused;
+    public boolean digitOnly;
+    public ComponentListener returnListener;
+    public TextComponentListener textListener;
+    protected Texture checkTexture;
+    private String displayValue;
+    private int textCursor = 0;
+    private int textCursorOffset = 0;
+    private int selectCursor = 0;
+    private int selectCursorOffset = 0;
+    private int shiftLength = 0;
+    private boolean dirty = false;
 
     public TextComponent(String name, String displayValue, boolean digitOnly) {
         super(name);

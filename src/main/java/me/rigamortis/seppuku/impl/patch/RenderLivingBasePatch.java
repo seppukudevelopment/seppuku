@@ -28,6 +28,47 @@ public final class RenderLivingBasePatch extends ClassPatch {
     }
 
     /**
+     * This is our renderName hook
+     * Used to disable rendering minecrafts default
+     * name tags on certain entities
+     *
+     * @param entity
+     * @return
+     */
+    public static boolean renderNameHook(EntityLivingBase entity) {
+        //dispatch our event and pass the entity in
+        final EventRenderName event = new EventRenderName(entity);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
+     * This is our setBrightness hook. Used to set custom shader uniforms
+     *
+     * @param buf
+     * @return
+     */
+    public static void setBrightnessHook(Buffer buf) {
+        FloatBuffer brightness = (FloatBuffer) buf;
+        for (Iterator<ShaderProgram> it = ShaderProgram.getProgramsInUse(); it.hasNext(); ) {
+            it.next().setEntityBrightnessUniform(brightness.get(), brightness.get(), brightness.get(), brightness.get());
+            brightness.position(0);
+        }
+    }
+
+    /**
+     * This is our unsetBrightness hook. Used to set custom shader uniforms
+     *
+     * @return
+     */
+    public static void unsetBrightnessHook() {
+        for (Iterator<ShaderProgram> it = ShaderProgram.getProgramsInUse(); it.hasNext(); ) {
+            it.next().setEntityBrightnessUniform(0.0f, 0.0f, 0.0f, 0.0f);
+        }
+    }
+
+    /**
      * This is where minecraft renders name plates
      *
      * @param methodNode
@@ -55,22 +96,6 @@ public final class RenderLivingBasePatch extends ClassPatch {
         insnList.add(jmp);
         //insert the list of instructions at the top of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    /**
-     * This is our renderName hook
-     * Used to disable rendering minecrafts default
-     * name tags on certain entities
-     *
-     * @param entity
-     * @return
-     */
-    public static boolean renderNameHook(EntityLivingBase entity) {
-        //dispatch our event and pass the entity in
-        final EventRenderName event = new EventRenderName(entity);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 
     /**
@@ -102,20 +127,6 @@ public final class RenderLivingBasePatch extends ClassPatch {
     }
 
     /**
-     * This is our setBrightness hook. Used to set custom shader uniforms
-     *
-     * @param buf
-     * @return
-     */
-    public static void setBrightnessHook(Buffer buf) {
-        FloatBuffer brightness = (FloatBuffer) buf;
-        for (Iterator<ShaderProgram> it = ShaderProgram.getProgramsInUse(); it.hasNext(); ) {
-            it.next().setEntityBrightnessUniform(brightness.get(), brightness.get(), brightness.get(), brightness.get());
-            brightness.position(0);
-        }
-    }
-
-    /**
      * Used to keep track of entity brightness colors (like the flash on primed
      * TNT/creepers and the red color from hurting mobs). This one clears the
      * brightness color
@@ -131,17 +142,6 @@ public final class RenderLivingBasePatch extends ClassPatch {
     public void unsetBrightness(MethodNode methodNode, PatchManager.Environment env) {
         //insert instruction to call our hook function
         methodNode.instructions.insert(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "unsetBrightnessHook", "()V", false));
-    }
-
-    /**
-     * This is our unsetBrightness hook. Used to set custom shader uniforms
-     *
-     * @return
-     */
-    public static void unsetBrightnessHook() {
-        for (Iterator<ShaderProgram> it = ShaderProgram.getProgramsInUse(); it.hasNext(); ) {
-            it.next().setEntityBrightnessUniform(0.0f, 0.0f, 0.0f, 0.0f);
-        }
     }
 
 //    /**

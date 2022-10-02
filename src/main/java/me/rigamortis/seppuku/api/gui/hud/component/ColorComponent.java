@@ -9,16 +9,13 @@ import java.awt.*;
 
 public class ColorComponent extends TextComponent {
 
-    private Color currentColor;
-
     // space occupied from left to right: border, color box, spacing, text, spacing, check, spacing, gear, border
     private static final int COLOR_SIZE = 7;
     private static final int GEAR_WIDTH = 8;
-
-    private String customDisplayValue;
-
     private final Texture gearTexture;
     private final Texture gearTextureEnabled;
+    private Color currentColor;
+    private String customDisplayValue;
 
     public ColorComponent(String name, int defaultColor) {
         super(name, String.valueOf(defaultColor), false);

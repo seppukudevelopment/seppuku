@@ -10,13 +10,11 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Particle {
 
+    private final int maxAlpha;
     private Vector2f pos;
     private Vector2f velocity;
     private Vector2f acceleration;
-
     private int alpha;
-    private final int maxAlpha;
-
     private float size;
 
     public Particle(Vector2f pos) {

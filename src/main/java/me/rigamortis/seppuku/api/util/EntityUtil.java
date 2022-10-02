@@ -13,7 +13,7 @@ import net.minecraft.util.math.Vec3d;
  */
 public class EntityUtil {
 
-    private static Minecraft mc = Minecraft.getMinecraft();
+    private static final Minecraft mc = Minecraft.getMinecraft();
 
     public static Vec3d getInterpolatedPosition(Entity entity, double x, double y, double z) {
         return new Vec3d(entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * x, entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * y, entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * z);

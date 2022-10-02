@@ -23,32 +23,20 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
  */
 public class Camera {
 
-    private Vec3d pos;
-
-    private Vec3d prevPos;
-
-    private float yaw;
-
-    private float pitch;
-
-    private boolean recording;
-
-    private boolean valid;
-
-    private boolean rendering;
-
-    private boolean firstUpdate;
-
-    private float farPlaneDistance;
-
-    private Framebuffer frameBuffer;
-
     private final int WIDTH_RESOLUTION = 420;
     private final int HEIGHT_RESOLUTION = 420;
-
-    private int frameCount;
-
     private final Minecraft mc = Minecraft.getMinecraft();
+    private Vec3d pos;
+    private Vec3d prevPos;
+    private float yaw;
+    private float pitch;
+    private boolean recording;
+    private boolean valid;
+    private boolean rendering;
+    private boolean firstUpdate;
+    private float farPlaneDistance;
+    private Framebuffer frameBuffer;
+    private int frameCount;
 
     public Camera() {
         this.pos = new Vec3d(0, 0, 0);

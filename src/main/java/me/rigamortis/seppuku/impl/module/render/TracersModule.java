@@ -46,14 +46,8 @@ public final class TracersModule extends Module {
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode"}, "The rendering mode to use for drawing the tracer-line", Mode.TWO_D);
 
     public final Value<Color> friendsColor = new Value<Color>("FriendsColor", new String[]{"friendscolor", "fc"}, "Change the color of added friends tracer lines", new Color(153, 0, 238));
-
-    private enum Mode {
-        TWO_D, THREE_D // TWO_DIMENSIONAL, THREE_DIMENSIONAL
-    }
-
     public final Value<Float> width = new Value<Float>("Width", new String[]{"Wid"}, "Pixel width of each tracer-line", 0.5f, 0.0f, 5.0f, 0.1f);
     public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"Alpha", "A", "Opacity", "Op"}, "Alpha value for each drawn line", 255, 1, 255, 1);
-
     public TracersModule() {
         super("Tracers", new String[]{"Trace", "Tracer", "Snapline", "Snaplines"}, "Draws a line to entities", "NONE", -1, ModuleType.RENDER);
     }
@@ -103,11 +97,7 @@ public final class TracersModule extends Module {
     }
 
     private boolean checkFilter(Entity entity) {
-        boolean ret = false;
-
-        if (this.players.getValue() && entity instanceof EntityPlayer && entity != Minecraft.getMinecraft().player) {
-            ret = true;
-        }
+        boolean ret = this.players.getValue() && entity instanceof EntityPlayer && entity != Minecraft.getMinecraft().player;
 
         if (this.mobs.getValue() && entity instanceof IMob) {
             ret = true;
@@ -156,6 +146,10 @@ public final class TracersModule extends Module {
         }
 
         return ColorUtil.changeAlpha(ret, this.alpha.getValue());
+    }
+
+    private enum Mode {
+        TWO_D, THREE_D // TWO_DIMENSIONAL, THREE_DIMENSIONAL
     }
 
 }

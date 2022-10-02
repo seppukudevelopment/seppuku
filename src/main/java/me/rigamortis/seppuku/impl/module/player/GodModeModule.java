@@ -21,13 +21,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class GodModeModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The mode of the god-mode exploit", Mode.PORTAL);
-
-    private enum Mode {
-        PORTAL, RIDING, LOCK, PACKET
-    }
-
     public final Value<Boolean> footsteps = new Value<Boolean>("FootSteps", new String[]{"Foot"}, "If enabled, others will be able to see your foot-steps during god-mode. (Disable if having trouble getting god-mode to work)", false);
-
     private Entity riding;
 
     public GodModeModule() {
@@ -146,6 +140,10 @@ public final class GodModeModule extends Module {
         if (event.getScreen() != null && event.getScreen() instanceof GuiGameOver && this.mode.getValue() == Mode.LOCK) {
             event.setCanceled(true);
         }
+    }
+
+    private enum Mode {
+        PORTAL, RIDING, LOCK, PACKET
     }
 
 }

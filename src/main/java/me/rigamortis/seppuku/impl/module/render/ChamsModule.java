@@ -66,47 +66,10 @@ public final class ChamsModule extends Module {
     public final Value<Color> sneakingColor = new Value<Color>("SneakingColor", new String[]{"sneakingcolor", "sneakcolor", "sc"}, "Change the color of sneaking players on esp", new Color(238, 153, 0));
 
     public final Value<Shader> shader = new Value<Shader>("Shader", new String[]{"shader", "program", "shaderprogram", "sp"}, "Change the shader to use when in shader mode", new Shader("resource:///assets/seppukumod/shaders/chams.json"));
-
-    private enum Mode {
-        NORMAL, COLOR, TEXTURE, FLAT, WIREFRAME, SHADER
-    }
-
-    private enum EntityType {
-        SKIP, UNKNOWN, ANIMAL, MOB, VEHICLE, ITEM, CRYSTAL, NORMAL_PLAYER, FRIENDLY_PLAYER, SNEAKING_PLAYER
-    }
-
-    private class QueuedEntity {
-        public final double x;
-        public final double y;
-        public final double z;
-        public final float yaw;
-        public final float partialTicks;
-        public final EntityType entityType;
-        public final boolean hasShadow;
-        public final Render<Entity> render;
-
-        public QueuedEntity(Entity entity, double x, double y, double z, float yaw, float partialTicks, EntityType entityType, boolean hasShadow) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.yaw = yaw;
-            this.partialTicks = partialTicks;
-            this.entityType = entityType;
-            this.hasShadow = hasShadow;
-            this.render = Minecraft.getMinecraft().getRenderManager().<Entity>getEntityRenderObject(entity);
-            this.render.setRenderOutlines(false);
-        }
-
-        public QueuedEntity(EventRenderEntity event, EntityType entityType, boolean hasShadow) {
-            this(event.getEntity(), event.getX(), event.getY(), event.getZ(), event.getYaw(), event.getPartialTicks(), entityType, hasShadow);
-        }
-    }
-
     private final HashMap<Entity, QueuedEntity> queuedEntities = new HashMap<Entity, QueuedEntity>();
     private final ArrayList<EventDrawNameplate> queuedNameplates = new ArrayList<EventDrawNameplate>();
     private boolean renderShadow = false;
     private boolean renderingShaded = false;
-
     public ChamsModule() {
         super("Chams", new String[]{"Cham", "Chameleon"}, "Allows you to see entities through walls", "NONE", -1, ModuleType.RENDER);
     }
@@ -357,6 +320,41 @@ public final class ChamsModule extends Module {
                 return this.unknowns.getValue();
             default:
                 return false;
+        }
+    }
+
+    private enum Mode {
+        NORMAL, COLOR, TEXTURE, FLAT, WIREFRAME, SHADER
+    }
+
+    private enum EntityType {
+        SKIP, UNKNOWN, ANIMAL, MOB, VEHICLE, ITEM, CRYSTAL, NORMAL_PLAYER, FRIENDLY_PLAYER, SNEAKING_PLAYER
+    }
+
+    private class QueuedEntity {
+        public final double x;
+        public final double y;
+        public final double z;
+        public final float yaw;
+        public final float partialTicks;
+        public final EntityType entityType;
+        public final boolean hasShadow;
+        public final Render<Entity> render;
+
+        public QueuedEntity(Entity entity, double x, double y, double z, float yaw, float partialTicks, EntityType entityType, boolean hasShadow) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.yaw = yaw;
+            this.partialTicks = partialTicks;
+            this.entityType = entityType;
+            this.hasShadow = hasShadow;
+            this.render = Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(entity);
+            this.render.setRenderOutlines(false);
+        }
+
+        public QueuedEntity(EventRenderEntity event, EntityType entityType, boolean hasShadow) {
+            this(event.getEntity(), event.getX(), event.getY(), event.getZ(), event.getYaw(), event.getPartialTicks(), entityType, hasShadow);
         }
     }
 

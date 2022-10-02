@@ -18,13 +18,7 @@ public final class BrightnessModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The brightness mode to use", Mode.GAMMA);
     public final Value<Boolean> disablePotion = new Value<Boolean>("DisablePotion", new String[]{"AutoDisablePotion", "dp", "adp"}, "Automatically remove the night vision effect if using a different mode", true);
-
-    private enum Mode {
-        GAMMA, POTION, TABLE
-    }
-
     private float lastGamma;
-
     private World world;
 
     public BrightnessModule() {
@@ -93,5 +87,9 @@ public final class BrightnessModule extends Module {
                     break;
             }
         }
+    }
+
+    private enum Mode {
+        GAMMA, POTION, TABLE
     }
 }

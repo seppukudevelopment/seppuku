@@ -20,10 +20,7 @@ import java.awt.*;
  */
 public class AmbianceModule extends Module {
 
-    public enum SkyMode {
-        NORMAL, COLOR, SEPPUKU, RAINBOW, END, NONE
-    }
-
+    private static final ResourceLocation END_SKY_TEXTURES = new ResourceLocation("textures/environment/end_sky.png");
     public final Value<SkyMode> skyMode = new Value<SkyMode>("SkyMode", new String[]{"Sky", "Sm", "SkieMode", "Skie", "Skies"}, "Edit the skybox", SkyMode.SEPPUKU);
     public final Value<Color> skyColor = new Value<Color>("SkyColor", new String[]{"SkyCol", "Sc", "SkieColor", "SkieCol", "Color", "C"}, "Edit the skybox color (COLOR mode only)", new Color(0, 127, 255));
     public final Value<Integer> skyGamma = new Value<Integer>("SkyGamma", new String[]{"SkyGam", "SkyG", "Sg", "Gamma", "G"}, "Edit the skybox gamma", 128, 1, 255, 1);
@@ -32,8 +29,6 @@ public class AmbianceModule extends Module {
     private final Minecraft mc = Minecraft.getMinecraft();
     private final Texture seppukuSkyTexture;
     private final Texture rainbowSkyTexture;
-    private static final ResourceLocation END_SKY_TEXTURES = new ResourceLocation("textures/environment/end_sky.png");
-
     public AmbianceModule() {
         super("Ambiance", new String[]{"Ambience", "CustomSky", "CustomSound", "CustomSounds"}, "Edit ambient parts of the game. (Sky, sounds, etc.)", "NONE", -1, ModuleType.WORLD);
         this.seppukuSkyTexture = new Texture("seppuku_sky.jpg");
@@ -146,5 +141,9 @@ public class AmbianceModule extends Module {
         GlStateManager.depthMask(true);
         GlStateManager.enableTexture2D();
         GlStateManager.enableAlpha();
+    }
+
+    public enum SkyMode {
+        NORMAL, COLOR, SEPPUKU, RAINBOW, END, NONE
     }
 }

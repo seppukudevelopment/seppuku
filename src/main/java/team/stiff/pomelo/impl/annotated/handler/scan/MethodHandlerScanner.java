@@ -30,9 +30,9 @@ public final class MethodHandlerScanner implements EventHandlerScanner {
         final Map<Class<?>, Set<EventHandler>> eventHandlers = new HashMap<>();
         Stream.of(listenerContainer.getClass().getDeclaredMethods())
                 .filter(annotatedListenerPredicate).forEach(method -> eventHandlers
-                .computeIfAbsent(method.getParameterTypes()[0], obj -> new TreeSet<>())
-                .add(new MethodEventHandler(listenerContainer, method,
-                        filterScanner.scan(method))));
+                        .computeIfAbsent(method.getParameterTypes()[0], obj -> new TreeSet<>())
+                        .add(new MethodEventHandler(listenerContainer, method,
+                                filterScanner.scan(method))));
         return eventHandlers;
     }
 }

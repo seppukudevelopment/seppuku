@@ -24,13 +24,12 @@ import java.util.List;
  * @since 6/24/20
  */
 public class TotemNotifierModule extends Module {
+    public final List<Integer> entitiesWithTotems = new ArrayList<>();
     final Minecraft mc = Minecraft.getMinecraft();
 
     public TotemNotifierModule() {
         super("TotemNotifier", new String[]{"tm"}, "Notifies you when others pop totems", "NONE", -1, ModuleType.COMBAT);
     }
-
-    public final List<Integer> entitiesWithTotems = new ArrayList<>();
 
     @Listener
     public void runTick(EventRunTick event) {

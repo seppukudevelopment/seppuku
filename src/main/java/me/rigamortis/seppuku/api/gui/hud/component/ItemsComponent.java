@@ -24,9 +24,9 @@ public final class ItemsComponent extends HudComponent {
 
     private final TextComponent searchBox;
     private final List<Item> items = new ArrayList<>();
-    private List<Item> displayedItems;
+    private final List<Item> displayedItems;
 
-    private Value<List<Item>> value;
+    private final Value<List<Item>> value;
 
     public ItemsComponent(Value<List<Item>> value) {
         super(value.getName());

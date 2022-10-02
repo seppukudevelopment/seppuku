@@ -16,10 +16,6 @@ public final class GreeterModule extends Module {
     public final Value<Boolean> friends = new Value<Boolean>("Friends", new String[]{"Friend", "F"}, "Will only greet friends", false);
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Change between greeter modes: Client mode will only appear for you, Server mode will type the greeting in chat", Mode.CLIENT);
 
-    private enum Mode {
-        CLIENT, SERVER
-    }
-
     public GreeterModule() {
         super("Greeter", new String[]{"Greet"}, "Automatically announces when a player joins and leaves", "NONE", -1, ModuleType.MISC);
     }
@@ -53,5 +49,9 @@ public final class GreeterModule extends Module {
                 Seppuku.INSTANCE.getChatManager().add(event.getName() + " has left the game");
                 break;
         }
+    }
+
+    private enum Mode {
+        CLIENT, SERVER
     }
 }

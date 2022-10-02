@@ -22,35 +22,35 @@ public class Note {
         this.pitch = pitch;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    public void setPosition(BlockPos position) {
-        this.position = position;
-    }
-
-    public void setInstrument(int instrument) {
-        this.instrument = instrument;
-    }
-
-    public void setPitch(int pitch) {
-        this.pitch = pitch;
-    }
-
     public int getIndex() {
         return this.index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     public BlockPos getPosition() {
         return this.position;
     }
 
+    public void setPosition(BlockPos position) {
+        this.position = position;
+    }
+
     public int getInstrument() {
         return this.instrument;
     }
 
+    public void setInstrument(int instrument) {
+        this.instrument = instrument;
+    }
+
     public int getPitch() {
         return this.pitch;
+    }
+
+    public void setPitch(int pitch) {
+        this.pitch = pitch;
     }
 }

@@ -22,17 +22,9 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class StepModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The step block-height mode to use", Mode.ONE);
-
-    private enum Mode {
-        ONE, TWO
-    }
-
     private final double[] oneblockPositions = {0.42D, 0.75D};
-
     private final double[] twoblockPositions = {0.4D, 0.75D, 0.5D, 0.41D, 0.83D, 1.16D, 1.41D, 1.57D, 1.58D, 1.42D};
-
     private double[] selectedPositions = new double[0];
-
     private int packets;
 
     public StepModule() {
@@ -82,6 +74,10 @@ public final class StepModule extends Module {
                 this.packets = 0;
             }
         }
+    }
+
+    private enum Mode {
+        ONE, TWO
     }
 
 }

@@ -16,6 +16,10 @@ public class Regex {
         this.setPatternString(patternString);
     }
 
+    public String getPatternString() {
+        return this.patternString;
+    }
+
     public void setPatternString(String patternString) {
         this.patternString = patternString;
         if (patternString.equals("")) {
@@ -28,10 +32,6 @@ public class Regex {
         } catch (PatternSyntaxException exception) {
             this.pattern = null;
         }
-    }
-
-    public String getPatternString() {
-        return this.patternString;
     }
 
     @Nullable

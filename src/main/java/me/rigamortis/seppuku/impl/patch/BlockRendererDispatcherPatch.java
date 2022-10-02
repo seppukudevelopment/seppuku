@@ -23,6 +23,12 @@ public final class BlockRendererDispatcherPatch extends ClassPatch {
         super("net.minecraft.client.renderer.BlockRendererDispatcher", "bvm");
     }
 
+    public static boolean renderBlockHook(IBlockState state, BlockPos pos, IBlockAccess access, BufferBuilder bufferBuilder) {
+        final EventRenderBlock event = new EventRenderBlock(state, pos, access, bufferBuilder);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }
+
     //public boolean renderBlock(IBlockState state, BlockPos pos, IBlockAccess blockAccess, BufferBuilder bufferBuilderIn)Z
     //public boolean a(awt , et et1, amy amy1, buk buk1)Z {
     @MethodPatch(
@@ -54,11 +60,5 @@ public final class BlockRendererDispatcherPatch extends ClassPatch {
         insnList.add(jmp);
         //insert instructions
         methodNode.instructions.insert(insnList);
-    }
-
-    public static boolean renderBlockHook(IBlockState state, BlockPos pos, IBlockAccess access, BufferBuilder bufferBuilder) {
-        final EventRenderBlock event = new EventRenderBlock(state, pos, access, bufferBuilder);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-        return event.isCanceled();
     }
 }

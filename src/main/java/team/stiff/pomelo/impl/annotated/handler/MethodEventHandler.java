@@ -39,7 +39,7 @@ public final class MethodEventHandler implements EventHandler {
     private final Listener listenerAnnotation;
 
     public MethodEventHandler(final Object listenerParent, final Method method,
-            final Set<EventFilter> eventFilters) {
+                              final Set<EventFilter> eventFilters) {
         this.listenerParent = listenerParent;
         if (!method.isAccessible())
             method.setAccessible(true);

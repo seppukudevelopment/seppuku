@@ -62,64 +62,37 @@ public final class WallHackModule extends Module {
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The mode of the drawn esp/wallhack", Mode.OPAQUE);
     public final Value<HealthMode> hpMode = new Value<HealthMode>("Hp", new String[]{"Health", "HpMode"}, "Rendering mode for the health bar", HealthMode.NONE);
     public final Value<PotionsMode> potionsMode = new Value<PotionsMode>("Potions", new String[]{"Pot", "Pots", "PotsMode"}, "Rendering mode for active potion-effects on the entity", PotionsMode.NONE);
-
-    private enum Mode {
-        OPAQUE, BOX
-    }
-
     public final Value<Boolean> players = new Value<Boolean>("Players", new String[]{"Player"}, "Choose to enable on players", true);
     public final Value<Color> playersColor = new Value<Color>("PlayersColor", new String[]{"playerscolor", "pc"}, "Change the color of players on esp", new Color(255, 68, 68));
-
     public final Value<Boolean> mobs = new Value<Boolean>("Mobs", new String[]{"Mob"}, "Choose to enable on mobs", true);
     public final Value<Color> mobsColor = new Value<Color>("MobsColor", new String[]{"mobscolor", "mc"}, "Change the color of mobs on esp", new Color(255, 170, 0));
-
     public final Value<Boolean> animals = new Value<Boolean>("Animals", new String[]{"Animal"}, "Choose to enable on animals", true);
     public final Value<Color> animalsColor = new Value<Color>("AnimalsColor", new String[]{"animalscolor", "ac"}, "Change the color of animals on esp", new Color(0, 255, 68));
-
     public final Value<Boolean> vehicles = new Value<Boolean>("Vehicles", new String[]{"Vehic", "Vehicle"}, "Choose to enable on vehicles", true);
     public final Value<Color> vehiclesColor = new Value<Color>("VehiclesColor", new String[]{"vehiclescolor", "vc"}, "Change the color of vehicles on esp", new Color(213, 255, 0));
-
     public final Value<Boolean> items = new Value<Boolean>("Items", new String[]{"Item"}, "Choose to enable on items", true);
     public final Value<Color> itemsColor = new Value<Color>("ItemsColor", new String[]{"itemscolor", "ic"}, "Change the color of items on esp", new Color(0, 255, 170));
-
     public final Value<Boolean> local = new Value<Boolean>("Local", new String[]{"Self"}, "Choose to enable on self/local-player", true);
-
     public final Value<Boolean> crystals = new Value<Boolean>("Crystals", new String[]{"crystal", "crystals", "endcrystal", "endcrystals"}, "Choose to enable on end crystals", true);
     public final Value<Color> crystalsColor = new Value<Color>("CrystalsColor", new String[]{"endercrystalscolor", "endercrystalcolor", "crystalscolor", "crystalcolor", "ecc"}, "Change the color of ender crystals on esp", new Color(205, 0, 205));
-
     public final Value<Boolean> pearls = new Value<Boolean>("Pearls", new String[]{"Pearl"}, "Choose to enable on ender pearls.", true);
     public final Value<Color> pearlsColor = new Value<Color>("PearlsColor", new String[]{"enderpearlscolor", "enderpearlcolor", "pearlscolor", "pearlcolor", "epc"}, "Change the color of ender pearls on esp", new Color(151, 255, 252));
-
     public final Value<Boolean> armorStand = new Value<Boolean>("ArmorStands", new String[]{"ArmorStand", "ArmourStand", "ArmourStands", "ArmStand"}, "Choose to enable on armor-stands", true);
     public final Value<Boolean> footsteps = new Value<Boolean>("FootSteps", new String[]{"FootStep", "Steps"}, "Choose to draw entity footsteps", false);
     public final Value<Boolean> owner = new Value<Boolean>("Owner", new String[]{"Owners", "MobOwner"}, "Choose to draw entity (tame-able or horse) owner name", false);
-
     public final Value<Boolean> nametag = new Value<Boolean>("Nametag", new String[]{"tag", "tags", "names", "name"}, "Draw the entity's name tag", true);
     public final Value<Boolean> ping = new Value<Boolean>("Ping", new String[]{"Ms"}, "Draw the entity's ping (only works on players)", true);
     public final Value<Boolean> armor = new Value<Boolean>("Armor", new String[]{"Arm"}, "Draw the entity's equipped armor", true);
     public final Value<Boolean> hearts = new Value<Boolean>("Hearts", new String[]{"Hrts"}, "Draw the entity's hearts in decimal format", true);
     public final Value<Boolean> absorption = new Value<Boolean>("Absorption", new String[]{"Abs", "GappleHearts"}, "Adds absorption value to heart display", true);
     public final Value<Boolean> enchants = new Value<Boolean>("Enchants", new String[]{"Ench"}, "Draw enchant names above the entity's equipped armor. (requires Armor value to be enabled", true);
-
     public final Value<Color> friendsColor = new Value<Color>("FriendsColor", new String[]{"friendscolor", "friendcolor", "fc"}, "Change the color of friendly players on esp", new Color(153, 0, 238));
     public final Value<Color> sneakingColor = new Value<Color>("SneakingColor", new String[]{"sneakingcolor", "sneakcolor", "sc"}, "Change the color of sneaking players on esp", new Color(238, 153, 0));
-
+    public final Value<Boolean> background = new Value<Boolean>("Background", new String[]{"Bg"}, "Draw a transparent black background behind any text or icon drawn", true);
     private final Map<UUID, String> cachedMobOwners = Maps.newHashMap();
     private final Timer uuidTimer = new Timer();
-
-    private enum PotionsMode {
-        NONE, ICON, TEXT
-    }
-
-    public final Value<Boolean> background = new Value<Boolean>("Background", new String[]{"Bg"}, "Draw a transparent black background behind any text or icon drawn", true);
-
-    private enum HealthMode {
-        NONE, BAR, BARTEXT
-    }
-
     private final ICamera camera = new Frustum();
     private final ResourceLocation inventory = new ResourceLocation("textures/gui/container/inventory.png");
-
     //i cba
     private final List<FootstepData> footstepDataList = new CopyOnWriteArrayList<>();
 
@@ -670,6 +643,18 @@ public final class WallHackModule extends Module {
         }
 
         return null;
+    }
+
+    private enum Mode {
+        OPAQUE, BOX
+    }
+
+    private enum PotionsMode {
+        NONE, ICON, TEXT
+    }
+
+    private enum HealthMode {
+        NONE, BAR, BARTEXT
     }
 
     public static class FootstepData {

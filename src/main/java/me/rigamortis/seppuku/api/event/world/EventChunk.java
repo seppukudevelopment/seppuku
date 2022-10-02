@@ -24,10 +24,10 @@ public class EventChunk {
         return chunk;
     }
 
-    public static enum ChunkType {
+    public enum ChunkType {
         LOAD, UNLOAD;
 
-        private ChunkType() {
+        ChunkType() {
         }
     }
 

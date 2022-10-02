@@ -21,12 +21,11 @@ import net.minecraft.util.EnumHand;
  */
 public final class BattleInfoComponent extends DraggableHudComponent {
 
+    private final Texture donorsTexture;
     private CrystalAuraModule crystalAuraModule;
     private KillAuraModule killAuraModule;
     private AutoTrapModule autoTrapModule;
     private AbstractClientPlayer currentOpponent;
-
-    private final Texture donorsTexture;
 
     public BattleInfoComponent() {
         super("BattleInfo");

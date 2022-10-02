@@ -139,10 +139,7 @@ public final class HolesModule extends Module {
             }
         }
 
-        if (validHorizontalBlocks < 4)
-            return false;
-
-        return true;
+        return validHorizontalBlocks >= 4;
     }
 
     private class Hole extends Vec3i {

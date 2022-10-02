@@ -16,10 +16,10 @@ import java.io.IOException;
  */
 public final class GuiAddAlt extends GuiScreen {
 
+    private final GuiAltManager parent;
     private GuiTextField usernameField;
     private GuiTextField emailField;
     private GuiPasswordField passwordField;
-    private final GuiAltManager parent;
 
     public GuiAddAlt(GuiAltManager parent) {
         this.parent = parent;

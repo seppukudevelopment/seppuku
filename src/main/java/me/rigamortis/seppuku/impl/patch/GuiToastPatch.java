@@ -16,6 +16,12 @@ public class GuiToastPatch extends ClassPatch {
         super("net.minecraft.client.gui.toasts.GuiToast", "bkc");
     }
 
+    public static boolean drawToastHook() {
+        final EventDrawToast event = new EventDrawToast();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }
+
     @MethodPatch(
             mcpName = "drawToast",
             notchName = "a",
@@ -36,11 +42,5 @@ public class GuiToastPatch extends ClassPatch {
         insnList.add(jmp);
         //insert the list of instructs at the top of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    public static boolean drawToastHook() {
-        final EventDrawToast event = new EventDrawToast();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-        return event.isCanceled();
     }
 }

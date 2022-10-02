@@ -47,24 +47,18 @@ public final class NoteBotModule extends Module {
     private final Value<Float> tuneDelay = new Value<Float>("TuneDelay", new String[]{"Tune Delay", "tune-delay", "tdelay", "tdel", "td"}, "Delay(ms) to wait between right clicks", 200.0f, 0.0f, 1000.0f, 1.0f);
 
     private final RotationTask rotationTask = new RotationTask("NoteBot", 2);
-
-    private BlockPos currentBlock;
-
     private final int[] positionOffsets = new int[]{2, 1, 2};
-
     private final NotePlayer notePlayer = new NotePlayer();
     private final NoteReceiver receiver = new NoteReceiver();
-
     private final Timer discoverTimer = new Timer();
     private final Timer tuneTimer = new Timer();
     private final Timer stateTimer = new Timer();
-
     private final List<BlockPos> blocks = new ArrayList<>();
     private final List<BlockPos> tunedBlocks = new ArrayList<>();
     private final Map<BlockPos, Note> discoveredBlocks = new HashMap<>();
-
     private final int BLOCK_AREA = 25;
     private final Minecraft mc = Minecraft.getMinecraft();
+    private BlockPos currentBlock;
 
     public NoteBotModule() {
         super("NoteBot", new String[]{"NoteBot+", "MusicBot", "MusicPlayer", "MidiPlayer", "MidiBot"}, "Play .midi files on a 5x5 grid of note-blocks", "NONE", -1, ModuleType.WORLD);
@@ -321,14 +315,6 @@ public final class NoteBotModule extends Module {
         this.notePlayer.end();
     }
 
-    public enum BotState {
-        IDLE, DISCOVERING, TUNING, PLAYING;
-    }
-
-    public enum Mode {
-        NORMAL, DEBUG
-    }
-
     public Value<BotState> getState() {
         return state;
     }
@@ -339,6 +325,14 @@ public final class NoteBotModule extends Module {
 
     public NoteReceiver getReceiver() {
         return receiver;
+    }
+
+    public enum BotState {
+        IDLE, DISCOVERING, TUNING, PLAYING
+    }
+
+    public enum Mode {
+        NORMAL, DEBUG
     }
 
     public class NoteReceiver implements Receiver {

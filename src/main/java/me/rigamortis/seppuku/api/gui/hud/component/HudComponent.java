@@ -11,23 +11,18 @@ import java.util.List;
  */
 public class HudComponent {
 
+    public ComponentListener mouseClickListener, rightClickListener;
+    public boolean rightClickEnabled;
+    public int subComponents = 0;
     private float x;
     private float y;
     private float w;
     private float h;
-
     private float emptyH;
-
     private String name;
     private String displayName;
     private String tooltipText = "";
-
     private boolean visible;
-
-    public ComponentListener mouseClickListener, rightClickListener;
-    public boolean rightClickEnabled;
-    public int subComponents = 0;
-
     private List<Value> valueList = new ArrayList<Value>();
 
     public HudComponent() {

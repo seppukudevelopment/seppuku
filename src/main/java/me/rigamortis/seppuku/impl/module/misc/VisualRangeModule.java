@@ -19,11 +19,6 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class VisualRangeModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Change between alert modes", Mode.NOTIFICATION);
-
-    private enum Mode {
-        CHAT, NOTIFICATION, BOTH
-    }
-
     private int prevPlayer = -1;
 
     public VisualRangeModule() {
@@ -73,6 +68,10 @@ public final class VisualRangeModule extends Module {
                 }
             }
         }
+    }
+
+    private enum Mode {
+        CHAT, NOTIFICATION, BOTH
     }
 
 

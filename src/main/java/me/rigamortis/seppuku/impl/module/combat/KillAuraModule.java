@@ -127,11 +127,7 @@ public final class KillAuraModule extends Module {
     }
 
     private boolean checkFilter(Entity entity) {
-        boolean ret = false;
-
-        if (this.players.getValue() && entity instanceof EntityPlayer && entity != Minecraft.getMinecraft().player && Seppuku.INSTANCE.getFriendManager().isFriend(entity) == null && !entity.getName().equals(Minecraft.getMinecraft().player.getName())) {
-            ret = true;
-        }
+        boolean ret = this.players.getValue() && entity instanceof EntityPlayer && entity != Minecraft.getMinecraft().player && Seppuku.INSTANCE.getFriendManager().isFriend(entity) == null && !entity.getName().equals(Minecraft.getMinecraft().player.getName());
 
         if (this.mobs.getValue() && entity instanceof IMob) {
             ret = true;

@@ -67,13 +67,13 @@ public final class EnchantCommand extends Command {
                 // disable curses? (used when doing all enchants)
                 if (split.length > 3) {
                     final String disableCurses = split[3];
-                    if (disableCurses.toLowerCase().equals("true") && enchant.isCurse())
+                    if (disableCurses.equalsIgnoreCase("true") && enchant.isCurse())
                         continue;
                 }
 
                 final String enchantmentName = enchant.getTranslatedName(0).replaceAll(" ", "");
 
-                if (enchantToApply.toLowerCase().equals("all") || enchantmentName.toLowerCase().startsWith(enchantToApply.toLowerCase())) {
+                if (enchantToApply.equalsIgnoreCase("all") || enchantmentName.toLowerCase().startsWith(enchantToApply.toLowerCase())) {
                     final NBTTagCompound enchantmentCompound = new NBTTagCompound();
                     enchantmentCompound.setShort("id", (short) Enchantment.getEnchantmentID(enchant)); // set the enchant id
                     if (levelToApply.toLowerCase().startsWith("max")) {

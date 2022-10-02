@@ -21,6 +21,19 @@ public final class VisGraphPatch extends ClassPatch {
     }
 
     /**
+     * Our setOpaqueCube hook
+     * Cancel to prevent culling(this may cost a few frames)
+     *
+     * @return
+     */
+    public static boolean setOpaqueCubeHook() {
+        final EventSetOpaqueCube event = new EventSetOpaqueCube();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
      * This is where minecraft handles culling
      *
      * @param methodNode
@@ -46,19 +59,6 @@ public final class VisGraphPatch extends ClassPatch {
         insnList.add(jmp);
         //insert the list of instructions at the top of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    /**
-     * Our setOpaqueCube hook
-     * Cancel to prevent culling(this may cost a few frames)
-     *
-     * @return
-     */
-    public static boolean setOpaqueCubeHook() {
-        final EventSetOpaqueCube event = new EventSetOpaqueCube();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 
 }

@@ -35,26 +35,21 @@ import java.util.List;
 public final class ModuleListComponent extends ResizableHudComponent {
 
     private final Module.ModuleType type;
-
-    private int scroll = 0;
-    private int oldScroll = 0;
-    private int totalHeight;
-
     private final int SCROLL_WIDTH = 5;
     private final int BORDER = 2;
     private final int TEXT_GAP = 1;
     private final int TEXTURE_SIZE = 8;
     private final int TITLE_BAR_HEIGHT = mc.fontRenderer.FONT_HEIGHT + 1;
-
-    private String originalName = "";
-    private String title = "";
-
     private final HudEditorModule hudEditorModule;
     private final Texture texture;
     private final Texture gearTexture;
-
-    private ToolTipComponent currentToolTip;
     public ModuleSettingsComponent currentSettings;
+    private int scroll = 0;
+    private int oldScroll = 0;
+    private int totalHeight;
+    private String originalName = "";
+    private String title = "";
+    private ToolTipComponent currentToolTip;
 
     public ModuleListComponent(Module.ModuleType type) {
         super(StringUtils.capitalize(type.name().toLowerCase()), 100, 100, 150, 400);
@@ -592,7 +587,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
                     this.addComponentToButtons(valueText);*/
 
                     CarouselComponent carouselComponent = new CarouselComponent(value.getName(), value);
-                    carouselComponent.setTooltipText(value.getDesc() + " " + ChatFormatting.GRAY + "(" + options.toString() + ")");
+                    carouselComponent.setTooltipText(value.getDesc() + " " + ChatFormatting.GRAY + "(" + options + ")");
                     components.add(carouselComponent);
                     this.addComponentToButtons(carouselComponent);
                 } else if (value.getValue() instanceof String) {

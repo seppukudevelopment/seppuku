@@ -22,6 +22,14 @@ public final class BlockFencePatch extends ClassPatch {
         super("net.minecraft.block.BlockFence", "aqo");
     }
 
+    public static boolean addCollisionBoxToListHook(BlockPos pos, Entity entity) {
+        //dispatch our event and pass the block and entity in
+        final EventAddCollisionBox event = new EventAddCollisionBox(pos, entity);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
     @MethodPatch(
             mcpName = "addCollisionBoxToList",
             notchName = "a",
@@ -46,14 +54,6 @@ public final class BlockFencePatch extends ClassPatch {
         insnList.add(jmp);
         //insert our instructions
         methodNode.instructions.insert(insnList);
-    }
-
-    public static boolean addCollisionBoxToListHook(BlockPos pos, Entity entity) {
-        //dispatch our event and pass the block and entity in
-        final EventAddCollisionBox event = new EventAddCollisionBox(pos, entity);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 
 }

@@ -47,7 +47,7 @@ public final class ShulkerPreviewModule extends Module {
                 if (blockEntityTag.hasKey("Items", 9)) {
                     event.setCanceled(true); // cancel rendering the old tooltip
 
-                    NonNullList<ItemStack> nonnulllist = NonNullList.<ItemStack>withSize(27, ItemStack.EMPTY);
+                    NonNullList<ItemStack> nonnulllist = NonNullList.withSize(27, ItemStack.EMPTY);
                     ItemStackHelper.loadAllItems(blockEntityTag, nonnulllist); // load the itemstacks from the tag to the list
 
                     // store mouse/event coords

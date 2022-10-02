@@ -25,6 +25,41 @@ public final class NetworkManagerPatch extends ClassPatch {
     }
 
     /**
+     * This is our sendPacket hook
+     * It allows us to intercept outgoing unencrypted packets and modify the data
+     * It also allows us to cancel sending certain packets
+     *
+     * @param packet
+     * @param stage
+     * @return
+     */
+    public static boolean sendPacketHook(Packet packet, EventStageable.EventStage stage) {
+        final EventSendPacket event = new EventSendPacket(stage, packet);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
+     * This is our channelRead0 hook
+     * It allows us to cancel processing incoming packets or modify the unencrypted data
+     *
+     * @param packet
+     * @param stage
+     * @return
+     */
+    public static boolean channelRead0Hook(Packet packet, EventStageable.EventStage stage) {
+        if (packet != null) {
+            final EventReceivePacket event = new EventReceivePacket(stage, packet);
+            Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+            return event.isCanceled();
+        }
+
+        return false;
+    }
+
+    /**
      * This is where minecraft sends packets before they are compressed and encrypted
      *
      * @param methodNode
@@ -69,22 +104,6 @@ public final class NetworkManagerPatch extends ClassPatch {
     }
 
     /**
-     * This is our sendPacket hook
-     * It allows us to intercept outgoing unencrypted packets and modify the data
-     * It also allows us to cancel sending certain packets
-     *
-     * @param packet
-     * @param stage
-     * @return
-     */
-    public static boolean sendPacketHook(Packet packet, EventStageable.EventStage stage) {
-        final EventSendPacket event = new EventSendPacket(stage, packet);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
-    }
-
-    /**
      * This is where minecraft handles received packets
      *
      * @param methodNode
@@ -126,25 +145,6 @@ public final class NetworkManagerPatch extends ClassPatch {
         postInsn.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "channelRead0Hook", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/network/Packet;Lme/rigamortis/seppuku/api/event/EventStageable$EventStage;)Z" : "(Lht;Lme/rigamortis/seppuku/api/event/EventStageable$EventStage;)Z", false));
         //insert the list of instructions at the bottom of the function
         methodNode.instructions.insertBefore(ASMUtil.bottom(methodNode), postInsn);
-    }
-
-    /**
-     * This is our channelRead0 hook
-     * It allows us to cancel processing incoming packets or modify the unencrypted data
-     *
-     * @param packet
-     * @param stage
-     * @return
-     */
-    public static boolean channelRead0Hook(Packet packet, EventStageable.EventStage stage) {
-        if (packet != null) {
-            final EventReceivePacket event = new EventReceivePacket(stage, packet);
-            Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-            return event.isCanceled();
-        }
-
-        return false;
     }
 
 

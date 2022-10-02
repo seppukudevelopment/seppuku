@@ -11,20 +11,13 @@ import me.rigamortis.seppuku.impl.gui.hud.component.NotificationsComponent;
 public final class Notification {
 
     private final String title;
-
-    private String text;
-
-    private float x = 0, y = 0, width = 0, height = 0;
-
     private final Type type;
-
-    private int duration; // milliseconds
-
     private final int maxDuration;
-
-    private float transitionX = 0, transitionY = 0;
-
     private final Timer timer = new Timer();
+    private String text;
+    private float x = 0, y = 0, width = 0, height = 0;
+    private int duration; // milliseconds
+    private float transitionX = 0, transitionY = 0;
 
     public Notification(String title, String text, Type type, int duration) {
         this.title = title;

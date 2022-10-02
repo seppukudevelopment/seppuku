@@ -73,7 +73,7 @@ public class Value<T> {
     }
 
     public String getCapitalizedName() {
-        return Character.toString(this.getName().charAt(0)) + this.getName().toLowerCase().replaceFirst(Character.toString(this.getName().charAt(0)).toLowerCase(), "");
+        return this.getName().charAt(0) + this.getName().toLowerCase().replaceFirst(Character.toString(this.getName().charAt(0)).toLowerCase(), "");
     }
 
     public String getCapitalizedValue() {

@@ -20,6 +20,27 @@ public final class ItemRendererPatch extends ClassPatch {
         super("net.minecraft.client.renderer.ItemRenderer", "buu");
     }
 
+    public static boolean renderSuffocationOverlayHook() {
+        final EventRenderOverlay event = new EventRenderOverlay(EventRenderOverlay.OverlayType.BLOCK);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    public static boolean renderWaterOverlayTextureHook() {
+        final EventRenderOverlay event = new EventRenderOverlay(EventRenderOverlay.OverlayType.LIQUID);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    public static boolean renderFireInFirstPersonHook() {
+        final EventRenderOverlay event = new EventRenderOverlay(EventRenderOverlay.OverlayType.FIRE);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
     @MethodPatch(
             mcpName = "renderSuffocationOverlay",
             notchName = "a",
@@ -40,13 +61,6 @@ public final class ItemRendererPatch extends ClassPatch {
         insnList.add(jmp);
         //insert the list of instructions at the top of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    public static boolean renderSuffocationOverlayHook() {
-        final EventRenderOverlay event = new EventRenderOverlay(EventRenderOverlay.OverlayType.BLOCK);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 
     @MethodPatch(
@@ -70,13 +84,6 @@ public final class ItemRendererPatch extends ClassPatch {
         methodNode.instructions.insert(insnList);
     }
 
-    public static boolean renderWaterOverlayTextureHook() {
-        final EventRenderOverlay event = new EventRenderOverlay(EventRenderOverlay.OverlayType.LIQUID);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
-    }
-
     @MethodPatch(
             mcpName = "renderFireInFirstPerson",
             notchName = "d",
@@ -96,12 +103,5 @@ public final class ItemRendererPatch extends ClassPatch {
         insnList.add(jmp);
         //insert the list of instructions at the top of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    public static boolean renderFireInFirstPersonHook() {
-        final EventRenderOverlay event = new EventRenderOverlay(EventRenderOverlay.OverlayType.FIRE);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 }

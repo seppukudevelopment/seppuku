@@ -129,9 +129,7 @@ public final class CapeManager {
         final CapeUser user = this.find(player);
         if (user != null) {
             final ResourceLocation res = this.findResource(user.getCape());
-            if (res != null) {
-                return res;
-            }
+            return res;
         }
         return null;
     }

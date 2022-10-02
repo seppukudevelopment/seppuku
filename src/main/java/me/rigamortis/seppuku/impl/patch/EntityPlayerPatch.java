@@ -22,6 +22,33 @@ public final class EntityPlayerPatch extends ClassPatch {
     }
 
     /**
+     * Our isPushedByWater hook
+     *
+     * @return
+     */
+    public static boolean isPushedByWaterHook() {
+        //dispatch our event
+        final EventPushedByWater event = new EventPushedByWater();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
+     * Our applyEntityCollision hook
+     * Used to cancel entity collision
+     *
+     * @return
+     */
+    public static boolean applyEntityCollisionHook() {
+        //dispatch our event
+        final EventApplyCollision event = new EventApplyCollision();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
      * This is where minecraft handles
      * water pushing
      * Normally in creative mode you dont
@@ -54,19 +81,6 @@ public final class EntityPlayerPatch extends ClassPatch {
     }
 
     /**
-     * Our isPushedByWater hook
-     *
-     * @return
-     */
-    public static boolean isPushedByWaterHook() {
-        //dispatch our event
-        final EventPushedByWater event = new EventPushedByWater();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
-    }
-
-    /**
      * This is where minecraft handles entities
      * colliding with each other
      *
@@ -93,20 +107,6 @@ public final class EntityPlayerPatch extends ClassPatch {
         insnList.add(jmp);
         //insert the list of instructs at the top of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    /**
-     * Our applyEntityCollision hook
-     * Used to cancel entity collision
-     *
-     * @return
-     */
-    public static boolean applyEntityCollisionHook() {
-        //dispatch our event
-        final EventApplyCollision event = new EventApplyCollision();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 
 }

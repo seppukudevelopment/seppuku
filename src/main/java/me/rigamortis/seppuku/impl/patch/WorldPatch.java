@@ -21,6 +21,57 @@ public final class WorldPatch extends ClassPatch {
         super("net.minecraft.world.World", "amu");
     }
 
+    public static boolean checkLightForHook() {
+        final EventLightUpdate event = new EventLightUpdate();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }
+
+    public static boolean getRainStrengthHook() {
+        final EventRainStrength event = new EventRainStrength();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }
+
+   /* @MethodPatch(
+            mcpName = "checkLight",
+            notchName = "w",
+            mcpDesc = "(Lnet/minecraft/util/math/BlockPos;)Z",
+            notchDesc = "(Let;)Z")
+    public void checkLight(MethodNode methodNode, PatchManager.Environment env) {
+        final InsnList list = new InsnList();
+        list.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "checkLightHook", "()Z", false));
+        final LabelNode jmp = new LabelNode();
+        list.add(new JumpInsnNode(IFEQ, jmp));
+        // by default, this function will return false if the area is not loaded or checked for light
+        list.add(new InsnNode(ICONST_0));
+        list.add(new InsnNode(IRETURN));
+        list.add(jmp);
+        methodNode.instructions.insert(list);
+    }
+
+    public static boolean checkLightHook() {
+        final EventLightUpdate event = new EventLightUpdate();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }*/
+
+    public static boolean onEntityAddedHook(Entity entity) {
+        final EventAddEntity eventAddEntity = new EventAddEntity(entity);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(eventAddEntity);
+        return eventAddEntity.isCanceled();
+    }
+
+    public static void onEntityRemovedHook(Entity entity) {
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventRemoveEntity(entity));
+    }
+
+    public static boolean spawnParticleHook() {
+        final EventSpawnParticle event = new EventSpawnParticle();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }
+
     /**
      * This function is used to update light for blocks
      * It is VERY unoptimized and in some cases it's
@@ -53,35 +104,6 @@ public final class WorldPatch extends ClassPatch {
         methodNode.instructions.insert(list);
     }
 
-    public static boolean checkLightForHook() {
-        final EventLightUpdate event = new EventLightUpdate();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-        return event.isCanceled();
-    }
-
-   /* @MethodPatch(
-            mcpName = "checkLight",
-            notchName = "w",
-            mcpDesc = "(Lnet/minecraft/util/math/BlockPos;)Z",
-            notchDesc = "(Let;)Z")
-    public void checkLight(MethodNode methodNode, PatchManager.Environment env) {
-        final InsnList list = new InsnList();
-        list.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "checkLightHook", "()Z", false));
-        final LabelNode jmp = new LabelNode();
-        list.add(new JumpInsnNode(IFEQ, jmp));
-        // by default, this function will return false if the area is not loaded or checked for light
-        list.add(new InsnNode(ICONST_0));
-        list.add(new InsnNode(IRETURN));
-        list.add(jmp);
-        methodNode.instructions.insert(list);
-    }
-
-    public static boolean checkLightHook() {
-        final EventLightUpdate event = new EventLightUpdate();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-        return event.isCanceled();
-    }*/
-
     @MethodPatch(
             mcpName = "getRainStrength",
             notchName = "j",
@@ -96,12 +118,6 @@ public final class WorldPatch extends ClassPatch {
         list.add(new InsnNode(FRETURN));
         list.add(jmp);
         methodNode.instructions.insert(list);
-    }
-
-    public static boolean getRainStrengthHook() {
-        final EventRainStrength event = new EventRainStrength();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-        return event.isCanceled();
     }
 
     @MethodPatch(
@@ -120,12 +136,6 @@ public final class WorldPatch extends ClassPatch {
         methodNode.instructions.insert(list);
     }
 
-    public static boolean onEntityAddedHook(Entity entity) {
-        final EventAddEntity eventAddEntity = new EventAddEntity(entity);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(eventAddEntity);
-        return eventAddEntity.isCanceled();
-    }
-
     @MethodPatch(
             mcpName = "onEntityRemoved",
             notchName = "c",
@@ -136,10 +146,6 @@ public final class WorldPatch extends ClassPatch {
         list.add(new VarInsnNode(ALOAD, 1));
         list.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "onEntityRemovedHook", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/entity/Entity;)V" : "(Lvg;)V", false));
         methodNode.instructions.insert(list);
-    }
-
-    public static void onEntityRemovedHook(Entity entity) {
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventRemoveEntity(entity));
     }
 
     @MethodPatch(
@@ -155,11 +161,5 @@ public final class WorldPatch extends ClassPatch {
         list.add(new InsnNode(RETURN));
         list.add(jmp);
         methodNode.instructions.insert(list);
-    }
-
-    public static boolean spawnParticleHook() {
-        final EventSpawnParticle event = new EventSpawnParticle();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-        return event.isCanceled();
     }
 }

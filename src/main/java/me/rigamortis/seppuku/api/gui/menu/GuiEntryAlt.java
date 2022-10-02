@@ -13,9 +13,9 @@ import net.minecraft.util.ResourceLocation;
  */
 public class GuiEntryAlt implements GuiListExtended.IGuiListEntry {
 
-    private GuiListAlt parent;
-    private ResourceLocation resourceLocation;
     private final AltData alt;
+    private final GuiListAlt parent;
+    private ResourceLocation resourceLocation;
 
     public GuiEntryAlt(GuiListAlt parent, AltData alt) {
         this.parent = parent;

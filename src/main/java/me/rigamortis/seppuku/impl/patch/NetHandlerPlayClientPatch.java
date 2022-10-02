@@ -26,6 +26,13 @@ public final class NetHandlerPlayClientPatch extends ClassPatch {
         super("net.minecraft.client.network.NetHandlerPlayClient", "brz");
     }
 
+    public static void handleChunkDataHook(SPacketChunkData chunkData) {
+        if (chunkData != null) {
+            final EventChunk event = new EventChunk(EventChunk.ChunkType.LOAD, Minecraft.getMinecraft().world.getChunk(chunkData.getChunkX(), chunkData.getChunkZ()));
+            Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        }
+    }
+
     @MethodPatch(
             mcpName = "handleChunkData",
             notchName = "a",
@@ -36,12 +43,5 @@ public final class NetHandlerPlayClientPatch extends ClassPatch {
         insnList.add(new VarInsnNode(ALOAD, 1));
         insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "handleChunkDataHook", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/network/play/server/SPacketChunkData;)V" : "(Lje;)V", false));
         methodNode.instructions.insertBefore(ASMUtil.bottom(methodNode), insnList);
-    }
-
-    public static void handleChunkDataHook(SPacketChunkData chunkData) {
-        if (chunkData != null) {
-            final EventChunk event = new EventChunk(EventChunk.ChunkType.LOAD, Minecraft.getMinecraft().world.getChunk(chunkData.getChunkX(), chunkData.getChunkZ()));
-            Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-        }
     }
 }

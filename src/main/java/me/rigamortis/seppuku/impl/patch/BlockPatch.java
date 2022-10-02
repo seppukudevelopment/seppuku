@@ -1,9 +1,7 @@
 package me.rigamortis.seppuku.impl.patch;
 
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.event.render.EventRenderBlockSide;
 import me.rigamortis.seppuku.api.event.world.EventAddCollisionBox;
-import me.rigamortis.seppuku.api.event.world.EventGetBlockLayer;
 import me.rigamortis.seppuku.api.patch.ClassPatch;
 import me.rigamortis.seppuku.api.patch.MethodPatch;
 import me.rigamortis.seppuku.impl.management.PatchManager;
@@ -11,7 +9,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
-import team.stiff.pomelo.EventManager;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -133,6 +130,20 @@ public final class BlockPatch extends ClassPatch {
     */
 
     /**
+     * Our addCollisionBoxToList hook used to disable block collision
+     *
+     * @param entity
+     * @return
+     */
+    public static boolean addCollisionBoxToListHook(BlockPos pos, Entity entity) {
+        //dispatch our event and pass the block and entity in
+        final EventAddCollisionBox event = new EventAddCollisionBox(pos, entity);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
      * This is where minecraft adds aabb's for block collision
      *
      * @param methodNode
@@ -162,19 +173,5 @@ public final class BlockPatch extends ClassPatch {
         insnList.add(jmp);
         //insert our instructions
         methodNode.instructions.insert(insnList);
-    }
-
-    /**
-     * Our addCollisionBoxToList hook used to disable block collision
-     *
-     * @param entity
-     * @return
-     */
-    public static boolean addCollisionBoxToListHook(BlockPos pos, Entity entity) {
-        //dispatch our event and pass the block and entity in
-        final EventAddCollisionBox event = new EventAddCollisionBox(pos, entity);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 }

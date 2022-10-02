@@ -20,6 +20,12 @@ public class ParticleManagerPatch extends ClassPatch {
         super("net.minecraft.client.particle.ParticleManager", "btg");
     }
 
+    public static boolean addEffectHook(Particle particle) {
+        final EventAddEffect event = new EventAddEffect(particle);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }
+
     /*
      * public void a(btf ) {
      *     this.h.add();
@@ -47,12 +53,6 @@ public class ParticleManagerPatch extends ClassPatch {
         insnList.add(jmp);
         //insert the list of instructs at the top of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    public static boolean addEffectHook(Particle particle) {
-        final EventAddEffect event = new EventAddEffect(particle);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-        return event.isCanceled();
     }
 
     /*

@@ -25,18 +25,10 @@ import java.util.List;
 public final class FlightModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The flight mode to use", Mode.VANILLA);
-
-    private enum Mode {
-        VANILLA, PACKET
-    }
-
     public final Value<Float> speed = new Value<Float>("Speed", new String[]{"Spd"}, "Speed multiplier for flight, higher values equals more speed", 1.0f, 0.0f, 5.0f, 0.01f);
-
     public final Value<Boolean> noKick = new Value<Boolean>("NoKick", new String[]{"AntiKick", "Kick"}, "Bypass the server kicking you for flying while in flight", true);
-
     private int teleportId;
-    private List<CPacketPlayer> packets = new ArrayList<>();
-
+    private final List<CPacketPlayer> packets = new ArrayList<>();
     public FlightModule() {
         super("Flight", new String[]{"Fly"}, "Allows you to fly", "NONE", -1, ModuleType.MOVEMENT);
     }
@@ -223,6 +215,10 @@ public final class FlightModule extends Module {
                 }
             }
         }
+    }
+
+    private enum Mode {
+        VANILLA, PACKET
     }
 
 }

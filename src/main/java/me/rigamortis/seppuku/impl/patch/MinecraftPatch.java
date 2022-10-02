@@ -32,6 +32,66 @@ public final class MinecraftPatch extends ClassPatch {
     }
 
     /**
+     * This is called when we resize our game
+     */
+    public static void updateFramebufferSizeHook() {
+        //dispatch our event "EventUpdateFramebufferSize"
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventUpdateFramebufferSize());
+    }
+
+    /**
+     * This is twice called every tick
+     */
+    public static void runTickHook(EventStageable.EventStage stage) {
+        //dispatch our event "EventRunTick" and pass in the stage(pre, post)
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventRunTick(stage));
+    }
+
+    /**
+     * This is a hacky way to intercept key presses
+     */
+    public static void runTickKeyboardHook(int key) {
+        //check if the key was just pressed
+        if (Keyboard.getEventKeyState()) {
+            //dispatch our event for key presses and pass in the keycode
+            Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventKeyPress(key));
+        }
+    }
+
+    /**
+     * Our display gui hook called when we open a gui
+     *
+     * @param screen can be null!
+     * @return
+     */
+    public static boolean displayGuiScreenHook(GuiScreen screen) {
+        //dispatch our event and pass the gui
+        final EventDisplayGui event = new EventDisplayGui(screen);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        //return event.isCanceled() to allow us to cancel the original function
+        return event.isCanceled();
+    }
+
+    public static boolean loadWorldHook(WorldClient worldClient) {
+        final EventLoadWorld event = new EventLoadWorld(worldClient);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }
+
+    public static boolean clickMouseHook() {
+        final EventMouseLeftClick event = new EventMouseLeftClick();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }
+
+    public static boolean rightClickMouseHook() {
+        final EventMouseRightClick event = new EventMouseRightClick();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }
+
+    /**
      * Patch the method "updateFramebufferSize"
      * Mainly used for shaders
      *
@@ -44,14 +104,6 @@ public final class MinecraftPatch extends ClassPatch {
     public void updateFramebufferSize(MethodNode methodNode, PatchManager.Environment env) {
         //inset a static method call to our method "updateFramebufferSizeHook"
         methodNode.instructions.insert(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "updateFramebufferSizeHook", "()V", false));
-    }
-
-    /**
-     * This is called when we resize our game
-     */
-    public static void updateFramebufferSizeHook() {
-        //dispatch our event "EventUpdateFramebufferSize"
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventUpdateFramebufferSize());
     }
 
     /**
@@ -87,14 +139,6 @@ public final class MinecraftPatch extends ClassPatch {
     }
 
     /**
-     * This is twice called every tick
-     */
-    public static void runTickHook(EventStageable.EventStage stage) {
-        //dispatch our event "EventRunTick" and pass in the stage(pre, post)
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventRunTick(stage));
-    }
-
-    /**
      * This is where key input is handled
      *
      * @param methodNode
@@ -117,17 +161,6 @@ public final class MinecraftPatch extends ClassPatch {
             insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "runTickKeyboardHook", "(I)V", false));
             //inset the instructions after the call "dispatchKeypresses"
             methodNode.instructions.insert(target, insnList);
-        }
-    }
-
-    /**
-     * This is a hacky way to intercept key presses
-     */
-    public static void runTickKeyboardHook(int key) {
-        //check if the key was just pressed
-        if (Keyboard.getEventKeyState()) {
-            //dispatch our event for key presses and pass in the keycode
-            Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventKeyPress(key));
         }
     }
 
@@ -163,21 +196,6 @@ public final class MinecraftPatch extends ClassPatch {
         methodNode.instructions.insert(insnList);
     }
 
-    /**
-     * Our display gui hook called when we open a gui
-     *
-     * @param screen can be null!
-     * @return
-     */
-    public static boolean displayGuiScreenHook(GuiScreen screen) {
-        //dispatch our event and pass the gui
-        final EventDisplayGui event = new EventDisplayGui(screen);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        //return event.isCanceled() to allow us to cancel the original function
-        return event.isCanceled();
-    }
-
     @MethodPatch(
             mcpName = "loadWorld",
             notchName = "a",
@@ -192,12 +210,6 @@ public final class MinecraftPatch extends ClassPatch {
         insnList.add(new InsnNode(RETURN));
         insnList.add(jmp);
         methodNode.instructions.insert(insnList);
-    }
-
-    public static boolean loadWorldHook(WorldClient worldClient) {
-        final EventLoadWorld event = new EventLoadWorld(worldClient);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-        return event.isCanceled();
     }
 
     @MethodPatch(
@@ -215,12 +227,6 @@ public final class MinecraftPatch extends ClassPatch {
         methodNode.instructions.insert(insnList);
     }
 
-    public static boolean clickMouseHook() {
-        final EventMouseLeftClick event = new EventMouseLeftClick();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-        return event.isCanceled();
-    }
-
     @MethodPatch(
             mcpName = "rightClickMouse",
             notchName = "aB",
@@ -234,11 +240,5 @@ public final class MinecraftPatch extends ClassPatch {
         insnList.add(new InsnNode(RETURN));
         insnList.add(jmp);
         methodNode.instructions.insert(insnList);
-    }
-
-    public static boolean rightClickMouseHook() {
-        final EventMouseRightClick event = new EventMouseRightClick();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-        return event.isCanceled();
     }
 }

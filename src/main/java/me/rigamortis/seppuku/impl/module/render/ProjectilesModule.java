@@ -43,11 +43,10 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public final class ProjectilesModule extends Module {
 
-    private final Queue<Vec3d> flightPoint = new ConcurrentLinkedQueue<>();
-
     public final Value<Float> width = new Value<Float>("Width", new String[]{"W", "Width"}, "Pixel width of the projectile path", 1.0f, 0.1f, 5.0f, 0.1f);
     public final Value<Color> color = new Value<Color>("PathColor", new String[]{"color", "c", "pc"}, "Change the color of the predicted path", new Color(255, 255, 255));
     public final Value<Integer> alpha = new Value<Integer>("PathAlpha", new String[]{"opacity", "a", "o", "pa", "po"}, "Alpha value for the predicted path", 255, 1, 255, 1);
+    private final Queue<Vec3d> flightPoint = new ConcurrentLinkedQueue<>();
 
     public ProjectilesModule() {
         super("Projectiles", new String[]{"Proj"}, "Projects the possible path of an entity that was fired", "NONE", -1, ModuleType.RENDER);
@@ -225,6 +224,7 @@ public final class ProjectilesModule extends Module {
      */
     private final class FlightPath {
         private final EntityPlayerSP shooter;
+        private final ThrowableType throwableType;
         private Vec3d position;
         private Vec3d motion;
         private float yaw;
@@ -232,7 +232,6 @@ public final class ProjectilesModule extends Module {
         private AxisAlignedBB boundingBox;
         private boolean collided;
         private RayTraceResult target;
-        private final ThrowableType throwableType;
 
         FlightPath(EntityPlayerSP player, ThrowableType throwableType) {
             this.shooter = player;

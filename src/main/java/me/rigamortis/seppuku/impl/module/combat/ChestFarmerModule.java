@@ -33,8 +33,6 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class ChestFarmerModule extends Module {
 
-    private final Minecraft mc = Minecraft.getMinecraft();
-
     //public final Value<Boolean> pickOnlyMode = new Value<Boolean>("PickaxeOnly", new String[]{"pickonly", "onlypick", "onlypicks", "onlypickaxes", "pickaxesonly", "po"}, "Only run this module while a pickaxe is being held", true);
     public final Value<Boolean> visible = new Value<Boolean>("Visible", new String[]{"Visible", "v"}, "Casts a ray to the placement position, forces the placement when disabled", true);
     public final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"rotation", "r", "rotate"}, "Rotate to place the chest", true);
@@ -44,7 +42,7 @@ public final class ChestFarmerModule extends Module {
     public final Value<Integer> range = new Value<Integer>("Range", new String[]{"MaxRange", "MaximumRange"}, "Range around you to mine ender chests", 3, 1, 6, 1);
     public final Value<Float> placeDelay = new Value<Float>("Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay(ms) between chests being placed", 100.0f, 0.0f, 500.0f, 1.0f);
     public final Value<Integer> safeLimit = new Value<Integer>("SafeLimit", new String[]{"limit", "sl", "l"}, "The amount of ender chests we will keep and not farm", 16, 0, 128, 1);
-
+    private final Minecraft mc = Minecraft.getMinecraft();
     private final Timer placeTimer = new Timer();
     private final RotationTask placeRotationTask = new RotationTask("ChestFarmerPlaceTask", 3);
     private final RotationTask mineRotationTask = new RotationTask("ChestFarmerMineTask", 3);

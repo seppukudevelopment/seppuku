@@ -317,6 +317,10 @@ public final class ModuleManager {
         return moduleList;
     }
 
+    public void setModuleList(List<Module> moduleList) {
+        this.moduleList = moduleList;
+    }
+
     public List<Module> getModuleList(Module.ModuleType type) {
         List<Module> list = new ArrayList<>();
         for (Module module : moduleList) {
@@ -325,9 +329,5 @@ public final class ModuleManager {
             }
         }
         return list;
-    }
-
-    public void setModuleList(List<Module> moduleList) {
-        this.moduleList = moduleList;
     }
 }

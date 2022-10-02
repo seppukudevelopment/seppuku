@@ -25,11 +25,6 @@ import java.awt.*;
 public final class StorageESPModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Rendering mode", Mode.THREE_D);
-
-    private enum Mode {
-        TWO_D, THREE_D // TWO_DIMENSIONAL, THREE_DIMENSIONAL
-    }
-
     public final Value<Boolean> nametag = new Value<Boolean>("Nametag", new String[]{"Nametag", "Tag", "Tags", "Ntag", "name", "names"}, "Renders the name of the drawn storage object", false);
     public final Value<Integer> opacity = new Value<Integer>("Opacity", new String[]{"Opacity", "Transparency", "Alpha"}, "Opacity of the rendered esp", 128, 0, 255, 1);
     public final Value<Boolean> tracer = new Value<Boolean>("Tracer", new String[]{"TracerLine", "trace", "line"}, "Display a tracer line to each storage object", false);
@@ -37,7 +32,6 @@ public final class StorageESPModule extends Module {
     public final Value<Boolean> tracerStorageColor = new Value<Boolean>("TracerStorageColor", new String[]{"TracerStorageColor", "TStorageColor", "TSColor", "TStorageC", "TSC"}, "Use the storage object's color as the tracer color", false);
     public final Value<Float> tracerWidth = new Value<Float>("TracerWidth", new String[]{"TracerWidth", "TWidth", "TW"}, "Pixel width of each tracer-line", 0.5f, 0.1f, 5.0f, 0.1f);
     public final Value<Integer> tracerAlpha = new Value<Integer>("TracerAlpha", new String[]{"TracerAlpha", "TAlpha", "TA", "TracerOpacity", "TOpacity", "TO"}, "Alpha value for each drawn line", 255, 1, 255, 1);
-
     private final ICamera camera = new Frustum();
 
     public StorageESPModule() {
@@ -149,10 +143,7 @@ public final class StorageESPModule extends Module {
         if (te instanceof TileEntityHopper) {
             return true;
         }
-        if (te instanceof TileEntityShulkerBox) {
-            return true;
-        }
-        return false;
+        return te instanceof TileEntityShulkerBox;
     }
 
     private AxisAlignedBB boundingBoxForEnt(TileEntity te) {
@@ -212,7 +203,6 @@ public final class StorageESPModule extends Module {
 
         return null;
     }
-
 
     private int getBaseColor(TileEntity te) {
         if (te instanceof TileEntityChest) {
@@ -275,7 +265,7 @@ public final class StorageESPModule extends Module {
             return null;
         }
 
-        final Vec3d corners[] = {
+        final Vec3d[] corners = {
                 new Vec3d(bb.minX, bb.minY, bb.minZ),
                 new Vec3d(bb.maxX, bb.maxY, bb.maxZ),
                 new Vec3d(bb.minX, bb.maxY, bb.maxZ),
@@ -301,6 +291,10 @@ public final class StorageESPModule extends Module {
         }
 
         return null;
+    }
+
+    private enum Mode {
+        TWO_D, THREE_D // TWO_DIMENSIONAL, THREE_DIMENSIONAL
     }
 
 }

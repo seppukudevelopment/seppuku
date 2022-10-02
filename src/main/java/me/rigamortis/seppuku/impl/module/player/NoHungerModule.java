@@ -26,11 +26,7 @@ public final class NoHungerModule extends Module {
         if (event.getStage() == EventStageable.EventStage.PRE) {
             if (event.getPacket() instanceof CPacketPlayer) {
                 final CPacketPlayer packet = (CPacketPlayer) event.getPacket();
-                if (Minecraft.getMinecraft().player.fallDistance > 0 || Minecraft.getMinecraft().playerController.isHittingBlock) {
-                    packet.onGround = true;
-                } else {
-                    packet.onGround = false;
-                }
+                packet.onGround = Minecraft.getMinecraft().player.fallDistance > 0 || Minecraft.getMinecraft().playerController.isHittingBlock;
             }
             if (event.getPacket() instanceof CPacketEntityAction) {
                 final CPacketEntityAction packet = (CPacketEntityAction) event.getPacket();

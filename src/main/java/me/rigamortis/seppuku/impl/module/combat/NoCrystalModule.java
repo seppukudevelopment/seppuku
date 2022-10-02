@@ -15,7 +15,6 @@ import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.module.player.FreeCamModule;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemChorusFruit;
@@ -35,8 +34,6 @@ import java.util.List;
  */
 public final class NoCrystalModule extends Module {
 
-    private final Minecraft mc = Minecraft.getMinecraft();
-
     public final Value<Boolean> extended = new Value<Boolean>("Extended", new String[]{"extend", "e", "big"}, "Enlarges the size of the fortress", false);
     public final Value<Boolean> visible = new Value<Boolean>("Visible", new String[]{"Visible", "v"}, "Casts a ray to the placement position, forces the placement when disabled", true);
     public final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"rotation", "r", "rotate"}, "Rotate to place blocks", true);
@@ -46,7 +43,7 @@ public final class NoCrystalModule extends Module {
     public final Value<Boolean> sneak = new Value<Boolean>("PlaceOnSneak", new String[]{"sneak", "s", "pos", "sneakPlace"}, "When true, NoCrystal will only place while the player is sneaking", false);
     public final Value<Float> range = new Value<Float>("Range", new String[]{"MaxRange", "MaximumRange"}, "The maximum block reaching range to continue building in", 6.0f, 1.0f, 10.0f, 0.5f);
     public final Value<Float> placeDelay = new Value<Float>("Delay", new String[]{"PlaceDelay", "PlaceDel"}, "The delay(ms) between obsidian blocks being placed", 100.0f, 0.0f, 500.0f, 1.0f);
-
+    private final Minecraft mc = Minecraft.getMinecraft();
     private final Timer placeTimer = new Timer();
     private final Timer chorusTpTimer = new Timer();
     private final RotationTask rotationTask = new RotationTask("NoCrystalTask", 8);

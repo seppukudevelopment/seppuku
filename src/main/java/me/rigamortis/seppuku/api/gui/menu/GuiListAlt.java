@@ -63,16 +63,16 @@ public final class GuiListAlt extends GuiListExtended {
         return (index == this.selected);
     }
 
-    public void setSelected(int index) {
-        this.selected = index;
-    }
-
     public boolean hasSelected() {
         return (this.selected >= 0 && this.selected < this.entries.size());
     }
 
     public GuiEntryAlt getSelected() {
         return this.hasSelected() ? this.entries.get(this.selected) : null;
+    }
+
+    public void setSelected(int index) {
+        this.selected = index;
     }
 
     public int getSize() {

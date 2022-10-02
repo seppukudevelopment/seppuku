@@ -24,6 +24,86 @@ public final class PlayerControllerMPPatch extends ClassPatch {
     }
 
     /**
+     * Our onPlayerDestroyBlock hook used to get block coordinates
+     * of what we just broke
+     *
+     * @param pos
+     * @return
+     */
+    public static boolean onPlayerDestroyBlockHook(BlockPos pos) {
+        //dispatch our event and pass the BlockPos
+        final EventDestroyBlock event = new EventDestroyBlock(pos);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
+     * Our clickBlock hook used to detect when we first
+     * click on a block
+     *
+     * @param pos
+     * @param face
+     * @return
+     */
+    public static boolean clickBlockHook(BlockPos pos, EnumFacing face) {
+        //dispatch our event and pass the BlockPos and EnumFacing
+        final EventClickBlock event = new EventClickBlock(pos, face);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
+     * Our resetBlockRemoving used to detect when we stop mining
+     * It is cancellable so we can save break progress
+     *
+     * @return
+     */
+    public static boolean resetBlockRemovingHook() {
+        //dispatch the event
+        final EventResetBlockRemoving event = new EventResetBlockRemoving();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
+     * Our onPlayerDamageBlock hook used to detect if we are
+     * currently mining a block
+     *
+     * @param pos
+     * @param face
+     * @return
+     */
+    public static boolean onPlayerDamageBlockHook(BlockPos pos, EnumFacing face) {
+        //dispatch the event
+        final EventPlayerDamageBlock event = new EventPlayerDamageBlock(pos, face);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    public static boolean isHittingPositionHook(BlockPos pos) {
+        final EventHittingPosition event = new EventHittingPosition(pos);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
+     * Our getIsHittingBlockHook hook used to override block-hitting hand activity
+     *
+     * @return true if the event is cancelled
+     */
+    public static boolean getIsHittingBlockHook() {
+        //dispatch our event
+        final EventHittingBlock event = new EventHittingBlock();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }
+
+    /**
      * This is called when we finish mining a block
      *
      * @param methodNode
@@ -53,21 +133,6 @@ public final class PlayerControllerMPPatch extends ClassPatch {
         insnList.add(jmp);
         //insert the list of instructions at the top of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    /**
-     * Our onPlayerDestroyBlock hook used to get block coordinates
-     * of what we just broke
-     *
-     * @param pos
-     * @return
-     */
-    public static boolean onPlayerDestroyBlockHook(BlockPos pos) {
-        //dispatch our event and pass the BlockPos
-        final EventDestroyBlock event = new EventDestroyBlock(pos);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 
     /**
@@ -105,22 +170,6 @@ public final class PlayerControllerMPPatch extends ClassPatch {
     }
 
     /**
-     * Our clickBlock hook used to detect when we first
-     * click on a block
-     *
-     * @param pos
-     * @param face
-     * @return
-     */
-    public static boolean clickBlockHook(BlockPos pos, EnumFacing face) {
-        //dispatch our event and pass the BlockPos and EnumFacing
-        final EventClickBlock event = new EventClickBlock(pos, face);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
-    }
-
-    /**
      * This is where minecraft handles abort destroying blocks
      * and resetting break progress
      *
@@ -145,20 +194,6 @@ public final class PlayerControllerMPPatch extends ClassPatch {
         insnList.add(jmp);
         //insert the list of instructions at the top of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    /**
-     * Our resetBlockRemoving used to detect when we stop mining
-     * It is cancellable so we can save break progress
-     *
-     * @return
-     */
-    public static boolean resetBlockRemovingHook() {
-        //dispatch the event
-        final EventResetBlockRemoving event = new EventResetBlockRemoving();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 
     /**
@@ -194,22 +229,6 @@ public final class PlayerControllerMPPatch extends ClassPatch {
         insnList.add(jmp);
         //insert the list of instructions at the top of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    /**
-     * Our onPlayerDamageBlock hook used to detect if we are
-     * currently mining a block
-     *
-     * @param pos
-     * @param face
-     * @return
-     */
-    public static boolean onPlayerDamageBlockHook(BlockPos pos, EnumFacing face) {
-        //dispatch the event
-        final EventPlayerDamageBlock event = new EventPlayerDamageBlock(pos, face);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 
     /**
@@ -351,13 +370,6 @@ public final class PlayerControllerMPPatch extends ClassPatch {
         methodNode.instructions.insert(insnList);
     }
 
-    public static boolean isHittingPositionHook(BlockPos pos) {
-        final EventHittingPosition event = new EventHittingPosition(pos);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
-    }
-
     @MethodPatch(
             mcpName = "getIsHittingBlock",
             notchName = "m",
@@ -379,18 +391,6 @@ public final class PlayerControllerMPPatch extends ClassPatch {
         insnList.add(jmp);
         //insert the list of instructs at the top of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    /**
-     * Our getIsHittingBlockHook hook used to override block-hitting hand activity
-     *
-     * @return true if the event is cancelled
-     */
-    public static boolean getIsHittingBlockHook() {
-        //dispatch our event
-        final EventHittingBlock event = new EventHittingBlock();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-        return event.isCanceled();
     }
 
     @MethodPatch(

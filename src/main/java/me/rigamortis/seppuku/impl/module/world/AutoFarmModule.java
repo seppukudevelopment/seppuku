@@ -30,10 +30,8 @@ public final class AutoFarmModule extends Module {
 
     public final Value<Float> range = new Value<Float>("Range", new String[]{"Range", "Reach", "r"}, "The range in blocks your player should reach to farm", 4.0f, 1.0f, 9.0f, 0.1f);
     public final Value<Boolean> rotate = new Value<Boolean>("Rotate", new String[]{"rot"}, "Should we rotate the player's head when Auto-Farming?", true);
-
-    private BlockPos currentBlockPos;
-
     private final RotationTask rotationTask = new RotationTask("AutoFarmTask", 3);
+    private BlockPos currentBlockPos;
 
     public AutoFarmModule() {
         super("AutoFarm", new String[]{"AutoFarm", "Farm", "AutoHoe", "AutoBoneMeal", "AutoPlant"}, "Good ol' farming, just change the \"Mode\" value", "NONE", -1, ModuleType.WORLD);

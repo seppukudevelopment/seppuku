@@ -15,22 +15,18 @@ import org.lwjgl.input.Keyboard;
  */
 public class DraggableHudComponent extends HudComponent {
 
+    private static final double ANCHOR_THRESHOLD = 80;
+    protected final Minecraft mc = Minecraft.getMinecraft();
     private boolean rclicked;
     private boolean snappable;
     private boolean dragging;
     private boolean locked;
     private float deltaX;
     private float deltaY;
-
     private AnchorPoint anchorPoint;
-
     private DraggableHudComponent glued;
     private GlueSide glueSide;
     private boolean parent;
-
-    private static final double ANCHOR_THRESHOLD = 80;
-
-    protected final Minecraft mc = Minecraft.getMinecraft();
 
     public DraggableHudComponent(String name) {
         this.setName(name);
@@ -360,15 +356,15 @@ public class DraggableHudComponent extends HudComponent {
         this.glueSide = glueSide;
     }
 
-    public enum GlueSide {
-        TOP, BOTTOM
-    }
-
     public boolean isParent() {
         return parent;
     }
 
     public void setParent(boolean parent) {
         this.parent = parent;
+    }
+
+    public enum GlueSide {
+        TOP, BOTTOM
     }
 }

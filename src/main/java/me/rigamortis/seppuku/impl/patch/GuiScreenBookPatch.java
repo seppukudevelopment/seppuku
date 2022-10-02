@@ -22,6 +22,36 @@ public final class GuiScreenBookPatch extends ClassPatch {
     }
 
     /**
+     * This is our pageInsertIntoCurrent hook
+     * We can use it to modify book pages
+     *
+     * @param page
+     * @return
+     */
+    public static String pageInsertIntoCurrentHook(String page) {
+        //dispatch our event and pass in the page
+        final EventBookPage event = new EventBookPage(page);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.getPage();
+    }
+
+    /**
+     * This is our keyTypedInTitle
+     * We can use it to modify the title text of a book
+     *
+     * @param title
+     * @return
+     */
+    public static String keyTypedInTitleHook(String title) {
+        //dispatch our event and pass in the title which can be null
+        final EventBookTitle event = new EventBookTitle(title);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.getTitle();
+    }
+
+    /**
      * This is where minecraft appends your text
      * to a page in books
      *
@@ -43,21 +73,6 @@ public final class GuiScreenBookPatch extends ClassPatch {
         insnList.add(new VarInsnNode(ASTORE, 1));
         //insert our instructions
         methodNode.instructions.insert(insnList);
-    }
-
-    /**
-     * This is our pageInsertIntoCurrent hook
-     * We can use it to modify book pages
-     *
-     * @param page
-     * @return
-     */
-    public static String pageInsertIntoCurrentHook(String page) {
-        //dispatch our event and pass in the page
-        final EventBookPage event = new EventBookPage(page);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.getPage();
     }
 
     /**
@@ -86,21 +101,6 @@ public final class GuiScreenBookPatch extends ClassPatch {
         insnList.add(new FieldInsnNode(PUTFIELD, env == PatchManager.Environment.IDE ? "net/minecraft/client/gui/GuiScreenBook" : "bmj", env == PatchManager.Environment.IDE ? "bookTitle" : "A", "Ljava/lang/String;"));
         //insert our list of instructions
         methodNode.instructions.insert(insnList);
-    }
-
-    /**
-     * This is our keyTypedInTitle
-     * We can use it to modify the title text of a book
-     *
-     * @param title
-     * @return
-     */
-    public static String keyTypedInTitleHook(String title) {
-        //dispatch our event and pass in the title which can be null
-        final EventBookTitle event = new EventBookTitle(title);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.getTitle();
     }
 
 }

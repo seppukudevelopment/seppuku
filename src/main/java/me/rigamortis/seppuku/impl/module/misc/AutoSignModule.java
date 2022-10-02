@@ -22,9 +22,8 @@ import java.util.stream.IntStream;
  */
 public final class AutoSignModule extends Module {
 
-    private String[] lines;
-
     public final Value<Boolean> overflow = new Value("Overflow", new String[]{"Ov"}, "Fill the sign with the maximum number of randomly generated characters", false);
+    private String[] lines;
 
     public AutoSignModule() {
         super("AutoSign", new String[]{"AutomaticSign", "ASign"}, "Automatically writes text on signs for you", "NONE", -1, ModuleType.MISC);
@@ -41,7 +40,7 @@ public final class AutoSignModule extends Module {
         if (event.getScreen() != null && event.getScreen() instanceof GuiEditSign) {
             final GuiEditSign gui = (GuiEditSign) event.getScreen();
 
-            final boolean shouldCancel = this.overflow.getValue() ? true : this.lines != null;
+            final boolean shouldCancel = this.overflow.getValue() || this.lines != null;
 
             if (gui != null && shouldCancel && gui.tileSign != null) {
                 Minecraft.getMinecraft().player.connection.sendPacket(new CPacketUpdateSign(gui.tileSign.getPos(), new TextComponentString[]{new TextComponentString(""), new TextComponentString(""), new TextComponentString(""), new TextComponentString("")}));

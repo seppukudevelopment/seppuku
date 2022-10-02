@@ -18,15 +18,12 @@ import java.util.logging.Level;
  */
 public final class PacketLoggerModule extends Module {
 
-    private Packet[] packets;
-
     public final Value<Boolean> incoming = new Value<Boolean>("Incoming", new String[]{"in"}, "Log incoming packets when enabled", true);
     public final Value<Boolean> outgoing = new Value<Boolean>("Outgoing", new String[]{"out"}, "Log outgoing packets when enabled", true);
-
     public final Value<Boolean> chat = new Value<Boolean>("Chat", new String[]{"ch"}, "Logs packet traffic to chat", true);
     public final Value<Boolean> console = new Value<Boolean>("Console", new String[]{"con"}, "Logs packet traffic to console", true);
-
     public final Value<Boolean> data = new Value<Boolean>("Data", new String[]{"dat"}, "Include data about the packet's class in the log when enabled", true);
+    private Packet[] packets;
 
     public PacketLoggerModule() {
         super("PacketLogger", new String[]{"pktlgr"}, "Log incoming and/or outgoing packets to console", "NONE", -1, ModuleType.MISC);

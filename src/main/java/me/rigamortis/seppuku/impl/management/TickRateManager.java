@@ -14,7 +14,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class TickRateManager {
 
     private long prevTime;
-    private float[] ticks = new float[20];
+    private final float[] ticks = new float[20];
     private int currentTick;
 
     private float lastTick = -1;

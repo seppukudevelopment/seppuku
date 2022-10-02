@@ -21,6 +21,19 @@ public final class BlockSoulSandPatch extends ClassPatch {
     }
 
     /**
+     * Our onEntityCollidedWithBlock hook used to disable
+     * the slowing of movement while on soul sand
+     *
+     * @return
+     */
+    public static boolean onEntityCollidedWithBlockHook() {
+        final EventCollideSoulSand event = new EventCollideSoulSand();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
      * This is where minecraft slows you down when moving on soul sand
      *
      * @param methodNode
@@ -46,19 +59,6 @@ public final class BlockSoulSandPatch extends ClassPatch {
         insnList.add(jmp);
         //insert the list of instructions at the top of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    /**
-     * Our onEntityCollidedWithBlock hook used to disable
-     * the slowing of movement while on soul sand
-     *
-     * @return
-     */
-    public static boolean onEntityCollidedWithBlockHook() {
-        final EventCollideSoulSand event = new EventCollideSoulSand();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 
 }

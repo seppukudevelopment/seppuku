@@ -20,6 +20,13 @@ public final class GuiPlayerTabOverlayPatch extends ClassPatch {
         super("net.minecraft.client.gui.GuiPlayerTabOverlay", "bjq");
     }
 
+    public static String getPlayerNameHook(NetworkPlayerInfo networkPlayerInfo) {
+        final EventGetGuiTabName event = new EventGetGuiTabName(networkPlayerInfo.getDisplayName() != null ? networkPlayerInfo.getDisplayName().getUnformattedComponentText() : networkPlayerInfo.getGameProfile().getName());
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.getName();
+    }
+
     @MethodPatch(
             mcpName = "getPlayerName",
             notchName = "a",
@@ -32,13 +39,6 @@ public final class GuiPlayerTabOverlayPatch extends ClassPatch {
         insnList.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "getPlayerNameHook", env == PatchManager.Environment.IDE ? "(Lnet/minecraft/client/network/NetworkPlayerInfo;)Ljava/lang/String;" : "(Lbsc;)Ljava/lang/String;", false));
         insnList.add(new InsnNode(ARETURN));
         methodNode.instructions.insert(insnList);
-    }
-
-    public static String getPlayerNameHook(NetworkPlayerInfo networkPlayerInfo) {
-        final EventGetGuiTabName event = new EventGetGuiTabName(networkPlayerInfo.getDisplayName() != null ? networkPlayerInfo.getDisplayName().getUnformattedComponentText() : networkPlayerInfo.getGameProfile().getName());
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.getName();
     }
 
 

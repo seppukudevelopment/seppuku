@@ -30,22 +30,14 @@ import java.awt.*;
  */
 public final class SpeedMineModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The speed-mine mode to use", Mode.DAMAGE);
-
-    private enum Mode {
-        PACKET, DAMAGE, INSTANT, SEQUENTIAL
-    }
-
     public static BlockPos autoPos;
-
-    public BlockPos seqPos;
-    public EnumFacing seqDir;
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The speed-mine mode to use", Mode.DAMAGE);
     public final Minecraft mc = Minecraft.getMinecraft();
-
     public final Value<Boolean> reset = new Value<Boolean>("Reset", new String[]{"Res"}, "Stops current block destroy damage from resetting if enabled", true);
     public final Value<Boolean> doubleBreak = new Value<Boolean>("DoubleBreak", new String[]{"DoubleBreak", "Double", "DB"}, "Mining a block will also mine the block above it, if enabled", false);
     public final Value<Boolean> auto = new Value<Boolean>("Auto", new String[]{"MultiMine", "MM"}, "When enabled, allows for multi-mining blocks", false);
-
+    public BlockPos seqPos;
+    public EnumFacing seqDir;
     public SpeedMineModule() {
         super("SpeedMine", new String[]{"FastMine"}, "Allows you to break blocks faster", "NONE", -1, ModuleType.WORLD);
     }
@@ -103,7 +95,6 @@ public final class SpeedMineModule extends Module {
             RenderUtil.end3D();
         }
     }
-
 
     @Listener
     public void damageBlock(EventPlayerDamageBlock event) {
@@ -167,12 +158,16 @@ public final class SpeedMineModule extends Module {
         }
     }
 
-
     private boolean canBreak(BlockPos pos) {
         final IBlockState blockState = mc.world.getBlockState(pos);
         final Block block = blockState.getBlock();
 
         return block.getBlockHardness(blockState, mc.world, pos) != -1;
+    }
+
+
+    private enum Mode {
+        PACKET, DAMAGE, INSTANT, SEQUENTIAL
     }
 
 }

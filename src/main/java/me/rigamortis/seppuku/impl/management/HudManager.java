@@ -32,10 +32,9 @@ import java.util.stream.Collectors;
  */
 public final class HudManager {
 
+    private final FirstLaunchComponent firstLaunchComponent;
     private List<HudComponent> componentList = new CopyOnWriteArrayList<>();
     private List<AnchorPoint> anchorPoints = new ArrayList<>();
-
-    private final FirstLaunchComponent firstLaunchComponent;
 
     public HudManager() {
         final ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());

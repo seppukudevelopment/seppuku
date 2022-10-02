@@ -77,7 +77,7 @@ public final class GuiAltManager extends GuiScreen implements GuiYesNoCallback {
                 break;
             case 1:
                 if (this.guiListAlt.hasSelected() && this.guiListAlt.getSelected() != null) {
-                    mc.displayGuiScreen((GuiScreen) new GuiYesNo(this, "Remove account '" + this.guiListAlt.getSelected().getAlt().getUsername() + "'?", "", "Yes", "No", 0));
+                    mc.displayGuiScreen(new GuiYesNo(this, "Remove account '" + this.guiListAlt.getSelected().getAlt().getUsername() + "'?", "", "Yes", "No", 0));
                 }
                 break;
             case 2:

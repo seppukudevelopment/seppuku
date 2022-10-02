@@ -20,6 +20,12 @@ public final class GuiChatPatch extends ClassPatch {
         super("net.minecraft.client.gui.GuiChat", "bkn");
     }
 
+    public static boolean keyTypedHook(char typedChar, int keyCode) {
+        final EventChatKeyTyped event = new EventChatKeyTyped(typedChar, keyCode);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }
+
     @MethodPatch(
             mcpName = "keyTyped",
             notchName = "a",
@@ -34,11 +40,5 @@ public final class GuiChatPatch extends ClassPatch {
         insnList.add(new InsnNode(RETURN));
         insnList.add(jmp);
         methodNode.instructions.insert(insnList);
-    }
-
-    public static boolean keyTypedHook(char typedChar, int keyCode) {
-        final EventChatKeyTyped event = new EventChatKeyTyped(typedChar, keyCode);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-        return event.isCanceled();
     }
 }

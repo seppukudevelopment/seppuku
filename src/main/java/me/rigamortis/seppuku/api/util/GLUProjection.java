@@ -13,259 +13,11 @@ import java.nio.IntBuffer;
  * Author TheCyberBrick
  */
 public final class GLUProjection {
-    public static class Line {
-        public Vector3D sourcePoint = new Vector3D(0, 0, 0);
-        public Vector3D direction = new Vector3D(0, 0, 0);
-
-        public Line(double sx, double sy, double sz, double dx, double dy, double dz) {
-            this.sourcePoint.x = sx;
-            this.sourcePoint.y = sy;
-            this.sourcePoint.z = sz;
-            this.direction.x = dx;
-            this.direction.y = dy;
-            this.direction.z = dz;
-        }
-
-        public Vector3D intersect(Line line) {
-            double a = this.sourcePoint.x;
-            double b = this.direction.x;
-            double c = line.sourcePoint.x;
-            double d = line.direction.x;
-            double e = this.sourcePoint.y;
-            double f = this.direction.y;
-            double g = line.sourcePoint.y;
-            double h = line.direction.y;
-            double te = -(a * h - c * h - d * (e - g));
-            double be = b * h - d * f;
-            if (be == 0) {
-                return this.intersectXZ(line);
-            }
-            double t = te / be;
-            Vector3D result = new Vector3D(0, 0, 0);
-            result.x = this.sourcePoint.x + this.direction.x * t;
-            result.y = this.sourcePoint.y + this.direction.y * t;
-            result.z = this.sourcePoint.z + this.direction.z * t;
-            return result;
-        }
-
-        private Vector3D intersectXZ(Line line) {
-            double a = this.sourcePoint.x;
-            double b = this.direction.x;
-            double c = line.sourcePoint.x;
-            double d = line.direction.x;
-            double e = this.sourcePoint.z;
-            double f = this.direction.z;
-            double g = line.sourcePoint.z;
-            double h = line.direction.z;
-            double te = -(a * h - c * h - d * (e - g));
-            double be = b * h - d * f;
-            if (be == 0) {
-                return this.intersectYZ(line);
-            }
-            double t = te / be;
-            Vector3D result = new Vector3D(0, 0, 0);
-            result.x = this.sourcePoint.x + this.direction.x * t;
-            result.y = this.sourcePoint.y + this.direction.y * t;
-            result.z = this.sourcePoint.z + this.direction.z * t;
-            return result;
-        }
-
-        private Vector3D intersectYZ(Line line) {
-            double a = this.sourcePoint.y;
-            double b = this.direction.y;
-            double c = line.sourcePoint.y;
-            double d = line.direction.y;
-            double e = this.sourcePoint.z;
-            double f = this.direction.z;
-            double g = line.sourcePoint.z;
-            double h = line.direction.z;
-            double te = -(a * h - c * h - d * (e - g));
-            double be = b * h - d * f;
-            if (be == 0) {
-                return null;
-            }
-            double t = te / be;
-            Vector3D result = new Vector3D(0, 0, 0);
-            result.x = this.sourcePoint.x + this.direction.x * t;
-            result.y = this.sourcePoint.y + this.direction.y * t;
-            result.z = this.sourcePoint.z + this.direction.z * t;
-            return result;
-        }
-
-        public Vector3D intersectPlane(Vector3D pointOnPlane, Vector3D planeNormal) {
-            Vector3D result = new Vector3D(this.sourcePoint.x, this.sourcePoint.y, this.sourcePoint.z);
-            double d = pointOnPlane.sub(this.sourcePoint).dot(planeNormal) / this.direction.dot(planeNormal);
-            result.sadd(this.direction.mul(d));
-            if (this.direction.dot(planeNormal) == 0.0D) {
-                return null;
-            }
-            return result;
-        }
-    }
-
-    public static class Vector3D {
-        public double x, y, z;
-
-        public Vector3D(double x, double y, double z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-
-        public Vector3D add(Vector3D v) {
-            return new Vector3D(this.x + v.x, this.y + v.y, this.z + v.z);
-        }
-
-        public Vector3D add(double x, double y, double z) {
-            return new Vector3D(this.x + x, this.y + y, this.z + z);
-        }
-
-        public Vector3D sub(Vector3D v) {
-            return new Vector3D(this.x - v.x, this.y - v.y, this.z - v.z);
-        }
-
-        public Vector3D sub(double x, double y, double z) {
-            return new Vector3D(this.x - x, this.y - y, this.z - z);
-        }
-
-        public Vector3D normalized() {
-            double len = (double) Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
-            return new Vector3D(this.x / len, this.y / len, this.z / len);
-        }
-
-        public double dot(Vector3D v) {
-            return this.x * v.x + this.y * v.y + this.z * v.z;
-        }
-
-        public Vector3D cross(Vector3D v) {
-            return new Vector3D(this.y * v.z - this.z * v.y, this.z * v.x - this.x * v.z, this.x * v.y - this.y * v.x);
-        }
-
-        public Vector3D mul(double m) {
-            return new Vector3D(this.x * m, this.y * m, this.z * m);
-        }
-
-        public Vector3D div(double d) {
-            return new Vector3D(this.x / d, this.y / d, this.z / d);
-        }
-
-        public double length() {
-            return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
-        }
-
-        public Vector3D sadd(Vector3D v) {
-            this.x += v.x;
-            this.y += v.y;
-            this.z += v.z;
-            return this;
-        }
-
-        public Vector3D sadd(double x, double y, double z) {
-            this.x += x;
-            this.y += y;
-            this.z += z;
-            return this;
-        }
-
-        public Vector3D ssub(Vector3D v) {
-            this.x -= v.x;
-            this.y -= v.y;
-            this.z -= v.z;
-            return this;
-        }
-
-        public Vector3D ssub(double x, double y, double z) {
-            this.x -= x;
-            this.y -= y;
-            this.z -= z;
-            return this;
-        }
-
-        public Vector3D snormalize() {
-            double len = (double) Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
-            this.x /= len;
-            this.y /= len;
-            this.z /= len;
-            return this;
-        }
-
-        public Vector3D scross(Vector3D v) {
-            this.x = this.y * v.z - this.z * v.y;
-            this.y = this.z * v.x - this.x * v.z;
-            this.z = this.x * v.y - this.y * v.x;
-            return this;
-        }
-
-        public Vector3D smul(double m) {
-            this.x *= m;
-            this.y *= m;
-            this.z *= m;
-            return this;
-        }
-
-        public Vector3D sdiv(double d) {
-            this.x /= d;
-            this.y /= d;
-            this.z /= d;
-            return this;
-        }
-
-        @Override
-        public String toString() {
-            return "(X: " + this.x + " Y: " + this.y + " Z: " + this.z + ")";
-        }
-    }
-
-    public static class Projection {
-        public static enum Type {
-            INSIDE, OUTSIDE, INVERTED, FAIL
-        }
-
-        private final double x;
-        private final double y;
-        private final Type t;
-
-        public Projection(double x, double y, Type t) {
-            this.x = x;
-            this.y = y;
-            this.t = t;
-        }
-
-        public double getX() {
-            return this.x;
-        }
-
-        public double getY() {
-            return this.y;
-        }
-
-        public Type getType() {
-            return this.t;
-        }
-
-        public boolean isType(Type type) {
-            return this.t == type;
-        }
-    }
-
-    public static enum ClampMode {ORTHOGONAL, DIRECT, NONE}
-
-    private GLUProjection() {
-    }
-
     private static GLUProjection instance;
-
-    public static GLUProjection getInstance() {
-        if (instance == null) {
-            instance = new GLUProjection();
-        }
-        return instance;
-    }
-
     private IntBuffer viewport;
     private FloatBuffer modelview;
     private FloatBuffer projection;
-    private FloatBuffer coords = BufferUtils.createFloatBuffer(3);
+    private final FloatBuffer coords = BufferUtils.createFloatBuffer(3);
     private Vector3D frustumPos;
     private Vector3D[] frustum;
     private Vector3D[] invFrustum;
@@ -279,6 +31,15 @@ public final class GLUProjection {
     private float fovY;
     private float fovX;
     private Vector3D lookVec;
+    private GLUProjection() {
+    }
+
+    public static GLUProjection getInstance() {
+        if (instance == null) {
+            instance = new GLUProjection();
+        }
+        return instance;
+    }
 
     /**
      * Updates the matrices. Needed whenever the viewport or one of the matrices has changed.
@@ -361,14 +122,14 @@ public final class GLUProjection {
     public Projection project(double x, double y, double z, ClampMode clampModeOutside, boolean extrudeInverted) {
         if (this.viewport != null && this.modelview != null && this.projection != null) {
             Vector3D posVec = new Vector3D(x, y, z);
-            boolean frustum[] = this.doFrustumCheck(this.frustum, this.frustumPos, x, y, z);
+            boolean[] frustum = this.doFrustumCheck(this.frustum, this.frustumPos, x, y, z);
             boolean outsideFrustum = frustum[0] || frustum[1] || frustum[2] || frustum[3];
             //Check if point is inside frustum
             if (outsideFrustum) {
                 //Check if point is on opposite side of the near clip plane
                 boolean opposite = posVec.sub(this.frustumPos).dot(this.viewVec) <= 0.0D;
                 //Get inverted frustum check
-                boolean invFrustum[] = this.doFrustumCheck(this.invFrustum, this.frustumPos, x, y, z);
+                boolean[] invFrustum = this.doFrustumCheck(this.invFrustum, this.frustumPos, x, y, z);
                 boolean outsideInvertedFrustum = invFrustum[0] || invFrustum[1] || invFrustum[2] || invFrustum[3];
                 if ((extrudeInverted && !outsideInvertedFrustum) || (outsideInvertedFrustum && clampModeOutside != ClampMode.NONE)) {
                     if ((extrudeInverted && !outsideInvertedFrustum) ||
@@ -381,10 +142,10 @@ public final class GLUProjection {
                             if (opposite) {
                                 //Invert coordinates
                                 vecX = this.displayWidth * this.widthScale - (double) this.coords.get(0) * this.widthScale - this.displayWidth * this.widthScale / 2.0F;
-                                vecY = this.displayHeight * this.heightScale - ((double) displayHeight - (double) this.coords.get(1)) * (double) this.heightScale - this.displayHeight * this.heightScale / 2.0F;
+                                vecY = this.displayHeight * this.heightScale - (displayHeight - (double) this.coords.get(1)) * this.heightScale - this.displayHeight * this.heightScale / 2.0F;
                             } else {
                                 vecX = (double) this.coords.get(0) * this.widthScale - this.displayWidth * this.widthScale / 2.0F;
-                                vecY = ((double) this.displayHeight - (double) this.coords.get(1)) * (double) this.heightScale - this.displayHeight * this.heightScale / 2.0F;
+                                vecY = (this.displayHeight - (double) this.coords.get(1)) * this.heightScale - this.displayHeight * this.heightScale / 2.0F;
                             }
                         } else {
                             return new Projection(0, 0, Projection.Type.FAIL);
@@ -421,7 +182,7 @@ public final class GLUProjection {
                         if (GLU.gluProject((float) x, (float) y, (float) z, this.modelview, this.projection, this.viewport, this.coords)) {
                             //Get projected coordinates
                             double guiX = (double) this.coords.get(0) * this.widthScale;
-                            double guiY = ((double) this.displayHeight - (double) this.coords.get(1)) * (double) this.heightScale;
+                            double guiY = (this.displayHeight - (double) this.coords.get(1)) * this.heightScale;
                             if (opposite) {
                                 //Invert coordinates
                                 guiX = this.displayWidth * this.widthScale - guiX;
@@ -447,7 +208,7 @@ public final class GLUProjection {
                     if (GLU.gluProject((float) x, (float) y, (float) z, this.modelview, this.projection, this.viewport, this.coords)) {
                         //Get projected coordinates
                         double guiX = (double) this.coords.get(0) * this.widthScale;
-                        double guiY = ((double) this.displayHeight - (double) this.coords.get(1)) * (double) this.heightScale;
+                        double guiY = (this.displayHeight - (double) this.coords.get(1)) * this.heightScale;
                         if (opposite) {
                             //Invert coordinates
                             guiX = this.displayWidth * this.widthScale - guiX;
@@ -463,7 +224,7 @@ public final class GLUProjection {
                 if (GLU.gluProject((float) x, (float) y, (float) z, this.modelview, this.projection, this.viewport, this.coords)) {
                     //Get projected coordinates
                     double guiX = (double) this.coords.get(0) * this.widthScale;
-                    double guiY = ((double) this.displayHeight - (double) this.coords.get(1)) * (double) this.heightScale;
+                    double guiY = (this.displayHeight - (double) this.coords.get(1)) * this.heightScale;
                     return new Projection(guiX, guiY, Projection.Type.INSIDE);
                 } else {
                     return new Projection(0, 0, Projection.Type.FAIL);
@@ -603,6 +364,242 @@ public final class GLUProjection {
         double s = Math.sin(-rotYaw * 0.017453292F - Math.PI);
         double nc = -Math.cos(-rotPitch * 0.017453292F);
         double ns = Math.sin(-rotPitch * 0.017453292F);
-        return new Vector3D((double) (s * nc), (double) ns, (double) (c * nc));
+        return new Vector3D(s * nc, ns, c * nc);
+    }
+
+    public enum ClampMode {ORTHOGONAL, DIRECT, NONE}
+
+    public static class Line {
+        public Vector3D sourcePoint = new Vector3D(0, 0, 0);
+        public Vector3D direction = new Vector3D(0, 0, 0);
+
+        public Line(double sx, double sy, double sz, double dx, double dy, double dz) {
+            this.sourcePoint.x = sx;
+            this.sourcePoint.y = sy;
+            this.sourcePoint.z = sz;
+            this.direction.x = dx;
+            this.direction.y = dy;
+            this.direction.z = dz;
+        }
+
+        public Vector3D intersect(Line line) {
+            double a = this.sourcePoint.x;
+            double b = this.direction.x;
+            double c = line.sourcePoint.x;
+            double d = line.direction.x;
+            double e = this.sourcePoint.y;
+            double f = this.direction.y;
+            double g = line.sourcePoint.y;
+            double h = line.direction.y;
+            double te = -(a * h - c * h - d * (e - g));
+            double be = b * h - d * f;
+            if (be == 0) {
+                return this.intersectXZ(line);
+            }
+            double t = te / be;
+            Vector3D result = new Vector3D(0, 0, 0);
+            result.x = this.sourcePoint.x + this.direction.x * t;
+            result.y = this.sourcePoint.y + this.direction.y * t;
+            result.z = this.sourcePoint.z + this.direction.z * t;
+            return result;
+        }
+
+        private Vector3D intersectXZ(Line line) {
+            double a = this.sourcePoint.x;
+            double b = this.direction.x;
+            double c = line.sourcePoint.x;
+            double d = line.direction.x;
+            double e = this.sourcePoint.z;
+            double f = this.direction.z;
+            double g = line.sourcePoint.z;
+            double h = line.direction.z;
+            double te = -(a * h - c * h - d * (e - g));
+            double be = b * h - d * f;
+            if (be == 0) {
+                return this.intersectYZ(line);
+            }
+            double t = te / be;
+            Vector3D result = new Vector3D(0, 0, 0);
+            result.x = this.sourcePoint.x + this.direction.x * t;
+            result.y = this.sourcePoint.y + this.direction.y * t;
+            result.z = this.sourcePoint.z + this.direction.z * t;
+            return result;
+        }
+
+        private Vector3D intersectYZ(Line line) {
+            double a = this.sourcePoint.y;
+            double b = this.direction.y;
+            double c = line.sourcePoint.y;
+            double d = line.direction.y;
+            double e = this.sourcePoint.z;
+            double f = this.direction.z;
+            double g = line.sourcePoint.z;
+            double h = line.direction.z;
+            double te = -(a * h - c * h - d * (e - g));
+            double be = b * h - d * f;
+            if (be == 0) {
+                return null;
+            }
+            double t = te / be;
+            Vector3D result = new Vector3D(0, 0, 0);
+            result.x = this.sourcePoint.x + this.direction.x * t;
+            result.y = this.sourcePoint.y + this.direction.y * t;
+            result.z = this.sourcePoint.z + this.direction.z * t;
+            return result;
+        }
+
+        public Vector3D intersectPlane(Vector3D pointOnPlane, Vector3D planeNormal) {
+            Vector3D result = new Vector3D(this.sourcePoint.x, this.sourcePoint.y, this.sourcePoint.z);
+            double d = pointOnPlane.sub(this.sourcePoint).dot(planeNormal) / this.direction.dot(planeNormal);
+            result.sadd(this.direction.mul(d));
+            if (this.direction.dot(planeNormal) == 0.0D) {
+                return null;
+            }
+            return result;
+        }
+    }
+
+    public static class Vector3D {
+        public double x, y, z;
+
+        public Vector3D(double x, double y, double z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        public Vector3D add(Vector3D v) {
+            return new Vector3D(this.x + v.x, this.y + v.y, this.z + v.z);
+        }
+
+        public Vector3D add(double x, double y, double z) {
+            return new Vector3D(this.x + x, this.y + y, this.z + z);
+        }
+
+        public Vector3D sub(Vector3D v) {
+            return new Vector3D(this.x - v.x, this.y - v.y, this.z - v.z);
+        }
+
+        public Vector3D sub(double x, double y, double z) {
+            return new Vector3D(this.x - x, this.y - y, this.z - z);
+        }
+
+        public Vector3D normalized() {
+            double len = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+            return new Vector3D(this.x / len, this.y / len, this.z / len);
+        }
+
+        public double dot(Vector3D v) {
+            return this.x * v.x + this.y * v.y + this.z * v.z;
+        }
+
+        public Vector3D cross(Vector3D v) {
+            return new Vector3D(this.y * v.z - this.z * v.y, this.z * v.x - this.x * v.z, this.x * v.y - this.y * v.x);
+        }
+
+        public Vector3D mul(double m) {
+            return new Vector3D(this.x * m, this.y * m, this.z * m);
+        }
+
+        public Vector3D div(double d) {
+            return new Vector3D(this.x / d, this.y / d, this.z / d);
+        }
+
+        public double length() {
+            return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+        }
+
+        public Vector3D sadd(Vector3D v) {
+            this.x += v.x;
+            this.y += v.y;
+            this.z += v.z;
+            return this;
+        }
+
+        public Vector3D sadd(double x, double y, double z) {
+            this.x += x;
+            this.y += y;
+            this.z += z;
+            return this;
+        }
+
+        public Vector3D ssub(Vector3D v) {
+            this.x -= v.x;
+            this.y -= v.y;
+            this.z -= v.z;
+            return this;
+        }
+
+        public Vector3D ssub(double x, double y, double z) {
+            this.x -= x;
+            this.y -= y;
+            this.z -= z;
+            return this;
+        }
+
+        public Vector3D snormalize() {
+            double len = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+            this.x /= len;
+            this.y /= len;
+            this.z /= len;
+            return this;
+        }
+
+        public Vector3D scross(Vector3D v) {
+            this.x = this.y * v.z - this.z * v.y;
+            this.y = this.z * v.x - this.x * v.z;
+            this.z = this.x * v.y - this.y * v.x;
+            return this;
+        }
+
+        public Vector3D smul(double m) {
+            this.x *= m;
+            this.y *= m;
+            this.z *= m;
+            return this;
+        }
+
+        public Vector3D sdiv(double d) {
+            this.x /= d;
+            this.y /= d;
+            this.z /= d;
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            return "(X: " + this.x + " Y: " + this.y + " Z: " + this.z + ")";
+        }
+    }
+
+    public static class Projection {
+        private final double x;
+        private final double y;
+        private final Type t;
+        public Projection(double x, double y, Type t) {
+            this.x = x;
+            this.y = y;
+            this.t = t;
+        }
+
+        public double getX() {
+            return this.x;
+        }
+
+        public double getY() {
+            return this.y;
+        }
+
+        public Type getType() {
+            return this.t;
+        }
+
+        public boolean isType(Type type) {
+            return this.t == type;
+        }
+
+        public enum Type {
+            INSIDE, OUTSIDE, INVERTED, FAIL
+        }
     }
 }

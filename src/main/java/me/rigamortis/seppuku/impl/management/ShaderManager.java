@@ -13,8 +13,8 @@ import java.util.logging.Level;
 
 public final class ShaderManager {
     // XXX a bimap would be better for this but i didnt want an extra library for a single class -rafern
-    private Map<String, ShaderProgram> shaderList = new HashMap<String, ShaderProgram>();
-    private Map<ShaderProgram, String> programToID = new HashMap<ShaderProgram, String>();
+    private final Map<String, ShaderProgram> shaderList = new HashMap<String, ShaderProgram>();
+    private final Map<ShaderProgram, String> programToID = new HashMap<ShaderProgram, String>();
 
     public ShaderManager() {
         this.loadShaders();

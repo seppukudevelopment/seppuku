@@ -51,10 +51,6 @@ public final class StorageAlertModule extends Module {
     private final File locationsFile;
     private CommandsModule commandsModule;
 
-    private enum Mode {
-        CHAT, NOTIFICATION, BOTH
-    }
-
     public StorageAlertModule() {
         super("StorageAlert", new String[]{"StorageAlerts", "ChestAlert"}, "Alerts you how many storage blocks are in a chunk when it's loaded", "NONE", -1, ModuleType.MISC);
 
@@ -146,5 +142,9 @@ public final class StorageAlertModule extends Module {
         }
 
         FileUtil.write(this.locationsFile, linesToAdd, false);
+    }
+
+    private enum Mode {
+        CHAT, NOTIFICATION, BOTH
     }
 }

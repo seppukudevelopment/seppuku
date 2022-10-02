@@ -11,7 +11,6 @@ import me.rigamortis.seppuku.api.util.MathUtil;
 import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -32,26 +31,19 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class BurrowModule extends Module {
 
-    public enum Mode {
-        JUMP, GLITCH, TP, INSTA
-    }
-
     public final Value<Mode> mode = new Value<>("Mode", new String[]{"m"}, "The current mode to use.", Mode.JUMP);
     public final Value<Float> glitchY = new Value<>("ModeGlitchY", new String[]{"mgy", "glitchy"}, "Using GLITCH mode, this will be your player's motionY", 0.5f, 0.1f, 1.5f, 0.1f);
     public final Value<Integer> tpHeight = new Value<>("ModeTPHeight", new String[]{"mtph", "mth", "tpheight", "tpy"}, "Using TP mode, this will be how many blocks above the player to TP", 20, -30, 30, 1);
     public final Value<Float> delay = new Value<>("ModeDelay", new String[]{"del", "d"}, "Delay(ms) to wait for placing obsidian after the initial jump. Not used in INSTA mode", 200.0f, 1.0f, 500.0f, 1.0f);
     public final Value<Boolean> smartTp = new Value<>("ModeSmartTp", new String[]{"smart", "adaptivetp", "a", "atp"}, "Searches for an air block to tp to for INSTA mode", true);
     public final Value<Boolean> noVoid = new Value<>("ModeNoVoid", new String[]{"nonegative", "nv"}, "Doesn't tp you under Y 0", true);
-
     public final Value<Boolean> rotate = new Value<>("Rotate", new String[]{"rot", "r"}, "Rotate the players head to place the block", true);
     public final Value<Boolean> center = new Value<>("Center", new String[]{"centered", "c", "cen"}, "Centers the player on their current block when beginning to place", false);
     public final Value<Boolean> offGround = new Value<>("OffGround", new String[]{"offg", "og", "o"}, "Forces player onGround to false when enabled", true);
     public final Value<Boolean> sneaking = new Value<>("Sneaking", new String[]{"sneak", "s", "fs", "sneaking"}, "Forces player to sneak when enabled", false);
-
     private final Timer timer = new Timer();
     private final RotationTask rotationTask = new RotationTask("BurrowTask", 9); // 9 == high priority
     private BlockPos burrowPos;
-
     public BurrowModule() {
         super("Burrow", new String[]{"burow", "burro", "brrw"}, "Places obsidian inside yourself", "NONE", -1, ModuleType.COMBAT);
     }
@@ -234,5 +226,9 @@ public final class BurrowModule extends Module {
             mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
 
         return true;
+    }
+
+    public enum Mode {
+        JUMP, GLITCH, TP, INSTA
     }
 }

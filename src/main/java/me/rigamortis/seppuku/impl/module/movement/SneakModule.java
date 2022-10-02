@@ -19,10 +19,6 @@ public final class SneakModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The sneak mode to use", Mode.VANILLA);
 
-    private enum Mode {
-        VANILLA, NCP
-    }
-
     public SneakModule() {
         super("Sneak", new String[]{"Sneek"}, "Allows you to sneak at full speed", "NONE", -1, ModuleType.MOVEMENT);
     }
@@ -79,6 +75,10 @@ public final class SneakModule extends Module {
 
     private boolean isMoving() {
         return GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindForward) || GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindLeft) || GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindRight) || GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindBack);
+    }
+
+    private enum Mode {
+        VANILLA, NCP
     }
 
 }

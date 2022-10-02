@@ -24,6 +24,59 @@ public final class GuiIngameForgePatch extends ClassPatch {
     }
 
     /**
+     * Our renderPortal hook to remove the portal overlay
+     *
+     * @return
+     */
+    public static boolean renderPortalHook() {
+        //dispatch our event
+        final EventRenderPortal event = new EventRenderPortal();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
+     * Our renderPotionIcons hook used to remove potion
+     * status icons
+     *
+     * @return
+     */
+    public static boolean renderPotionIconsHook() {
+        //dispatch our event
+        final EventRenderPotions event = new EventRenderPotions();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
+     * Our renderHelmet hook to remove overlay effects
+     *
+     * @return
+     */
+    public static boolean renderHelmetHook() {
+        //dispatch our event
+        final EventRenderHelmet event = new EventRenderHelmet();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
+     * Our renderCrosshairs hook to remove the crosshair
+     *
+     * @return
+     */
+    public static boolean renderCrosshairsHook() {
+        //dispatch our event
+        final EventRenderCrosshairs event = new EventRenderCrosshairs();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
      * This is where minecraft renders a
      * portal overlay effect on your screen
      *
@@ -49,19 +102,6 @@ public final class GuiIngameForgePatch extends ClassPatch {
         insnList.add(jmp);
         //insert the list of instructs at the top of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    /**
-     * Our renderPortal hook to remove the portal overlay
-     *
-     * @return
-     */
-    public static boolean renderPortalHook() {
-        //dispatch our event
-        final EventRenderPortal event = new EventRenderPortal();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 
     /**
@@ -93,20 +133,6 @@ public final class GuiIngameForgePatch extends ClassPatch {
     }
 
     /**
-     * Our renderPotionIcons hook used to remove potion
-     * status icons
-     *
-     * @return
-     */
-    public static boolean renderPotionIconsHook() {
-        //dispatch our event
-        final EventRenderPotions event = new EventRenderPotions();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
-    }
-
-    /**
      * This is where minecraft renders overlay effects
      * like pumpkins
      *
@@ -135,19 +161,6 @@ public final class GuiIngameForgePatch extends ClassPatch {
     }
 
     /**
-     * Our renderHelmet hook to remove overlay effects
-     *
-     * @return
-     */
-    public static boolean renderHelmetHook() {
-        //dispatch our event
-        final EventRenderHelmet event = new EventRenderHelmet();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
-    }
-
-    /**
      * This is where minecraft renders the game's crosshair
      *
      * @param methodNode
@@ -172,18 +185,5 @@ public final class GuiIngameForgePatch extends ClassPatch {
         insnList.add(jmp);
         //insert the list of instructs at the top of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    /**
-     * Our renderCrosshairs hook to remove the crosshair
-     *
-     * @return
-     */
-    public static boolean renderCrosshairsHook() {
-        //dispatch our event
-        final EventRenderCrosshairs event = new EventRenderCrosshairs();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 }

@@ -18,17 +18,14 @@ import org.lwjgl.opengl.GL11;
  */
 public final class HubComponent extends ResizableHudComponent {
 
-    private int scroll;
-
-    private int totalHeight;
-
     private final int SCROLL_WIDTH = 5;
     private final int BORDER = 2;
     private final int TEXT_GAP = 1;
     private final int TEXTURE_SIZE = 8;
     private final int TITLE_BAR_HEIGHT = mc.fontRenderer.FONT_HEIGHT + 1;
-
     private final Texture texture;
+    private int scroll;
+    private int totalHeight;
 
     public HubComponent() {
         super("Hub", 100, 120, 125, 1000);

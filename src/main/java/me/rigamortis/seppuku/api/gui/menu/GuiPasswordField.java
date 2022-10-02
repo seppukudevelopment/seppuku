@@ -60,6 +60,10 @@ public class GuiPasswordField extends Gui {
         ++this.cursorCounter;
     }
 
+    public String getText() {
+        return this.text;
+    }
+
     public void setText(String textIn) {
         if (this.validator.apply(textIn)) {
             if (textIn.length() > this.maxStringLength) {
@@ -71,10 +75,6 @@ public class GuiPasswordField extends Gui {
             this.setCursorPositionEnd();
         }
 
-    }
-
-    public String getText() {
-        return this.text;
     }
 
     public String getSelectedText() {
@@ -210,13 +210,6 @@ public class GuiPasswordField extends Gui {
 
     public void moveCursorBy(int num) {
         this.setCursorPosition(this.selectionEnd + num);
-    }
-
-    public void setCursorPosition(int pos) {
-        this.cursorPosition = pos;
-        int i = this.text.length();
-        this.cursorPosition = MathHelper.clamp(this.cursorPosition, 0, i);
-        this.setSelectionPos(this.cursorPosition);
     }
 
     public void setCursorPositionZero() {
@@ -433,13 +426,17 @@ public class GuiPasswordField extends Gui {
         GlStateManager.enableColorLogic();
         GlStateManager.colorLogicOp(LogicOp.OR_REVERSE);
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION);
-        bufferbuilder.pos((double) startX, (double) endY, 0.0D).endVertex();
-        bufferbuilder.pos((double) endX, (double) endY, 0.0D).endVertex();
-        bufferbuilder.pos((double) endX, (double) startY, 0.0D).endVertex();
-        bufferbuilder.pos((double) startX, (double) startY, 0.0D).endVertex();
+        bufferbuilder.pos(startX, endY, 0.0D).endVertex();
+        bufferbuilder.pos(endX, endY, 0.0D).endVertex();
+        bufferbuilder.pos(endX, startY, 0.0D).endVertex();
+        bufferbuilder.pos(startX, startY, 0.0D).endVertex();
         tessellator.draw();
         GlStateManager.disableColorLogic();
         GlStateManager.enableTexture2D();
+    }
+
+    public int getMaxStringLength() {
+        return this.maxStringLength;
     }
 
     public void setMaxStringLength(int length) {
@@ -450,12 +447,15 @@ public class GuiPasswordField extends Gui {
 
     }
 
-    public int getMaxStringLength() {
-        return this.maxStringLength;
-    }
-
     public int getCursorPosition() {
         return this.cursorPosition;
+    }
+
+    public void setCursorPosition(int pos) {
+        this.cursorPosition = pos;
+        int i = this.text.length();
+        this.cursorPosition = MathHelper.clamp(this.cursorPosition, 0, i);
+        this.setSelectionPos(this.cursorPosition);
     }
 
     public boolean getEnableBackgroundDrawing() {
@@ -474,6 +474,10 @@ public class GuiPasswordField extends Gui {
         this.disabledColor = color;
     }
 
+    public boolean isFocused() {
+        return this.isFocused;
+    }
+
     public void setFocused(boolean isFocusedIn) {
         if (isFocusedIn && !this.isFocused) {
             this.cursorCounter = 0;
@@ -484,10 +488,6 @@ public class GuiPasswordField extends Gui {
             Minecraft.getMinecraft().currentScreen.setFocused(isFocusedIn);
         }
 
-    }
-
-    public boolean isFocused() {
-        return this.isFocused;
     }
 
     public void setEnabled(boolean enabled) {

@@ -15,10 +15,6 @@ public final class SprintModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "The sprint mode to use", Mode.RAGE);
 
-    private enum Mode {
-        RAGE, LEGIT
-    }
-
     public SprintModule() {
         super("Sprint", new String[]{"AutoSprint", "Spr"}, "Automatically sprints for you", "NONE", -1, ModuleType.MOVEMENT);
     }
@@ -55,6 +51,10 @@ public final class SprintModule extends Module {
                     break;
             }
         }
+    }
+
+    private enum Mode {
+        RAGE, LEGIT
     }
 
 }

@@ -54,7 +54,7 @@ public final class LocateFeatureCommand extends Command {
                 Seppuku.INSTANCE.errorChat("Unknown number " + "\247f\"" + split[2] + "\"");
                 return;
             }
-            originHint = "to " + String.valueOf(originPos.getX()) + ", " + String.valueOf(originPos.getZ());
+            originHint = "to " + originPos.getX() + ", " + originPos.getZ();
         } else {
             originPos = new BlockPos(Minecraft.getMinecraft().player.posX, 64, Minecraft.getMinecraft().player.posZ);
             originHint = "you";
@@ -69,7 +69,7 @@ public final class LocateFeatureCommand extends Command {
                 if (pos == null) {
                     Seppuku.INSTANCE.errorChat("No structure found " + "\247f\"" + split[1] + "\"");
                 } else {
-                    Seppuku.INSTANCE.logChat(split[1] + " nearest " + originHint + " is at " + String.valueOf(pos.getX()) + ", " + String.valueOf(pos.getZ()));
+                    Seppuku.INSTANCE.logChat(split[1] + " nearest " + originHint + " is at " + pos.getX() + ", " + pos.getZ());
                 }
             } else {
                 Seppuku.INSTANCE.errorChat("Seed not set. Use the seed command first");

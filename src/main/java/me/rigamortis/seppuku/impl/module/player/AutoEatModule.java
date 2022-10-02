@@ -120,9 +120,6 @@ public final class AutoEatModule extends Module {
         if (!(item instanceof ItemFood))
             return false; // is not of ItemFood class
 
-        if (item == Items.GOLDEN_APPLE || item == Items.CHORUS_FRUIT || item == Items.ROTTEN_FLESH || item == Items.POISONOUS_POTATO || item == Items.SPIDER_EYE)
-            return false;
-
-        return true;
+        return item != Items.GOLDEN_APPLE && item != Items.CHORUS_FRUIT && item != Items.ROTTEN_FLESH && item != Items.POISONOUS_POTATO && item != Items.SPIDER_EYE;
     }
 }

@@ -111,7 +111,7 @@ public class Module {
                     options.append(option.name().toLowerCase() + ((i == size - 1) ? "" : ", "));
                 }
 
-                msg.appendSibling(new TextComponentString(valuePrefix + v.getName() + ChatFormatting.GRAY + " <" + options.toString() + ">" + ChatFormatting.RESET + ": " + ChatFormatting.YELLOW + val.name().toLowerCase()).setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(v.getName() + "\n" + ChatFormatting.GOLD + ((v.getDesc() == null || v.getDesc().equals("")) ? "There is no description for this enum value." : v.getDesc()) + ChatFormatting.RESET + "\n " + ChatFormatting.GRAY + "<" + options.toString() + ">")))));
+                msg.appendSibling(new TextComponentString(valuePrefix + v.getName() + ChatFormatting.GRAY + " <" + options + ">" + ChatFormatting.RESET + ": " + ChatFormatting.YELLOW + val.name().toLowerCase()).setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(v.getName() + "\n" + ChatFormatting.GOLD + ((v.getDesc() == null || v.getDesc().equals("")) ? "There is no description for this enum value." : v.getDesc()) + ChatFormatting.RESET + "\n " + ChatFormatting.GRAY + "<" + options + ">")))));
             }
 
             if (v.getValue() instanceof Regex) {
@@ -143,10 +143,6 @@ public class Module {
 
     public void unload() {
         this.valueList.clear();
-    }
-
-    public enum ModuleType {
-        COMBAT, MOVEMENT, RENDER, PLAYER, WORLD, MISC, HIDDEN, UI
     }
 
     public String getDisplayName() {
@@ -226,5 +222,9 @@ public class Module {
 
     public void setValueList(List<Value> valueList) {
         this.valueList = valueList;
+    }
+
+    public enum ModuleType {
+        COMBAT, MOVEMENT, RENDER, PLAYER, WORLD, MISC, HIDDEN, UI
     }
 }

@@ -288,11 +288,7 @@ public final class AutoTrapModule extends Module {
     }
 
     private boolean checkFilter(Entity entity) {
-        boolean ret = false;
-
-        if (entity instanceof EntityPlayer && entity != mc.player && Seppuku.INSTANCE.getFriendManager().isFriend(entity) == null && !entity.getName().equals(mc.player.getName())) {
-            ret = true;
-        }
+        boolean ret = entity instanceof EntityPlayer && entity != mc.player && Seppuku.INSTANCE.getFriendManager().isFriend(entity) == null && !entity.getName().equals(mc.player.getName());
 
         if (entity instanceof EntityLivingBase) {
             final EntityLivingBase entityLivingBase = (EntityLivingBase) entity;

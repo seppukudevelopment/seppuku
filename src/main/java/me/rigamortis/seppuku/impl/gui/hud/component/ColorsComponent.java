@@ -28,25 +28,20 @@ import java.util.logging.Level;
  */
 public final class ColorsComponent extends ResizableHudComponent {
 
-    private int scroll;
-
-    private int totalHeight;
-
     private final int SCROLL_WIDTH = 5;
     private final int BORDER = 2;
     private final int TEXT_GAP = 1;
     private final int TITLE_BAR_HEIGHT = mc.fontRenderer.FONT_HEIGHT + 1;
-
-    private ColorComponent currentColorComponent = null;
     private final Texture spectrum;
-
+    public int baseColor = 0xFFFFFFFF;
+    public int selectedColor = 0xFFFFFFFF;
+    private int scroll;
+    private int totalHeight;
+    private ColorComponent currentColorComponent = null;
     private int lastGradientMouseX = -1;
     private int lastGradientMouseY = -1;
     private int lastSpectrumMouseX = -1;
     private int lastSpectrumMouseY = -1;
-
-    public int baseColor = 0xFFFFFFFF;
-    public int selectedColor = 0xFFFFFFFF;
 
     public ColorsComponent() {
         super("Colors", 100, 120, 215, 1000);

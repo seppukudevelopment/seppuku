@@ -25,9 +25,9 @@ import java.util.Random;
  */
 public final class SlimeChunksModule extends Module {
 
-    private ICamera frustum = new Frustum();
+    private final ICamera frustum = new Frustum();
 
-    private List<SlimeChunk> slimeChunkList = new ArrayList<>();
+    private final List<SlimeChunk> slimeChunkList = new ArrayList<>();
 
     public SlimeChunksModule() {
         super("SlimeChunks", new String[]{"SlimesChunks", "SlimeC"}, "Highlights slime chunks(Requires world seed with .seed)", "NONE", -1, ModuleType.WORLD);

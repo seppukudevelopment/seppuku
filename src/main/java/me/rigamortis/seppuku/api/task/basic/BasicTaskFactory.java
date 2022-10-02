@@ -68,9 +68,7 @@ public abstract class BasicTaskFactory<T extends BasicTask> implements TaskFacto
     }
 
     public boolean comparePriority(T task) {
-        if (task.getPriority() < this.currentTask.getPriority())
-            return false;
-        return true;
+        return task.getPriority() >= this.currentTask.getPriority();
     }
 
     public boolean isCurrentlyTasking() {

@@ -22,6 +22,27 @@ public final class RenderGlobalPatch extends ClassPatch {
         super("net.minecraft.client.renderer.RenderGlobal", "buy");
     }
 
+    public static boolean isRenderEntityOutlinesHook() {
+        final EventRenderEntityOutlines event = new EventRenderEntityOutlines();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    public static boolean renderSkyHook() {
+        final EventRenderSky event = new EventRenderSky();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    public static boolean drawBlockDamageTextureHook() {
+        final EventRenderBlockDamage event = new EventRenderBlockDamage();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
     @MethodPatch(
             mcpName = "isRenderEntityOutlines",
             notchName = "d",
@@ -35,13 +56,6 @@ public final class RenderGlobalPatch extends ClassPatch {
         insnList.add(new InsnNode(IRETURN));
         insnList.add(jmp);
         methodNode.instructions.insert(insnList);
-    }
-
-    public static boolean isRenderEntityOutlinesHook() {
-        final EventRenderEntityOutlines event = new EventRenderEntityOutlines();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 
     @MethodPatch(
@@ -59,13 +73,6 @@ public final class RenderGlobalPatch extends ClassPatch {
         methodNode.instructions.insert(insnList);
     }
 
-    public static boolean renderSkyHook() {
-        final EventRenderSky event = new EventRenderSky();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
-    }
-
     @MethodPatch(
             mcpName = "drawBlockDamageTexture",
             notchName = "a",
@@ -79,13 +86,6 @@ public final class RenderGlobalPatch extends ClassPatch {
         insnList.add(new InsnNode(RETURN));
         insnList.add(jmp);
         methodNode.instructions.insert(insnList);
-    }
-
-    public static boolean drawBlockDamageTextureHook() {
-        final EventRenderBlockDamage event = new EventRenderBlockDamage();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 
 }

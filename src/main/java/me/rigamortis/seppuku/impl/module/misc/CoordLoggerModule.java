@@ -22,17 +22,11 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public final class CoordLoggerModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"Mode", "M"}, "Change between various coord-logger modes", Mode.VANILLA);
-
-    private enum Mode {
-        VANILLA, SPIGOT
-    }
-
     public final Value<Boolean> thunder = new Value<Boolean>("Thunder", new String[]{"thund"}, "Logs positions of thunder/lightning sounds", true);
     public final Value<Boolean> endPortal = new Value<Boolean>("EndPortal", new String[]{"portal"}, "Logs position of end portal creation sound", true);
     public final Value<Boolean> wither = new Value<Boolean>("Wither", new String[]{"with"}, "Logs positions of wither sounds", true);
     public final Value<Boolean> endDragon = new Value<Boolean>("EndDragon", new String[]{"dragon"}, "Logs positions of end dragon sounds", true);
     public final Value<Boolean> slimes = new Value<Boolean>("Slimes", new String[]{"slime"}, "Logs positions of slime spawns", false);
-
     public CoordLoggerModule() {
         super("CoordLogger", new String[]{"CoordLog", "CLogger", "CLog"}, "Logs useful coordinates", "NONE", -1, ModuleType.MISC);
     }
@@ -110,5 +104,9 @@ public final class CoordLoggerModule extends Module {
                 }
             }
         }
+    }
+
+    private enum Mode {
+        VANILLA, SPIGOT
     }
 }

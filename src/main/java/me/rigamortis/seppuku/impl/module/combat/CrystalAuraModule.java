@@ -10,13 +10,14 @@ import me.rigamortis.seppuku.api.event.render.EventRender3D;
 import me.rigamortis.seppuku.api.event.world.EventAddEntity;
 import me.rigamortis.seppuku.api.module.Module;
 import me.rigamortis.seppuku.api.task.rotation.RotationTask;
-import me.rigamortis.seppuku.api.util.*;
+import me.rigamortis.seppuku.api.util.ColorUtil;
+import me.rigamortis.seppuku.api.util.MathUtil;
+import me.rigamortis.seppuku.api.util.RenderUtil;
 import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
 import me.rigamortis.seppuku.impl.module.player.GodModeModule;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -450,11 +451,7 @@ public final class CrystalAuraModule extends Module {
             return true;
         }
 
-        if (this.ignore.getValue()) {
-            return true;
-        }
-
-        return false;
+        return this.ignore.getValue();
     }
 
     private boolean canPlaceCrystal(BlockPos pos) {
@@ -504,27 +501,6 @@ public final class CrystalAuraModule extends Module {
         return damage;
     }
 
-    private static final class PlaceLocation extends Vec3i {
-
-        private int alpha = 0xAA;
-        private boolean placed = false;
-        private float damage = -1;
-
-        private PlaceLocation(int xIn, int yIn, int zIn, float damage) {
-            super(xIn, yIn, zIn);
-            this.damage = damage;
-        }
-
-        private PlaceLocation(int xIn, int yIn, int zIn) {
-            super(xIn, yIn, zIn);
-        }
-
-        private void update() {
-            if (this.alpha > 0)
-                this.alpha -= 2;
-        }
-    }
-
     public Timer getAttackTimer() {
         return attackTimer;
     }
@@ -565,11 +541,32 @@ public final class CrystalAuraModule extends Module {
         return currentAttackEntity;
     }
 
+    public void setCurrentAttackEntity(Entity currentAttackEntity) {
+        this.currentAttackEntity = currentAttackEntity;
+    }
+
     public Entity getCurrentAttackPlayer() {
         return currentAttackPlayer;
     }
 
-    public void setCurrentAttackEntity(Entity currentAttackEntity) {
-        this.currentAttackEntity = currentAttackEntity;
+    private static final class PlaceLocation extends Vec3i {
+
+        private int alpha = 0xAA;
+        private boolean placed = false;
+        private float damage = -1;
+
+        private PlaceLocation(int xIn, int yIn, int zIn, float damage) {
+            super(xIn, yIn, zIn);
+            this.damage = damage;
+        }
+
+        private PlaceLocation(int xIn, int yIn, int zIn) {
+            super(xIn, yIn, zIn);
+        }
+
+        private void update() {
+            if (this.alpha > 0)
+                this.alpha -= 2;
+        }
     }
 }

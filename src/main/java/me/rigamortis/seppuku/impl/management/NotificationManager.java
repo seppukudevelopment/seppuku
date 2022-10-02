@@ -41,9 +41,7 @@ public final class NotificationManager implements Animation {
     }
 
     public void removeNotification(Notification notification) {
-        if (this.notifications.contains(notification)) {
-            this.notifications.remove(notification);
-        }
+        this.notifications.remove(notification);
     }
 
     public List<Notification> getNotifications() {

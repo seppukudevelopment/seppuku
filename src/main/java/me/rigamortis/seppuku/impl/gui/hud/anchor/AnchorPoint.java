@@ -47,10 +47,6 @@ public class AnchorPoint {
         this.point = point;
     }
 
-    public enum Point {
-        TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, TOP_CENTER, BOTTOM_CENTER
-    }
-
     public void updatePosition(final ScaledResolution sr) {
         switch (this.getPoint()) {
             case TOP_LEFT:
@@ -78,5 +74,9 @@ public class AnchorPoint {
                 this.y = sr.getScaledHeight() - 2;
                 break;
         }
+    }
+
+    public enum Point {
+        TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT, TOP_CENTER, BOTTOM_CENTER
     }
 }

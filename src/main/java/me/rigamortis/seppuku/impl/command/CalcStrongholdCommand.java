@@ -26,13 +26,11 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  */
 public final class CalcStrongholdCommand extends Command {
 
+    private final String[] resetAlias = new String[]{"Reset", "Res", "R"};
     private Vec3d firstStart;
     private Vec3d firstEnd;
-
     private Vec3d secondStart;
     private Vec3d secondEnd;
-
-    private final String[] resetAlias = new String[]{"Reset", "Res", "R"};
 
     public CalcStrongholdCommand() {
         super("CalcStronghold", new String[]{"CS", "FindStronghold", "cstrong"}, "Calculates where the nearest stronghold is", "CalcStronghold\n" +

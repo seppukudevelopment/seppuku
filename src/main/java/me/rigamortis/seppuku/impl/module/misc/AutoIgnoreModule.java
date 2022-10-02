@@ -121,15 +121,15 @@ public final class AutoIgnoreModule extends Module {
         }
     }
 
-    private enum Mode {
-        CLIENT, SERVER, BOTH
-    }
-
     public List<String> getBlacklist() {
         return blacklist;
     }
 
     public void setBlacklist(List<String> blacklist) {
         this.blacklist = blacklist;
+    }
+
+    private enum Mode {
+        CLIENT, SERVER, BOTH
     }
 }

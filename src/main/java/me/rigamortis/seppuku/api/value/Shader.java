@@ -16,12 +16,12 @@ public class Shader {
         this("");
     }
 
-    public void setShaderID(String id) {
-        this.id = id;
-    }
-
     public String getShaderID() {
         return this.id;
+    }
+
+    public void setShaderID(String id) {
+        this.id = id;
     }
 
     @Nullable

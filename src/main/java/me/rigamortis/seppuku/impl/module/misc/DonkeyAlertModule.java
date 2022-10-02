@@ -31,10 +31,6 @@ public final class DonkeyAlertModule extends Module {
 
     private final Timer timer = new Timer();
 
-    private enum Mode {
-        CHAT, NOTIFICATION, BOTH
-    }
-
     public DonkeyAlertModule() {
         super("DonkeyAlert", new String[]{"Donkellama", "Donkeyllama", "DonkeyFinder", "LlamaFinder", "StorageEntityFinder", "Dllama", "Donkelama", "Donkeylama", "Donk", "DonkAlert", "DonkeyAlert", "LlamaAlert"}, "Alerts you about donkeys and llamas!! (horses, mules, too..)", "NONE", -1, ModuleType.MISC);
     }
@@ -80,5 +76,9 @@ public final class DonkeyAlertModule extends Module {
                 this.timer.reset();
             }
         }
+    }
+
+    private enum Mode {
+        CHAT, NOTIFICATION, BOTH
     }
 }

@@ -21,6 +21,20 @@ public final class EntityLlamaPatch extends ClassPatch {
     }
 
     /**
+     * Our canBeSteered hook
+     * Used to allow us to steer and control llamas
+     *
+     * @return
+     */
+    public static boolean canBeSteeredHook() {
+        //dispatch our event
+        final EventSteerEntity event = new EventSteerEntity();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
      * This is where minecraft checks if you can steer llamas
      *
      * @param methodNode
@@ -47,19 +61,5 @@ public final class EntityLlamaPatch extends ClassPatch {
         insnList.add(jmp);
         //insert the list of instructions at the top of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    /**
-     * Our canBeSteered hook
-     * Used to allow us to steer and control llamas
-     *
-     * @return
-     */
-    public static boolean canBeSteeredHook() {
-        //dispatch our event
-        final EventSteerEntity event = new EventSteerEntity();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 }

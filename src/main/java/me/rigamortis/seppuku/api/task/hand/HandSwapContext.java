@@ -18,12 +18,12 @@ public final class HandSwapContext {
         return oldSlot;
     }
 
-    public int getNewSlot() {
-        return newSlot;
-    }
-
     public void setOldSlot(int oldSlot) {
         this.oldSlot = oldSlot;
+    }
+
+    public int getNewSlot() {
+        return newSlot;
     }
 
     public void setNewSlot(int newSlot) {

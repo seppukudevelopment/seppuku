@@ -29,9 +29,9 @@ public final class BlocksComponent extends HudComponent {
 
     private final TextComponent searchBox;
     private final List<Block> blocks = new ArrayList<>();
-    private List<Block> displayedBlocks;
+    private final List<Block> displayedBlocks;
 
-    private Value<List<Block>> value;
+    private final Value<List<Block>> value;
 
     public BlocksComponent(Value<List<Block>> value) {
         super(value.getName());

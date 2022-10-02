@@ -35,11 +35,9 @@ public final class ScaffoldModule extends Module {
     //public final Value<Boolean> destroy = new Value<Boolean>("Destroy", new String[]{"Dest"}, "When enabled, after placing the block, forces the player to swing/destroy at the same position.", false);
 
     private final int[] blackList = new int[]{145, 130, 12, 252, 54, 146, 122, 13, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 50};
-
+    private final RotationTask rotationTask = new RotationTask("ScaffoldTask", 3);
     //private final List<BlockPos> blocks = new CopyOnWriteArrayList<BlockPos>();
     private BlockPos currentPlaceBlock = null;
-
-    private final RotationTask rotationTask = new RotationTask("ScaffoldTask", 3);
 
     public ScaffoldModule() {
         super("Scaffold", new String[]{"Scaff"}, "Automatically places blocks where you are walking", "NONE", -1, ModuleType.MOVEMENT);

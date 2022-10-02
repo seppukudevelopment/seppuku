@@ -49,17 +49,11 @@ public final class SearchModule extends Module {
     public final Value<Float> width = new Value<Float>("Width", new String[]{"size"}, "Line width of the search bounding box", 1.0f, 0.1f, 5.0f, 0.1f);
     public final Value<Float> renderTime = new Value<Float>("RenderDelay", new String[]{"rendelay", "delay", "rd"}, "Delay(ms) between render updates if chunks are queued", 4000.0f, 500f, 8000f, 100f);
     public final Value<Boolean> tracer = new Value<Boolean>("Tracer", new String[]{"trace", "line"}, "Draw a tracer line to each search result", false);
-
-    public enum Mode {
-        BOX, OUTLINE, OUTLINE_BOX, PLANE
-    }
-
     private final Value<List<Block>> blockIds = new Value<>("Ids", new String[]{"id", "i", "blocks"}, "Blocks to search for");
     private final List<Vec3i> blocks = new CopyOnWriteArrayList<>();
     private final List<Chunk> renderQueue = new CopyOnWriteArrayList<>();
     private final Timer renderTimer = new Timer();
     private final ICamera frustum = new Frustum();
-
     public SearchModule() {
         super("Search", new String[]{"srch", "src"}, "Search for different types of blocks. Enter the \"search\" command", "NONE", -1, ModuleType.RENDER);
 
@@ -367,5 +361,9 @@ public final class SearchModule extends Module {
 
     public Value<List<Block>> getBlockIds() {
         return blockIds;
+    }
+
+    public enum Mode {
+        BOX, OUTLINE, OUTLINE_BOX, PLANE
     }
 }

@@ -26,6 +26,134 @@ public final class EntityPlayerSPPatch extends ClassPatch {
     }
 
     /**
+     * Our onUpdate hook
+     * This is where minecraft runs movement related code and
+     * sends movement packets
+     *
+     * @param stage
+     * @return
+     */
+    public static boolean onUpdateHook(EventStageable.EventStage stage) {
+        //dispatch our event and pass the stage in
+        final EventPlayerUpdate event = new EventPlayerUpdate(stage);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        if (stage == EventStageable.EventStage.PRE) {
+            //update all camera fbos after we render
+            Seppuku.INSTANCE.getCameraManager().update();
+        }
+
+        return event.isCanceled();
+    }
+
+    /**
+     * Our onUpdate hook
+     * This is where minecraft runs non vehicle movement related code and
+     * sends movement packets
+     *
+     * @param stage
+     * @return
+     */
+    public static boolean onUpdateWalkingPlayerHook(EventStageable.EventStage stage) {
+        if (stage == EventStageable.EventStage.PRE) {
+            Seppuku.INSTANCE.getRotationManager().updateRotations();
+            Seppuku.INSTANCE.getPositionManager().updatePosition();
+        }
+
+        //dispatch our event and pass the stage in
+        final EventUpdateWalkingPlayer event = new EventUpdateWalkingPlayer(stage);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        if (stage == EventStageable.EventStage.POST) {
+            Seppuku.INSTANCE.getRotationManager().restoreRotations();
+            Seppuku.INSTANCE.getPositionManager().restorePosition();
+        }
+
+        return event.isCanceled();
+    }
+
+    /**
+     * Our sendChatMessage hook
+     * It allows us to intercept outgoing chat messages
+     *
+     * @param message
+     * @return
+     */
+    public static boolean sendChatMessageHook(String message) {
+        //dispatch our event and pass the message in
+        final EventSendChatMessage event = new EventSendChatMessage(message);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
+     * This is our swingArm hook
+     * We can cancel to stop our swing animation
+     * It's useful for older servers that dont support
+     * swinging the OFF_HAND
+     *
+     * @param hand
+     * @return
+     */
+    public static boolean swingArmHook(EnumHand hand) {
+        //dispatch our event and pass the EnumHand in
+        final EventSwingArm event = new EventSwingArm(hand);
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
+     * Our closeScreen hook
+     * Useful for some mods i.e MoreInv
+     *
+     * @return
+     */
+    public static boolean closeScreenHook() {
+        //dispatch our event
+        final EventCloseScreen event = new EventCloseScreen();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
+     * Our pushOutOfBlocks hook used to disable being pushed out of blocks
+     *
+     * @return
+     */
+    public static boolean pushOutOfBlocksHook() {
+        //dispatch our event
+        final EventPushOutOfBlocks event = new EventPushOutOfBlocks();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+
+        return event.isCanceled();
+    }
+
+    /**
+     * Our onLivingUpdate mid function hook
+     * Used to negate slowing down while hands are active
+     */
+    public static void onLivingUpdateHook() {
+        //dispatch our event
+        final EventUpdateInput event = new EventUpdateInput();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+    }
+
+    /**
+     * Our isHandActive hook used to override hand activity
+     *
+     * @return
+     */
+    public static boolean isHandActiveHook() {
+        //dispatch our event
+        final EventHandActive event = new EventHandActive();
+        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
+        return event.isCanceled();
+    }
+
+    /**
      * This is where minecraft handles player updates and movement
      *
      * @param methodNode
@@ -61,27 +189,6 @@ public final class EntityPlayerSPPatch extends ClassPatch {
         postInsn.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "onUpdateHook", "(Lme/rigamortis/seppuku/api/event/EventStageable$EventStage;)Z", false));
         //insert the list of instructions at the bottom of the function
         methodNode.instructions.insertBefore(ASMUtil.bottom(methodNode), postInsn);
-    }
-
-    /**
-     * Our onUpdate hook
-     * This is where minecraft runs movement related code and
-     * sends movement packets
-     *
-     * @param stage
-     * @return
-     */
-    public static boolean onUpdateHook(EventStageable.EventStage stage) {
-        //dispatch our event and pass the stage in
-        final EventPlayerUpdate event = new EventPlayerUpdate(stage);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        if (stage == EventStageable.EventStage.PRE) {
-            //update all camera fbos after we render
-            Seppuku.INSTANCE.getCameraManager().update();
-        }
-
-        return event.isCanceled();
     }
 
     /**
@@ -124,32 +231,6 @@ public final class EntityPlayerSPPatch extends ClassPatch {
     }
 
     /**
-     * Our onUpdate hook
-     * This is where minecraft runs non vehicle movement related code and
-     * sends movement packets
-     *
-     * @param stage
-     * @return
-     */
-    public static boolean onUpdateWalkingPlayerHook(EventStageable.EventStage stage) {
-        if (stage == EventStageable.EventStage.PRE) {
-            Seppuku.INSTANCE.getRotationManager().updateRotations();
-            Seppuku.INSTANCE.getPositionManager().updatePosition();
-        }
-
-        //dispatch our event and pass the stage in
-        final EventUpdateWalkingPlayer event = new EventUpdateWalkingPlayer(stage);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        if (stage == EventStageable.EventStage.POST) {
-            Seppuku.INSTANCE.getRotationManager().restoreRotations();
-            Seppuku.INSTANCE.getPositionManager().restorePosition();
-        }
-
-        return event.isCanceled();
-    }
-
-    /**
      * This is where minecraft handles sending chat messages
      *
      * @param methodNode
@@ -178,21 +259,6 @@ public final class EntityPlayerSPPatch extends ClassPatch {
         methodNode.instructions.insert(insnList);
     }
 
-    /**
-     * Our sendChatMessage hook
-     * It allows us to intercept outgoing chat messages
-     *
-     * @param message
-     * @return
-     */
-    public static boolean sendChatMessageHook(String message) {
-        //dispatch our event and pass the message in
-        final EventSendChatMessage event = new EventSendChatMessage(message);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
-    }
-
     @MethodPatch(
             mcpName = "swingArm",
             notchName = "a",
@@ -215,23 +281,6 @@ public final class EntityPlayerSPPatch extends ClassPatch {
         insnList.add(jmp);
         //insert the list of instructs at the top of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    /**
-     * This is our swingArm hook
-     * We can cancel to stop our swing animation
-     * It's useful for older servers that dont support
-     * swinging the OFF_HAND
-     *
-     * @param hand
-     * @return
-     */
-    public static boolean swingArmHook(EnumHand hand) {
-        //dispatch our event and pass the EnumHand in
-        final EventSwingArm event = new EventSwingArm(hand);
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
     }
 
     /**
@@ -261,20 +310,6 @@ public final class EntityPlayerSPPatch extends ClassPatch {
         methodNode.instructions.insert(insnList);
     }
 
-    /**
-     * Our closeScreen hook
-     * Useful for some mods i.e MoreInv
-     *
-     * @return
-     */
-    public static boolean closeScreenHook() {
-        //dispatch our event
-        final EventCloseScreen event = new EventCloseScreen();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
-    }
-
     @MethodPatch(
             mcpName = "pushOutOfBlocks",
             notchName = "i",
@@ -299,19 +334,6 @@ public final class EntityPlayerSPPatch extends ClassPatch {
     }
 
     /**
-     * Our pushOutOfBlocks hook used to disable being pushed out of blocks
-     *
-     * @return
-     */
-    public static boolean pushOutOfBlocksHook() {
-        //dispatch our event
-        final EventPushOutOfBlocks event = new EventPushOutOfBlocks();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-
-        return event.isCanceled();
-    }
-
-    /**
      * This is where minecraft slows you down while your hand is active
      *
      * @param methodNode
@@ -327,16 +349,6 @@ public final class EntityPlayerSPPatch extends ClassPatch {
         if (target != null) {
             methodNode.instructions.insert(target, new MethodInsnNode(INVOKESTATIC, Type.getInternalName(this.getClass()), "onLivingUpdateHook", "()V", false));
         }
-    }
-
-    /**
-     * Our onLivingUpdate mid function hook
-     * Used to negate slowing down while hands are active
-     */
-    public static void onLivingUpdateHook() {
-        //dispatch our event
-        final EventUpdateInput event = new EventUpdateInput();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
     }
 
     @MethodPatch(
@@ -403,18 +415,6 @@ public final class EntityPlayerSPPatch extends ClassPatch {
         insnList.add(jmp);
         //insert the list of instructs at the top of the function
         methodNode.instructions.insert(insnList);
-    }
-
-    /**
-     * Our isHandActive hook used to override hand activity
-     *
-     * @return
-     */
-    public static boolean isHandActiveHook() {
-        //dispatch our event
-        final EventHandActive event = new EventHandActive();
-        Seppuku.INSTANCE.getEventManager().dispatchEvent(event);
-        return event.isCanceled();
     }
 }
 

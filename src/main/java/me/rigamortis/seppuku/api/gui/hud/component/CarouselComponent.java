@@ -14,10 +14,9 @@ import java.util.Iterator;
  */
 public final class CarouselComponent extends HudComponent {
 
-    private Value value;
-
     public String displayValue;
     public boolean focused;
+    private final Value value;
 
     public CarouselComponent(String name, Value value) {
         super(name);

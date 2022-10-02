@@ -43,16 +43,9 @@ public final class WaypointsModule extends Module {
     public final Value<Float> pointSize = new Value<Float>("PointSize", new String[]{"psize", "pscale", "ps", "size", "scale", "s"}, "Size of the 3D rendered object", 0.5f, 0.1f, 3.0f, 0.1f);
     public final Value<Float> pointYOffset = new Value<Float>("PointYOffset", new String[]{"pyoffset", "pyoff", "pyo"}, "Y-level offset of the 3D rendered object", 0.0f, -1.0f, 1.0f, 0.1f);
     public final Value<Float> pointDiamondHeight = new Value<Float>("PointDiamondHeight", new String[]{"diamondheight", "diamondh", "pdh", "dh"}, "Extra height added to the top of the diamond object", 0.5f, 0.1f, 3.0f, 0.1f);
-
-    public enum Shape {
-        CUBE, PYRAMID, DIAMOND, SPHERE
-    }
-
-
     private final Minecraft mc = Minecraft.getMinecraft();
     private String host = "";
     private float angle = 0;
-
     public WaypointsModule() {
         super("Waypoints", new String[]{"Wp", "Waypoint"}, "Highlights waypoints", "NONE", -1, ModuleType.WORLD);
     }
@@ -162,6 +155,10 @@ public final class WaypointsModule extends Module {
                 Seppuku.INSTANCE.getWaypointManager().getWaypointDataList().add(new WaypointData(host, "death-" + new SimpleDateFormat("yyyy-MM-dd@HH:mm:ss").format(new Timestamp(System.currentTimeMillis())), Minecraft.getMinecraft().player.dimension, Minecraft.getMinecraft().player.posX, Minecraft.getMinecraft().player.posY + Minecraft.getMinecraft().player.getEyeHeight(), Minecraft.getMinecraft().player.posZ));
             }
         }
+    }
+
+    public enum Shape {
+        CUBE, PYRAMID, DIAMOND, SPHERE
     }
 
     public static final class WaypointData {

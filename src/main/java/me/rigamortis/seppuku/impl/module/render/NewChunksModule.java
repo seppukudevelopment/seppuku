@@ -30,15 +30,9 @@ public final class NewChunksModule extends Module {
     public final Value<Integer> alpha = new Value<Integer>("Alpha", new String[]{"Alp", "Opacity", "a", "o"}, "Edit the alpha of the chunk visual", 127, 1, 255, 1);
     public final Value<Float> lineWidth = new Value<Float>("LineWidth", new String[]{"Width", "Line-Width", "line", "size", "s", "l"}, "Edit the line width chunk visual", 1.5f, 0.1f, 5.0f, 0.1f);
     public final Value<Float> height = new Value<Float>("Height", new String[]{"H"}, "Edit the height of the chunk visual", 3f, 1f, 25f, 1f);
-
-    public enum Mode {
-        BOX, OUTLINE, PLANE
-    }
-
-    private Color currentColor;
     private final ICamera frustum = new Frustum();
-
     private final List<ChunkData> chunkDataList = new ArrayList<>();
+    private Color currentColor;
 
     public NewChunksModule() {
         super("NewChunks", new String[]{"ChunkGen"}, "Highlights newly generated chunks", "NONE", -1, ModuleType.RENDER);
@@ -117,6 +111,10 @@ public final class NewChunksModule extends Module {
                 temp = true;
         }
         return temp;
+    }
+
+    public enum Mode {
+        BOX, OUTLINE, PLANE
     }
 
     public static class ChunkData {
