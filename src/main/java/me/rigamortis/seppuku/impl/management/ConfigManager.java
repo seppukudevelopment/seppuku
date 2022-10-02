@@ -15,7 +15,8 @@ import java.util.List;
  */
 public final class ConfigManager {
 
-    public static final String CONFIG_PATH = "Seppuku/Config/";
+    public static final String CONFIG_PATH = "Seppuku/Config/%s/";
+    public String activeConfig;
     private File configDir;
     private File moduleConfigDir;
     private File hudComponentConfigDir;
@@ -23,23 +24,31 @@ public final class ConfigManager {
     private boolean customMainMenuHidden = false;
     private List<Configurable> configurableList = new ArrayList<>();
 
-    public ConfigManager() {
+    public ConfigManager(final String config) {
+        this.activeConfig = config;
         this.generateDirectories();
     }
 
+    public void switchToConfig(final String config) {
+        this.saveAll();
+
+        this.activeConfig = config;
+        Seppuku.INSTANCE.reload();
+    }
+
     private void generateDirectories() {
-        this.configDir = new File(CONFIG_PATH);
+        this.configDir = new File(String.format(CONFIG_PATH, activeConfig));
         if (!this.configDir.exists()) {
             this.setFirstLaunch(true);
             this.configDir.mkdirs();
         }
 
-        this.moduleConfigDir = new File(CONFIG_PATH + "Modules" + "/");
+        this.moduleConfigDir = new File(String.format(CONFIG_PATH, activeConfig) + "Modules" + "/");
         if (!this.moduleConfigDir.exists()) {
             this.moduleConfigDir.mkdirs();
         }
 
-        this.hudComponentConfigDir = new File(CONFIG_PATH + "HudComponents" + "/");
+        this.hudComponentConfigDir = new File(String.format(CONFIG_PATH, activeConfig) + "HudComponents" + "/");
         if (!this.hudComponentConfigDir.exists()) {
             this.hudComponentConfigDir.mkdirs();
         }
