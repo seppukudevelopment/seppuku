@@ -130,7 +130,7 @@ processResources {
     }
 }
 
-if (buildmode.equals("IDE")) {
+if (buildmode == "IDE") {
     sourceSets {
         main(({
             output.resourcesDir = output.classesDir
