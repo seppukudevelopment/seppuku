@@ -33,6 +33,7 @@ public final class ConfigManager {
         this.saveAll();
 
         this.activeConfig = config;
+        Seppuku.INSTANCE.unload();
         Seppuku.INSTANCE.reload();
     }
 
