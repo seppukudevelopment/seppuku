@@ -33,8 +33,8 @@ public final class ConfigManager {
         this.saveAll();
 
         this.activeConfig = config;
-        Seppuku.INSTANCE.unload();
-        Seppuku.INSTANCE.reload();
+        Seppuku.INSTANCE.unloadSimple();
+        Seppuku.INSTANCE.init();
     }
 
     private void generateDirectories() {

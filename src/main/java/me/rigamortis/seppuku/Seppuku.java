@@ -145,7 +145,7 @@ public final class Seppuku {
         logChat(String.format(format, objects));
     }
 
-    public void unload() {
+    public void unloadSimple() {
         this.moduleManager.unload();
         this.apiManager.unload();
         this.commandManager.unload();
@@ -165,6 +165,10 @@ public final class Seppuku {
         this.cameraManager.unload();
         this.altManager.unload();
         this.shaderManager.unload();
+    }
+
+    public void unload() {
+        unloadSimple();
 
         this.getEventManager().dispatchEvent(new EventUnload());
 
