@@ -28,6 +28,7 @@ public final class DonkeyAlertModule extends Module {
     public final Value<Boolean> horse = new Value<Boolean>("Horse", new String[]{"Hrse", "H"}, "Enables alerts for horse entities", true);
     public final Value<Boolean> mule = new Value<Boolean>("Mule", new String[]{"Mul", "M"}, "Enables alerts for mule entities", true);
     public final Value<Boolean> hoverInfo = new Value<Boolean>("HoverInfo", new String[]{"InfoHover", "Hover", "Info", "IH", "HI"}, "Enables on-hover info for chat messages of alerts", true);
+    public final Value<Boolean> tamed = new Value<Boolean>("Tamed", new String[]{"Tamed", "Tame", "Owned", "Owner", "T"}, "Enables alerts on your (tamed) animals as well", false);
 
     private final Timer timer = new Timer();
 
@@ -43,13 +44,42 @@ public final class DonkeyAlertModule extends Module {
             String alertText = "";
             String distance = "";
 
+            if (mc.player.isRiding()) {
+                if (mc.player.getRidingEntity() != null) {
+                    if (mc.player.getRidingEntity().equals(entity))
+                        return;
+                }
+            }
+
             if (this.donkey.getValue() && entity instanceof EntityDonkey) {
+                final EntityDonkey entityDonkey = (EntityDonkey) entity;
+                if (!this.tamed.getValue() && entityDonkey.getOwnerUniqueId() != null)
+                    if (entityDonkey.getOwnerUniqueId().equals(mc.player.getUniqueID()))
+                        return;
                 alertText += "Donkey found";
             } else if (this.lama.getValue() && entity instanceof EntityLlama) {
+                final EntityLlama entityLlama = (EntityLlama) entity;
+                if (!this.tamed.getValue() && entityLlama.getOwnerUniqueId() != null)
+                    if (entityLlama.getOwnerUniqueId().equals(mc.player.getUniqueID()))
+                        return;
                 alertText += "Llama found";
-            } else if (this.horse.getValue() && (entity instanceof EntityHorse || entity instanceof EntitySkeletonHorse)) {
+            } else if (this.horse.getValue() && entity instanceof EntityHorse) {
+                final EntityHorse entityHorse = (EntityHorse) entity;
+                if (!this.tamed.getValue() && entityHorse.getOwnerUniqueId() != null)
+                    if (entityHorse.getOwnerUniqueId().equals(mc.player.getUniqueID()))
+                        return;
                 alertText += "Horse found";
+            } else if (this.horse.getValue() && entity instanceof EntitySkeletonHorse) {
+                final EntitySkeletonHorse entitySkeletonHorse = (EntitySkeletonHorse) entity;
+                if (!this.tamed.getValue() && entitySkeletonHorse.getOwnerUniqueId() != null)
+                    if (entitySkeletonHorse.getOwnerUniqueId().equals(mc.player.getUniqueID()))
+                        return;
+                alertText += "Skeleton horse found";
             } else if (this.mule.getValue() && entity instanceof EntityMule) {
+                final EntityMule entityMule = (EntityMule) entity;
+                if (!this.tamed.getValue() && entityMule.getOwnerUniqueId() != null)
+                    if (entityMule.getOwnerUniqueId().equals(mc.player.getUniqueID()))
+                        return;
                 alertText += "Mule found";
             }
 
