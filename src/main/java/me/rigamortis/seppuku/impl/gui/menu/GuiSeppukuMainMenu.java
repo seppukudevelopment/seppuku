@@ -166,7 +166,10 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
         if (Seppuku.INSTANCE.getConfigManager().isCustomMainMenuHidden())
             return;
 
-        if (event.getScreen() == null && mc.world == null) {
+        if (Minecraft.getMinecraft().world != null)
+            return;
+
+        if (event.getScreen() == null) {
             event.setCanceled(true);
             Minecraft.getMinecraft().displayGuiScreen(this);
         }
