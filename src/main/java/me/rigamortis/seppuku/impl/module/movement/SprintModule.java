@@ -61,6 +61,7 @@ public final class SprintModule extends Module {
                     if ((mc.gameSettings.keyBindForward.isKeyDown()) && !(mc.player.isSneaking()) && !(mc.player.isHandActive()) && !(mc.player.collidedHorizontally)) {
                         mc.player.setSprinting(true);
                     }
+                    break;
                 case ALWAYS:
                     mc.player.setSprinting(true);
                     break;
