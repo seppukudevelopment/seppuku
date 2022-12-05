@@ -5,14 +5,14 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 
 /**
- * @author Seth
+ * @author Seth/riga
  * @author noil
- * @author the entire github & discordcommunity
+ * @author GitHub's contributors & our Discord plugin developers
  */
-@Mod(modid = "seppukumod", name = "Seppuku", version = SeppukuMod.VERSION, certificateFingerprint = "7979b1d0446af2675fcb5e888851a7f32637fdb9")
+@Mod(modid = "seppukumod", name = "Seppuku", version = SeppukuMod.VERSION)
 public final class SeppukuMod {
 
-    public static final String VERSION = "3.1.8";
+    public static final String VERSION = "3.2.0";
 
     /**
      * Our mods entry point

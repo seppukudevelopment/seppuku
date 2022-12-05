@@ -86,7 +86,7 @@ public final class Seppuku {
     public void init() {
         this.eventManager = new AnnotatedEventManager();
         this.apiManager = new APIManager();
-        this.configManager = new ConfigManager("Default");
+        this.configManager = new ConfigManager();
         this.ignoredManager = new IgnoredManager();
         this.friendManager = new FriendManager();
         this.rotationManager = new RotationManager();
@@ -203,7 +203,7 @@ public final class Seppuku {
         this.capeManager = new CapeManager();
 
         this.configManager.getConfigurableList().clear();
-        this.configManager = new ConfigManager(this.configManager.activeConfig);
+        this.configManager = new ConfigManager();
         this.configManager.init();
 
         this.getEventManager().dispatchEvent(new EventReload());
@@ -266,7 +266,7 @@ public final class Seppuku {
 
     public ConfigManager getConfigManager() {
         if (this.configManager == null) {
-            this.configManager = new ConfigManager("Default");
+            this.configManager = new ConfigManager();
         }
         return this.configManager;
     }
