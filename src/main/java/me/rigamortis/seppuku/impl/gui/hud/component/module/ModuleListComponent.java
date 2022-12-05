@@ -192,7 +192,7 @@ public final class ModuleListComponent extends ResizableHudComponent {
         }
 
         // Handle tooltips
-        if (this.hudEditorModule != null && this.hudEditorModule.tooltips.getValue() && !insideTitlebar) {
+        if (this.hudEditorModule != null && this.hudEditorModule.tooltips.getValue()) {
             if (this.isMouseInside(mouseX, mouseY)) {
                 String tooltipText = "";
                 int height = BORDER;
