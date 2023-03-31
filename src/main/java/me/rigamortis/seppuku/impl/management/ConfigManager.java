@@ -100,6 +100,7 @@ public final class ConfigManager {
         this.configurableList.add(new IgnoreConfig(configDir));
         this.configurableList.add(new AutoIgnoreConfig(configDir));
         this.configurableList.add(new AltConfig(configDir));
+        this.configurableList.add(new NukerFilterConfig(configDir));
 
         if (this.firstLaunch) {
             this.saveAll();
