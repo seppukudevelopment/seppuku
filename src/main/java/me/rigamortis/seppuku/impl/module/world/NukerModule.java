@@ -39,6 +39,7 @@ public final class NukerModule extends Module {
     public final Value<Integer> timeout = new Value<Integer>("Timeout", new String[]{"TO, t"}, "How long to wait (in ms) until trying to break a specific block again (PACKET Mode)", 1000, 0, 5000, 10);
     public final Value<Float> minMineSpeed = new Value<Float>("MinMineSpeed", new String[]{"Min", "Speed", "MineSpeed"}, "How fast you should be able to mine a block for nuker to attempt to mine it (0-1, 0 to allow all blocks, 1 to only allow instantly minable blocks)", 0.2f, 0f, 1.0f, 0.1f);
 
+    // TODO: FilterMode does not show up in the gui (noil's fault).
     public final Value<FilterMode> filterMode = new Value<FilterMode>("FilterMode", new String[]{"fm", "fmode"}, "Controls how blocks should be checked against the filter", FilterMode.WHITE);
     public final Value<List<Block>> filter = new Value<List<Block>>("Filter", new String[]{}, "Controls what block id's nuker will mine");
 
