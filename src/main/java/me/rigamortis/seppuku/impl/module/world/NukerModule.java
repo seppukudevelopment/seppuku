@@ -13,7 +13,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.init.Blocks;
+import net.minecraft.network.play.client.CPacketPlayerDigging;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -21,8 +23,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Author Seth
@@ -30,7 +31,7 @@ import java.util.Map;
  */
 public final class NukerModule extends Module {
 
-    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"M"}, "The nuker mode to use.", Mode.SELECTION);
+    public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"M"}, "The nuker mode to use", Mode.SELECTION);
     public final Value<MineMode> mineMode = new Value<MineMode>("MineMode", new String[]{"MM"}, "The way that nuker mines blocks", MineMode.NORMAL);
     public final Value<Float> distance = new Value<Float>("Distance", new String[]{"Dist", "D"}, "Maximum distance in blocks the nuker will reach", 4.5f, 0.0f, 5.0f, 0.1f);
     public final Value<Boolean> fixed = new Value<Boolean>("FixedDistance", new String[]{"Fixed", "fdist", "F"}, "Use vertical and horizontal distances in blocks instead of distances relative to the camera", false);
@@ -79,7 +80,31 @@ public final class NukerModule extends Module {
                     // PACKET mode does not need to rotate. The few servers it works on probably don't care about rotation.
                     // It also tries to break more than one block per event, and I am not sure how to handle that using the
                     // rotation task.
+                    List<BlockPos> blocks = getSortedBlocks();
 
+                    for (BlockPos pos : blocks) {
+                        IBlockState state = mc.world.getBlockState(pos);
+
+                        if (shouldBreak(pos)) {
+                            if (!this.attemptedBreaks.containsKey(pos)) {
+                                mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, pos, EnumFacing.NORTH));
+                                mc.player.connection.sendPacket(new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, pos, EnumFacing.NORTH));
+
+                                this.attemptedBreaks.put(pos, System.currentTimeMillis());
+                            }
+                        }
+                    }
+
+                    List<BlockPos> toRemove = new ArrayList<>();
+                    for (BlockPos pos : attemptedBreaks.keySet()) {
+                        if (System.currentTimeMillis() - attemptedBreaks.get(pos) >= timeout.getValue()) {
+                            toRemove.add(pos);
+                        }
+                    }
+
+                    for (BlockPos pos : toRemove) {
+                        attemptedBreaks.remove(pos);
+                    }
                 } else {
                     this.currentPos = this.getClosestBlock();
 
@@ -98,8 +123,7 @@ public final class NukerModule extends Module {
                     if (mc.player.capabilities.isCreativeMode) {
                         /* the amazing creative 'nuker' straight from the latch hacked client */
                         // TODO: Test moving to the iterable didn't break this
-                        Iterable<BlockPos> itr = getBoxIterable();
-                        for (BlockPos blockPos : itr) {
+                        for (BlockPos blockPos : getBoxIterable()) {
                             final Block block = BlockUtil.getBlock(blockPos);
                             if (block == Blocks.AIR || !mc.world.getBlockState(blockPos).isFullBlock())
                                 continue;
@@ -216,11 +240,10 @@ public final class NukerModule extends Module {
 
     private BlockPos getClosestBlock() {
         final Minecraft mc = Minecraft.getMinecraft();
-        Iterable<BlockPos> itr = getBoxIterable();
 
         BlockPos closest = null;
         double closestDist = Double.POSITIVE_INFINITY;
-        for (BlockPos pos : itr) {
+        for (BlockPos pos : getBoxIterable()) {
             double dist = pos.distanceSqToCenter(mc.player.posX, mc.player.getEyeHeight(), mc.player.posZ);
 
             if (shouldBreak(pos)) {
@@ -232,6 +255,24 @@ public final class NukerModule extends Module {
         }
 
         return closest;
+    }
+
+    /*
+     * Not very good performance wise. A better way to do this would be to directly iterate from the player's head,
+     * but that is difficult, and we don't expect SUPER huge input for this. At most the player would probably have a
+     * cube of 'radius' 6, +1 if the bounding box is aligned right, so we would have around 13^3 = 2197 blocks to
+     * iterate and sort.
+     */
+    private List<BlockPos> getSortedBlocks() {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        List<BlockPos> ret = new ArrayList<>();
+
+        for (BlockPos pos : getBoxIterable()) {
+            ret.add(new BlockPos(pos));
+        }
+
+        ret.sort(Comparator.comparingDouble(o -> o.distanceSqToCenter(player.posX, player.posY, player.posZ)));
+        return ret;
     }
 
     private enum Mode {
