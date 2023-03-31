@@ -150,7 +150,7 @@ public final class FreeCamModule extends Module {
                     }
                 }
 
-                if (this.packet.getValue()) {
+                if (this.packet.getValue() || Minecraft.getMinecraft().isSingleplayer()) {
                     if (event.getPacket() instanceof CPacketPlayer) {
                         event.setCanceled(true);
                     }
@@ -166,9 +166,6 @@ public final class FreeCamModule extends Module {
     @Listener
     public void receivePacket(EventReceivePacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
-            if (Minecraft.getMinecraft().isSingleplayer()) // don't mess up single-player
-                return;
-
             if (event.getPacket() instanceof SPacketSetPassengers) {
                 final SPacketSetPassengers packet = (SPacketSetPassengers) event.getPacket();
                 final Entity riding = Minecraft.getMinecraft().world.getEntityByID(packet.getEntityId());
@@ -179,7 +176,7 @@ public final class FreeCamModule extends Module {
             }
             if (event.getPacket() instanceof SPacketPlayerPosLook) {
                 final SPacketPlayerPosLook packet = (SPacketPlayerPosLook) event.getPacket();
-                if (this.packet.getValue()) {
+                if (this.packet.getValue() && !Minecraft.getMinecraft().isSingleplayer()) {
                     if (this.entity != null) {
                         this.entity.setPositionAndRotation(packet.getX(), packet.getY(), packet.getZ(), packet.getYaw(), packet.getPitch());
                     }
