@@ -35,6 +35,7 @@ public final class NukerModule extends Module {
     public final Value<MineMode> mineMode = new Value<MineMode>("MineMode", new String[]{"MM"}, "The way that nuker mines blocks", MineMode.NORMAL);
     public final Value<Float> distance = new Value<Float>("Distance", new String[]{"Dist", "D"}, "Maximum distance in blocks the nuker will reach", 4.5f, 0.0f, 5.0f, 0.1f);
     public final Value<Boolean> fixed = new Value<Boolean>("FixedDistance", new String[]{"Fixed", "fdist", "F"}, "Use vertical and horizontal distances in blocks instead of distances relative to the camera", false);
+    public final Value<Boolean> flatten = new Value<Boolean>("Flatten", new String[]{"flat"}, "Ensures nuker does not mine blocks below your feet", false);
     public final Value<Float> vDistance = new Value<Float>("VerticalDistance", new String[]{"Vertical", "vdist", "VD"}, "Maximum vertical distance in blocks the nuker will reach", 4.5f, 0.0f, 5.0f, 0.1f);
     public final Value<Float> hDistance = new Value<Float>("HorizontalDistance", new String[]{"Horizontal", "hist", "HD"}, "Maximum horizontal distance in blocks the nuker will reach", 3f, 0.0f, 5.0f, 0.1f);
 
@@ -220,7 +221,7 @@ public final class NukerModule extends Module {
         if (this.fixed.getValue()) {
             bb = new AxisAlignedBB(
                     (int) mc.player.posX - hDistance.getValue(),
-                    (int) mc.player.posY - vDistance.getValue(),
+                    (int) (this.flatten.getValue() ? mc.player.posY : mc.player.posY - vDistance.getValue()),
                     (int) mc.player.posZ - hDistance.getValue(),
                     (int) mc.player.posX + hDistance.getValue(),
                     (int) mc.player.posY + vDistance.getValue(),
@@ -228,7 +229,7 @@ public final class NukerModule extends Module {
         } else {
             bb = new AxisAlignedBB(
                     (int) mc.player.posX - distance.getValue(),
-                    (int) mc.player.posY - distance.getValue(),
+                    (int) (this.flatten.getValue() ? mc.player.posY : mc.player.posY - vDistance.getValue()),
                     (int) mc.player.posZ - distance.getValue(),
                     (int) mc.player.posX + distance.getValue(),
                     (int) mc.player.posY + distance.getValue(),
