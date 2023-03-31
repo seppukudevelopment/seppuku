@@ -23,8 +23,8 @@ import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
- * Author Seth
- * 4/24/2019 @ 7:45 PM.
+ * @author Seth
+ * @author noil
  */
 public final class FreeCamModule extends Module {
 
@@ -134,6 +134,9 @@ public final class FreeCamModule extends Module {
     @Listener
     public void sendPacket(EventSendPacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
+            if (!Minecraft.getMinecraft().isSingleplayer()) // don't mess up single-player
+                return;
+
             if (Minecraft.getMinecraft().world != null) {
                 if (!this.allowDismount.getValue()) {
                     if (event.getPacket() instanceof CPacketInput) {
@@ -163,6 +166,9 @@ public final class FreeCamModule extends Module {
     @Listener
     public void receivePacket(EventReceivePacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
+            if (!Minecraft.getMinecraft().isSingleplayer()) // don't mess up single-player
+                return;
+
             if (event.getPacket() instanceof SPacketSetPassengers) {
                 final SPacketSetPassengers packet = (SPacketSetPassengers) event.getPacket();
                 final Entity riding = Minecraft.getMinecraft().world.getEntityByID(packet.getEntityId());
