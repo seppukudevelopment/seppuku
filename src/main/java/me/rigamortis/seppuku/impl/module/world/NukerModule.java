@@ -30,11 +30,11 @@ import java.util.*;
 public final class NukerModule extends Module {
 
     public final Value<Mode> mode = new Value<Mode>("Mode", new String[]{"M"}, "The way that nuker mines blocks", Mode.NORMAL);
-    public final Value<Float> distance = new Value<Float>("Distance", new String[]{"Dist", "D"}, "Maximum distance in blocks the nuker will reach", 4.5f, 0.0f, 5.0f, 0.1f);
+    public final Value<Float> distance = new Value<Float>("Distance", new String[]{"Dist", "D", "Range", "R"}, "Maximum distance in blocks the nuker will reach", 4.5f, 0.0f, 5.0f, 0.1f);
     public final Value<Boolean> fixed = new Value<Boolean>("FixedDistance", new String[]{"Fixed", "fdist", "F"}, "Use vertical and horizontal distances in blocks instead of distances relative to the camera", false);
     public final Value<Boolean> flatten = new Value<Boolean>("Flatten", new String[]{"flat"}, "Ensures nuker does not mine blocks below your feet", false);
-    public final Value<Float> vDistance = new Value<Float>("VerticalDistance", new String[]{"Vertical", "vdist", "VD"}, "Maximum vertical distance in blocks the nuker will reach", 4.5f, 0.0f, 5.0f, 0.1f);
-    public final Value<Float> hDistance = new Value<Float>("HorizontalDistance", new String[]{"Horizontal", "hist", "HD"}, "Maximum horizontal distance in blocks the nuker will reach", 3f, 0.0f, 5.0f, 0.1f);
+    public final Value<Float> vDistance = new Value<Float>("VerticalDistance", new String[]{"Vertical", "vdist", "VD", "vrange", "VR"}, "Maximum vertical distance in blocks the nuker will reach", 4.5f, 0.0f, 5.0f, 0.1f);
+    public final Value<Float> hDistance = new Value<Float>("HorizontalDistance", new String[]{"Horizontal", "hist", "HD", "hrange", "HR"}, "Maximum horizontal distance in blocks the nuker will reach", 3f, 0.0f, 5.0f, 0.1f);
 
     public final Value<Integer> timeout = new Value<Integer>("Timeout", new String[]{"TO, t"}, "How long to wait (in ms) until trying to break a specific block again (PACKET Mode)", 1000, 0, 5000, 10);
     public final Value<Float> minMineSpeed = new Value<Float>("MinMineSpeed", new String[]{"Min", "Speed", "MineSpeed"}, "How fast you should be able to mine a block for nuker to attempt to mine it (0-1, 0 to allow all blocks, 1 to only allow instantly minable blocks)", 0.2f, 0f, 1.0f, 0.1f);

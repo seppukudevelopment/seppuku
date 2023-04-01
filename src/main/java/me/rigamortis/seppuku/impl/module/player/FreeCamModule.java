@@ -134,9 +134,6 @@ public final class FreeCamModule extends Module {
     @Listener
     public void sendPacket(EventSendPacket event) {
         if (event.getStage() == EventStageable.EventStage.PRE) {
-            if (Minecraft.getMinecraft().isSingleplayer()) // don't mess up single-player
-                return;
-
             if (Minecraft.getMinecraft().world != null) {
                 if (!this.allowDismount.getValue()) {
                     if (event.getPacket() instanceof CPacketInput) {
