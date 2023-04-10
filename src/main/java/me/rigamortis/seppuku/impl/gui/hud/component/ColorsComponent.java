@@ -119,42 +119,50 @@ public final class ColorsComponent extends ResizableHudComponent {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         RenderUtil.glScissor(this.getX() + BORDER, this.getY() + offsetY + BORDER, this.getX() + this.getW() - BORDER - SCROLL_WIDTH, this.getY() + this.getH() - BORDER, sr);
         for (HudComponent component : Seppuku.INSTANCE.getHudManager().getComponentList()) {
-            if (component != this && component.getValueList().size() > 0) {
+            if (component == null)
+                continue;
+
+            if (component != this && !component.getValueList().isEmpty()) {
                 for (Value value : component.getValueList()) {
-                    if (value.getValue().getClass() != Color.class)
-                        continue;
+                    if (value.getValue() != null) {
+                        if (value.getValue().getClass() == Color.class) {
+                            RenderUtil.drawRect(this.getX() + BORDER + TEXT_GAP, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 2, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll, 0x45303030);
+                            final boolean insideComponent = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + mc.fontRenderer.FONT_HEIGHT + 1 + offsetY - this.scroll - mc.fontRenderer.FONT_HEIGHT + 1) && mouseY <= (this.getY() + BORDER + (mc.fontRenderer.FONT_HEIGHT) + 1 + offsetY - this.scroll);
+                            if (insideComponent) {
+                                RenderUtil.drawGradientRect(this.getX() + BORDER + TEXT_GAP, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 2, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll, 0x30909090, 0x00101010);
+                            }
 
-                    RenderUtil.drawRect(this.getX() + BORDER + TEXT_GAP, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 2, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll, 0x45303030);
-                    final boolean insideComponent = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + mc.fontRenderer.FONT_HEIGHT + 1 + offsetY - this.scroll - mc.fontRenderer.FONT_HEIGHT + 1) && mouseY <= (this.getY() + BORDER + (mc.fontRenderer.FONT_HEIGHT) + 1 + offsetY - this.scroll);
-                    if (insideComponent) {
-                        RenderUtil.drawGradientRect(this.getX() + BORDER + TEXT_GAP, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 2, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll, 0x30909090, 0x00101010);
+                            // draw button text
+                            final int valueColor = ((Color) value.getValue()).getRGB();
+                            mc.fontRenderer.drawStringWithShadow(ChatFormatting.GRAY + component.getName() + ": " + ChatFormatting.RESET + value.getName(), this.getX() + BORDER + TEXT_GAP + 1, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, valueColor);
+
+                            offsetY += mc.fontRenderer.FONT_HEIGHT + TEXT_GAP;
+                        }
                     }
-
-                    // draw button text
-                    final int valueColor = ((Color) value.getValue()).getRGB();
-                    mc.fontRenderer.drawStringWithShadow(ChatFormatting.GRAY + component.getName() + ": " + ChatFormatting.RESET + value.getName(), this.getX() + BORDER + TEXT_GAP + 1, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, valueColor);
-
-                    offsetY += mc.fontRenderer.FONT_HEIGHT + TEXT_GAP;
                 }
             }
         }
         for (Module module : Seppuku.INSTANCE.getModuleManager().getModuleList()) {
-            if (module.getValueList().size() > 0) {
+            if (module == null)
+                continue;
+
+            if (!module.getValueList().isEmpty()) {
                 for (Value value : module.getValueList()) {
-                    if (value.getValue().getClass() != Color.class)
-                        continue;
+                    if (value.getValue() != null) {
+                        if (value.getValue().getClass() == Color.class) {
+                            RenderUtil.drawRect(this.getX() + BORDER + TEXT_GAP, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 2, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll, 0x45303030);
+                            final boolean insideComponent = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + mc.fontRenderer.FONT_HEIGHT + 1 + offsetY - this.scroll - mc.fontRenderer.FONT_HEIGHT + 1) && mouseY <= (this.getY() + BORDER + (mc.fontRenderer.FONT_HEIGHT) + 1 + offsetY - this.scroll);
+                            if (insideComponent) {
+                                RenderUtil.drawGradientRect(this.getX() + BORDER + TEXT_GAP, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 2, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll, 0x30909090, 0x00101010);
+                            }
 
-                    RenderUtil.drawRect(this.getX() + BORDER + TEXT_GAP, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 2, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll, 0x45303030);
-                    final boolean insideComponent = mouseX >= (this.getX() + BORDER) && mouseX <= (this.getX() + this.getW() - BORDER - SCROLL_WIDTH) && mouseY >= (this.getY() + BORDER + mc.fontRenderer.FONT_HEIGHT + 1 + offsetY - this.scroll - mc.fontRenderer.FONT_HEIGHT + 1) && mouseY <= (this.getY() + BORDER + (mc.fontRenderer.FONT_HEIGHT) + 1 + offsetY - this.scroll);
-                    if (insideComponent) {
-                        RenderUtil.drawGradientRect(this.getX() + BORDER + TEXT_GAP, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, this.getX() + BORDER + TEXT_GAP + this.getW() - BORDER - SCROLL_WIDTH - BORDER - 2, this.getY() + offsetY + BORDER + TEXT_GAP + mc.fontRenderer.FONT_HEIGHT - this.scroll, 0x30909090, 0x00101010);
+                            // draw button text
+                            final int valueColor = ((Color) value.getValue()).getRGB();
+                            mc.fontRenderer.drawStringWithShadow(ChatFormatting.GRAY + module.getDisplayName() + ": " + ChatFormatting.RESET + value.getName(), this.getX() + BORDER + TEXT_GAP + 1, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, valueColor);
+
+                            offsetY += mc.fontRenderer.FONT_HEIGHT + TEXT_GAP;
+                        }
                     }
-
-                    // draw button text
-                    final int valueColor = ((Color) value.getValue()).getRGB();
-                    mc.fontRenderer.drawStringWithShadow(ChatFormatting.GRAY + module.getDisplayName() + ": " + ChatFormatting.RESET + value.getName(), this.getX() + BORDER + TEXT_GAP + 1, this.getY() + offsetY + BORDER + TEXT_GAP - this.scroll, valueColor);
-
-                    offsetY += mc.fontRenderer.FONT_HEIGHT + TEXT_GAP;
                 }
             }
         }
