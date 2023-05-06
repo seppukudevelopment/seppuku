@@ -56,7 +56,7 @@ public final class CapeManager {
     }
 
     public boolean findCape(String uuid) {
-        if (hasCapeForUuid(uuid))
+        if (this.hasCapeForUuid(uuid))
             return true;
 
         try {
