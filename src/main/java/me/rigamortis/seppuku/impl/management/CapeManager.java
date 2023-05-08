@@ -10,6 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -111,9 +112,14 @@ public final class CapeManager {
                             URL url = new URL(user.getCape());
                             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                             httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.76");
-                            final DynamicTexture texture = new DynamicTexture(ImageIO.read(httpURLConnection.getInputStream()));
-                            final ResourceLocation location = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("seppuku/capes", texture);
-                            this.capesMap.put(user.getCape(), location);
+                            final BufferedImage imageIO = ImageIO.read(httpURLConnection.getInputStream());
+                            if (imageIO != null) {
+                                if (imageIO.getWidth() == 512 && imageIO.getHeight() == 256) {
+                                    final DynamicTexture texture = new DynamicTexture(imageIO);
+                                    final ResourceLocation location = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("seppuku/capes", texture);
+                                    this.capesMap.put(user.getCape(), location);
+                                }
+                            }
                         }
                     }
                 }
