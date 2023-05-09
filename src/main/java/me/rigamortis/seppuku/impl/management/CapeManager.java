@@ -61,7 +61,7 @@ public final class CapeManager {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
             reader.lines().forEachOrdered(line -> {
                 final String[] split = line.split(";");
-                if (line.toLowerCase().endsWith("png")) {
+                if (split[1].toLowerCase().endsWith("png")) {
                     this.getCapeUserList().add(new CapeUser(split[0], split[1]));
                 }
             });
