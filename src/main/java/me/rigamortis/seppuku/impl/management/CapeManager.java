@@ -55,16 +55,21 @@ public final class CapeManager {
 //        });
 //        t.start();
         try {
-            URL url = new URL("https://seppuku.pw/capes");
+            URL url = new URL("https://seppuku.pw/capes/");
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.76");
             final BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-            reader.lines().forEachOrdered(line -> {
-                final String[] split = line.split(";");
-                if (split[1].toLowerCase().endsWith("png")) {
-                    this.getCapeUserList().add(new CapeUser(split[0], split[1]));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!line.startsWith("<pre>") && !line.startsWith("</pre>") && line.length() > 1) {
+                    final String[] split = line.split(";");
+                    if (split[0] != null && split[1] != null) {
+                        if (split[1].toLowerCase().endsWith("png")) {
+                            this.capeUserList.add(new CapeUser(split[0], split[1]));
+                        }
+                    }
                 }
-            });
+            }
             reader.close();
         } catch (Exception e) {
             //e.printStackTrace();
@@ -76,23 +81,25 @@ public final class CapeManager {
      * TODO thread this
      */
     public void downloadCapes() {
-        this.capeUserList.parallelStream().filter(capeUser -> this.findResource(capeUser.getCape()) == null).forEach(capeUser -> {
-            try {
-                URL url = new URL(capeUser.getCape());
-                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.76");
-                final BufferedImage imageIO = ImageIO.read(httpURLConnection.getInputStream());
-                if (imageIO != null) {
-                    if (imageIO.getWidth() <= 2048 && imageIO.getHeight() <= 1024) {
-                        final DynamicTexture texture = new DynamicTexture(imageIO);
-                        final ResourceLocation location = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("seppuku/capes", texture);
-                        this.capesMap.put(capeUser.getCape(), location);
+        for (CapeUser capeUser : this.capeUserList) {
+            if (this.findResource(capeUser.getCape()) == null) {
+                try {
+                    URL url = new URL(capeUser.getCape());
+                    HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                    httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.76");
+                    final BufferedImage imageIO = ImageIO.read(httpURLConnection.getInputStream());
+                    if (imageIO != null) {
+                        if (imageIO.getWidth() <= 2048 && imageIO.getHeight() <= 1024) {
+                            final DynamicTexture texture = new DynamicTexture(imageIO);
+                            final ResourceLocation location = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("seppuku/capes", texture);
+                            this.capesMap.put(capeUser.getCape(), location);
+                        }
                     }
+                } catch (Exception e) {
+                    //e.printStackTrace();
                 }
-            } catch (Exception e) {
-                //e.printStackTrace();
             }
-        });
+        }
     }
 
     /**
@@ -112,13 +119,14 @@ public final class CapeManager {
      * @return
      */
     public ResourceLocation getCape(AbstractClientPlayer player) {
+        ResourceLocation result = null;
         final CapeUser user = this.find(player);
 
         if (user != null) {
-            return this.findResource(user.getCape());
+            result = this.findResource(user.getCape());
         }
 
-        return null;
+        return result;
     }
 
     /**
@@ -128,16 +136,17 @@ public final class CapeManager {
      * @return
      */
     public CapeUser find(AbstractClientPlayer player) {
-        if (this.capeUserList.isEmpty())
-            return null;
-
-        for (CapeUser user : this.capeUserList) {
-            if (user.getUuid().equals(player.getUniqueID().toString().replace("-", ""))) {
-                return user;
+        CapeUser result = null;
+        if (!this.capeUserList.isEmpty()) {
+            for (CapeUser user : this.capeUserList) {
+                if (user.getUuid().equals(player.getUniqueID().toString().replace("-", ""))) {
+                    result = user;
+                    break;
+                }
             }
         }
 
-        return null;
+        return result;
     }
 
     public boolean hasCape() {
