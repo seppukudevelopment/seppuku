@@ -36,7 +36,7 @@ public final class CapeManager {
     @Listener
     public void displayCape(EventCapeLocation event) {
         if (Minecraft.getMinecraft().player != null && event.getPlayer() != Minecraft.getMinecraft().player) {
-            String uuid = event.getPlayer().getUniqueID().toString().replace("-", "");
+            final String uuid = event.getPlayer().getUniqueID().toString().replace("-", "");
             if (this.hasCape(uuid)) {
                 final ResourceLocation cape = this.getCape(event.getPlayer());
                 if (cape != null) {
@@ -69,7 +69,12 @@ public final class CapeManager {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (!line.toLowerCase().startsWith("no") && line.toLowerCase().endsWith("png")) {
-                    this.capeUserList.add(new CapeUser(uuid, line));
+                    final BufferedImage imageIO = ImageIO.read(httpURLConnection.getInputStream());
+                    if (imageIO != null) {
+                        if (imageIO.getWidth() == 512 && imageIO.getHeight() == 256) {
+                            this.capeUserList.add(new CapeUser(uuid, line));
+                        }
+                    }
                 } else {
                     return false;
                 }
