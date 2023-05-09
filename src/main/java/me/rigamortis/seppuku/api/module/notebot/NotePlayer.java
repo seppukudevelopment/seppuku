@@ -38,8 +38,8 @@ public class NotePlayer {
         this.sequencer.open();
         this.sequencer.setSequence(this.currentSequence);
         this.sequencer.start();
-        this.sequencer.setMasterSyncMode(Sequencer.SyncMode.INTERNAL_CLOCK);
-        this.sequencer.setTempoInBPM(120);
+        this.sequencer.setMasterSyncMode(Sequencer.SyncMode.MIDI_SYNC);
+        //this.sequencer.setTempoInBPM(100);
 
         //int resolution = this.currentSequence.getResolution();
     }
