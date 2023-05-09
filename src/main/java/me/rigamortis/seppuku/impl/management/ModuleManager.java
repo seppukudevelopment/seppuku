@@ -179,7 +179,7 @@ public final class ModuleManager {
         add(new FastProjectile());
         // p2w experience
 
-        if (Seppuku.INSTANCE.getCapeManager().hasCape(Minecraft.getMinecraft().session.getProfile().getId().toString().replace("-", "")))
+        if (Seppuku.INSTANCE.getCapeManager().hasCape())
             add(new CapeModule());
 
         this.loadExternalModules();

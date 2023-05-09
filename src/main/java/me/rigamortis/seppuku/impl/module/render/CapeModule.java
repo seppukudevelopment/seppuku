@@ -19,12 +19,10 @@ public final class CapeModule extends Module {
 
     @Listener
     public void displayCape(EventCapeLocation event) {
-        if (Minecraft.getMinecraft().player != null && event.getPlayer() == Minecraft.getMinecraft().player) {
-            String uuid = Minecraft.getMinecraft().player.getUniqueID().toString().replace("-", "");
-            if (Seppuku.INSTANCE.getCapeManager().hasCape(uuid)) {
-                final ResourceLocation cape = Seppuku.INSTANCE.getCapeManager().getCape(event.getPlayer());
-                if (cape != null) {
-                    event.setLocation(cape);
+        if (event.getPlayer() != null) {
+            if (Minecraft.getMinecraft().player != null && event.getPlayer() == Minecraft.getMinecraft().player) {
+                if (Seppuku.INSTANCE.getCapeManager().getCape(event.getPlayer()) != null) {
+                    event.setLocation(Seppuku.INSTANCE.getCapeManager().getCape(event.getPlayer()));
                     event.setCanceled(true);
                 }
             }

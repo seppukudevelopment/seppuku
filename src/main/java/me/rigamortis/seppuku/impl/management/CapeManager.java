@@ -15,7 +15,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Seth
@@ -23,115 +26,73 @@ import java.util.*;
  */
 public final class CapeManager {
 
-    private List<CapeUser> capeUserList = new ArrayList<>();
+    private final List<CapeUser> capeUserList = new ArrayList<>();
 
-    private HashMap<String, ResourceLocation> capesMap = new HashMap<>();
+    private final HashMap<String, ResourceLocation> capesMap = new HashMap<>();
 
     public CapeManager() {
-        //this.downloadCapeUsers();
-        //this.downloadCapes();
+        this.downloadCapeUsers();
+        this.downloadCapes();
         Seppuku.INSTANCE.getEventManager().addEventListener(this);
     }
 
     @Listener
     public void displayCape(EventCapeLocation event) {
-        if (Minecraft.getMinecraft().player != null && event.getPlayer() != Minecraft.getMinecraft().player) {
-            final String uuid = event.getPlayer().getUniqueID().toString().replace("-", "");
-            if (this.hasCape(uuid)) {
-                final ResourceLocation cape = this.getCape(event.getPlayer());
-                if (cape != null) {
-                    event.setLocation(cape);
+        if (event.getPlayer() != null) {
+            if (Minecraft.getMinecraft().player != null && event.getPlayer() != Minecraft.getMinecraft().player) {
+                if (this.getCape(event.getPlayer()) != null) {
+                    event.setLocation(this.getCape(event.getPlayer()));
                     event.setCanceled(true);
                 }
             }
         }
     }
 
-    public boolean hasCapeForUuid(String uuid) {
-        for (CapeUser capeUser : this.capeUserList) {
-            if (capeUser.getUuid().equals(uuid)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean findCape(String uuid) {
-        if (this.hasCapeForUuid(uuid))
-            return true;
-
+    public void downloadCapeUsers() {
+//        Thread t = new Thread(new Runnable() {
+//            public void run() {
+//            }
+//        });
+//        t.start();
         try {
-            URL url = new URL("https://seppuku.pw/cape/" + uuid);
+            URL url = new URL("https://seppuku.pw/capes");
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.76");
             final BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (!line.toLowerCase().startsWith("no") && line.toLowerCase().endsWith("png")) {
-                    final BufferedImage imageIO = ImageIO.read(httpURLConnection.getInputStream());
-                    if (imageIO != null) {
-                        if (imageIO.getWidth() == 512 && imageIO.getHeight() == 256) {
-                            this.capeUserList.add(new CapeUser(uuid, line));
-                        }
-                    }
-                } else {
-                    return false;
+            reader.lines().forEachOrdered(line -> {
+                final String[] split = line.split(";");
+                if (line.toLowerCase().endsWith("png")) {
+                    this.getCapeUserList().add(new CapeUser(split[0], split[1]));
                 }
-            }
-
+            });
             reader.close();
-            return true;
         } catch (Exception e) {
             //e.printStackTrace();
         }
-        return false;
     }
 
     /**
      * Download and cache each cape for each user
      * TODO thread this
      */
-    public void downloadCape(String uuid) {
-        CapeUser existingUser = null;
-        for (CapeUser capeUser : this.capeUserList) {
-            if (capeUser.getUuid().equals(uuid)) {
-                existingUser = capeUser;
-                break;
-            }
-        }
-        if (existingUser != null) {
-            if (this.capesMap.containsKey(existingUser.getCape())) {
-                return;
-            }
-        }
-
-        try {
-            Minecraft.getMinecraft().getTextureManager();
-            for (CapeUser user : this.capeUserList) {
-                if (user != null) {
-                    if (Objects.equals(user.getUuid(), uuid)) {
-                        final ResourceLocation cape = this.findResource(user.getCape());
-
-                        if (cape == null) {
-                            URL url = new URL(user.getCape());
-                            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                            httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.76");
-                            final BufferedImage imageIO = ImageIO.read(httpURLConnection.getInputStream());
-                            if (imageIO != null) {
-                                if (imageIO.getWidth() == 512 && imageIO.getHeight() == 256) {
-                                    final DynamicTexture texture = new DynamicTexture(imageIO);
-                                    final ResourceLocation location = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("seppuku/capes", texture);
-                                    this.capesMap.put(user.getCape(), location);
-                                }
-                            }
-                        }
+    public void downloadCapes() {
+        this.capeUserList.parallelStream().filter(capeUser -> this.findResource(capeUser.getCape()) == null).forEach(capeUser -> {
+            try {
+                URL url = new URL(capeUser.getCape());
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.76");
+                final BufferedImage imageIO = ImageIO.read(httpURLConnection.getInputStream());
+                if (imageIO != null) {
+                    if (imageIO.getWidth() <= 2048 && imageIO.getHeight() <= 1024) {
+                        final DynamicTexture texture = new DynamicTexture(imageIO);
+                        final ResourceLocation location = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("seppuku/capes", texture);
+                        this.capesMap.put(capeUser.getCape(), location);
                     }
                 }
+            } catch (Exception e) {
+                //e.printStackTrace();
             }
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
+        });
     }
 
     /**
@@ -141,42 +102,7 @@ public final class CapeManager {
      * @return
      */
     public ResourceLocation findResource(String key) {
-        for (Map.Entry<String, ResourceLocation> entry : this.capesMap.entrySet()) {
-            if (entry.getKey().equals(key)) {
-                return entry.getValue();
-            }
-        }
-        return null;
-    }
-
-//this.capeUserList.add(new CapeUser(split[0], split[1]));
-//    /**
-//     * Read a list of UUIDS and their cape names
-//     */
-//    protected void downloadCapeUsers() {
-//        try {
-//            URL url = new URL("https://seppuku.pw/files/capes_new.txt");
-//            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-//            httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.76");
-//            final BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-//
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                final String[] split = line.split(";");
-//                this.capeUserList.add(new CapeUser(split[0], split[1]));
-//            }
-//
-//            reader.close();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
-    public boolean hasCape(String uuid) {
-        if (this.findCape(uuid)) {
-            this.downloadCape(uuid);
-            return true;
-        }
-        return false;
+        return this.capesMap.entrySet().stream().filter(entry -> entry.getKey().equals(key)).findFirst().map(Map.Entry::getValue).orElse(null);
     }
 
     /**
@@ -187,9 +113,11 @@ public final class CapeManager {
      */
     public ResourceLocation getCape(AbstractClientPlayer player) {
         final CapeUser user = this.find(player);
+
         if (user != null) {
             return this.findResource(user.getCape());
         }
+
         return null;
     }
 
@@ -208,7 +136,12 @@ public final class CapeManager {
                 return user;
             }
         }
+
         return null;
+    }
+
+    public boolean hasCape() {
+        return this.capeUserList.stream().anyMatch(capeUser -> capeUser.getUuid().equals(Minecraft.getMinecraft().session.getProfile().getId().toString().replace("-", "")));
     }
 
     public void unload() {
@@ -220,15 +153,7 @@ public final class CapeManager {
         return capeUserList;
     }
 
-    public void setCapeUserList(List<CapeUser> capeUserList) {
-        this.capeUserList = capeUserList;
-    }
-
     public HashMap<String, ResourceLocation> getCapesMap() {
         return capesMap;
-    }
-
-    public void setCapesMap(HashMap<String, ResourceLocation> capesMap) {
-        this.capesMap = capesMap;
     }
 }
