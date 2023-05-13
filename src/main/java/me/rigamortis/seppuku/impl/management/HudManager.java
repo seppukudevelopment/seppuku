@@ -109,6 +109,7 @@ public final class HudManager {
         add(new ColorsComponent());
         add(new BattleInfoComponent());
         add(new FpsGraphComponent());
+        add(new KeyboardComponent());
 
         TrayComponent trayComponent = new TrayComponent();
         trayComponent.setAnchorPoint(BOTTOM_CENTER);
