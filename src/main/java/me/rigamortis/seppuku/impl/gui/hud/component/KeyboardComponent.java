@@ -47,7 +47,7 @@ public final class KeyboardComponent extends DraggableHudComponent {
         }
 
         final boolean isLocalSneaking = Minecraft.getMinecraft().player.isSneaking();
-        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(keyNames[0], this.getX() + Minecraft.getMinecraft().fontRenderer.getStringWidth(keyNames[0]), this.getY(), keysPressed[0] ? (isLocalSneaking ? 0xFFFFFF55 : 0xFFFFFFFF) : 0xFF999999);
+        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(keyNames[0], this.getX() + (this.getW() / 2f) - (Minecraft.getMinecraft().fontRenderer.getStringWidth(keyNames[0]) / 2f), this.getY(), keysPressed[0] ? (isLocalSneaking ? 0xFFFFFF55 : 0xFFFFFFFF) : 0xFF999999);
         Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(keyNames[1], this.getX(), this.getY() + Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT, keysPressed[1] ? (isLocalSneaking ? 0xFFFFFF55 : 0xFFFFFFFF) : 0xFF999999);
         Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(keyNames[2], this.getX() + Minecraft.getMinecraft().fontRenderer.getStringWidth(keyNames[1]), this.getY() + Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT, keysPressed[2] ? (isLocalSneaking ? 0xFFFFFF55 : 0xFFFFFFFF) : 0xFF999999);
         Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(keyNames[3], this.getX() + Minecraft.getMinecraft().fontRenderer.getStringWidth(keyNames[1] + keyNames[2]), this.getY() + Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT, keysPressed[3] ? (isLocalSneaking ? 0xFFFFFF55 : 0xFFFFFFFF) : 0xFF999999);
