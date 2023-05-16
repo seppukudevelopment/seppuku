@@ -32,8 +32,8 @@ public final class LoadCommand extends Command {
         final String[] split = input.split(" ");
 
         JsonObject configJson = null;
-        try { //http://127.0.0.1:5000/config/38aef33297814b07a88a3d2d1a611002/100
-            final String stringUrl = "http://127.0.0.1:5000/config/" + Minecraft.getMinecraft().player.getUniqueID().toString().replace("-", "") + "/" + split[1];
+        try {
+            final String stringUrl = "https://seppuku.pw/config/" + Minecraft.getMinecraft().player.getUniqueID().toString().replace("-", "") + "/" + split[1];
             URL url = new URL(stringUrl);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.76");
