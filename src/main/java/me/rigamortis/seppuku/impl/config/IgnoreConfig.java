@@ -19,8 +19,8 @@ public final class IgnoreConfig extends Configurable {
     }
 
     @Override
-    public void onLoad() {
-        super.onLoad();
+    public void onLoad(JsonObject jsonObject) {
+        super.onLoad(jsonObject);
 
         final JsonArray ignoredJsonArray = this.getJsonObject().get("Ignored").getAsJsonArray();
 

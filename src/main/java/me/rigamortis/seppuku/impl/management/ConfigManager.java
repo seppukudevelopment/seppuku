@@ -129,7 +129,7 @@ public final class ConfigManager {
     public void load(Class configurableClassType) {
         for (Configurable cfg : configurableList) {
             if (cfg.getClass().isAssignableFrom(configurableClassType)) {
-                cfg.onLoad();
+                cfg.onLoad(null);
             }
         }
         Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventLoadConfig());
@@ -137,7 +137,7 @@ public final class ConfigManager {
 
     public void loadAll() {
         for (Configurable cfg : configurableList) {
-            cfg.onLoad();
+            cfg.onLoad(null);
         }
         Seppuku.INSTANCE.getEventManager().dispatchEvent(new EventLoadConfig());
     }

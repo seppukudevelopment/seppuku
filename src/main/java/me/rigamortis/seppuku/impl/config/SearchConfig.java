@@ -24,8 +24,8 @@ public final class SearchConfig extends Configurable {
     }
 
     @Override
-    public void onLoad() {
-        super.onLoad();
+    public void onLoad(JsonObject jsonObject) {
+        super.onLoad(jsonObject);
 
         if (this.searchModule == null)
             return;

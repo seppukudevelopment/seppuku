@@ -25,8 +25,12 @@ public abstract class Configurable {
         return file;
     }
 
-    public void onLoad() {
-        this.jsonObject = this.convertJsonObjectFromFile();
+    public void onLoad(JsonObject jsonObject) {
+        if (jsonObject != null) {
+            this.jsonObject = jsonObject;
+        } else {
+            this.jsonObject = this.convertJsonObjectFromFile();
+        }
     }
 
     public void onSave() {

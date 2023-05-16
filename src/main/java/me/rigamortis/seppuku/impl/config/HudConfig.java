@@ -26,8 +26,8 @@ public final class HudConfig extends Configurable {
     }
 
     @Override
-    public void onLoad() {
-        super.onLoad();
+    public void onLoad(JsonObject jsonObject) {
+        super.onLoad(jsonObject);
 
         if (this.hudComponent instanceof DraggableHudComponent) {
             final DraggableHudComponent draggableHudComponent = (DraggableHudComponent) this.hudComponent;
@@ -171,5 +171,9 @@ public final class HudConfig extends Configurable {
                 }
             }
         }
+    }
+
+    public HudComponent getHudComponent() {
+        return hudComponent;
     }
 }

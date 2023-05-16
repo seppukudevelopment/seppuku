@@ -17,8 +17,8 @@ public final class ClientConfig extends Configurable {
     }
 
     @Override
-    public void onLoad() {
-        super.onLoad();
+    public void onLoad(JsonObject jsonObject) {
+        super.onLoad(jsonObject);
 
         this.getJsonObject().entrySet().forEach(entry -> {
             if (entry.getKey().equalsIgnoreCase("CustomMainMenuHidden")) {

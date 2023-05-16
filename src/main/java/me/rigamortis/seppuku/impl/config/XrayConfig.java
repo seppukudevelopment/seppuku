@@ -24,8 +24,8 @@ public final class XrayConfig extends Configurable {
     }
 
     @Override
-    public void onLoad() {
-        super.onLoad();
+    public void onLoad(JsonObject jsonObject) {
+        super.onLoad(jsonObject);
 
         if (this.xrayModule == null)
             return;

@@ -20,8 +20,8 @@ public final class WaypointsConfig extends Configurable {
     }
 
     @Override
-    public void onLoad() {
-        super.onLoad();
+    public void onLoad(JsonObject jsonObject) {
+        super.onLoad(jsonObject);
 
         final JsonArray waypointsJsonArray = this.getJsonObject().get("Waypoints").getAsJsonArray();
 

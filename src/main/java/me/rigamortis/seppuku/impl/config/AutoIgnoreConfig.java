@@ -23,8 +23,8 @@ public final class AutoIgnoreConfig extends Configurable {
     }
 
     @Override
-    public void onLoad() {
-        super.onLoad();
+    public void onLoad(JsonObject jsonObject) {
+        super.onLoad(jsonObject);
 
         final JsonArray autoIgnoredJsonArray = this.getJsonObject().get("AutoIgnored").getAsJsonArray();
 

@@ -24,8 +24,8 @@ public class NukerFilterConfig extends Configurable {
     }
 
     @Override
-    public void onLoad() {
-        super.onLoad();
+    public void onLoad(JsonObject jsonObject) {
+        super.onLoad(jsonObject);
 
         if (this.nukerModule == null)
             return;

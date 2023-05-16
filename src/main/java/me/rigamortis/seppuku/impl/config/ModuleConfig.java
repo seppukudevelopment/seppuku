@@ -28,8 +28,8 @@ public class ModuleConfig extends Configurable {
     }
 
     @Override
-    public void onLoad() {
-        super.onLoad();
+    public void onLoad(JsonObject jsonObject) {
+        super.onLoad(jsonObject);
 
         this.getJsonObject().entrySet().forEach(entry -> {
             if (entry.getKey().equalsIgnoreCase("Color")) {
@@ -137,5 +137,9 @@ public class ModuleConfig extends Configurable {
             });
         }
         this.saveJsonObjectToFile(moduleJsonObject);
+    }
+
+    public Module getModule() {
+        return module;
     }
 }
