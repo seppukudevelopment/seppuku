@@ -79,6 +79,7 @@ public final class CommandManager {
         this.commandList.add(new NukerFilterCommand());
         this.commandList.add(new ExportCommand());
         this.commandList.add(new LoadCommand());
+        this.commandList.add(new SaveCommand());
 
         //create commands for every value within every module
         loadValueCommands();
