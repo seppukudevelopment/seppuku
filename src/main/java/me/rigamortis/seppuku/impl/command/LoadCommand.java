@@ -78,6 +78,9 @@ public final class LoadCommand extends Command {
                 });
             });
 
+            Seppuku.INSTANCE.unloadSimple();
+            Seppuku.INSTANCE.init();
+
             Seppuku.INSTANCE.logChat("\247c" + "Loaded config from server.");
         }
     }

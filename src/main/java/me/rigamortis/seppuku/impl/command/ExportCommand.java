@@ -16,7 +16,7 @@ import java.io.File;
  */
 public final class ExportCommand extends Command {
     public ExportCommand() {
-        super("Export", new String[]{"Exprt"}, "Export all Module & HUD configs into a single json for upload on Seppuku's website.", "Export <config_name>");
+        super("Export", new String[]{"Exprt"}, "Export all Module & HUD configs into a single json for upload on Seppuku's website", "Export <config_name>");
     }
 
     @Override
@@ -33,25 +33,25 @@ public final class ExportCommand extends Command {
         JsonObject endJson = new JsonObject();
         for (Configurable cfg : Seppuku.INSTANCE.getConfigManager().getConfigurableList()) {
             if (cfg.getClass().equals(ClientConfig.class)) {
-                final JsonObject clientJson = cfg.getJsonObject();
+                final JsonObject clientJson = cfg.convertJsonObjectFromFile();
                 endJson.add("Client", clientJson);
             }
             if (cfg.getClass().equals(XrayConfig.class)) {
-                final JsonObject xrayJson = cfg.getJsonObject();
+                final JsonObject xrayJson = cfg.convertJsonObjectFromFile();
                 endJson.add("Xray", xrayJson);
             }
             if (cfg.getClass().equals(SearchConfig.class)) {
-                final JsonObject searchJson = cfg.getJsonObject();
+                final JsonObject searchJson = cfg.convertJsonObjectFromFile();
                 endJson.add("Search", searchJson);
             }
             if (cfg.getClass().equals(ModuleConfig.class)) {
-                final JsonObject moduleJson = cfg.getJsonObject();
+                final JsonObject moduleJson = cfg.convertJsonObjectFromFile();
                 final ModuleConfig moduleConfig = (ModuleConfig) cfg;
                 final Module module = moduleConfig.getModule();
                 endJson.add("Module" + module.getDisplayName(), moduleJson);
             }
             if (cfg.getClass().equals(HudConfig.class)) {
-                final JsonObject hudJson = cfg.getJsonObject();
+                final JsonObject hudJson = cfg.convertJsonObjectFromFile();
                 final HudConfig hudConfig = (HudConfig) cfg;
                 final HudComponent hudComponent = hudConfig.getHudComponent();
                 endJson.add("HudComponent" + hudComponent.getName(), hudJson);

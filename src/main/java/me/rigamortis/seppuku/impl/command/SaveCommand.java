@@ -9,7 +9,7 @@ import me.rigamortis.seppuku.api.command.Command;
 public final class SaveCommand extends Command {
 
     public SaveCommand() {
-        super("Save", new String[]{"SaveAll"}, "Saves all client settings to disk.", "Save");
+        super("Save", new String[]{"SaveAll"}, "Saves all client settings to disk", "Save");
     }
 
     @Override
@@ -20,7 +20,7 @@ public final class SaveCommand extends Command {
         }
 
         Seppuku.INSTANCE.getConfigManager().saveAll();
-        Seppuku.INSTANCE.logChat("Saved current config.");
+        Seppuku.INSTANCE.logChat("Saved current config");
     }
 }
 

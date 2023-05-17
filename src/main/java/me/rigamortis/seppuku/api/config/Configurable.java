@@ -37,11 +37,11 @@ public abstract class Configurable {
 
     }
 
-    protected void saveJsonObjectToFile(JsonObject object) {
+    public void saveJsonObjectToFile(JsonObject object) {
         FileUtil.saveJsonFile(FileUtil.recreateFile(this.getFile()), object);
     }
 
-    protected JsonObject convertJsonObjectFromFile() {
+    public JsonObject convertJsonObjectFromFile() {
         if (!this.getFile().exists())
             return new JsonObject();
 
