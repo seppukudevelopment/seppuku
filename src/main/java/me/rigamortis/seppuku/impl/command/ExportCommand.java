@@ -60,7 +60,7 @@ public final class ExportCommand extends Command {
 
         FileUtil.saveJsonFile(file, endJson);
 
-        Seppuku.INSTANCE.logChat("\247c" + "Exported config " + configName + ".json into the Seppuku directory.");
+        Seppuku.INSTANCE.logChat("\247c" + "Exported config " + configName + ".json into the Seppuku directory");
     }
 
 }

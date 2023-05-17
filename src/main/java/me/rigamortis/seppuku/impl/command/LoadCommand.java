@@ -18,7 +18,7 @@ import java.net.URL;
 public final class LoadCommand extends Command {
 
     public LoadCommand() {
-        super("Load", new String[]{"Lode"}, "Load a config from your profile on Seppuku's website.", "Load <pin>");
+        super("Load", new String[]{"Lode"}, "Load a config from your profile on Seppuku's website", "Load <pin>");
     }
 
     @Override
@@ -51,7 +51,7 @@ public final class LoadCommand extends Command {
 
         } catch (Exception e) {
             e.printStackTrace();
-            Seppuku.INSTANCE.logChat("\247c" + "Error loading config from server.");
+            Seppuku.INSTANCE.logChat("\247c" + "Error loading config from server");
         }
 
         if (configJson != null) {
@@ -81,7 +81,7 @@ public final class LoadCommand extends Command {
             Seppuku.INSTANCE.unloadSimple();
             Seppuku.INSTANCE.init();
 
-            Seppuku.INSTANCE.logChat("\247c" + "Loaded config from server.");
+            Seppuku.INSTANCE.logChat("\247c" + "Loaded config from server");
         }
     }
 
