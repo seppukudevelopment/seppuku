@@ -44,10 +44,6 @@ public final class ExportCommand extends Command {
                 final JsonObject searchJson = cfg.getJsonObject();
                 endJson.add("Search", searchJson);
             }
-            if (cfg.getClass().equals(NukerFilterConfig.class)) {
-                final JsonObject nukerFilterJson = cfg.getJsonObject();
-                endJson.add("NukerFilter", nukerFilterJson);
-            }
             if (cfg.getClass().equals(ModuleConfig.class)) {
                 final JsonObject moduleJson = cfg.getJsonObject();
                 final ModuleConfig moduleConfig = (ModuleConfig) cfg;

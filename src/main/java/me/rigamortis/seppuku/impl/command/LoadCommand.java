@@ -3,7 +3,6 @@ package me.rigamortis.seppuku.impl.command;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.rigamortis.seppuku.Seppuku;
-import me.rigamortis.seppuku.api.cape.CapeUser;
 import me.rigamortis.seppuku.api.command.Command;
 import me.rigamortis.seppuku.impl.config.*;
 import net.minecraft.client.Minecraft;
@@ -66,9 +65,6 @@ public final class LoadCommand extends Command {
                 if (entry.getKey().equalsIgnoreCase("Search")) {
                     this.loadConfigForClass(SearchConfig.class, entry.getValue().getAsJsonObject());
 
-                }
-                if (entry.getKey().equalsIgnoreCase("NukerFilter")) {
-                    this.loadConfigForClass(NukerFilterConfig.class, entry.getValue().getAsJsonObject());
                 }
                 Seppuku.INSTANCE.getModuleManager().getModuleList().forEach(module -> {
                     if (entry.getKey().equalsIgnoreCase("Module" + module.getDisplayName())) {

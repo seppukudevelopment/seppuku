@@ -20,7 +20,7 @@ public class NukerFilterConfig extends Configurable {
 
     public NukerFilterConfig(File dir) {
         super(FileUtil.createJsonFile(dir, "NukerFilter"));
-        this.nukerModule = (NukerModule) Seppuku.INSTANCE.getModuleManager().find("Nuker");
+        this.nukerModule = (NukerModule) Seppuku.INSTANCE.getModuleManager().find(NukerModule.class);
     }
 
     @Override
@@ -49,6 +49,12 @@ public class NukerFilterConfig extends Configurable {
     @Override
     public void onSave() {
         if (this.nukerModule == null)
+            return;
+
+        if (this.nukerModule.getFilter().getValue() == null)
+            return;
+
+        if (this.nukerModule.getFilter().getValue().isEmpty())
             return;
 
         JsonObject save = new JsonObject();
