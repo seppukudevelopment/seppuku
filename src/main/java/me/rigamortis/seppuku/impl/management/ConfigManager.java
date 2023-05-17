@@ -86,7 +86,7 @@ public final class ConfigManager {
             this.configurableList.add(new ModuleConfig(this.moduleConfigDir, module));
         });
 
-        Seppuku.INSTANCE.getHudManager().getComponentList().stream().forEach(hudComponent -> {
+        Seppuku.INSTANCE.getHudManager().getComponentList().forEach(hudComponent -> {
             this.configurableList.add(new HudConfig(this.hudComponentConfigDir, hudComponent));
         });
 

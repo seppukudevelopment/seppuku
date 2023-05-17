@@ -64,7 +64,6 @@ public final class LoadCommand extends Command {
                 }
                 if (entry.getKey().equalsIgnoreCase("Search")) {
                     this.loadConfigForClass(SearchConfig.class, entry.getValue().getAsJsonObject());
-
                 }
                 Seppuku.INSTANCE.getModuleManager().getModuleList().forEach(module -> {
                     if (entry.getKey().equalsIgnoreCase("Module" + module.getDisplayName())) {
@@ -78,8 +77,8 @@ public final class LoadCommand extends Command {
                 });
             });
 
-            Seppuku.INSTANCE.unloadSimple();
-            Seppuku.INSTANCE.init();
+//            Seppuku.INSTANCE.getConfigManager().saveAll();
+//            Seppuku.INSTANCE.reload();
 
             Seppuku.INSTANCE.logChat("\247c" + "Loaded config from server");
         }
@@ -94,8 +93,8 @@ public final class LoadCommand extends Command {
     private void loadModuleConfigForClass(Class configClass, JsonObject jsonObject, String displayName) {
         Seppuku.INSTANCE.getConfigManager().getConfigurableList().stream().filter(configurable -> configurable.getClass().equals(ModuleConfig.class)).forEach(configurable -> {
             final ModuleConfig moduleConfig = (ModuleConfig) configurable;
-            if (moduleConfig.getModule().getDisplayName().equals(displayName)) {
-                configurable.onLoad(jsonObject);
+            if (moduleConfig.getModule().getDisplayName().equalsIgnoreCase(displayName)) {
+                moduleConfig.onLoad(jsonObject);
             }
         });
     }
@@ -103,8 +102,8 @@ public final class LoadCommand extends Command {
     private void loadHudConfigForClass(Class configClass, JsonObject jsonObject, String name) {
         Seppuku.INSTANCE.getConfigManager().getConfigurableList().stream().filter(configurable -> configurable.getClass().equals(HudConfig.class)).forEach(configurable -> {
             final HudConfig hudConfig = (HudConfig) configurable;
-            if (hudConfig.getHudComponent().getName().equals(name)) {
-                configurable.onLoad(jsonObject);
+            if (hudConfig.getHudComponent().getName().equalsIgnoreCase(name)) {
+                hudConfig.onLoad(jsonObject);
             }
         });
     }
