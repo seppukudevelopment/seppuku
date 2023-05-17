@@ -20,7 +20,7 @@ public final class SaveCommand extends Command {
         }
 
         Seppuku.INSTANCE.getConfigManager().saveAll();
-        Seppuku.INSTANCE.logChat("Saved");
+        Seppuku.INSTANCE.logChat("Saved current config.");
     }
 }
 
