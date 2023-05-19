@@ -49,10 +49,16 @@ public class ModuleConfig extends Configurable {
             }
 
             // Check if we are already enabled
-            if (entry.getKey().equalsIgnoreCase("Enabled") && !module.isEnabled() && module.getType() != Module.ModuleType.HIDDEN) {
-                if (entry.getValue().getAsBoolean()) {
-                    module.toggle();
+            if (entry.getKey().equalsIgnoreCase("Enabled") && module.getType() != Module.ModuleType.HIDDEN) {
+                if (entry.getValue().getAsBoolean() && !module.isEnabled()) {
+                    module.setEnabled(true);
+                    module.onEnable();
                 }
+                if (!entry.getValue().getAsBoolean() && module.isEnabled()) {
+                    module.setEnabled(false);
+                    module.onDisable();
+                }
+                module.onToggle();
             }
 
             for (Value val : module.getValueList()) {
