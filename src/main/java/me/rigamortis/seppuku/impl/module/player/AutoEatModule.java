@@ -19,6 +19,7 @@ public final class AutoEatModule extends Module {
 
     public final Value<Float> hunger = new Value<Float>("Hunger", new String[]{"food", "h"}, "The amount of hunger needed to acquire some food", 9.0f, 0.0f, 20.0f, 0.5f);
     public final Value<Integer> forcedSlot = new Value<Integer>("Slot", new String[]{"s"}, "The hot-bar slot to put the food into (45 for offhand)", 43, 0, 43, 1);
+    public final Value<Boolean> gapples = new Value<Boolean>("Gapples", new String[]{"gap", "gapple", "goldenapple", "goldenapples"}, "Allow eating golden apples for food", false);
 
     private int previousHeldItem = -1;
     private int foodSlot = -1;
@@ -119,6 +120,9 @@ public final class AutoEatModule extends Module {
     private boolean isFoodItem(Item item) {
         if (!(item instanceof ItemFood))
             return false; // is not of ItemFood class
+
+        if (this.gapples.getValue())
+            return item == Items.GOLDEN_APPLE;
 
         return item != Items.GOLDEN_APPLE && item != Items.CHORUS_FRUIT && item != Items.ROTTEN_FLESH && item != Items.POISONOUS_POTATO && item != Items.SPIDER_EYE;
     }
