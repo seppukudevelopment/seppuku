@@ -8,11 +8,13 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.util.glu.Sphere;
 
+import java.awt.*;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -296,6 +298,58 @@ public final class RenderUtil {
         bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
         bufferbuilder.pos(bb.maxX, bb.minY, bb.minZ).endVertex();
         tessellator.draw();
+    }
+
+    public static void renderFaceMesh (AxisAlignedBB bb, EnumFacing face, double stepSize, float width, int hex) {
+        if (face == EnumFacing.NORTH) {
+            for (double i = bb.minX; i <= bb.maxX; i += stepSize) {
+                drawLine3D(i, bb.minY, bb.minZ, i, bb.maxY, bb.minZ, width, hex);
+            }
+
+            for (double i = bb.minY; i <= bb.maxY; i += stepSize) {
+                drawLine3D(bb.minX, i, bb.minZ, bb.maxX, i, bb.minZ, width, hex);
+            }
+        } else if (face == EnumFacing.SOUTH) {
+            for (double i = bb.minX; i <= bb.maxX; i += stepSize) {
+                drawLine3D(i, bb.minY, bb.maxZ, i, bb.maxY, bb.maxZ, width, hex);
+            }
+
+            for (double i = bb.minY; i <= bb.maxY; i += stepSize) {
+                drawLine3D(bb.minX, i, bb.maxZ, bb.maxX, i, bb.maxZ, width, hex);
+            }
+        } else if (face == EnumFacing.EAST) {
+            for (double i = bb.minZ; i <= bb.maxZ; i += stepSize) {
+                drawLine3D(bb.maxX, bb.minY, i, bb.maxX, bb.maxY, i, width, hex);
+            }
+
+            for (double i = bb.minY; i <= bb.maxY; i += stepSize) {
+                drawLine3D(bb.maxX, i, bb.minZ, bb.maxX, i, bb.maxZ, width, hex);
+            }
+        } else if (face == EnumFacing.WEST) {
+            for (double i = bb.minZ; i <= bb.maxZ; i += stepSize) {
+                drawLine3D(bb.minX, bb.minY, i, bb.minX, bb.maxY, i, width, hex);
+            }
+
+            for (double i = bb.minY; i <= bb.maxY; i += stepSize) {
+                drawLine3D(bb.minX, i, bb.minZ, bb.minX, i, bb.maxZ, width, hex);
+            }
+        } else if (face == EnumFacing.UP) {
+            for (double i = bb.minX; i <= bb.maxX; i += stepSize) {
+                drawLine3D(i, bb.maxY, bb.minZ, i, bb.maxY, bb.maxZ, width, hex);
+            }
+
+            for (double i = bb.minZ; i <= bb.maxZ; i += stepSize) {
+                drawLine3D(bb.minX, bb.maxY, i, bb.maxX, bb.maxY, i, width, hex);
+            }
+        } else if (face == EnumFacing.DOWN) {
+            for (double i = bb.minX; i <= bb.maxX; i += stepSize) {
+                drawLine3D(i, bb.minY, bb.minZ, i, bb.minY, bb.maxZ, width, hex);
+            }
+
+            for (double i = bb.minZ; i <= bb.maxZ; i += stepSize) {
+                drawLine3D(bb.minX, bb.minY, i, bb.maxX, bb.minY, i, width, hex);
+            }
+        }
     }
 
     public static void drawBoundingBox(AxisAlignedBB bb, float width, int color) {
