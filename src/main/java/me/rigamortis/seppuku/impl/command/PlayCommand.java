@@ -15,7 +15,7 @@ public final class PlayCommand extends Command {
     private final File directory;
 
     public PlayCommand() {
-        super("Play", new String[]{"playsong", "begin"}, "Plays a song file from your /Seppuku/Songs/ directory.", ".play <song file name>");
+        super("Play", new String[]{"playsong", "begin"}, "Plays a song file from your /Seppuku/Config/<current config>/Songs/ directory.", ".play <midi file name>");
 
         this.directory = new File(Seppuku.INSTANCE.getConfigManager().getConfigDir(), "Songs");
         if (!directory.exists()) {
@@ -27,6 +27,21 @@ public final class PlayCommand extends Command {
     public void exec(String input) {
         if (!this.clamp(input, 2, 2)) {
             this.printUsage();
+            if (!this.directory.exists())
+                return;
+            final StringBuilder listedFilesBuilder = new StringBuilder();
+            final String[] fileList = this.directory.list();
+            if (fileList == null)
+                return;
+            if (fileList.length == 0 || fileList.length > 100)
+                return;
+            for (int i = 0; i < fileList.length; i++) {
+                String s = fileList[i].replaceAll(".midi", "").replaceAll(".mid", "");
+                listedFilesBuilder.append(ChatFormatting.GREEN).append(s);
+                if (i != fileList.length - 1)
+                    listedFilesBuilder.append(ChatFormatting.GRAY).append(", ");
+            }
+            Seppuku.INSTANCE.logChat(ChatFormatting.GRAY + listedFilesBuilder.toString());
             return;
         }
 
