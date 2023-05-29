@@ -1,4 +1,6 @@
-# ![Seppuku](res/seppuku_full.png)
+# ![Seppuku](res/seppuku_full.png)  <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_square.svg" width="96" height="96">
+
+A special thanks to JetBrains, they've kindly provided our team with Open Source development licenses! Check out more [here](https://jb.gg/OpenSourceSupport).
 
 [![Website](https://img.shields.io/website?down_color=lightgrey&down_message=offline&up_color=darkgreen&up_message=online&url=https%3A%2F%2Fseppuku.pw%2F)](https://seppuku.pw)
 [![Discord](https://img.shields.io/discord/579516739092480000?color=lightblue)](https://discord.gg/kfqVQPpmCx)
