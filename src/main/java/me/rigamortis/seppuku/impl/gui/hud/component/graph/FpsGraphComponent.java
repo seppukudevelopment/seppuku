@@ -135,7 +135,7 @@ public final class FpsGraphComponent extends ResizableHudComponent {
             // border
             RenderUtil.drawBorderedRectBlurred(this.getX(), this.getY(), this.getX() + this.getW(), this.getY() + this.getH(), 2.0f, 0x00000000, 0x90101010);
         } else {
-            mc.fontRenderer.drawStringWithShadow("(movement)", this.getX(), this.getY(), 0xFFAAAAAA);
+            mc.fontRenderer.drawStringWithShadow("(fps graph)", this.getX(), this.getY(), 0xFFAAAAAA);
         }
     }
 
