@@ -118,7 +118,7 @@ public final class GuiSeppukuMainMenu extends GuiScreen {
 
                     if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
                         try {
-                            desktop.browse(new URL("https://seppuku.pw/donate.html").toURI());
+                            desktop.browse(new URL("https://seppuku.pw/donate").toURI());
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
