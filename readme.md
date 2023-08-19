@@ -1,12 +1,9 @@
 # ![Seppuku](res/seppuku_full.png)  <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_square.svg" width="96" height="96">
 
-A special thanks to JetBrains, they've kindly provided our team with Open Source development licenses! Check out more [here](https://jb.gg/OpenSourceSupport).
-
 [![Website](https://img.shields.io/website?down_color=lightgrey&down_message=offline&up_color=darkgreen&up_message=online&url=https%3A%2F%2Fseppuku.pw%2F)](https://seppuku.pw)
 [![Discord](https://img.shields.io/discord/579516739092480000?color=lightblue)](https://discord.gg/kfqVQPpmCx)
 [![License](https://img.shields.io/github/license/seppukudevelopment/seppuku)](https://github.com/seppukudevelopment/seppuku/blob/master/LICENSE)
 [![GitHub Version](https://img.shields.io/github/v/release/seppukudevelopment/seppuku)](https://github.com/seppukudevelopment/seppuku/releases/latest)
-![GitHub Lines](https://img.shields.io/tokei/lines/github/seppukudevelopment/seppuku)
 [![GitHub Contributors](https://img.shields.io/github/contributors/seppukudevelopment/seppuku?color=lightgrey)](https://github.com/seppukudevelopment/seppuku/graphs/contributors)
 ![GitHub Language](https://img.shields.io/github/languages/top/seppukudevelopment/seppuku?color=9900ee)
 [![Downloads](https://img.shields.io/github/downloads/seppukudevelopment/seppuku/total?color=9900ee)](https://github.com/seppukudevelopment/seppuku/releases/latest)
@@ -16,6 +13,8 @@ Seppuku is a free, open-source and lightweight Minecraft 1.12.2 [Forge](https://
 Originally oriented towards the 9B9T and 2B2T anarchy servers; it is a fully featured client-side mod with an external plugin system, unique exploits, and a [solid Discord community](https://discord.gg/kfqVQPpmCx).
 
 Checkout the [guide](https://seppuku.pw/guide.html) for help.
+
+*A special thanks to JetBrains, they've kindly provided our team with Open Source development licenses! Check out more [here](https://jb.gg/OpenSourceSupport).*
 
 # Requirements
 - **JDK 8** ([Corretto](https://aws.amazon.com/corretto/) or [Adoptium](https://adoptium.net/?variant=openjdk8) is recommended)
