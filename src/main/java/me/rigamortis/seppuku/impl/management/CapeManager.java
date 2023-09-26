@@ -7,14 +7,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.io.IOUtils;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,30 +49,24 @@ public final class CapeManager {
     }
 
     public void downloadCapeUsers() {
-//        Thread t = new Thread(new Runnable() {
-//            public void run() {
-//            }
-//        });
-//        t.start();
         try {
             URL url = new URL("https://seppuku.pw/capes/");
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.76");
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (!line.startsWith("<pre>") && !line.startsWith("</pre>") && line.length() > 1) {
-                    final String[] split = line.split(";");
+            final List<String> lines = IOUtils.readLines(httpURLConnection.getInputStream(), StandardCharsets.UTF_8);
+            lines.stream().filter(line -> line.contains(";")).forEach(line -> {
+                final String[] split = line.split(";");
+                if (split.length > 1) {
                     if (split[0] != null && split[1] != null) {
                         if (split[1].toLowerCase().endsWith("png")) {
+                            System.out.println("uuid:" + split[0]);
                             this.capeUserList.add(new CapeUser(split[0], split[1]));
                         }
                     }
                 }
-            }
-            reader.close();
+            });
         } catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         }
     }
 

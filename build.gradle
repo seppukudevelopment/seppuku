@@ -18,7 +18,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 
 apply plugin: "com.github.johnrengelman.shadow"
 
-version = "3.2.1"
+version = "3.2.2"
 group = "me.rigamortis"
 archivesBaseName = "seppuku"
 def buildmode = "IDE"

@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 @Mod(modid = "seppukumod", name = "Seppuku", version = SeppukuMod.VERSION)
 public final class SeppukuMod {
 
-    public static final String VERSION = "3.2.1";
+    public static final String VERSION = "3.2.2";
 
     /**
      * Our mods entry point
