@@ -59,7 +59,6 @@ public final class CapeManager {
                 if (split.length > 1) {
                     if (split[0] != null && split[1] != null) {
                         if (split[1].toLowerCase().endsWith("png")) {
-                            System.out.println("uuid:" + split[0]);
                             this.capeUserList.add(new CapeUser(split[0], split[1]));
                         }
                     }
