@@ -19,10 +19,10 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 
 apply plugin: "com.github.johnrengelman.shadow"
 
-version = "3.2.2"
+version = "3.3.0"
 group = "me.rigamortis"
 archivesBaseName = "seppuku"
-def buildmode = "IDE"
+def buildmode = "RELEASE"
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 compileJava {
