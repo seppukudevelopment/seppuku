@@ -50,7 +50,7 @@ public final class CapeManager {
 
     public void downloadCapeUsers() {
         try {
-            URL url = new URL("https://seppuku.pw/capes/");
+            URL url = new URL("https://seppukudevelopment.github.io/capes/");
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.76");
             final List<String> lines = IOUtils.readLines(httpURLConnection.getInputStream(), StandardCharsets.UTF_8);
