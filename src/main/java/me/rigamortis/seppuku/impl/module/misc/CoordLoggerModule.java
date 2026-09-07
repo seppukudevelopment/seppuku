@@ -27,6 +27,7 @@ public final class CoordLoggerModule extends Module {
     public final Value<Boolean> wither = new Value<Boolean>("Wither", new String[]{"with"}, "Logs positions of wither sounds", true);
     public final Value<Boolean> endDragon = new Value<Boolean>("EndDragon", new String[]{"dragon"}, "Logs positions of end dragon sounds", true);
     public final Value<Boolean> slimes = new Value<Boolean>("Slimes", new String[]{"slime"}, "Logs positions of slime spawns", false);
+
     public CoordLoggerModule() {
         super("CoordLogger", new String[]{"CoordLog", "CLogger", "CLog"}, "Logs useful coordinates", "NONE", -1, ModuleType.MISC);
     }

@@ -29,6 +29,7 @@ public final class FlightModule extends Module {
     public final Value<Boolean> noKick = new Value<Boolean>("NoKick", new String[]{"AntiKick", "Kick"}, "Bypass the server kicking you for flying while in flight", true);
     private int teleportId;
     private final List<CPacketPlayer> packets = new ArrayList<>();
+
     public FlightModule() {
         super("Flight", new String[]{"Fly"}, "Allows you to fly", "NONE", -1, ModuleType.MOVEMENT);
     }

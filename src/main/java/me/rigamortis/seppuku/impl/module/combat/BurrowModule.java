@@ -44,6 +44,7 @@ public final class BurrowModule extends Module {
     private final Timer timer = new Timer();
     private final RotationTask rotationTask = new RotationTask("BurrowTask", 9); // 9 == high priority
     private BlockPos burrowPos;
+
     public BurrowModule() {
         super("Burrow", new String[]{"burow", "burro", "brrw"}, "Places obsidian inside yourself", "NONE", -1, ModuleType.COMBAT);
     }

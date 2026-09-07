@@ -23,6 +23,7 @@ public final class SpeedModule extends Module {
     private int tick;
     private double prevDistance;
     private double movementSpeed;
+
     public SpeedModule() {
         super("Speed", new String[]{"Spd"}, "Allows you to move faster", "NONE", -1, ModuleType.MOVEMENT);
     }

@@ -29,8 +29,6 @@ public final class Seppuku {
 
     private Logger logger;
 
-    //private String prevTitle;
-
     private EventManager eventManager;
 
     private APIManager apiManager;
@@ -110,9 +108,6 @@ public final class Seppuku {
         this.seppukuMainMenu = new GuiSeppukuMainMenu();
 
         this.configManager.init(); // Keep last, so we load configs after everything else inits
-
-        //this.prevTitle = Display.getTitle();
-        //Display.setTitle("Seppuku 1.12.2");
 
         this.getEventManager().dispatchEvent(new EventLoad());
 

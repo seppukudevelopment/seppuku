@@ -54,6 +54,7 @@ public final class SearchModule extends Module {
     private final List<Chunk> renderQueue = new CopyOnWriteArrayList<>();
     private final Timer renderTimer = new Timer();
     private final ICamera frustum = new Frustum();
+
     public SearchModule() {
         super("Search", new String[]{"srch", "src"}, "Search for different types of blocks. Enter the \"search\" command", "NONE", -1, ModuleType.RENDER);
 

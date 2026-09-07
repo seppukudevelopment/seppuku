@@ -13,12 +13,12 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  * @author noil
  */
 public class PearlDupeModule extends Module {
-    private final Value<String> message = new Value<>("Message", new String[] { "msg", "text" }, "Command to send", "kill");
+    private final Value<String> message = new Value<>("Message", new String[]{"msg", "text"}, "Command to send", "kill");
 
 //    private static final int TP_DISTANCE = 16;
 
     public PearlDupeModule() {
-        super("PearlDupe", new String[] { "pearldupe", "dupepearl", "pearlexploit" }, "Sends /kill (or another command) when receiving a teleport position packet. Be careful!", "NONE", -1, Module.ModuleType.MISC);
+        super("PearlDupe", new String[]{"pearldupe", "dupepearl", "pearlexploit"}, "Sends /kill (or another command) when receiving a teleport position packet. Be careful!", "NONE", -1, Module.ModuleType.MISC);
     }
 
     @Listener
@@ -33,7 +33,7 @@ public class PearlDupeModule extends Module {
                 return;
             if (localPlayer.ticksExisted < 20)
                 return;
-            if (isPearlOrFarTeleport(localPlayer, (SPacketPlayerPosLook)event.getPacket()))
+            if (isPearlOrFarTeleport(localPlayer, (SPacketPlayerPosLook) event.getPacket()))
                 sendKillMessage(localPlayer);
             toggle();
         }

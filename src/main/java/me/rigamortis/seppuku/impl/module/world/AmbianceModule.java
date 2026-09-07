@@ -29,6 +29,7 @@ public class AmbianceModule extends Module {
     private final Minecraft mc = Minecraft.getMinecraft();
     private final Texture seppukuSkyTexture;
     private final Texture rainbowSkyTexture;
+
     public AmbianceModule() {
         super("Ambiance", new String[]{"Ambience", "CustomSky", "CustomSound", "CustomSounds"}, "Edit ambient parts of the game. (Sky, sounds, etc.)", "NONE", -1, ModuleType.WORLD);
         this.seppukuSkyTexture = new Texture("seppuku_sky.jpg");

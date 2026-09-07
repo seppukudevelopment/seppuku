@@ -14,7 +14,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.util.glu.Sphere;
 
-import java.awt.*;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -300,7 +299,7 @@ public final class RenderUtil {
         tessellator.draw();
     }
 
-    public static void renderFaceMesh (AxisAlignedBB bb, EnumFacing face, double stepSize, float width, int hex) {
+    public static void renderFaceMesh(AxisAlignedBB bb, EnumFacing face, double stepSize, float width, int hex) {
         if (face == EnumFacing.NORTH) {
             for (double i = bb.minX; i <= bb.maxX; i += stepSize) {
                 drawLine3D(i, bb.minY, bb.minZ, i, bb.maxY, bb.minZ, width, hex);

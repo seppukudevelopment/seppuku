@@ -46,6 +46,7 @@ public final class WaypointsModule extends Module {
     private final Minecraft mc = Minecraft.getMinecraft();
     private String host = "";
     private float angle = 0;
+
     public WaypointsModule() {
         super("Waypoints", new String[]{"Wp", "Waypoint"}, "Highlights waypoints", "NONE", -1, ModuleType.WORLD);
     }

@@ -4,7 +4,6 @@ import me.rigamortis.seppuku.Seppuku;
 import me.rigamortis.seppuku.api.event.player.EventCapeLocation;
 import me.rigamortis.seppuku.api.module.Module;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**

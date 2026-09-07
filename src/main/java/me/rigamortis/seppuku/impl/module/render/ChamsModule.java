@@ -70,6 +70,7 @@ public final class ChamsModule extends Module {
     private final ArrayList<EventDrawNameplate> queuedNameplates = new ArrayList<EventDrawNameplate>();
     private boolean renderShadow = false;
     private boolean renderingShaded = false;
+
     public ChamsModule() {
         super("Chams", new String[]{"Cham", "Chameleon"}, "Allows you to see entities through walls", "NONE", -1, ModuleType.RENDER);
     }

@@ -38,6 +38,7 @@ public final class SpeedMineModule extends Module {
     public final Value<Boolean> auto = new Value<Boolean>("Auto", new String[]{"MultiMine", "MM"}, "When enabled, allows for multi-mining blocks", false);
     public BlockPos seqPos;
     public EnumFacing seqDir;
+
     public SpeedMineModule() {
         super("SpeedMine", new String[]{"FastMine"}, "Allows you to break blocks faster", "NONE", -1, ModuleType.WORLD);
     }

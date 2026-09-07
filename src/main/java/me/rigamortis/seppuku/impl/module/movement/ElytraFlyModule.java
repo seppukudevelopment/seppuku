@@ -53,6 +53,7 @@ public final class ElytraFlyModule extends Module {
     private final Timer equipDelayTimer = new Timer();
     private final Timer stayAirborneTimer = new Timer();
     private final Timer jumpTimer = new Timer();
+
     public ElytraFlyModule() {
         super("ElytraFly", new String[]{"Elytra", "ElytraPlus", "Elytra+"}, "Allows you to fly with elytras", "NONE", -1, ModuleType.MOVEMENT);
     }

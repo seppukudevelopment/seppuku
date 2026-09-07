@@ -10,8 +10,8 @@ import me.rigamortis.seppuku.api.event.render.EventRender2D;
 import me.rigamortis.seppuku.api.event.render.EventRenderName;
 import me.rigamortis.seppuku.api.friend.Friend;
 import me.rigamortis.seppuku.api.module.Module;
-import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.util.*;
+import me.rigamortis.seppuku.api.util.Timer;
 import me.rigamortis.seppuku.api.value.Value;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -49,8 +49,8 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 import java.awt.*;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**

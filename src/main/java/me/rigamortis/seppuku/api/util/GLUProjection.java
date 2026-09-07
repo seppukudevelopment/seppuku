@@ -31,6 +31,7 @@ public final class GLUProjection {
     private float fovY;
     private float fovX;
     private Vector3D lookVec;
+
     private GLUProjection() {
     }
 
@@ -576,6 +577,7 @@ public final class GLUProjection {
         private final double x;
         private final double y;
         private final Type t;
+
         public Projection(double x, double y, Type t) {
             this.x = x;
             this.y = y;

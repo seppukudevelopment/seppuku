@@ -196,7 +196,7 @@ public final class NukerModule extends Module {
                 && !isFiltered;
     }
 
-    private Iterable<BlockPos> getBoxIterable () {
+    private Iterable<BlockPos> getBoxIterable() {
         final Minecraft mc = Minecraft.getMinecraft();
         AxisAlignedBB bb;
 

@@ -23,11 +23,11 @@ public class MapBoundsModule extends Module {
     public Value<Color> gridColor = new Value<Color>("GridColor", new String[]{"GC", "GridC", "GColor", "Grid"}, "The color the grid should be", new Color(5, 155, 0, 255));
 
     public MapBoundsModule() {
-        super("MapBounds", new String[]{"MBounds", "ShowMaps", "MapBoundaries"},  "Shows the boundaries of the map you are currently standing in.", -1, ModuleType.RENDER);
+        super("MapBounds", new String[]{"MBounds", "ShowMaps", "MapBoundaries"}, "Shows the boundaries of the map you are currently standing in.", -1, ModuleType.RENDER);
     }
 
     @Listener
-    public void onRender3d (EventRender3D event) {
+    public void onRender3d(EventRender3D event) {
         Minecraft mc = Minecraft.getMinecraft();
         double minX = (int) Math.floor((mc.player.posX + 64) / 128) * 128 - 64;
         double minZ = ((int) Math.floor((mc.player.posZ + 64) / 128) * 128 - 64);
@@ -49,11 +49,11 @@ public class MapBoundsModule extends Module {
         RenderUtil.end3D();
     }
 
-    public static AxisAlignedBB interpolateBB (AxisAlignedBB bb, float partialTicks) {
+    public static AxisAlignedBB interpolateBB(AxisAlignedBB bb, float partialTicks) {
         EntityPlayer entityplayer = Minecraft.getMinecraft().player;
-        double ix = entityplayer.lastTickPosX + (entityplayer.posX - entityplayer.lastTickPosX) * (double)partialTicks;
-        double iy = entityplayer.lastTickPosY + (entityplayer.posY - entityplayer.lastTickPosY) * (double)partialTicks;
-        double iz = entityplayer.lastTickPosZ + (entityplayer.posZ - entityplayer.lastTickPosZ) * (double)partialTicks;
+        double ix = entityplayer.lastTickPosX + (entityplayer.posX - entityplayer.lastTickPosX) * (double) partialTicks;
+        double iy = entityplayer.lastTickPosY + (entityplayer.posY - entityplayer.lastTickPosY) * (double) partialTicks;
+        double iz = entityplayer.lastTickPosZ + (entityplayer.posZ - entityplayer.lastTickPosZ) * (double) partialTicks;
 
         return new AxisAlignedBB(
                 bb.minX - ix,
